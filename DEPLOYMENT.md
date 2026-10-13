@@ -1,15 +1,36 @@
-# 🚀 Vercel Deployment Guide
+# 🚀 Deployment Guide (Cloudflare Pages & Vercel)
 
-This guide outlines everything you need to deploy **The Dive Village Frontend** to Vercel seamlessly with zero hassle.
+This guide outlines everything you need to deploy **The Dive Village Frontend** to **Cloudflare Pages** or **Vercel** seamlessly.
 
 ---
 
-## ⚡ Quick 1-Click Deployment
+## ☁️ Cloudflare Pages Deployment
 
-1. **Push to GitHub**: Make sure all changes on `TheDiveVillage-Frontend` are committed and pushed to your GitHub repository.
+### 1. Project Configuration in Cloudflare Dashboard
+1. Go to your **Cloudflare Dashboard** -> **Compute (Workers & Pages)** -> **Create application** -> **Pages** -> **Connect to Git**.
+2. Select your repository: **`thedivevillage/TheDiveVillage.com-Frontend`**.
+3. In **Set up builds and deployments**, configure:
+   - **Framework preset**: `Vite` (or `None`)
+   - **Build command**: `npm run build`
+   - **Build output directory**: `Frontend/dist` (or `dist` — both work with the included sync script)
+   - **Root directory**: `/` (Leave blank or `/` — do **NOT** set to `Frontend` because the LFS hydrator runs from the repo root)
+4. Under **Environment variables**, add your production variables (see list below).
+5. Click **Save and Deploy**.
+
+### 2. Built-in Cloudflare Pages Support
+- **`wrangler.json`**: Pre-configured with `"pages_build_output_dir": "Frontend/dist"`.
+- **`Frontend/public/_redirects`**: Automatically provides SPA fallback (`/* /index.html 200`) so refreshing routes (e.g., `/shop`, `/book-us`, `/about`) works without 404s.
+- **`Frontend/public/_headers`**: Configured with CORS and immutable caching for static assets.
+- **`scripts/sync-dist.js`**: Automatically mirrors `Frontend/dist` to root `./dist` upon build completion, ensuring deployments succeed regardless of whether the output directory is configured as `Frontend/dist` or `dist`.
+
+---
+
+## ⚡ Vercel Deployment
+
+1. **Push to GitHub**: Make sure all changes on `TheDiveVillage.com-Frontend` are committed and pushed.
 2. **Import to Vercel**:
    - Go to [vercel.com](https://vercel.com) and click **"Add New..." > "Project"**.
-   - Select and import your **`TheDiveVillage-Frontend`** GitHub repository.
+   - Select and import your **`TheDiveVillage.com-Frontend`** GitHub repository.
 3. **Configure Settings**:
    - **Framework Preset**: Vite (detected automatically)
    - **Root Directory**: `./` (Default - root monorepo config handles workspaces automatically)

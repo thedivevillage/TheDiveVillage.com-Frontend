@@ -6,7 +6,7 @@
     "Frontend"
   ],
   "scripts": {
-    "build": "node scripts/hydrate-lfs-assets.js && node scripts/verify-lfs-assets.js && npm run build --workspace=Frontend",
+    "build": "node scripts/hydrate-lfs-assets.js && node scripts/verify-lfs-assets.js && npm run build --workspace=Frontend && node scripts/sync-dist.js",
     "dev": "npm run dev --workspace=Frontend"
   },
   "engines": {
