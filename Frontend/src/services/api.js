@@ -8,6 +8,8 @@ export const apiBaseUrl =
     ? 'http://localhost:5000'
     : 'https://thedivevillage-backend.onrender.com')
 
+export const isApiConfigured = Boolean(apiBaseUrl)
+
 const api = axios.create({
   baseURL: apiBaseUrl,
   headers: { 'Content-Type': 'application/json' },
@@ -15,6 +17,13 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
+  if (!isApiConfigured) {
+    const controller = new AbortController()
+    config.signal = controller.signal
+    controller.abort('API base URL is not configured in production.')
+    return config
+  }
+
   const token = localStorage.getItem('tdv_id_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
@@ -35,3 +44,4 @@ api.interceptors.response.use(
 )
 
 export default api
+

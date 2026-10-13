@@ -12,7 +12,7 @@ import useNightDive from '../hooks/useNightDive'
 import SEOHead from '../components/SEOHead'
 import MerchBannerCTA from '../components/MerchBannerCTA'
 import ViberQRModal from '../components/ViberQRModal'
-import api from '../services/api'
+import api, { isApiConfigured } from '../services/api'
 
 export default function Contact() {
   const isNightDive = useNightDive()
@@ -217,7 +217,13 @@ export default function Contact() {
         details,
       }
 
-      await api.post('/api/content/contact', payload)
+      if (isApiConfigured) {
+        try {
+          await api.post('/api/content/contact', payload)
+        } catch (apiErr) {
+          console.warn('Backend API submission skipped or failed:', apiErr)
+        }
+      }
 
       try {
         const newEnquiryRecord = {
