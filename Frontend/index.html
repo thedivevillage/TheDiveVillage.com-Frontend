@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Dive Village | It's a Community" />
+  <meta name="keywords"
+    content="scuba diving, freediving, scuba certification, certified diving courses, dive center, dive apparel, ocean gear, underwater excursions, dive village" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="The Dive Village | It's a Community" />
+  <meta property="og:description"
+    content="Join our vibrant ocean community for certified scuba diving courses, freediving excursions, and premium marine gear." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preload" href="/fonts/Antonio-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/GoogleSansFlex-VariableFont.woff2" as="font" type="font/woff2" crossorigin />
+
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+  <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SportsActivityLocation",
+        "name": "The Dive Village",
+        "url": "https://thedivevillage.co",
+        "logo": "https://thedivevillage.co/src/assets/Logo.png",
+        "description": "Premier scuba diving center offering certified diving courses, guided freediving excursions, eco-tours, and ocean apparel.",
+        "telephone": "+91 7338257002",
+        "email": "sanjeev.bajaj@thedivevillage.com",
+        "priceRange": "$$"
+      }
+    </script>
+
+  <title>The Dive Village | It's a Community</title>
+</head>
+
+<body style="background-color: #001e3d; margin: 0; padding: 0;">
+  <!-- Global Ambient Audio Stream (Loaded and playing from millisecond zero) -->
+  <audio
+    id="tdv-global-ambient-audio"
+    src="https://res.cloudinary.com/qvbunv8y/video/upload/v1791685502/TDV-Media/Audio/Audio.mp3"
+    autoplay
+    loop
+    preload="auto"
+    crossorigin="anonymous"
+    playsinline
+    webkit-playsinline
+    style="display:none;position:fixed;pointer-events:none;"
+  ></audio>
+  <script>
+    (function () {
+      try {
+        var audio = document.getElementById('tdv-global-ambient-audio');
+        if (!audio) return;
+        var isMuted = localStorage.getItem('tdv_audio_muted') === 'true';
+        if (isMuted) {
+          audio.muted = true;
+          audio.volume = 0;
+          return;
+        }
+
+        audio.volume = 0.5;
+
+        var startPlay = function () {
+          if (localStorage.getItem('tdv_audio_muted') === 'true') return;
+          if (document.hidden) return;
+          audio.muted = false;
+          audio.volume = 0.5;
+          var p = audio.play();
+          if (p !== undefined) {
+            p.then(function () {
+              audio.muted = false;
+              audio.volume = 0.5;
+              if ('mediaSession' in navigator && typeof MediaMetadata !== 'undefined') {
+                try {
+                  navigator.mediaSession.metadata = new MediaMetadata({
+                    title: 'Underwater Ambiance',
+                    artist: 'The Dive Village',
+                    album: "It's a Community",
+                    artwork: [{ src: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791691225/TDV-Media/UI/Logo.png', sizes: '512x512', type: 'image/png' }]
+                  });
+                } catch (e) {}
+              }
+            }).catch(function () {
+              // If unmuted autoplay blocked on initial boot, play muted so stream runs
+              audio.muted = true;
+              audio.play().catch(function () {});
+            });
+          }
+        };
+
+        startPlay();
+        document.addEventListener('DOMContentLoaded', startPlay, { once: true });
+        window.addEventListener('load', startPlay, { once: true });
+
+        // Unmute on ANY micro-gesture (cursor movement, wheel, touch, scroll, focus, key) without needing a click
+        var microEvents = ['mousemove', 'pointermove', 'pointerdown', 'touchstart', 'mousedown', 'keydown', 'wheel', 'scroll', 'focus'];
+        var onMicroGesture = function () {
+          if (localStorage.getItem('tdv_audio_muted') === 'true') return;
+          if (document.hidden) return;
+          if (audio.muted || audio.paused) {
+            audio.muted = false;
+            audio.volume = 0.5;
+            var p = audio.play();
+            if (p !== undefined) {
+              p.then(function () {
+                audio.muted = false;
+                audio.volume = 0.5;
+                if ('mediaSession' in navigator && typeof MediaMetadata !== 'undefined') {
+                  try {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                      title: 'Underwater Ambiance',
+                      artist: 'The Dive Village',
+                      album: "It's a Community",
+                      artwork: [{ src: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791691225/TDV-Media/UI/Logo.png', sizes: '512x512', type: 'image/png' }]
+                    });
+                  } catch (e) {}
+                }
+                microEvents.forEach(function (e) {
+                  window.removeEventListener(e, onMicroGesture, true);
+                  document.removeEventListener(e, onMicroGesture, true);
+                });
+              }).catch(function () {});
+            }
+          }
+        };
+        microEvents.forEach(function (e) {
+          window.addEventListener(e, onMicroGesture, { capture: true, passive: true });
+          document.addEventListener(e, onMicroGesture, { capture: true, passive: true });
+        });
+      } catch (e) {}
+    })();
+  </script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

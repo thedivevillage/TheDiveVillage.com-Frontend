@@ -1,0 +1,1599 @@
+@import 'lenis/dist/lenis.css';
+@import 'react-phone-number-input/style.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@font-face {
+  font-family: 'Antonio';
+  src: url('/fonts/Antonio-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Flex';
+  src: url('/fonts/GoogleSansFlex-VariableFont.woff2') format('woff2');
+  font-weight: 1 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --toolbar-bottom: 64px;
+    --screen-scale: 1;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --toolbar-bottom: 68px;
+    }
+  }
+
+  /* ==========================================================================
+     AUTOMATIC PROPORTIONAL SCALING FOR LAPTOPS & 13-INCH SCREENS
+     Scales down typography, cards, paddings, gaps, and containers proportionately
+     so all content fits comfortably without horizontal or vertical clipping.
+     ========================================================================== */
+
+  /* 1. Standard 13-inch to 14-inch Laptops (1281px - 1439px, e.g. 1366x768, 1440x900) */
+  @media screen and (min-width: 1281px) and (max-width: 1439px) {
+    html {
+      font-size: 14.6px;
+      --screen-scale: 0.9125;
+    }
+  }
+
+  /* 2. Compact 13-inch Laptops / High-DPI Scaling (1024px - 1280px, e.g. 1280x800, 1920x1200 at 150%) */
+  @media screen and (min-width: 1024px) and (max-width: 1280px) {
+    html {
+      font-size: 14px;
+      --screen-scale: 0.875;
+    }
+  }
+
+  /* 3. Gentle Vertical Height Compensation for 13-inch Laptops (viewport height <= 850px) */
+  @media screen and (min-width: 1024px) and (max-width: 1439px) and (max-height: 850px) {
+    html {
+      font-size: clamp(13.4px, calc(0.75rem + 0.28vw), 14.6px);
+    }
+  }
+
+  /* ==========================================================================
+     PRODUCT DETAIL MEDIA PANEL (Images, Video, 3D Model Viewer)
+     Carefully calibrated for laptop screens below 15-inch / user screen size
+     so that the media view box and the thumbnail selector row beneath it
+     remain fully visible in the initial viewport without requiring scroll.
+     ========================================================================== */
+  .product-media-panel {
+    height: 350px;
+  }
+
+  @media screen and (min-width: 480px) {
+    .product-media-panel {
+      height: 390px;
+    }
+  }
+
+  @media screen and (min-width: 640px) {
+    .product-media-panel {
+      height: 430px;
+    }
+  }
+
+  /* 13-inch and 14-inch laptop screens (1024px - 1439px wide) */
+  @media screen and (min-width: 1024px) and (max-width: 1439px) {
+    .product-media-panel {
+      height: 335px;
+    }
+  }
+
+  /* Compact laptop heights (e.g. 1366x768 with browser chrome -> height <= 800px) */
+  @media screen and (min-width: 1024px) and (max-width: 1439px) and (max-height: 800px) {
+    .product-media-panel {
+      height: 315px;
+    }
+  }
+
+  /* Short / windowed laptop viewports (height <= 720px, e.g. 1354x640) */
+  @media screen and (min-width: 1024px) and (max-width: 1439px) and (max-height: 720px) {
+    .product-media-panel {
+      height: 290px;
+    }
+  }
+
+  /* Ultra-compact heights (height <= 650px) */
+  @media screen and (min-width: 1024px) and (max-width: 1439px) and (max-height: 650px) {
+    .product-media-panel {
+      height: 280px;
+    }
+  }
+
+  /* ==========================================================================
+     BIGGER SCREEN VIEW ONLY (ISOLATED) - Big monitors & Desktop displays (>= 1440px)
+     Restores the spacious view box and larger thumbnails the user had before.
+     ========================================================================== */
+  @media screen and (min-width: 1440px) {
+    .product-media-panel {
+      height: 460px;
+    }
+
+    .product-thumb-btn {
+      width: 4.5rem !important;
+      /* 72px (w-18) */
+      height: 5.5rem !important;
+      /* 88px (h-22) */
+    }
+  }
+
+  /* When viewport height has ample room (>= 820px), expand view box to full 500px */
+  @media screen and (min-width: 1440px) and (min-height: 820px) {
+    .product-media-panel {
+      height: 500px;
+    }
+  }
+
+  /* Full 2XL displays & Desktop displays (>= 1536px) with standard height */
+  @media screen and (min-width: 1536px) and (min-height: 850px) {
+    .product-media-panel {
+      height: 520px;
+    }
+  }
+
+  /* Ultra-wide / 1080p tall displays (min-width: 1536px with tall viewport >= 920px) */
+  @media screen and (min-width: 1536px) and (min-height: 920px) {
+    .product-media-panel {
+      height: 560px;
+    }
+
+    .product-thumb-btn {
+      width: 5rem !important;
+      /* 80px (w-20) */
+      height: 6rem !important;
+      /* 96px (h-24) */
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #001e3d !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    transition: font-size 0.2s ease-out;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  a:focus,
+  button:focus,
+  [role="button"]:focus,
+  input:focus,
+  select:focus,
+  textarea:focus,
+  a:active,
+  button:active,
+  [role="button"]:active {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  body {
+    @apply font-body text-body text-white bg-navy antialiased select-none;
+    background-color: #001e3d !important;
+    font-optical-sizing: auto;
+    font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  em,
+  i,
+  cite,
+  blockquote {
+    font-style: normal;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* Prevent iOS Safari from auto-zooming on input focus & ensure comfortable tap targets */
+  @media screen and (max-width: 768px) {
+
+    input,
+    select:not(.mobile-sort-select),
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  .mobile-sort-select,
+  .mobile-sort-select option {
+    font-size: 11px !important;
+  }
+
+  /* Fast responsive touch action for interactive elements */
+  button,
+  a,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hide scrollbars globally across all browsers for elements with scrollbar-none or no-scrollbar */
+  .scrollbar-none::-webkit-scrollbar,
+  .no-scrollbar::-webkit-scrollbar,
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+
+  .scrollbar-none,
+  .no-scrollbar,
+  .overflow-x-auto {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  .hide-cursors,
+  .hide-cursors *:not(input):not(textarea):not(select):not([contenteditable="true"]):not(.normal-cursor):not(.normal-cursor *):not(#dive-map-container):not(#dive-map-container *):not([data-globe]):not([data-globe] *):not(.cesium-widget):not(.cesium-widget *) {
+    cursor: none !important;
+  }
+
+  .hide-cursors input,
+  .hide-cursors textarea,
+  .hide-cursors select,
+  .hide-cursors [contenteditable="true"],
+  .hide-cursors .normal-cursor,
+  .hide-cursors .normal-cursor * {
+    cursor: auto !important;
+  }
+
+  .hide-cursors input[type="text"],
+  .hide-cursors input[type="email"],
+  .hide-cursors input[type="password"],
+  .hide-cursors input[type="search"],
+  .hide-cursors input[type="number"],
+  .hide-cursors input[type="tel"],
+  .hide-cursors input[type="url"],
+  .hide-cursors textarea {
+    cursor: text !important;
+  }
+
+  .hide-cursors .normal-cursor button,
+  .hide-cursors .normal-cursor a,
+  .hide-cursors .normal-cursor [role="button"],
+  .hide-cursors .normal-cursor .cursor-pointer {
+    cursor: pointer !important;
+  }
+
+  /* Restore natural default & grab cursors for 3D globe & 2D dive map */
+  .hide-cursors #dive-map-container,
+  .hide-cursors #dive-map-container *,
+  .hide-cursors [data-globe],
+  .hide-cursors [data-globe] *,
+  .hide-cursors .cesium-viewer,
+  .hide-cursors .cesium-viewer *,
+  .hide-cursors .cesium-widget,
+  .hide-cursors .cesium-widget *,
+  .hide-cursors .maplibregl-map,
+  .hide-cursors .maplibregl-map *,
+  .hide-cursors [data-dive-map],
+  .hide-cursors [data-dive-map] * {
+    cursor: default;
+  }
+
+  .hide-cursors #dive-map-container canvas,
+  .hide-cursors [data-globe] canvas,
+  .hide-cursors .cesium-widget canvas,
+  .hide-cursors .maplibregl-canvas {
+    cursor: grab !important;
+  }
+
+  .hide-cursors #dive-map-container canvas:active,
+  .hide-cursors [data-globe] canvas:active,
+  .hide-cursors .cesium-widget canvas:active,
+  .hide-cursors .maplibregl-canvas:active {
+    cursor: grabbing !important;
+  }
+
+  .hide-cursors #dive-map-container button,
+  .hide-cursors #dive-map-container a,
+  .hide-cursors #dive-map-container [role="button"],
+  .hide-cursors #dive-map-container .cursor-pointer,
+  .hide-cursors [data-globe] button,
+  .hide-cursors [data-globe] a,
+  .hide-cursors .maplibregl-ctrl button,
+  .hide-cursors [data-dive-map] button,
+  .hide-cursors [data-dive-map] a,
+  .hide-cursors [data-dive-map] [role="button"],
+  .hide-cursors [data-dive-map] .cursor-pointer {
+    cursor: pointer !important;
+  }
+
+  .hide-cursors #dive-map-container .cursor-grab,
+  .hide-cursors [data-globe] .cursor-grab,
+  .hide-cursors [data-dive-map] .cursor-grab {
+    cursor: grab !important;
+  }
+
+  .hide-cursors #dive-map-container .cursor-grabbing,
+  .hide-cursors [data-globe] .cursor-grabbing,
+  .hide-cursors [data-dive-map] .cursor-grabbing {
+    cursor: grabbing !important;
+  }
+
+  /* Magnetic button hover effect when cursor is within proximity radius */
+  .proximity-active {
+    transform: translateY(-2px) scale(1.04) !important;
+    box-shadow: 0 12px 24px -6px rgba(0, 174, 199, 0.35) !important;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Completely remove hover glow and scale transform on header / toolbar elements */
+  header .proximity-active,
+  header button.proximity-active,
+  header a.proximity-active,
+  header div.proximity-active,
+  header button:hover,
+  header a:hover {
+    box-shadow: none !important;
+  }
+
+  /* Completely remove hover glow and box shadows on footer elements */
+  footer .proximity-active,
+  footer button.proximity-active,
+  footer a.proximity-active,
+  footer div.proximity-active,
+  footer button:hover,
+  footer a:hover {
+    box-shadow: none !important;
+    filter: none !important;
+    drop-shadow: none !important;
+  }
+
+  /* Carousel arrow buttons: locked position with zero shift on hover, turning yellow on hover */
+  .carousel-arrow-btn {
+    transform: translateY(-50%) !important;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+  }
+
+  .carousel-arrow-btn.proximity-active {
+    transform: translateY(-50%) !important;
+    box-shadow: none !important;
+  }
+
+  .carousel-arrow-btn:hover,
+  .carousel-arrow-btn.proximity-active:hover {
+    background-color: #FFCD00 !important;
+    color: #00223D !important;
+    border-color: #FFCD00 !important;
+    transform: translateY(-50%) !important;
+  }
+
+  /* Program panel glassmorphic buttons turning yellow on hover */
+  .program-panel-btn {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+  }
+
+  .program-panel-btn:hover,
+  .group:hover .program-panel-btn,
+  .program-panel-btn.proximity-active {
+    background-color: #FFCD00 !important;
+    color: #00223D !important;
+    border-color: #FFCD00 !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  @keyframes floatPngSlow {
+
+    0%,
+    100% {
+      transform: translateY(0px) scale(1.02);
+    }
+
+    50% {
+      transform: translateY(-8px) scale(1.05);
+    }
+  }
+
+  .group:hover .hover-float-png {
+    animation: floatPngSlow 2.5s ease-in-out infinite !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading font-bold;
+  }
+
+
+  /* Utility class overrides for centered, left, or right aligned text blocks & section headers */
+  .text-center,
+  .text-center p,
+  p.text-center {
+    text-align: center !important;
+    text-align-last: center !important;
+  }
+
+  .text-left,
+  .text-left p,
+  p.text-left {
+    text-align: left !important;
+    text-align-last: left !important;
+  }
+
+  .text-right,
+  .text-right p,
+  p.text-right {
+    text-align: right !important;
+    text-align-last: right !important;
+  }
+
+  /* Fix for dropdown options & phone country select rendering in all browsers */
+  select option,
+  .PhoneInputCountrySelect option {
+    background-color: #003865;
+    color: white;
+    padding: 8px 12px;
+    font-weight: 600;
+  }
+
+  .PhoneInput {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .PhoneInputCountry {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .PhoneInputCountrySelect {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    z-index: 10;
+  }
+
+  .PhoneInputCountryIcon {
+    width: 24px;
+    height: 18px;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .PhoneInputCountrySelectArrow {
+    display: block;
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-left: 6px;
+    border-style: solid;
+    border-color: currentColor;
+    border-top-width: 0;
+    border-bottom-width: 2px;
+    border-left-width: 0;
+    border-right-width: 2px;
+    transform: rotate(45deg);
+    opacity: 0.6;
+  }
+
+  .PhoneInputInput {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+
+  ::selection {
+    background-color: rgba(0, 174, 199, 0.25);
+    color: #003865;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .animate-spin-carousel {
+    animation: spin-carousel 60s linear infinite;
+  }
+
+  .animate-spin-carousel:hover {
+    animation-play-state: paused;
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+
+  .glass-premium {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-btn {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .glass-btn:hover {
+    background: #FFCD00 !important;
+    color: #003865 !important;
+    border-color: #FFCD00 !important;
+    box-shadow: 0 12px 35px rgba(255, 205, 0, 0.55) !important;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+}
+
+@keyframes spin-carousel {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- NIGHT DIVE MODE (DARK THEME OVERRIDES) --- */
+body.night-dive,
+.night-dive {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+body.night-dive #root,
+.night-dive #root {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+.night-dive .glass-premium {
+  background-color: rgba(0, 30, 61, 0.88) !important;
+  color: #ffffff !important;
+}
+
+.night-dive section,
+.night-dive footer,
+.night-dive header,
+.night-dive main {
+  color: #ffffff !important;
+}
+
+/* Night Dive Mode Footer: headings in yellow, rest in white only */
+.night-dive footer h3 {
+  color: #FFCD00 !important;
+}
+
+.night-dive footer a,
+.night-dive footer span,
+.night-dive footer p,
+.night-dive footer li {
+  color: #ffffff !important;
+}
+
+.night-dive footer a:hover,
+.night-dive footer a:hover span {
+  color: #ffffff !important;
+}
+
+/* Night Dive mode background is #003865 */
+.night-dive [class*="bg-[#FAFAFA]"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#F8FAFC]"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#f0f9ff]"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#0b1726]"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#030a12]"]:not(input):not(select):not(textarea) {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+/* Primary surface cards, panels & modals in Night Dive Mode */
+.night-dive [class*="bg-white"]:not([data-product-card]):not([data-product-card] *):not([data-product-media]):not([data-product-media] *):not([data-product-showcase]):not([data-product-showcase] *):not(.product-media-panel):not(.product-media-panel *):not(.product-3d-wrapper):not(.product-3d-wrapper *):not([data-floating-image-card]):not([data-floating-image-card] *):not(model-viewer):not(model-viewer *):not(.hero-btn):not(input):not(select):not(textarea),
+.night-dive aside nav {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Sub-cards, metrics, widgets, empty states & table rows */
+.night-dive [class*="bg-slate-50"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-slate-100"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-gray-50"]:not(input):not(select):not(textarea),
+.night-dive [class*="bg-gray-100"]:not(input):not(select):not(textarea) {
+  background-color: #002747 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Remove box or panel shadows in Night Dive */
+.night-dive .shadow-card,
+.night-dive .shadow-lift,
+.night-dive .shadow-float,
+.night-dive .shadow-xs,
+.night-dive .shadow-sm,
+.night-dive .shadow-md,
+.night-dive .shadow-lg,
+.night-dive .shadow-xl,
+.night-dive .shadow-2xl,
+.night-dive .shadow-2xs,
+.night-dive .shadow,
+.night-dive [class*="shadow"],
+.night-dive [class*="drop-shadow"],
+.night-dive .card,
+.night-dive [class*="card"],
+.night-dive [class*="panel"],
+.night-dive [class*="box"],
+.night-dive dialog,
+.night-dive [role="dialog"],
+.night-dive aside,
+.night-dive section>div[class*="rounded"] {
+  box-shadow: none !important;
+}
+
+/* Headings and high-contrast text elements */
+.night-dive h1,
+.night-dive h2,
+.night-dive h3,
+.night-dive h4,
+.night-dive h5,
+.night-dive h6,
+.night-dive [class*="text-slate-900"],
+.night-dive [class*="text-slate-800"],
+.night-dive [class*="text-slate-700"],
+.night-dive [class*="text-gray-900"],
+.night-dive [class*="text-gray-800"],
+.night-dive [class*="text-navy"],
+.night-dive [class*="text-[#003865]"] {
+  color: #ffffff !important;
+}
+
+/* Muted / secondary subtext */
+.night-dive [class*="text-slate-600"],
+.night-dive [class*="text-slate-500"],
+.night-dive [class*="text-slate-400"],
+.night-dive [class*="text-gray-600"],
+.night-dive [class*="text-gray-500"],
+.night-dive [class*="text-gray-400"],
+.night-dive [class*="text-navy/"] {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.night-dive [class*="text-[#00AEC7]"]:not([data-product-card] *):not([data-product-card]),
+.night-dive [class*="text-accent"]:not([data-product-card] *):not([data-product-card]) {
+  color: #FFCD00 !important;
+}
+
+/* Borders */
+.night-dive [class*="border-gray-100"],
+.night-dive [class*="border-gray-200"],
+.night-dive [class*="border-gray-300"],
+.night-dive [class*="border-slate-100"],
+.night-dive [class*="border-slate-200"],
+.night-dive [class*="border-slate-300"],
+.night-dive [class*="border-navy"] {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+/* Sidebar Navigation Tabs in Night Mode */
+.night-dive aside nav a.active,
+.night-dive nav a.active[class*="bg-slate-900"],
+.night-dive aside nav a[class*="bg-slate-900"] {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.night-dive aside nav a:not(.active),
+.night-dive nav a:not(.active)[class*="text-slate-600"] {
+  color: rgba(255, 255, 255, 0.75) !important;
+  background-color: transparent !important;
+}
+
+.night-dive aside nav a:not(.active):hover,
+.night-dive nav a:not(.active):hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Primary Action Buttons */
+.night-dive button[class*="bg-slate-900"],
+.night-dive a[class*="bg-slate-900"] {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  font-weight: 700 !important;
+  border-color: #FFCD00 !important;
+  box-shadow: none !important;
+}
+
+.night-dive button[class*="bg-slate-900"]:hover,
+.night-dive a[class*="bg-slate-900"]:hover {
+  background-color: #ffe066 !important;
+  color: #001e3d !important;
+  transform: translateY(-1px);
+}
+
+/* Secondary / Outline Buttons */
+.night-dive button[class*="border-gray-300"],
+.night-dive a[class*="border-gray-300"],
+.night-dive button[class*="bg-white"]:not([data-thumb-btn]):not([data-product-media]):not(.hero-btn):not([data-product-card]):not([data-product-card] *),
+.night-dive a[class*="bg-white"]:not(.hero-btn):not([data-product-card]):not([data-product-card] *) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.night-dive button[class*="border-gray-300"]:hover,
+.night-dive a[class*="border-gray-300"]:hover,
+.night-dive button[class*="bg-white"]:not([data-thumb-btn]):not([data-product-media]):not(.hero-btn):not([data-product-card]):not([data-product-card] *):hover,
+.night-dive a[class*="bg-white"]:not(.hero-btn):not([data-product-card]):not([data-product-card] *):hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Hero section buttons hover in Night Dive mode: yellow #FFCD00 with navy text/border/icon */
+.night-dive a.hero-btn {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: none !important;
+}
+
+.hero-btn:hover,
+a.hero-btn:hover,
+.night-dive .hero-btn:hover,
+.night-dive a.hero-btn:hover,
+.night-dive a.hero-btn:focus-visible,
+html body.night-dive a.hero-btn:hover {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+  box-shadow: none !important;
+}
+
+.hero-btn:hover *,
+a.hero-btn:hover *,
+.night-dive .hero-btn:hover *,
+.night-dive a.hero-btn:hover *,
+html body.night-dive a.hero-btn:hover * {
+  color: #001e3d !important;
+  stroke: #001e3d !important;
+}
+
+/* Night Dive Toolbar & Footer: background #001C39 without shadows */
+.night-dive #main-toolbar>div,
+.night-dive #main-toolbar .pointer-events-auto:not(button):not(a):not(input) {
+  background-color: #001C39 !important;
+  box-shadow: none !important;
+}
+
+.night-dive footer,
+.night-dive footer>div,
+.night-dive footer .bg-navy,
+.night-dive footer [class*="bg-[#071d37]"] {
+  background-color: #001C39 !important;
+  box-shadow: none !important;
+}
+
+/* Shop Hero Banner & Merch CTA in Night Dive Mode - Thicker Border #001C39 */
+body.night-dive .shop-hero-banner,
+.night-dive .shop-hero-banner,
+body.night-dive [data-shop-banner],
+.night-dive [data-shop-banner] {
+  border: px solid #001C39 !important;
+}
+
+/* Status Badges */
+.night-dive [class*="bg-emerald-50"] {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+.night-dive [class*="bg-blue-50"] {
+  background-color: rgba(0, 174, 199, 0.18) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(0, 174, 199, 0.35) !important;
+}
+
+.night-dive [class*="bg-purple-50"] {
+  background-color: rgba(168, 85, 247, 0.18) !important;
+  color: #c084fc !important;
+  border-color: rgba(168, 85, 247, 0.35) !important;
+}
+
+.night-dive [class*="bg-amber-50"] {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.night-dive [class*="bg-indigo-50"] {
+  background-color: rgba(99, 102, 241, 0.18) !important;
+  color: #818cf8 !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+.night-dive [class*="bg-slate-100"] {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Dark Overlays for Who Can Dive Cards & Ocean Gradients in Night Dive Mode */
+.night-dive .who-can-dive-card {
+  background-color: #030a12 !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: none !important;
+}
+
+.night-dive .who-can-dive-overlay {
+  background: linear-gradient(to top, #030a12 0%, rgba(3, 10, 18, 0.95) 45%, rgba(3, 10, 18, 0.7) 75%, transparent 100%) !important;
+}
+
+.night-dive [class*="from-navy"] {
+  --tw-gradient-from: #003865 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(0, 56, 101, 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-from), var(--tw-gradient-to)) !important;
+}
+
+.night-dive [class*="via-navy"] {
+  --tw-gradient-via: rgba(0, 56, 101, 0.85) var(--tw-gradient-via-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(0, 56, 101, 0.85), var(--tw-gradient-to) !important;
+}
+
+/* ==========================================================================
+   NIGHT DIVE MODE: FORM INPUT BOXES (#003865) & WHITE TEXT ON FORMS
+   ========================================================================== */
+
+/* Boxes where you type in content like name, phone number, email, date, etc. */
+.night-dive input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not(.switch__input),
+.night-dive select,
+.night-dive textarea,
+.night-dive .PhoneInput,
+.night-dive .PhoneInputInput,
+.night-dive form div[class*="bg-[#F0F2F5]"],
+.night-dive form div[class*="bg-white"],
+.night-dive form button[class*="bg-[#F0F2F5]"],
+.night-dive form [class*="border-dashed"],
+.night-dive [data-input-box],
+.night-dive .phone-input-wrapper {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color-scheme: dark;
+}
+
+.night-dive input:focus,
+.night-dive select:focus,
+.night-dive textarea:focus,
+.night-dive .PhoneInputInput:focus,
+.night-dive form div[class*="bg-[#F0F2F5]"]:focus-within {
+  border-color: #FFCD00 !important;
+  box-shadow: 0 0 0 2px rgba(255, 205, 0, 0.35) !important;
+}
+
+.night-dive input::placeholder,
+.night-dive textarea::placeholder,
+.night-dive .PhoneInputInput::placeholder {
+  color: rgba(255, 255, 255, 0.65) !important;
+  opacity: 1 !important;
+}
+
+.night-dive select option,
+.night-dive .PhoneInputCountrySelect option {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+.night-dive .PhoneInputCountrySelect {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.night-dive .PhoneInputCountryIcon,
+.night-dive .PhoneInputCountrySelectArrow {
+  opacity: 0.9 !important;
+}
+
+/* Calendar popover in night dive mode */
+.night-dive .popover-calendar,
+.night-dive [role="dialog"][aria-label*="preferred dive date"] {
+  background-color: #001e3d !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.night-dive .popover-calendar * {
+  color: #ffffff !important;
+}
+
+.night-dive .popover-calendar button[class*="bg-[#F0F2F5]"] {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+/* --- TEXT COLOR WHITE ON THE FORMS --- */
+.night-dive form,
+.night-dive form label,
+.night-dive form label *,
+.night-dive form legend,
+.night-dive form p,
+.night-dive form span:not([class*="bg-accent"]):not(.bg-accent):not(.text-red-500):not(.text-red-600),
+.night-dive form h1,
+.night-dive form h2,
+.night-dive form h3,
+.night-dive form h4,
+.night-dive form h5,
+.night-dive form h6,
+.night-dive form [class*="text-navy"],
+.night-dive form [class*="text-slate"],
+.night-dive form [class*="text-gray"],
+.night-dive form [class*="text-blue-600"],
+.night-dive form button:not([type="submit"]):not([class*="bg-accent"]):not([class*="bg-navy"]) {
+  color: #ffffff !important;
+}
+
+/* Outside form container text (e.g. Contact Us card heading & intro) */
+.night-dive #contact-form-container,
+.night-dive #contact-form-container h2,
+.night-dive #contact-form-container p,
+.night-dive #contact-form-container span:not(.text-accent) {
+  color: #ffffff !important;
+}
+
+/* Ensure SVG icons inside forms are white */
+.night-dive form svg:not(.text-accent):not([fill*="#FFCD00"]):not(.text-red-500):not(.text-red-600):not(.text-emerald-600) {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   GLOBAL TRANSLUCENT BUTTONS & YELLOW HOVER ONLY
+   ========================================================================== */
+button:not([data-no-glass]):not(.switch__input),
+a.btn,
+.btn {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* Ensure resting state for glass buttons is translucent */
+button.glass-btn,
+a.glass-btn,
+button[data-glass],
+a[data-glass] {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+/* Solid accent button default styles */
+button.bg-accent,
+a.bg-accent {
+  background-color: #FFCD00;
+  color: #001e3d;
+}
+
+/* Solid navy button default styles */
+button.bg-navy,
+a.bg-navy {
+  background-color: #003865;
+  color: #ffffff;
+}
+
+/* Glass and specialized button hover states */
+button.glass-btn:hover,
+a.glass-btn:hover,
+.btn-primary:hover {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+}
+
+/* FAQ Box Neutral Accordion Styles */
+.faq-box-btn,
+.faq-box-btn:hover,
+.faq-box-btn:focus,
+.faq-box-btn:active {
+  background-color: transparent !important;
+  color: #003865 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.faq-box-btn:hover {
+  background-color: rgba(0, 56, 101, 0.05) !important;
+}
+
+/* Night-dive button contrast adjustment */
+.night-dive button.bg-accent,
+.night-dive a.bg-accent {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+:root {
+  --hue: 223;
+  --trans-dur: 0.4s;
+  --trans-timing: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.switch,
+.switch__input {
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.switch {
+  margin: auto;
+}
+
+.switch__input:before {
+  background-color: hsl(var(--hue), 10%, 10%);
+}
+
+.switch__input {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.switch__input {
+  border-radius: 0.75em;
+  cursor: pointer;
+  display: block;
+  width: 3em;
+  height: 1.5em;
+  transition: background-color var(--trans-dur) var(--trans-timing);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.switch__input:before {
+  border-radius: 50%;
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0.125em;
+  left: 0.125em;
+  width: 1.25em;
+  height: 1.25em;
+  transition:
+    background-color var(--trans-dur) var(--trans-timing),
+    transform var(--trans-dur) var(--trans-timing);
+}
+
+.switch__icon,
+.switch__icon-part {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.switch__icon {
+  background-color: hsl(var(--hue), 10%, 90%);
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  top: 0.125em;
+  left: 0.125em;
+  width: 1.25em;
+  height: 1.25em;
+  transition: transform var(--trans-dur) var(--trans-timing);
+}
+
+.switch__icon-part {
+  transition:
+    box-shadow var(--trans-dur) var(--trans-timing),
+    transform var(--trans-dur) var(--trans-timing);
+}
+
+.switch__icon-part--1,
+.switch__icon-part--2,
+.switch__icon-part--3 {
+  border-radius: 50%;
+}
+
+.switch__icon-part--1 {
+  background-color: hsl(var(--hue), 10%, 90%);
+  top: calc(50% - 0.375em);
+  left: calc(50% - 0.375em);
+  width: 0.75em;
+  height: 0.75em;
+}
+
+.switch__icon-part--2 {
+  background-color: hsl(var(--hue), 10%, 10%);
+  top: calc(50% - 0.4375em);
+  left: calc(50% - 0.0625em);
+  width: 0.5em;
+  height: 0.5em;
+  transform: translate(-0.1875em, 0.1875em) scale(0.2);
+}
+
+.switch__icon-part--3 {
+  box-shadow: 0 0 0 0.625em hsl(var(--hue), 10%, 10%) inset;
+  width: 1.25em;
+  height: 1.25em;
+  transform: scale(0.25);
+}
+
+.switch__icon-part--3~.switch__icon-part {
+  background-color: hsl(var(--hue), 10%, 10%);
+  border-radius: 0.0625em;
+  top: 50%;
+  left: 50%;
+  width: 0.125em;
+  height: 0.1875em;
+  transform-origin: 50% 0;
+}
+
+.switch__icon-part--4 {
+  transform: translateX(-50%) rotate(0) translateY(0.25em);
+}
+
+.switch__icon-part--5 {
+  transform: translateX(-50%) rotate(45deg) translateY(0.25em);
+}
+
+.switch__icon-part--6 {
+  transform: translateX(-50%) rotate(90deg) translateY(0.25em);
+}
+
+.switch__icon-part--7 {
+  transform: translateX(-50%) rotate(135deg) translateY(0.25em);
+}
+
+.switch__icon-part--8 {
+  transform: translateX(-50%) rotate(180deg) translateY(0.25em);
+}
+
+.switch__icon-part--9 {
+  transform: translateX(-50%) rotate(225deg) translateY(0.25em);
+}
+
+.switch__icon-part--10 {
+  transform: translateX(-50%) rotate(270deg) translateY(0.25em);
+}
+
+.switch__icon-part--11 {
+  transform: translateX(-50%) rotate(315deg) translateY(0.25em);
+}
+
+.switch__sr {
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+}
+
+/* `:checked` state */
+.switch__input:checked {
+  background-color: transparent;
+}
+
+.switch__input:checked:before,
+.switch__input:checked~.switch__icon {
+  transform: translateX(1.5em);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--2 {
+  transform: translate(0, 0) scale(1);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--3 {
+  box-shadow: 0 0 0 0.25em hsl(var(--hue), 10%, 10%) inset;
+  transform: scale(1);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--4 {
+  transform: translateX(-50%) rotate(0) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--5 {
+  transform: translateX(-50%) rotate(45deg) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--6 {
+  transform: translateX(-50%) rotate(90deg) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--7 {
+  transform: translateX(-50%) rotate(135deg) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--8 {
+  transform: translateX(-50%) rotate(180deg) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--9 {
+  transform: translateX(-50%) rotate(225deg) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--10 {
+  transform: translateX(-50%) rotate(270deg) translateY(0.625em) scale(0);
+}
+
+.switch__input:checked~.switch__icon .switch__icon-part--11 {
+  transform: translateX(-50%) rotate(315deg) translateY(0.625em) scale(0);
+}
+
+/* Mobile Safe Area & Touch Ergonomics */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-pb {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* Skeleton Shimmer Loading Animations */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg,
+      rgba(0, 56, 101, 0.05) 25%,
+      rgba(0, 56, 101, 0.12) 37%,
+      rgba(0, 56, 101, 0.05) 63%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-shimmer-dark {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.14) 37%,
+      rgba(255, 255, 255, 0.05) 63%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   CUSTOM DESKTOP SCROLLBAR & DESKTOP POLISH
+   ========================================================================== */
+@media (min-width: 1024px) {
+
+  /* Sleek brand scrollbar for desktop */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #001428;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #003865;
+    border-radius: 9999px;
+    border: 2px solid #001428;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00AEC7;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #003865 #001428;
+  }
+}
+
+/* Ensure all anchor targets and tab jump targets clear fixed desktop navbar */
+[id] {
+  scroll-margin-top: 7rem;
+}
+
+/* ==========================================================================
+   PRODUCT CARDS & SUB PRODUCT MEDIA SHOWCASE PANELS IN NIGHT DIVE MODE
+   ALWAYS SOLID WHITE PANELS
+   Ensures 3D products, front and back images, magnifier lens, thumbnails and
+   modal windows remain on a clean solid white background so dark & black models
+   and products stand out with crystal clarity.
+   ========================================================================== */
+html body.night-dive [data-product-card],
+html body.night-dive a[data-product-card],
+html body.night-dive div[data-product-card],
+html body.night-dive [data-product-card] div:not(.product-wishlist-btn):not(.product-add-btn):not(.product-add-btn-mobile),
+html body.night-dive [data-product-card] [data-product-media],
+html body.night-dive [data-product-card] [data-product-media] *,
+html body.night-dive [data-product-card] [slot="poster"],
+html body.night-dive [data-product-card] [slot="poster"] *,
+html body.night-dive [data-product-card] model-viewer,
+html body.night-dive [data-product-card] model-viewer *,
+html body.night-dive [data-product-media],
+html body.night-dive [data-product-media] *,
+html body.night-dive [data-product-showcase],
+html body.night-dive [data-product-showcase] *,
+html body.night-dive .product-media-panel,
+html body.night-dive .product-media-panel *,
+html body.night-dive .product-3d-wrapper,
+html body.night-dive .product-3d-wrapper *,
+html body.night-dive model-viewer,
+html body.night-dive model-viewer *,
+html body.night-dive model-viewer [slot="poster"],
+html body.night-dive model-viewer [slot="poster"] *,
+html body.night-dive [data-floating-image-card],
+html body.night-dive [data-floating-image-card] *,
+html body.night-dive button[data-thumb-btn][style*="#ffffff"],
+html body.night-dive button[data-thumb-btn]:not([style*="001E36"]):not([style*="black"]) {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  --poster-color: #ffffff !important;
+  --progress-bar-color: transparent !important;
+  --progress-bar-height: 0px !important;
+  --progress-mask: transparent !important;
+}
+
+html body.night-dive model-viewer,
+html body model-viewer,
+model-viewer {
+  --poster-color: #ffffff !important;
+  --progress-bar-color: transparent !important;
+  --progress-bar-height: 0px !important;
+  --progress-mask: transparent !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+html body.night-dive .product-media-panel>div,
+html body.night-dive .product-media-panel img,
+html body.night-dive [data-product-showcase]>div,
+html body.night-dive [data-product-showcase] img,
+html body.night-dive [data-product-media] img,
+html body.night-dive .product-3d-wrapper>div,
+html body.night-dive [data-floating-image-card] img {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+html body.night-dive .product-media-panel,
+html body.night-dive [data-product-showcase] {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html body.night-dive [data-floating-image-card] {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: none !important;
+}
+
+html body.night-dive button[data-thumb-btn][data-active="true"] {
+  border-color: #FFCD00 !important;
+  box-shadow: 0 0 0 2px rgba(255, 205, 0, 0.5) !important;
+}
+
+html body.night-dive button[data-thumb-btn][data-active="false"] {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+html body.night-dive [data-product-card],
+html body.night-dive a[data-product-card],
+html body.night-dive div[data-product-card] {
+  border-color: rgba(0, 30, 61, 0.12) !important;
+  box-shadow: none !important;
+  color: #001e3d !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* Headings and titles inside product cards */
+html body.night-dive [data-product-card] h3,
+html body.night-dive [data-product-card] .product-card-title {
+  color: #001e3d !important;
+}
+
+html body.night-dive [data-product-card]:hover .product-card-title {
+  color: #00AEC7 !important;
+}
+
+/* Descriptions inside product cards */
+html body.night-dive [data-product-card] p,
+html body.night-dive [data-product-card] .product-card-desc {
+  color: rgba(0, 30, 61, 0.72) !important;
+}
+
+/* Category tags */
+html body.night-dive [data-product-card] span.product-card-category,
+html body.night-dive [data-product-card] .product-card-category {
+  color: #00AEC7 !important;
+}
+
+/* Inquire within text */
+html body.night-dive [data-product-card] .product-card-inquire {
+  color: #059669 !important;
+}
+
+/* View Gear link */
+html body.night-dive [data-product-card] .product-card-link,
+html body.night-dive [data-product-card] span.text-\[\#00AEC7\] {
+  color: #00AEC7 !important;
+}
+
+html body.night-dive [data-product-card]:hover .product-card-link,
+html body.night-dive [data-product-card]:hover span.text-\[\#00AEC7\] {
+  color: #00889c !important;
+}
+
+/* Wishlist button */
+html body.night-dive [data-product-card] .product-wishlist-btn {
+  background-color: rgba(0, 30, 61, 0.06) !important;
+  border-color: rgba(0, 30, 61, 0.15) !important;
+  color: #001e3d !important;
+}
+
+html body.night-dive [data-product-card] .product-wishlist-btn:hover {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+}
+
+/* Desktop Add to Cart button */
+html body.night-dive [data-product-card] .product-add-btn {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+html body.night-dive [data-product-card] .product-add-btn:hover {
+  background-color: #00AEC7 !important;
+  color: #001e3d !important;
+}
+
+/* Mobile Add to Cart button */
+html body.night-dive [data-product-card] .product-add-btn-mobile {
+  background-color: #FFCD00 !important;
+  color: #000000 !important;
+}
+
+html body.night-dive [data-product-card] .product-add-btn-mobile span {
+  color: #000000 !important;
+}
+
+/* Night Dive Preloader Screen & White Diver Video Animation */
+.night-dive #preloader-container {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+.night-dive #preloader-container canvas {
+  filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)) !important;
+}

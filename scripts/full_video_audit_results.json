@@ -1,0 +1,1113 @@
+[
+  {
+    "filename": "Turtle Anna.mp4",
+    "relPath": "src/assets/New folder/Turtle Anna.mp4",
+    "sizeBytes": 209641120,
+    "sizeMB": "199.93",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 5760,
+      "height": 2880,
+      "fps": 30,
+      "durationSec": 15.5,
+      "hasAudio": true,
+      "is360": true,
+      "aspectRatio": "5760x2880 (2.00:1)"
+    },
+    "isReferenced": false,
+    "references": [],
+    "components": "Unreferenced",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "dji_mimo_20260124_112020_0_1769300692742_video.mp4",
+    "relPath": "src/assets/New folder/dji_mimo_20260124_112020_0_1769300692742_video.mp4",
+    "sizeBytes": 153197549,
+    "sizeMB": "146.10",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 30.4,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "DJI_20260525104139_0011_D.MP4",
+    "relPath": "src/assets/New folder/DJI_20260525104139_0011_D.MP4",
+    "sizeBytes": 134059784,
+    "sizeMB": "127.85",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 20.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "dji_mimo_20260204_084858_0_1770187391850_video.mp4",
+    "relPath": "src/assets/New folder/dji_mimo_20260204_084858_0_1770187391850_video.mp4",
+    "sizeBytes": 122996248,
+    "sizeMB": "117.30",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 24.8,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "20260707_165729_460.mp4",
+    "relPath": "src/assets/New folder/20260707_165729_460.mp4",
+    "sizeBytes": 113984487,
+    "sizeMB": "108.70",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 2160,
+      "height": 3840,
+      "fps": 30,
+      "durationSec": 25.9,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "2160x3840 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "20260630_153650_005.mp4",
+    "relPath": "src/assets/New folder/20260630_153650_005.mp4",
+    "sizeBytes": 109430022,
+    "sizeMB": "104.36",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 2160,
+      "height": 3840,
+      "fps": 30,
+      "durationSec": 24.9,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "2160x3840 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "DJI_20260525123656_0017_D.MP4",
+    "relPath": "src/assets/New folder/DJI_20260525123656_0017_D.MP4",
+    "sizeBytes": 93866877,
+    "sizeMB": "89.52",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 14.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "DJI_20260525124204_0018_D.MP4",
+    "relPath": "src/assets/New folder/DJI_20260525124204_0018_D.MP4",
+    "sizeBytes": 93130552,
+    "sizeMB": "88.82",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 14,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "nightdive.mp4",
+    "relPath": "src/assets/nightdive.mp4",
+    "sizeBytes": 87976162,
+    "sizeMB": "83.90",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 42.9,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": false,
+    "references": [],
+    "components": "Unreferenced",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "DJI_20260525102811_0007_D.MP4",
+    "relPath": "src/assets/New folder/DJI_20260525102811_0007_D.MP4",
+    "sizeBytes": 87477299,
+    "sizeMB": "83.42",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 13.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "dji_mimo_20260204_084830_0_1770187393265_video.mp4",
+    "relPath": "src/assets/New folder/dji_mimo_20260204_084830_0_1770187393265_video.mp4",
+    "sizeBytes": 86127522,
+    "sizeMB": "82.14",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 16.4,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "GX018841.MP4",
+    "relPath": "src/assets/New folder/GX018841.MP4",
+    "sizeBytes": 80364537,
+    "sizeMB": "76.64",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "durationSec": 14.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "3840x2160 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "1.mp4",
+    "relPath": "src/assets/1.mp4",
+    "sizeBytes": 69292692,
+    "sizeMB": "66.08",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1088,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 11,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1088x1920 (0.57:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "dji_mimo_20260220_140750_0_1771571076972_video.mp4",
+    "relPath": "src/assets/New folder/dji_mimo_20260220_140750_0_1771571076972_video.mp4",
+    "sizeBytes": 63002268,
+    "sizeMB": "60.08",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 13.3,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "2.mp4",
+    "relPath": "src/assets/2.mp4",
+    "sizeBytes": 62407244,
+    "sizeMB": "59.52",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1088,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 10.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1088x1920 (0.57:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/pages/Login.jsx"
+      },
+      {
+        "sourceFile": "src/pages/Services.jsx"
+      }
+    ],
+    "components": "Login, Services",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "20260707_170454_824.mp4",
+    "relPath": "src/assets/New folder/20260707_170454_824.mp4",
+    "sizeBytes": 59747734,
+    "sizeMB": "56.98",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 2160,
+      "height": 3840,
+      "fps": 30,
+      "durationSec": 13.6,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "2160x3840 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Dive.MP4",
+    "relPath": "src/assets/New folder/Dive.MP4",
+    "sizeBytes": 54789023,
+    "sizeMB": "52.25",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 8.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "4.mp4",
+    "relPath": "src/assets/4.mp4",
+    "sizeBytes": 53733749,
+    "sizeMB": "51.24",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1088,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 10.4,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1088x1920 (0.57:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "3.mp4",
+    "relPath": "src/assets/3.mp4",
+    "sizeBytes": 49079391,
+    "sizeMB": "46.81",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1088,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 10.5,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1088x1920 (0.57:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "nightdive_fast.mp4",
+    "relPath": "src/assets/nightdive_fast.mp4",
+    "sizeBytes": 43585604,
+    "sizeMB": "41.57",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 43,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/VideoSphereBackground.jsx"
+      }
+    ],
+    "components": "VideoSphereBackground",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Travel.mp4",
+    "relPath": "src/assets/New folder/Travel.mp4",
+    "sizeBytes": 35968920,
+    "sizeMB": "34.30",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 23.2,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/pages/Home.jsx"
+      },
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "Home, galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Hero(1).mp4",
+    "relPath": "src/assets/Hero(1).mp4",
+    "sizeBytes": 33357176,
+    "sizeMB": "31.81",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "durationSec": 9.1,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "3840x2160 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/VideoSphereBackground.jsx"
+      }
+    ],
+    "components": "VideoSphereBackground",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": true,
+    "isLazy": false
+  },
+  {
+    "filename": "free diving .mp4",
+    "relPath": "src/assets/New folder/free diving .mp4",
+    "sizeBytes": 21671400,
+    "sizeMB": "20.67",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 10.6,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1080x1920 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Turtle Flyinnn.mov",
+    "relPath": "src/assets/New folder/Turtle Flyinnn.mov",
+    "sizeBytes": 21650797,
+    "sizeMB": "20.65",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 11,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": false,
+    "references": [],
+    "components": "Unreferenced",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Turtle Anna(1).mp4",
+    "relPath": "src/assets/New folder/Turtle Anna(1).mp4",
+    "sizeBytes": 20722062,
+    "sizeMB": "19.76",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 15.5,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "surfing.mp4",
+    "relPath": "src/assets/New folder/surfing.mp4",
+    "sizeBytes": 20178603,
+    "sizeMB": "19.24",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 3.8,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1080x1920 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "5.mov",
+    "relPath": "src/assets/5.mov",
+    "sizeBytes": 19437364,
+    "sizeMB": "18.54",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 9.8,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": false,
+    "references": [],
+    "components": "Unreferenced",
+    "is360": false,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Turtle_fast.mp4",
+    "relPath": "src/assets/Turtle_fast.mp4",
+    "sizeBytes": 18822586,
+    "sizeMB": "17.95",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 15.5,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/VideoSphereBackground.jsx"
+      }
+    ],
+    "components": "VideoSphereBackground",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "gallery1.mp4",
+    "relPath": "src/assets/New folder/gallery1.mp4",
+    "sizeBytes": 15581858,
+    "sizeMB": "14.86",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "durationSec": 10.6,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "720x1280 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Free Diving 1.mov",
+    "relPath": "src/assets/New folder/Free Diving 1.mov",
+    "sizeBytes": 13869666,
+    "sizeMB": "13.23",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 2.9,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1080x1920 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Book_fast.mp4",
+    "relPath": "src/assets/Book_fast.mp4",
+    "sizeBytes": 13731964,
+    "sizeMB": "13.10",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 2560,
+      "height": 1440,
+      "fps": 30,
+      "durationSec": 10.1,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "2560x1440 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/VideoSphereBackground.jsx"
+      }
+    ],
+    "components": "VideoSphereBackground",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "GX018833.mp4",
+    "relPath": "src/assets/New folder/GX018833.mp4",
+    "sizeBytes": 13476859,
+    "sizeMB": "12.85",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 2160,
+      "height": 3840,
+      "fps": 30,
+      "durationSec": 3.6,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "2160x3840 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Hero_fast.mp4",
+    "relPath": "src/assets/Hero_fast.mp4",
+    "sizeBytes": 13268191,
+    "sizeMB": "12.65",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 2560,
+      "height": 1440,
+      "fps": 30,
+      "durationSec": 9.1,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "2560x1440 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/InteractiveVideoSphere.jsx"
+      },
+      {
+        "sourceFile": "src/components/VideoSphereBackground.jsx"
+      }
+    ],
+    "components": "InteractiveVideoSphere, VideoSphereBackground",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": true,
+    "isLazy": false
+  },
+  {
+    "filename": "free diving 3.mp4",
+    "relPath": "src/assets/New folder/free diving 3.mp4",
+    "sizeBytes": 13138775,
+    "sizeMB": "12.53",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "durationSec": 6.5,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1080x1920 (0.56:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "galleryData",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "merch 5.mp4",
+    "relPath": "src/assets/New folder/merch 5.mp4",
+    "sizeBytes": 10432775,
+    "sizeMB": "9.95",
+    "meta": {
+      "codec": "H.265 (HEVC)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 6.7,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/CustomerReviews.jsx"
+      },
+      {
+        "sourceFile": "src/components/ProgramsPreview.jsx"
+      },
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "CustomerReviews, ProgramsPreview, galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Hero_optimized.mp4",
+    "relPath": "src/assets/Hero_optimized.mp4",
+    "sizeBytes": 10323165,
+    "sizeMB": "9.84",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 2560,
+      "height": 1440,
+      "fps": 30,
+      "durationSec": 9.1,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "2560x1440 (1.78:1)"
+    },
+    "isReferenced": false,
+    "references": [],
+    "components": "Unreferenced",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Book(2).mp4",
+    "relPath": "src/assets/Book(2).mp4",
+    "sizeBytes": 9897965,
+    "sizeMB": "9.44",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 10.1,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/pages/Contact.jsx"
+      }
+    ],
+    "components": "Contact",
+    "is360": true,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Diving(1).mp4",
+    "relPath": "src/assets/Diving(1).mp4",
+    "sizeBytes": 9844278,
+    "sizeMB": "9.39",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 12.5,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1920x1080 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/VideoSphereBackground.jsx"
+      },
+      {
+        "sourceFile": "src/pages/About.jsx"
+      },
+      {
+        "sourceFile": "src/pages/Shop.jsx"
+      }
+    ],
+    "components": "VideoSphereBackground, About, Shop",
+    "is360": true,
+    "audioRequired": true,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "Itinerary.mp4",
+    "relPath": "src/assets/New folder/Itinerary.mp4",
+    "sizeBytes": 5477304,
+    "sizeMB": "5.22",
+    "meta": {
+      "codec": "Unknown",
+      "width": 0,
+      "height": 0,
+      "fps": 30,
+      "durationSec": 0,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "0:0"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/pages/Home.jsx"
+      },
+      {
+        "sourceFile": "src/utils/galleryData.js"
+      }
+    ],
+    "components": "Home, galleryData",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": false,
+    "isLazy": true
+  },
+  {
+    "filename": "cursor.webm",
+    "relPath": "src/assets/cursor.webm",
+    "sizeBytes": 3410400,
+    "sizeMB": "3.25",
+    "meta": {
+      "codec": "VP9 / WebM",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationSec": 2,
+      "hasAudio": false,
+      "is360": false,
+      "aspectRatio": "16:9"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/CustomCursor.jsx"
+      }
+    ],
+    "components": "CustomCursor",
+    "is360": false,
+    "audioRequired": false,
+    "isAboveFold": true,
+    "isLazy": false
+  },
+  {
+    "filename": "preloader.mp4",
+    "relPath": "src/assets/preloader.mp4",
+    "sizeBytes": 2271173,
+    "sizeMB": "2.17",
+    "meta": {
+      "codec": "H.264 (avc1)",
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "durationSec": 8.5,
+      "hasAudio": true,
+      "is360": false,
+      "aspectRatio": "1280x720 (1.78:1)"
+    },
+    "isReferenced": true,
+    "references": [
+      {
+        "sourceFile": "src/components/Preloader.jsx"
+      }
+    ],
+    "components": "Preloader",
+    "is360": false,
+    "audioRequired": true,
+    "isAboveFold": true,
+    "isLazy": false
+  }
+]
