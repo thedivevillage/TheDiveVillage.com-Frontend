@@ -1,7 +1,15 @@
 import axios from 'axios'
 
+const rawApiUrl = (import.meta.env.VITE_API_BASE_URL || '').trim()
+
+export const apiBaseUrl =
+  rawApiUrl ||
+  (import.meta.env.DEV
+    ? 'http://localhost:5000'
+    : 'https://thedivevillage-backend.onrender.com')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
+  baseURL: apiBaseUrl,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
 })
