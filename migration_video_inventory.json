@@ -1,0 +1,1475 @@
+{
+  "timestamp": "2026-10-13T20:01:35.396Z",
+  "cloudinary_account": "qvbunv8y",
+  "total_cloudinary_assets": 235,
+  "total_videos_to_migrate": 72,
+  "total_video_bytes": 943227587,
+  "total_video_mb": "899.53",
+  "total_images_retained": 150,
+  "total_raw_retained": 13,
+  "videos": [
+    {
+      "public_id": "TDV-Media/UI/preloader",
+      "format": "mp4",
+      "bytes": 670727,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791918482/TDV-Media/UI/preloader.mp4",
+      "resource_type": "video",
+      "width": 1280,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/bbgt5nk7/video/upload/v1790244018/dive-village/ui-videos/preloader_mp4.mp4",
+          "files": [
+            "components/Preloader.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/baracuda_1080p",
+      "format": "mp4",
+      "bytes": 16517654,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791729341/TDV-Media/Background/baracuda_1080p.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791729341/TDV-Media/Background/baracuda_1080p.mp4",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/ClownFish_1080p",
+      "format": "mp4",
+      "bytes": 13017939,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791729293/TDV-Media/Background/ClownFish_1080p.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791729293/TDV-Media/Background/ClownFish_1080p.mp4",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/About",
+      "format": "mp4",
+      "bytes": 7187036,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791691830/TDV-Media/Background/About.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/About.mp4",
+          "files": [
+            "pages/About.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/AirportToAirport/gallery1",
+      "format": "mp4",
+      "bytes": 4080433,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791691465/TDV-Media/AirportToAirport/gallery1.mp4",
+      "resource_type": "video",
+      "width": 406,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791691465/TDV-Media/AirportToAirport/gallery1.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/q_auto,f_auto/v1791691465/TDV-Media/AirportToAirport/gallery1.mp4",
+          "files": [
+            "pages/Home.jsx"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/f_auto,q_auto/v1791691465/TDV-Media/AirportToAirport/gallery1.webp",
+          "files": [
+            "pages/Home.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/AirportToAirport/travel",
+      "format": "mp4",
+      "bytes": 1346278,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791691360/TDV-Media/AirportToAirport/travel.mp4",
+      "resource_type": "video",
+      "width": 406,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/q_auto,f_auto/v1791691360/TDV-Media/AirportToAirport/travel.mp4",
+          "files": [
+            "pages/Home.jsx"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/f_auto,q_auto/v1791691360/TDV-Media/AirportToAirport/travel.webp",
+          "files": [
+            "pages/Home.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/AddOns/Campers",
+      "format": "mp4",
+      "bytes": 48269589,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791686777/TDV-Media/AddOns/Campers.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791686777/TDV-Media/AddOns/Campers.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Audio/Audio",
+      "format": "mp3",
+      "bytes": 9514926,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685502/TDV-Media/Audio/Audio.mp3",
+      "resource_type": "video",
+      "width": 0,
+      "height": 0,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685502/TDV-Media/Audio/Audio.mp3",
+          "files": [
+            "components/VideoSphereBackground.jsx",
+            "utils/audioManager.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/AddOns/liveaboard",
+      "format": "mp4",
+      "bytes": 979527,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685388/TDV-Media/AddOns/liveaboard.mp4",
+      "resource_type": "video",
+      "width": 406,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685388/TDV-Media/AddOns/liveaboard.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/AddOns/sightseeing",
+      "format": "mp4",
+      "bytes": 2786242,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685371/TDV-Media/AddOns/sightseeing.mp4",
+      "resource_type": "video",
+      "width": 720,
+      "height": 1280,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685371/TDV-Media/AddOns/sightseeing.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/AddOns/Trekking",
+      "format": "mp4",
+      "bytes": 5327170,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685324/TDV-Media/AddOns/Trekking.mp4",
+      "resource_type": "video",
+      "width": 720,
+      "height": 1280,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685324/TDV-Media/AddOns/Trekking.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx",
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/UI/cursor",
+      "format": "webm",
+      "bytes": 3410400,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685230/TDV-Media/UI/cursor.webm",
+      "resource_type": "video",
+      "width": 1280,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791685230/TDV-Media/UI/cursor.webm",
+          "files": [
+            "components/CustomCursor.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/baracuda",
+      "format": "mp4",
+      "bytes": 20790355,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791627870/TDV-Media/Background/baracuda.mp4",
+      "resource_type": "video",
+      "width": 4320,
+      "height": 2160,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/baracuda.mp4",
+          "files": [
+            "pages/Contact.jsx",
+            "utils/videoOptimizer.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791729341/TDV-Media/Background/baracuda_1080p.mp4",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/sp_4k/v1791627870/TDV-Media/Background/baracuda.m3u8",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/Night_Dive",
+      "format": "mp4",
+      "bytes": 63863680,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791626977/TDV-Media/Background/Night_Dive.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458701/TDV-Media/Services/Night_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/Night_Dive.mp4",
+          "files": [
+            "pages/About.jsx",
+            "pages/BookUs.jsx",
+            "pages/Contact.jsx",
+            "utils/videoOptimizer.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/sp_4k/v1791626977/TDV-Media/Background/Night_Dive.m3u8",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/Turtle",
+      "format": "mp4",
+      "bytes": 20738775,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791626669/TDV-Media/Background/Turtle.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458106/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle_2.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/Turtle.mp4",
+          "files": [
+            "pages/BookUs.jsx",
+            "utils/videoOptimizer.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/sp_4k/v1791626669/TDV-Media/Background/Turtle.m3u8",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Background/ClownFish",
+      "format": "mp4",
+      "bytes": 61008492,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791626590/TDV-Media/Background/ClownFish.mp4",
+      "resource_type": "video",
+      "width": 5760,
+      "height": 2880,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/ClownFish.mp4",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791729293/TDV-Media/Background/ClownFish_1080p.mp4",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/sp_4k/v1791626590/TDV-Media/Background/ClownFish.m3u8",
+          "files": [
+            "utils/videoOptimizer.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Other/Canoneering",
+      "format": "mp4",
+      "bytes": 91136631,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791460085/TDV-Media/Services/Other/Canoneering.mp4",
+      "resource_type": "video",
+      "width": 1440,
+      "height": 1806,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_scale,q_auto,w_360/TDV-Media/Services/Other/Canoneering.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791460085/TDV-Media/Services/Other/Canoneering.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master",
+      "format": "mp4",
+      "bytes": 7324944,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458861/TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458861/TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Wreck_Diver",
+      "format": "mp4",
+      "bytes": 3545385,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458856/TDV-Media/Services/Wreck_Diver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458856/TDV-Media/Services/Wreck_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Try_Dive",
+      "format": "mp4",
+      "bytes": 9771079,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458850/TDV-Media/Services/Try_Dive.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458850/TDV-Media/Services/Try_Dive.mp4",
+          "files": [
+            "components/ProgramsPreview.jsx",
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Skin_Diver",
+      "format": "mp4",
+      "bytes": 13159121,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458841/TDV-Media/Services/Skin_Diver.mp4",
+      "resource_type": "video",
+      "width": 480,
+      "height": 848,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458841/TDV-Media/Services/Skin_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Scuba_Diver",
+      "format": "mp4",
+      "bytes": 9188335,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458832/TDV-Media/Services/Scuba_Diver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458832/TDV-Media/Services/Scuba_Diver.mp4",
+          "files": [
+            "data/servicesData.js",
+            "pages/Scuba.jsx",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Rescue_Diver",
+      "format": "mp4",
+      "bytes": 16519516,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458823/TDV-Media/Services/Rescue_Diver.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458823/TDV-Media/Services/Rescue_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458642/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/reefexplorer",
+      "format": "mp4",
+      "bytes": 15597618,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458813/TDV-Media/Services/reefexplorer.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458813/TDV-Media/Services/reefexplorer.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Reactivate_with_dive",
+      "format": "mp4",
+      "bytes": 10246470,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458802/TDV-Media/Services/Reactivate_with_dive.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458802/TDV-Media/Services/Reactivate_with_dive.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Project_AWARE",
+      "format": "mp4",
+      "bytes": 17241981,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458794/TDV-Media/Services/Project_AWARE.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458794/TDV-Media/Services/Project_AWARE.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Peak_Perormance_Buoyancy",
+      "format": "mp4",
+      "bytes": 8947439,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458783/TDV-Media/Services/Peak_Perormance_Buoyancy.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458783/TDV-Media/Services/Peak_Perormance_Buoyancy.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Open_water_Advanced_Openwater",
+      "format": "mp4",
+      "bytes": 13920975,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458729/TDV-Media/Services/Open_water_Advanced_Openwater.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458729/TDV-Media/Services/Open_water_Advanced_Openwater.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Open_Water_Diver",
+      "format": "mp4",
+      "bytes": 11770336,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458719/TDV-Media/Services/Open_Water_Diver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458719/TDV-Media/Services/Open_Water_Diver.mp4",
+          "files": [
+            "components/ProgramsPreview.jsx",
+            "data/servicesData.js",
+            "pages/AllCourses.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/oceanexplorer",
+      "format": "mp4",
+      "bytes": 12463557,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458710/TDV-Media/Services/oceanexplorer.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458710/TDV-Media/Services/oceanexplorer.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Night_Diver",
+      "format": "mp4",
+      "bytes": 6986613,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458701/TDV-Media/Services/Night_Diver.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458701/TDV-Media/Services/Night_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Lite_Refresher",
+      "format": "mp4",
+      "bytes": 2209118,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458695/TDV-Media/Services/Lite_Refresher.mp4",
+      "resource_type": "video",
+      "width": 406,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458695/TDV-Media/Services/Lite_Refresher.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Fun_Dive",
+      "format": "mp4",
+      "bytes": 4142365,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458693/TDV-Media/Services/Fun_Dive.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": []
+    },
+    {
+      "public_id": "TDV-Media/Services/Full_Refresher_with_dive",
+      "format": "mp4",
+      "bytes": 11482946,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458687/TDV-Media/Services/Full_Refresher_with_dive.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458687/TDV-Media/Services/Full_Refresher_with_dive.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Freediver",
+      "format": "mp4",
+      "bytes": 10772690,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458677/TDV-Media/Services/Freediver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458677/TDV-Media/Services/Freediver.mp4",
+          "files": [
+            "data/servicesData.js",
+            "pages/AllCourses.jsx",
+            "pages/Surfing.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Enriched_Air_Nitrox",
+      "format": "mp4",
+      "bytes": 3674465,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458669/TDV-Media/Services/Enriched_Air_Nitrox.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458669/TDV-Media/Services/Enriched_Air_Nitrox.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster",
+      "format": "mp4",
+      "bytes": 9465881,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458665/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458665/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458656/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites",
+      "format": "mp4",
+      "bytes": 21064937,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458656/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458656/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Emergency_First_Response_Rescue_Diver",
+      "format": "mp4",
+      "bytes": 7166384,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458642/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458642/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/EFR_Primary_Secondary_Care",
+      "format": "mp4",
+      "bytes": 8357970,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458635/TDV-Media/Services/EFR_Primary_Secondary_Care.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 960,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458635/TDV-Media/Services/EFR_Primary_Secondary_Care.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Drift_Dive",
+      "format": "mp4",
+      "bytes": 5039291,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458629/TDV-Media/Services/Drift_Dive.mp4",
+      "resource_type": "video",
+      "width": 1350,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458629/TDV-Media/Services/Drift_Dive.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/DiveMaster",
+      "format": "mp4",
+      "bytes": 15651294,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458623/TDV-Media/Services/DiveMaster.mp4",
+      "resource_type": "video",
+      "width": 2160,
+      "height": 3840,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458623/TDV-Media/Services/DiveMaster.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458665/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458656/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/discover_surfing",
+      "format": "mp4",
+      "bytes": 891053,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458614/TDV-Media/Services/discover_surfing.mp4",
+      "resource_type": "video",
+      "width": 406,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458614/TDV-Media/Services/discover_surfing.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Discover_Snorkelling",
+      "format": "mp4",
+      "bytes": 8486429,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458610/TDV-Media/Services/Discover_Snorkelling.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_scale,q_auto,w_360/TDV-Media/Services/Discover_Snorkelling.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458610/TDV-Media/Services/Discover_Snorkelling.mp4",
+          "files": [
+            "data/servicesData.js",
+            "pages/AllCourses.jsx",
+            "pages/Snorkeling.jsx"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Discover_Scuba_Dive",
+      "format": "mp4",
+      "bytes": 5489974,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458604/TDV-Media/Services/Discover_Scuba_Dive.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458599/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458604/TDV-Media/Services/Discover_Scuba_Dive.mp4",
+          "files": [
+            "data/servicesData.js",
+            "pages/Login.jsx",
+            "pages/Signup.jsx"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458588/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Discover_Scuba_Dive_Lite",
+      "format": "mp4",
+      "bytes": 14605011,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458599/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458599/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Discover_Scuba_Dive_Open_Water",
+      "format": "mp4",
+      "bytes": 16810990,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458588/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458588/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/DeepDiver",
+      "format": "mp4",
+      "bytes": 7470703,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458576/TDV-Media/Services/DeepDiver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458576/TDV-Media/Services/DeepDiver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Bubblemaker",
+      "format": "mp4",
+      "bytes": 15186236,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458569/TDV-Media/Services/Bubblemaker.mp4",
+      "resource_type": "video",
+      "width": 1440,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458569/TDV-Media/Services/Bubblemaker.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/BasicFreeDiver",
+      "format": "mp4",
+      "bytes": 2752048,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458559/TDV-Media/Services/BasicFreeDiver.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458559/TDV-Media/Services/BasicFreeDiver.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/AdventureDiver",
+      "format": "mp4",
+      "bytes": 3390981,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458554/TDV-Media/Services/AdventureDiver.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458554/TDV-Media/Services/AdventureDiver.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Advanced_Open_Water",
+      "format": "mp4",
+      "bytes": 14734900,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458550/TDV-Media/Services/Advanced_Open_Water.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458550/TDV-Media/Services/Advanced_Open_Water.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/Additional_dive_ater_discover_scuba_dive",
+      "format": "mp4",
+      "bytes": 3856495,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458540/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4",
+      "resource_type": "video",
+      "width": 1350,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458540/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Services/3_Day_Surf_Academy_Course",
+      "format": "mp4",
+      "bytes": 10855108,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458534/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_scale,q_auto,w_360/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4",
+          "files": [
+            "components/CustomizeExperiencePanel.jsx"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458534/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4",
+          "files": [
+            "data/servicesData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Whale_Shark",
+      "format": "mp4",
+      "bytes": 4127361,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458217/TDV-Media/Extras%20for%20Gallery/Whale_Shark.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458213/TDV-Media/Extras%20for%20Gallery/Whale_Shark_2.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458217/TDV-Media/Extras%20for%20Gallery/Whale_Shark.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Whale_Shark_2",
+      "format": "mp4",
+      "bytes": 7001608,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458213/TDV-Media/Extras%20for%20Gallery/Whale_Shark_2.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458213/TDV-Media/Extras%20for%20Gallery/Whale_Shark_2.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Silver_Barracudas",
+      "format": "mp4",
+      "bytes": 10105904,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458200/TDV-Media/Extras%20for%20Gallery/Silver_Barracudas.mp4",
+      "resource_type": "video",
+      "width": 1088,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458200/TDV-Media/Extras%20for%20Gallery/Silver_Barracudas.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Marbled_Stingray",
+      "format": "mp4",
+      "bytes": 3038185,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458175/TDV-Media/Extras%20for%20Gallery/Marbled_Stingray.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458175/TDV-Media/Extras%20for%20Gallery/Marbled_Stingray.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Manta_Ray",
+      "format": "mp4",
+      "bytes": 31180868,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458169/TDV-Media/Extras%20for%20Gallery/Manta_Ray.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458144/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Manta_Ray_2",
+      "format": "mp4",
+      "bytes": 23257629,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458144/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4",
+      "resource_type": "video",
+      "width": 1368,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458144/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Magnificent_Sea_Anemone",
+      "format": "mp4",
+      "bytes": 6981046,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458129/TDV-Media/Extras%20for%20Gallery/Magnificent_Sea_Anemone.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458129/TDV-Media/Extras%20for%20Gallery/Magnificent_Sea_Anemone.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Leaf_Scorpian_fish",
+      "format": "mp4",
+      "bytes": 3624951,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458122/TDV-Media/Extras%20for%20Gallery/Leaf_Scorpian_fish.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1440,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458122/TDV-Media/Extras%20for%20Gallery/Leaf_Scorpian_fish.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle",
+      "format": "mp4",
+      "bytes": 15180419,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458118/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458106/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle_2.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2",
+      "format": "mp4",
+      "bytes": 3705099,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458106/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle_2.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458106/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle_2.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Giant_Barrel_Sponge",
+      "format": "mp4",
+      "bytes": 1789845,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458098/TDV-Media/Extras%20for%20Gallery/Giant_Barrel_Sponge.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791457997/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        },
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458098/TDV-Media/Extras%20for%20Gallery/Giant_Barrel_Sponge.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Free_Diving",
+      "format": "mp4",
+      "bytes": 864173,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458096/TDV-Media/Extras%20for%20Gallery/Free_Diving.mp4",
+      "resource_type": "video",
+      "width": 406,
+      "height": 720,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": []
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone",
+      "format": "mp4",
+      "bytes": 11689632,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458085/TDV-Media/Extras%20for%20Gallery/Clownfish_and_Sea_Anemone.mp4",
+      "resource_type": "video",
+      "width": 1088,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458085/TDV-Media/Extras%20for%20Gallery/Clownfish_and_Sea_Anemone.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Bluespotted_Stingray",
+      "format": "mp4",
+      "bytes": 42779357,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458073/TDV-Media/Extras%20for%20Gallery/Bluespotted_Stingray.mp4",
+      "resource_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458073/TDV-Media/Extras%20for%20Gallery/Bluespotted_Stingray.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Big_Eye_Trevally",
+      "format": "mp4",
+      "bytes": 25520359,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458043/TDV-Media/Extras%20for%20Gallery/Big_Eye_Trevally.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458043/TDV-Media/Extras%20for%20Gallery/Big_Eye_Trevally.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/Beach_View",
+      "format": "mp4",
+      "bytes": 10637953,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458021/TDV-Media/Extras%20for%20Gallery/Beach_View.mp4",
+      "resource_type": "video",
+      "width": 720,
+      "height": 1280,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458021/TDV-Media/Extras%20for%20Gallery/Beach_View.mp4",
+          "files": [
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/A_Seafan",
+      "format": "mp4",
+      "bytes": 7300492,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458006/TDV-Media/Extras%20for%20Gallery/A_Seafan.mp4",
+      "resource_type": "video",
+      "width": 1080,
+      "height": 1920,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458006/TDV-Media/Extras%20for%20Gallery/A_Seafan.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    },
+    {
+      "public_id": "TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge",
+      "format": "mp4",
+      "bytes": 3556214,
+      "secure_url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791457997/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
+      "resource_type": "video",
+      "width": 770,
+      "height": 1080,
+      "intended_destination": "cloudflare_r2",
+      "frontend_references": [
+        {
+          "url": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791457997/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
+          "files": [
+            "data/servicesData.js",
+            "utils/galleryData.js"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -9,9 +9,8 @@ import SEOHead from '../components/SEOHead'
 import MerchBannerCTA from '../components/MerchBannerCTA'
 import { CAROUSEL_IMAGES } from '../utils/images'
 import { useReviews } from '../contexts/ReviewsContext'
-const aboutVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/About.mp4'
-const nightDiveVideo = 'https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/Night_Dive.mp4'
-const divingVid = 'https://res.cloudinary.com/bbgt5nk7/video/upload/v1790244035/dive-village/ui-videos/diving_1_mp4.mp4';
+const aboutVid = '/media/TDV-Media/Background/About.mp4'
+const nightDiveVideo = '/media/TDV-Media/Background/Night_Dive.mp4'
 import useNightDive from '../hooks/useNightDive'
 
 const certifiedCoursesImg = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp'

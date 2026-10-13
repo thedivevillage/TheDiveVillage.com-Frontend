@@ -12,7 +12,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-0",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791457997/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
     "title": "A Moray Eel in a Giant Barrel Sponge",
     "category": "marine",
     "filename": "A Moray Eel in a Giant Barrel Sponge.mp4"
@@ -20,7 +20,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-1",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458006/TDV-Media/Extras%20for%20Gallery/A_Seafan.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/A_Seafan.mp4",
     "title": "A Seafan",
     "category": "marine",
     "filename": "A Seafan.mp4"
@@ -28,7 +28,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-2",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458021/TDV-Media/Extras%20for%20Gallery/Beach_View.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Beach_View.mp4",
     "title": "Beach View",
     "category": "marine",
     "filename": "Beach View.mp4"
@@ -36,7 +36,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-3",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458043/TDV-Media/Extras%20for%20Gallery/Big_Eye_Trevally.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4",
     "title": "Big Eye Trevally",
     "category": "marine",
     "filename": "Big Eye Trevally.mp4"
@@ -44,7 +44,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-4",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458073/TDV-Media/Extras%20for%20Gallery/Bluespotted_Stingray.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4",
     "title": "Bluespotted Stingray",
     "category": "marine",
     "filename": "Bluespotted Stingray.mp4"
@@ -52,7 +52,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-5",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458085/TDV-Media/Extras%20for%20Gallery/Clownfish_and_Sea_Anemone.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4",
     "title": "Clownfish and Sea Anemone",
     "category": "marine",
     "filename": "Clownfish and Sea Anemone.mp4",
@@ -61,7 +61,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-7",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458098/TDV-Media/Extras%20for%20Gallery/Giant_Barrel_Sponge.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Giant_Barrel_Sponge.mp4",
     "title": "Giant Barrel Sponge",
     "category": "marine",
     "filename": "Giant Barrel Sponge.mp4"
@@ -69,7 +69,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-8",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458106/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle_2.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4",
     "title": "Hawksbill Sea Turtle",
     "category": "marine",
     "filename": "Hawksbill Sea Turtle.mp4"
@@ -78,7 +78,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-11",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458122/TDV-Media/Extras%20for%20Gallery/Leaf_Scorpian_fish.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Leaf_Scorpian_fish.mp4",
     "title": "Leaf Scorpian fish",
     "category": "marine",
     "filename": "Leaf Scorpian fish.mp4"
@@ -86,7 +86,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-12",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458129/TDV-Media/Extras%20for%20Gallery/Magnificent_Sea_Anemone.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Magnificent_Sea_Anemone.mp4",
     "title": "Magnificent Sea Anemone",
     "category": "marine",
     "filename": "Magnificent Sea Anemone.mp4"
@@ -94,7 +94,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-13",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458144/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4",
     "title": "Manta Ray",
     "category": "marine",
     "filename": "Manta Ray (2).mp4"
@@ -102,7 +102,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-15",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458175/TDV-Media/Extras%20for%20Gallery/Marbled_Stingray.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Marbled_Stingray.mp4",
     "title": "Marbled Stingray",
     "category": "marine",
     "filename": "Marbled Stingray.mp4"
@@ -110,7 +110,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-16",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458832/TDV-Media/Services/Scuba_Diver.mp4",
+    "src": "/media/TDV-Media/Services/Scuba_Diver.mp4",
     "title": "Scuba Diver",
     "category": "marine",
     "filename": "Scuba Diver.mp4"
@@ -118,7 +118,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-17",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/v1791458200/TDV-Media/Extras%20for%20Gallery/Silver_Barracudas.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4",
     "title": "Silver Barracudas",
     "category": "marine",
     "filename": "Silver Barracudas.mp4"
@@ -126,7 +126,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-18",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458213/TDV-Media/Extras%20for%20Gallery/Whale_Shark_2.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Whale_Shark.mp4",
     "title": "Whale Shark",
     "category": "marine",
     "filename": "Whale Shark (2).mp4"
@@ -134,7 +134,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-19",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458217/TDV-Media/Extras%20for%20Gallery/Whale_Shark.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Whale_Shark.mp4",
     "title": "Whale Shark",
     "category": "marine",
     "filename": "Whale Shark.mp4"
@@ -142,7 +142,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-20",
     "type": "video",
-    "src": "https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458554/TDV-Media/Services/AdventureDiver.mp4",
+    "src": "/media/TDV-Media/Services/AdventureDiver.mp4",
     "title": "Whitetip Reef Shark",
     "category": "marine",
     "filename": "Whitetip Reef Shark.mp4"

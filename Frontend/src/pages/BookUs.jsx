@@ -26,8 +26,8 @@ import {
 } from '../utils/courseEligibility'
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '../utils/haptics'
 
-const turtleAnnaVideo = 'https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/Turtle.mp4'
-const compiledNightDiveVideo = 'https://res.cloudinary.com/qvbunv8y/video/upload/TDV-Media/Background/Night_Dive.mp4'
+const turtleAnnaVideo = '/media/TDV-Media/Background/Turtle.mp4'
+const compiledNightDiveVideo = '/media/TDV-Media/Background/Night_Dive.mp4'
 import useNightDive from '../hooks/useNightDive'
 import DiveExplorerMap from '../components/DiveExplorerMap'
 import { loadDiveSites } from '../utils/diveSitesLoader'

@@ -2,9 +2,10 @@ import LazyVideo from './LazyVideo'
 import { Link, useNavigate } from 'react-router'
 import SectionReveal, { StaggerGrid, StaggerItem } from './SectionReveal'
 import { CAROUSEL_IMAGES } from '../utils/images'
-const diveSuitVid = 'https://res.cloudinary.com/bbgt5nk7/video/upload/v1790240882/dive-village/reviews/merch_5_mp4.mp4';
-const tryDiveVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458850/TDV-Media/Services/Try_Dive.mp4';
-const certVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458719/TDV-Media/Services/Open_Water_Diver.mp4';
+// Legacy bbgt5nk7 video retired; falls back to CAROUSEL_IMAGES[2]
+const diveSuitVid = null;
+const tryDiveVid = '/media/TDV-Media/Services/Try_Dive.mp4';
+const certVid = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
 
 const PROGRAMS = [
   {

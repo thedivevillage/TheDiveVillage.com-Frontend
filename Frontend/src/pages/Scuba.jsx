@@ -1,7 +1,7 @@
 import CourseTemplate from '../layouts/CourseTemplate'
 import SEOHead from '../components/SEOHead'
 import { IMAGES, FEATURED_EXPERIENCES } from '../utils/images'
-const scubaDiveVideo = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458832/TDV-Media/Services/Scuba_Diver.mp4'
+const scubaDiveVideo = '/media/TDV-Media/Services/Scuba_Diver.mp4'
 
 export default function Scuba() {
   const tours = [

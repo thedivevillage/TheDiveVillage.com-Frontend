@@ -1,6 +1,10 @@
 // Helper to generate optimized Cloudinary video poster/thumbnail frame
 export const getVideoThumbnail = (videoUrl) => {
   if (!videoUrl) return ''
+  if (videoUrl.startsWith('/media/')) {
+    const cleanKey = videoUrl.replace(/^\/media\//, '').replace(/\.(mp4|MP4)$/i, '')
+    return `https://res.cloudinary.com/qvbunv8y/video/upload/so_2,w_1200,q_auto:best,f_auto/${encodeURI(cleanKey)}.jpg`
+  }
   if (videoUrl.includes('res.cloudinary.com') && videoUrl.includes('/video/upload/')) {
     if (videoUrl.includes('/c_crop,ar_9:16/')) {
       return videoUrl
@@ -77,66 +81,66 @@ const extGiantClam = 'https://res.cloudinary.com/qvbunv8y/image/upload/v17914581
 const extLionfish = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791458123/TDV-Media/Extras%20for%20Gallery/Lionfish.webp';
 const extBubbleCoral = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791458078/TDV-Media/Extras%20for%20Gallery/Bubble_Coral.webp';
 const extBaitball = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp';
-const extMantaRayVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458144/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4';
-const extBarracudasVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458200/TDV-Media/Extras%20for%20Gallery/Silver_Barracudas.mp4';
-const extTurtleVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458106/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle_2.mp4';
-const extTrevallyVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458043/TDV-Media/Extras%20for%20Gallery/Big_Eye_Trevally.mp4';
-const extStingrayVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458073/TDV-Media/Extras%20for%20Gallery/Bluespotted_Stingray.mp4';
-const extScubaDiverVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458832/TDV-Media/Services/Scuba_Diver.mp4';
-const extMorayEelVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791457997/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4';
-const extAnemoneVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458085/TDV-Media/Extras%20for%20Gallery/Clownfish_and_Sea_Anemone.mp4';
-const extSeafanVid = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458006/TDV-Media/Extras%20for%20Gallery/A_Seafan.mp4';
+const extMantaRayVid = '/media/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4';
+const extBarracudasVid = '/media/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4';
+const extTurtleVid = '/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4';
+const extTrevallyVid = '/media/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4';
+const extStingrayVid = '/media/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4';
+const extScubaDiverVid = '/media/TDV-Media/Services/Scuba_Diver.mp4';
+const extMorayEelVid = '/media/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4';
+const extAnemoneVid = '/media/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4';
+const extSeafanVid = '/media/TDV-Media/Extras for Gallery/A_Seafan.mp4';
 
-// Exact Service Media Video Imports from Assets/Media/Services
-const vidTryDive = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458850/TDV-Media/Services/Try_Dive.mp4';
-const vidDSDLite = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458599/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4';
-const vidDiscoverScuba = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458604/TDV-Media/Services/Discover_Scuba_Dive.mp4';
-const vidDiscoverSnorkelling = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458610/TDV-Media/Services/Discover_Snorkelling.mp4';
-const vidBubblemaker = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458569/TDV-Media/Services/Bubblemaker.mp4';
-const vidAddDiveAfterDSD = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458540/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4';
-const vidSkinDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458841/TDV-Media/Services/Skin_Diver.mp4';
-const vidScubaDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458832/TDV-Media/Services/Scuba_Diver.mp4';
-const vidOpenWater = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458719/TDV-Media/Services/Open_Water_Diver.mp4';
-const vidAdventureDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/c_crop,ar_9:16/v1791458554/TDV-Media/Services/AdventureDiver.mp4';
-const vidAdvancedOpenWater = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458550/TDV-Media/Services/Advanced_Open_Water.mp4';
-const vidEFR = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458635/TDV-Media/Services/EFR_Primary_Secondary_Care.mp4';
-const vidRescueDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458823/TDV-Media/Services/Rescue_Diver.mp4';
-const vidReactivate = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458802/TDV-Media/Services/Reactivate_with_dive.mp4';
-const vidFullRefresher = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458687/TDV-Media/Services/Full_Refresher_with_dive.mp4';
-const vidLiteRefresher = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458695/TDV-Media/Services/Lite_Refresher.mp4';
-const vidBuoyancy = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458783/TDV-Media/Services/Peak_Perormance_Buoyancy.mp4';
-const vidProjectAware = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458794/TDV-Media/Services/Project_AWARE.mp4';
-const vidDeepDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458576/TDV-Media/Services/DeepDiver.mp4';
-const vidWreckDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458856/TDV-Media/Services/Wreck_Diver.mp4';
-const vidNightDiveBackground = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458701/TDV-Media/Services/Night_Diver.mp4';
-const vidNitrox = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458669/TDV-Media/Services/Enriched_Air_Nitrox.mp4';
+// Exact Service Media Video Imports from Assets/Media/Services (Cloudflare R2 endpoints)
+const vidTryDive = '/media/TDV-Media/Services/Try_Dive.mp4';
+const vidDSDLite = '/media/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4';
+const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4';
+const vidDiscoverSnorkelling = '/media/TDV-Media/Services/Discover_Snorkelling.mp4';
+const vidBubblemaker = '/media/TDV-Media/Services/Bubblemaker.mp4';
+const vidAddDiveAfterDSD = '/media/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4';
+const vidSkinDiver = '/media/TDV-Media/Services/Skin_Diver.mp4';
+const vidScubaDiver = '/media/TDV-Media/Services/Scuba_Diver.mp4';
+const vidOpenWater = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
+const vidAdventureDiver = '/media/TDV-Media/Services/AdventureDiver.mp4';
+const vidAdvancedOpenWater = '/media/TDV-Media/Services/Advanced_Open_Water.mp4';
+const vidEFR = '/media/TDV-Media/Services/EFR_Primary_Secondary_Care.mp4';
+const vidRescueDiver = '/media/TDV-Media/Services/Rescue_Diver.mp4';
+const vidReactivate = '/media/TDV-Media/Services/Reactivate_with_dive.mp4';
+const vidFullRefresher = '/media/TDV-Media/Services/Full_Refresher_with_dive.mp4';
+const vidLiteRefresher = '/media/TDV-Media/Services/Lite_Refresher.mp4';
+const vidBuoyancy = '/media/TDV-Media/Services/Peak_Perormance_Buoyancy.mp4';
+const vidProjectAware = '/media/TDV-Media/Services/Project_AWARE.mp4';
+const vidDeepDiver = '/media/TDV-Media/Services/DeepDiver.mp4';
+const vidWreckDiver = '/media/TDV-Media/Services/Wreck_Diver.mp4';
+const vidNightDiveBackground = '/media/TDV-Media/Services/Night_Diver.mp4';
+const vidNitrox = '/media/TDV-Media/Services/Enriched_Air_Nitrox.mp4';
 const vidFunDive = extTurtleVid;
-const vidDSDOpenWater = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458588/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4';
-const vidOWAdvanced = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458729/TDV-Media/Services/Open_water_Advanced_Openwater.mp4';
-const vidEFRRescue = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458642/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4';
-const vidDivemaster = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458623/TDV-Media/Services/DiveMaster.mp4';
-const vidEFRRescueDM = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458665/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4';
-const vidEFRRescueDMPrereq = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458656/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4';
-const vidZeroToHero = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458861/TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master.mp4';
-const vidBasicFreediver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458559/TDV-Media/Services/BasicFreeDiver.mp4';
-const vidFreediver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458677/TDV-Media/Services/Freediver.mp4';
-const vidReefExplorer = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458813/TDV-Media/Services/reefexplorer.mp4';
-const vidOceanExplorer = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458710/TDV-Media/Services/oceanexplorer.mp4';
-const vidDriftDiver = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458629/TDV-Media/Services/Drift_Dive.mp4';
-const vid3DaySurf = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458534/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4';
-const vidDiscoverSurfing = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791458614/TDV-Media/Services/discover_surfing.mp4';
-const vidCanoneering = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791460085/TDV-Media/Services/Other/Canoneering.mp4';
+const vidDSDOpenWater = '/media/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4';
+const vidOWAdvanced = '/media/TDV-Media/Services/Open_water_Advanced_Openwater.mp4';
+const vidEFRRescue = '/media/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4';
+const vidDivemaster = '/media/TDV-Media/Services/DiveMaster.mp4';
+const vidEFRRescueDM = '/media/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4';
+const vidEFRRescueDMPrereq = '/media/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4';
+const vidZeroToHero = '/media/TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master.mp4';
+const vidBasicFreediver = '/media/TDV-Media/Services/BasicFreeDiver.mp4';
+const vidFreediver = '/media/TDV-Media/Services/Freediver.mp4';
+const vidReefExplorer = '/media/TDV-Media/Services/reefexplorer.mp4';
+const vidOceanExplorer = '/media/TDV-Media/Services/oceanexplorer.mp4';
+const vidDriftDiver = '/media/TDV-Media/Services/Drift_Dive.mp4';
+const vid3DaySurf = '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4';
+const vidDiscoverSurfing = '/media/TDV-Media/Services/discover_surfing.mp4';
+const vidCanoneering = '/media/TDV-Media/Services/Other/Canoneering.mp4';
 
-// Add Ons Media (Cloudinary URLs)
-const vidTrekking = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791685324/TDV-Media/AddOns/Trekking.mp4'
+// Add Ons Media (Cloudflare R2 video URLs & Cloudinary poster URLs)
+const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
 const imgTrekking = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
-const vidSightseeing = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791685371/TDV-Media/AddOns/sightseeing.mp4'
+const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
 const imgSightseeing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
-const vidCampers = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791686777/TDV-Media/AddOns/Campers.mp4'
+const vidCampers = '/media/TDV-Media/AddOns/Campers.mp4'
 const imgCampers = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
-const vidSafari = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791691465/TDV-Media/AirportToAirport/gallery1.mp4'
+const vidSafari = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
 const imgSafari = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
-const vidLiveaboard = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791685388/TDV-Media/AddOns/liveaboard.mp4'
+const vidLiveaboard = '/media/TDV-Media/AddOns/liveaboard.mp4'
 const imgLiveaboard = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
 
 export const CATEGORIES = [

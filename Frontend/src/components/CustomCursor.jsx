@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-const cursorVideo = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791685230/TDV-Media/UI/cursor.webm'
+const cursorVideo = '/media/TDV-Media/UI/cursor.webm'
 const cursorPng = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791691225/TDV-Media/UI/Logo.png'
 const cursorHoverPng = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791691225/TDV-Media/UI/Logo.png'
 import useNightDive from '../hooks/useNightDive'

@@ -24,8 +24,8 @@ const envAppId = getEnvVar('VITE_FIREBASE_APP_ID')
 
 const hasEnvConfig = Boolean(envApiKey && envProjectId && envApiKey !== 'placeholder')
 
-// In production, strictly use environment variables. In DEV mode, allow fallback if env vars are missing.
-const useFallback = !hasEnvConfig && import.meta.env.DEV
+// Allow fallback if environment variables are omitted, ensuring seamless authentication on deployed previews and production
+const useFallback = !hasEnvConfig
 
 const firebaseConfig = {
   apiKey: envApiKey || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.apiKey : ''),
@@ -42,19 +42,23 @@ export const isFirebaseConfigured = Boolean(
     firebaseConfig.projectId
 )
 
-if (typeof window !== 'undefined' && import.meta.env.DEV) {
+if (typeof window !== 'undefined') {
   console.log('[Firebase] Active Configuration:', {
     projectId: firebaseConfig.projectId,
     authDomain: firebaseConfig.authDomain,
     usingEnvVars: hasEnvConfig,
-    usingDevFallback: useFallback,
+    usingFallback: useFallback,
     hostname: window.location.hostname,
     isConfigured: isFirebaseConfigured,
   })
 }
 
 async function getAuthModule() {
-  if (!isFirebaseConfigured) return null
+  if (!isFirebaseConfigured) {
+    throw new Error(
+      'Firebase Authentication is not configured. Please ensure VITE_FIREBASE_* environment variables are set in Cloudflare Pages.'
+    )
+  }
   if (auth && authModule) return { auth, app, authMod: authModule }
   const [{ initializeApp }, authMod] = await Promise.all([
     import('firebase/app'),

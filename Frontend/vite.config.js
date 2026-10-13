@@ -72,11 +72,13 @@ function missingAssetFallbackPlugin() {
 }
 
 import { VitePWA } from 'vite-plugin-pwa'
+import { r2DevMediaPlugin } from './scripts/r2DevMiddleware.js'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     missingAssetFallbackPlugin(), 
+    r2DevMediaPlugin(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
