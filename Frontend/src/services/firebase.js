@@ -24,8 +24,6 @@ if (typeof window !== 'undefined') {
   console.log('[Firebase] Active Configuration:', {
     projectId: firebaseConfig.projectId,
     authDomain: firebaseConfig.authDomain,
-    usingEnvVars: hasEnvConfig,
-    usingFallback: useFallback,
     hostname: window.location.hostname,
     isConfigured: isFirebaseConfigured,
   })
