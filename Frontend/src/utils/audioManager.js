@@ -1,8 +1,8 @@
-// Production CDN Audio URLs:
-const CLOUDINARY_AUDIO_URL = 'https://res.cloudinary.com/qvbunv8y/video/upload/v1791685502/TDV-Media/Audio/Audio.mp3'
+// Cloudflare R2 Audio Streaming URL:
+const R2_AUDIO_URL = '/media/TDV-Media/Audio/Audio.mp3'
 
 const AUDIO_SOURCES = [
-  CLOUDINARY_AUDIO_URL,
+  R2_AUDIO_URL,
 ].filter(Boolean)
 
 class AudioManager {
@@ -394,7 +394,7 @@ class AudioManager {
           album: "It's a Community",
           artwork: [
             {
-              src: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791691225/TDV-Media/UI/Logo.png',
+              src: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png',
               sizes: '512x512',
               type: 'image/png'
             }

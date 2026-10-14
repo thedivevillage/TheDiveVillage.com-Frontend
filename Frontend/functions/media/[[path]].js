@@ -28,9 +28,12 @@ export async function onRequest(context) {
     return new Response('Forbidden: Invalid path', { status: 403 });
   }
 
-  const bucket = env.MEDIA_BUCKET;
+  const bucket = env?.MEDIA_BUCKET;
   if (!bucket) {
-    return new Response('R2 binding MEDIA_BUCKET is not configured', { status: 500 });
+    // Graceful fallback: proxy to API server media streaming endpoint
+    const backendUrl = `https://api.thedivevillage.com/media/${encodeURI(key)}`;
+    const backendReq = new Request(backendUrl, request);
+    return fetch(backendReq);
   }
 
   // Determine Content-Type based on extension

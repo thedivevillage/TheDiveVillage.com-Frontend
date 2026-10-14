@@ -150,7 +150,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-21",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458009/TDV-Media/Extras%20for%20Gallery/Articulata.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458009/TDV-Media/Extras%20for%20Gallery/Articulata.webp",
     "title": "Articulata",
     "category": "marine",
     "filename": "Articulata.webp"
@@ -158,7 +158,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-22",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791457833/TDV-Media/Extras%20for%20Gallery/Banded_Coral_Shrimp.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791457833/TDV-Media/Extras%20for%20Gallery/Banded_Coral_Shrimp.webp",
     "title": "Banded Coral Shrimp",
     "category": "marine",
     "filename": "Banded Coral Shrimp.webp"
@@ -166,7 +166,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-23",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458011/TDV-Media/Extras%20for%20Gallery/Banded_Sea_Krait.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458011/TDV-Media/Extras%20for%20Gallery/Banded_Sea_Krait.webp",
     "title": "Banded Sea Krait",
     "category": "marine",
     "filename": "Banded Sea Krait.webp"
@@ -174,7 +174,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-24",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458046/TDV-Media/Extras%20for%20Gallery/Blackspotted_Pufferfish.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458046/TDV-Media/Extras%20for%20Gallery/Blackspotted_Pufferfish.webp",
     "title": "Blackspotted Pufferfish",
     "category": "marine",
     "filename": "Blackspotted Pufferfish.webp"
@@ -182,7 +182,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-25",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458047/TDV-Media/Extras%20for%20Gallery/Blue_and_Gold_Fusilier.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458047/TDV-Media/Extras%20for%20Gallery/Blue_and_Gold_Fusilier.webp",
     "title": "Blue and Gold Fusilier",
     "category": "marine",
     "filename": "Blue and Gold Fusilier.webp"
@@ -190,7 +190,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-26",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458048/TDV-Media/Extras%20for%20Gallery/Blue_Lincka.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458048/TDV-Media/Extras%20for%20Gallery/Blue_Lincka.webp",
     "title": "Blue Lincka",
     "category": "marine",
     "filename": "Blue Lincka.webp"
@@ -198,7 +198,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-27",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458078/TDV-Media/Extras%20for%20Gallery/Bubble_Coral.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458078/TDV-Media/Extras%20for%20Gallery/Bubble_Coral.webp",
     "title": "Bubble Coral",
     "category": "marine",
     "filename": "Bubble Coral.webp"
@@ -206,7 +206,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-28",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458088/TDV-Media/Extras%20for%20Gallery/Clownfish_within_Sea_Anemone.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458088/TDV-Media/Extras%20for%20Gallery/Clownfish_within_Sea_Anemone.webp",
     "title": "Clownfish within Sea Anemone",
     "category": "marine",
     "filename": "Clownfish within Sea Anemone.webp"
@@ -214,7 +214,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-29",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458090/TDV-Media/Extras%20for%20Gallery/Crown_Jellyfish.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458090/TDV-Media/Extras%20for%20Gallery/Crown_Jellyfish.webp",
     "title": "Crown Jellyfish",
     "category": "marine",
     "filename": "Crown Jellyfish.webp"
@@ -222,7 +222,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-30",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458091/TDV-Media/Extras%20for%20Gallery/Crown_of_thorns_Starfish.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458091/TDV-Media/Extras%20for%20Gallery/Crown_of_thorns_Starfish.webp",
     "title": "Crown of thorns Starfish",
     "category": "marine",
     "filename": "Crown of thorns Starfish.webp"
@@ -230,7 +230,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-31",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458092/TDV-Media/Extras%20for%20Gallery/Doctorfish_Tang.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458092/TDV-Media/Extras%20for%20Gallery/Doctorfish_Tang.webp",
     "title": "Doctorfish Tang",
     "category": "marine",
     "filename": "Doctorfish Tang.webp"
@@ -238,7 +238,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-32",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458093/TDV-Media/Extras%20for%20Gallery/Feather_Star_2.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458093/TDV-Media/Extras%20for%20Gallery/Feather_Star_2.webp",
     "title": "Feather Star",
     "category": "marine",
     "filename": "Feather Star (2).webp"
@@ -246,7 +246,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-33",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458094/TDV-Media/Extras%20for%20Gallery/Feather_Star.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458094/TDV-Media/Extras%20for%20Gallery/Feather_Star.webp",
     "title": "Feather Star",
     "category": "marine",
     "filename": "Feather Star.webp"
@@ -254,7 +254,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-34",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458095/TDV-Media/Extras%20for%20Gallery/FeatherStar_3.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458095/TDV-Media/Extras%20for%20Gallery/FeatherStar_3.webp",
     "title": "Feather Star",
     "category": "marine",
     "filename": "FeatherStar (3).webp"
@@ -262,7 +262,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-35",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458100/TDV-Media/Extras%20for%20Gallery/Giant_Clam.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458100/TDV-Media/Extras%20for%20Gallery/Giant_Clam.webp",
     "title": "Giant Clam",
     "category": "marine",
     "filename": "Giant Clam.webp"
@@ -270,7 +270,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-36",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458101/TDV-Media/Extras%20for%20Gallery/Giant_Thorny_Oyster.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458101/TDV-Media/Extras%20for%20Gallery/Giant_Thorny_Oyster.webp",
     "title": "Giant Thorny Oyster",
     "category": "marine",
     "filename": "Giant Thorny Oyster.webp"
@@ -278,7 +278,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-37",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458102/TDV-Media/Extras%20for%20Gallery/Green_Sea_Cucumber.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458102/TDV-Media/Extras%20for%20Gallery/Green_Sea_Cucumber.webp",
     "title": "Green Sea Cucumber",
     "category": "marine",
     "filename": "Green Sea Cucumber.webp"
@@ -286,7 +286,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-38",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458103/TDV-Media/Extras%20for%20Gallery/Greenfish_Sea_Cucumber.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458103/TDV-Media/Extras%20for%20Gallery/Greenfish_Sea_Cucumber.webp",
     "title": "Greenfish Sea Cucumber",
     "category": "marine",
     "filename": "Greenfish Sea Cucumber.webp"
@@ -294,7 +294,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-39",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458123/TDV-Media/Extras%20for%20Gallery/Lionfish.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458123/TDV-Media/Extras%20for%20Gallery/Lionfish.webp",
     "title": "Lionfish",
     "category": "marine",
     "filename": "Lionfish.webp"
@@ -302,7 +302,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-40",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458177/TDV-Media/Extras%20for%20Gallery/Moon_Jellyfish.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458177/TDV-Media/Extras%20for%20Gallery/Moon_Jellyfish.webp",
     "title": "Moon Jellyfish",
     "category": "marine",
     "filename": "Moon Jellyfish.webp"
@@ -310,7 +310,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-42",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp",
     "title": "School of Baitball",
     "category": "marine",
     "filename": "School of Baitball.webp"
@@ -318,7 +318,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-43",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458188/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458188/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp",
     "title": "Scuba Diving",
     "category": "marine",
     "filename": "Scuba Diving.webp"
@@ -326,7 +326,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-46",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458192/TDV-Media/Extras%20for%20Gallery/Sea_fan.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458192/TDV-Media/Extras%20for%20Gallery/Sea_fan.webp",
     "title": "Sea fan",
     "category": "marine",
     "filename": "Sea fan.webp"
@@ -334,7 +334,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-47",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458193/TDV-Media/Extras%20for%20Gallery/Shoal.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458193/TDV-Media/Extras%20for%20Gallery/Shoal.webp",
     "title": "Shoal",
     "category": "marine",
     "filename": "Shoal.webp"
@@ -342,7 +342,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-48",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458204/TDV-Media/Extras%20for%20Gallery/Sunset.jpg",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458204/TDV-Media/Extras%20for%20Gallery/Sunset.jpg",
     "title": "Sunset",
     "category": "marine",
     "filename": "Sunset.webp"
@@ -350,7 +350,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-49",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458205/TDV-Media/Extras%20for%20Gallery/Thorny_Oyster.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458205/TDV-Media/Extras%20for%20Gallery/Thorny_Oyster.webp",
     "title": "Thorny Oyster",
     "category": "marine",
     "filename": "Thorny Oyster.webp"
@@ -358,7 +358,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-50",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458206/TDV-Media/Extras%20for%20Gallery/Threadfin_Butterflyfish.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458206/TDV-Media/Extras%20for%20Gallery/Threadfin_Butterflyfish.webp",
     "title": "Threadfin Butterflyfish",
     "category": "marine",
     "filename": "Threadfin Butterflyfish.webp"
@@ -366,7 +366,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-51",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458207/TDV-Media/Extras%20for%20Gallery/Toadstool_Leather_Coral.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458207/TDV-Media/Extras%20for%20Gallery/Toadstool_Leather_Coral.webp",
     "title": "Toadstool Leather Coral",
     "category": "marine",
     "filename": "Toadstool Leather Coral.webp"
@@ -374,7 +374,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-52",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458209/TDV-Media/Extras%20for%20Gallery/Varicose_Wart_Slug.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458209/TDV-Media/Extras%20for%20Gallery/Varicose_Wart_Slug.webp",
     "title": "Varicose Wart Slug",
     "category": "marine",
     "filename": "Varicose Wart Slug.webp"
@@ -382,7 +382,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-53",
     "type": "image",
-    "src": "https://res.cloudinary.com/qvbunv8y/image/upload/v1791458221/TDV-Media/Extras%20for%20Gallery/Yellowback_fusiliers.webp",
+    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458221/TDV-Media/Extras%20for%20Gallery/Yellowback_fusiliers.webp",
     "title": "Yellowback fusiliers",
     "category": "marine",
     "filename": "Yellowback fusiliers.webp"
