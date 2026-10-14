@@ -6,15 +6,14 @@ const isLocalhostHost =
   typeof window !== 'undefined' &&
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
 
-export const isApiConfigured = Boolean(
-  rawApiUrl || (import.meta.env.DEV && isLocalhostHost)
-)
-
+// In production on the live domain, default cleanly to https://api.thedivevillage.com
 export const apiBaseUrl =
   rawApiUrl ||
-  (isApiConfigured
+  (import.meta.env.DEV && isLocalhostHost
     ? 'http://localhost:5000'
     : 'https://api.thedivevillage.com')
+
+export const isApiConfigured = true
 
 const api = axios.create({
   baseURL: apiBaseUrl,
@@ -23,13 +22,6 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  if (!isApiConfigured) {
-    const controller = new AbortController()
-    config.signal = controller.signal
-    controller.abort('API base URL is not configured in production.')
-    return config
-  }
-
   const token = localStorage.getItem('tdv_id_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
