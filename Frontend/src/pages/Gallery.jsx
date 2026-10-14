@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Button from '../components/Button'
 import SafeImage from '../components/SafeImage'
@@ -22,6 +22,7 @@ const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
 
 export default function Gallery() {
   const isNightDive = useNightDive()
+  const [searchParams] = useSearchParams()
   const [itemsList, setItemsList] = useState(SANITIZED_GALLERY_ITEMS)
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(null)
   const reduce = useReducedMotion()
@@ -32,21 +33,32 @@ export default function Gallery() {
 
   const filteredItems = itemsList
 
-  // Always scroll to top when mounting or reloading the Gallery page
+  // Scroll to targeted item if URL has ?item=id, or scroll to top
   useEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual'
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true })
-    }
-    const timer = setTimeout(() => {
+    const targetItemId = searchParams.get('item')
+    if (targetItemId) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(`gallery-item-${targetItemId}`)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 300)
+      return () => clearTimeout(timer)
+    } else {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual'
+      }
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-      if (lenis) lenis.scrollTo(0, { immediate: true })
-    }, 50)
-    return () => clearTimeout(timer)
-  }, [lenis])
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true })
+      }
+      const timer = setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+        if (lenis) lenis.scrollTo(0, { immediate: true })
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, lenis])
 
   // High-Res Preloading for adjacent images in Lightbox
   useEffect(() => {
@@ -372,13 +384,14 @@ export default function Gallery() {
                   <LazyVideo
                     src={currentItem.src}
                     controls
+                    controlsList="nodownload noplaybackrate nofullscreen"
                     autoPlay
                     loop
                     playsInline
                     muted={true}
                     defaultMuted={true}
                     playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-                    className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center"
+                    className="gallery-lightbox-video w-full h-full max-w-full max-h-full object-contain flex items-center justify-center"
                   />
                 ) : (
                   <SafeImage
@@ -548,6 +561,7 @@ function GalleryGridCard({ item, idx, reduce, onClick }) {
 
   return (
     <motion.div
+      id={`gallery-item-${item.id}`}
       ref={cardRef}
       initial={reduce ? false : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -592,8 +606,8 @@ function GalleryGridCard({ item, idx, reduce, onClick }) {
       </div>
 
       {/* Information Panel Below Media - Title */}
-      <div className="p-2 sm:p-5 bg-white">
-        <h3 className="font-heading text-xs sm:text-lg font-bold text-navy group-hover:text-accent transition duration-200 line-clamp-1 leading-tight">
+      <div className="p-2 sm:p-5 bg-white text-[#001e3d]">
+        <h3 className="font-heading text-xs sm:text-lg font-bold text-[#001e3d] group-hover:text-accent transition duration-200 line-clamp-1 leading-tight">
           {item.title}
         </h3>
       </div>

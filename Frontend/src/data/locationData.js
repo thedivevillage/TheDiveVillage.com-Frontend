@@ -6,7 +6,7 @@ export const LOCATION_DATA = {
     states: {
       'Andaman and Nicobar Islands': [
         'Port Blair',
-        'Havelock Island (Swaraj Dweep)',
+        'Havelock Island',
         'Neil Island (Shaheed Dweep)',
         'Diglipur',
         'Baratang Island',

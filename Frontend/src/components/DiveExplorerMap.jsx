@@ -505,7 +505,13 @@ export default function DiveExplorerMap({
           source: 'country-centroids-source',
           layout: {
             'icon-image': initialCountryIcon,
-            'icon-size': 1,
+            'icon-size': [
+              'interpolate', ['linear'], ['zoom'],
+              1, 0.75,
+              4, 0.9,
+              7, 1.35,
+              11, 2.0
+            ],
             'icon-anchor': 'bottom',
             'icon-allow-overlap': true,
             'icon-ignore-placement': true,
@@ -538,7 +544,13 @@ export default function DiveExplorerMap({
           source: 'dive-sites-source',
           layout: {
             'icon-image': initialSiteIcon,
-            'icon-size': 1,
+            'icon-size': [
+              'interpolate', ['linear'], ['zoom'],
+              4, 0.75,
+              7, 1.1,
+              10, 1.6,
+              13, 2.0
+            ],
             'icon-anchor': 'bottom',
             'icon-allow-overlap': true,
             'text-field': ['get', 'siteName'],
@@ -635,7 +647,7 @@ export default function DiveExplorerMap({
               x: e.point.x,
               y: e.point.y,
               name: p.siteName,
-              subtitle: p.naturalTypes ? `🌊 ${p.naturalTypes}` : p.country,
+              subtitle: p.naturalTypes ? `${p.naturalTypes}` : p.country,
             })
           }
         })

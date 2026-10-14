@@ -16,7 +16,13 @@ export default function GalleryPreview() {
 
   const previewItems = itemsList.filter(item => item.type === 'image').slice(0, 10)
 
-  const goToGallery = () => navigate('/gallery')
+  const goToGallery = (targetItem) => {
+    if (targetItem?.id) {
+      navigate(`/gallery?item=${targetItem.id}`)
+    } else {
+      navigate('/gallery')
+    }
+  }
 
   // Auto scroll from left to right using smooth requestAnimationFrame only when visible
   useEffect(() => {
@@ -173,7 +179,7 @@ export default function GalleryPreview() {
           {[...previewItems, ...previewItems, ...previewItems].map((item, i) => (
             <div
               key={`${item.id}-${i}`}
-              onClick={goToGallery}
+              onClick={() => goToGallery(item)}
               className="relative flex-shrink-0 w-[44vw] min-w-[155px] max-w-[210px] aspect-square sm:aspect-auto sm:w-[230px] sm:h-[310px] lg:w-[260px] lg:h-[350px] rounded-2xl overflow-hidden border border-white/20 shadow-none group cursor-pointer bg-transparent"
             >
               {item.type === 'video' ? (

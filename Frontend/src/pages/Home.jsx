@@ -375,6 +375,7 @@ export default function Home() {
               {
                 title: 'Comfortable Stays',
                 desc: 'Handpicked accommodations for luxury holidays and backpacking alike',
+                descMobile: 'Handpicked stays for luxury / budget friendly dive experiences.',
                 img: stayImg,
                 icon: (
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#00AEC7]" fill="currentColor" viewBox="0 0 24 24">
@@ -405,7 +406,7 @@ export default function Home() {
                 )
               },
             ].map((item, i) => (
-              <StaggerItem key={i} className="w-[62vw] min-w-[215px] max-w-[270px] aspect-square sm:w-auto sm:aspect-auto shrink-0 snap-center h-full">
+              <StaggerItem key={i} className="w-[72vw] min-w-[235px] max-w-[280px] sm:w-auto shrink-0 snap-center h-full">
                 <div
                   onClick={i === 3 ? () => {
                     const el = document.getElementById('customize-dive-section')
@@ -413,32 +414,44 @@ export default function Home() {
                       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }
                   } : undefined}
-                  className={`group relative h-full w-full rounded-2xl sm:rounded-[28px] lg:rounded-[32px] bg-[#00172b]/40 backdrop-blur-2xl border border-white/20 p-3 sm:p-5 lg:p-6 shadow-none transition-all duration-500 hover:bg-[#00172b]/60 flex flex-col justify-between ${
+                  className={`group relative h-full w-full rounded-2xl sm:rounded-[28px] lg:rounded-[32px] bg-[#00172b]/40 backdrop-blur-2xl border border-white/20 p-3.5 sm:p-5 lg:p-6 shadow-none transition-all duration-500 hover:bg-[#00172b]/60 flex flex-col justify-between ${
                     i === 3
                       ? 'cursor-pointer hover:-translate-y-3 hover:border-[#00AEC7] hover:shadow-none'
                       : 'cursor-default'
                   }`}
                 >
                   <div className="flex flex-col flex-1">
-                    {/* Top Bar: Icon Box */}
-                    <div className="flex items-center mb-1.5 sm:mb-4">
+                    {/* Top Bar: Icon Box & Mobile Click to Select */}
+                    <div className="flex items-center justify-between mb-2 sm:mb-4">
                       <div className="w-7 h-7 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-xl sm:rounded-2xl bg-[#00AEC7]/20 border border-[#00AEC7]/50 flex items-center justify-center shadow-sm group-hover:bg-[#00AEC7]/30 group-hover:border-[#00AEC7] transition duration-300">
                         {item.icon}
                       </div>
+                      {i === 3 && (
+                        <span className="sm:hidden text-[9px] uppercase font-extrabold text-[#FFCD00] tracking-wider px-2 py-0.5 rounded-full bg-[#00AEC7]/20 border border-[#00AEC7]/50 shadow-sm">
+                          Click to select
+                        </span>
+                      )}
                     </div>
 
                     {/* Main Heading Text */}
-                    <h3 className="font-heading text-xs xs:text-sm sm:text-xl lg:text-2xl font-bold text-white uppercase tracking-wide leading-tight mt-0.5 sm:mt-0 mb-3.5 sm:mb-2 text-left group-hover:text-[#FFCD00] transition-colors truncate sm:whitespace-normal">
+                    <h3 className="font-heading text-xs xs:text-sm sm:text-xl lg:text-2xl font-bold text-white uppercase tracking-wide leading-tight mt-0.5 sm:mt-0 mb-1.5 sm:mb-2 text-left group-hover:text-[#FFCD00] transition-colors truncate sm:whitespace-normal">
                       {item.title}
                     </h3>
 
-                    {/* Description Text */}
-                    <p className="hidden sm:block text-white/85 text-xs lg:text-sm font-medium leading-relaxed mb-5 text-left min-h-[40px]">
-                      {item.desc}
+                    {/* Description Text - Always visible on mobile & desktop */}
+                    <p className="text-white/85 text-[11px] sm:text-xs lg:text-sm font-medium leading-relaxed mb-2.5 sm:mb-5 text-left min-h-[32px] sm:min-h-[40px] line-clamp-2 sm:line-clamp-none">
+                      {item.descMobile ? (
+                        <>
+                          <span className="sm:hidden">{item.descMobile}</span>
+                          <span className="hidden sm:inline">{item.desc}</span>
+                        </>
+                      ) : (
+                        item.desc
+                      )}
                     </p>
 
-                    {/* Media Frame (Video or Image) */}
-                    <div className="relative w-full aspect-[16/10] sm:aspect-[16/11] rounded-xl sm:rounded-2xl overflow-hidden bg-black/40 mb-1.5 sm:mb-5 border border-white/20 shadow-none flex-1">
+                    {/* Media Frame (Video or Image) - Uniform height and aspect ratio across all panels */}
+                    <div className="relative w-full aspect-[16/10] sm:aspect-[16/11] rounded-xl sm:rounded-2xl overflow-hidden bg-black/40 mb-1.5 sm:mb-5 border border-white/20 shadow-none shrink-0">
                       {item.video ? (
                         <LazyVideo
                           src={item.video}

@@ -532,12 +532,16 @@
     opacity: 0.6;
   }
 
-  .PhoneInputInput {
+  .PhoneInputInput,
+  input.PhoneInputInput,
+  .PhoneInput input {
     flex: 1;
     min-width: 0;
-    background: transparent;
-    border: none;
-    outline: none;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 
   ::selection {
@@ -1229,7 +1233,7 @@ a.glass-btn:hover,
 }
 
 .switch__icon-part--3 {
-  box-shadow: 0 0 0 0.625em hsl(var(--hue), 10%, 10%) inset;
+  box-shadow: none !important;
   width: 1.25em;
   height: 1.25em;
   transform: scale(0.25);
@@ -1299,7 +1303,7 @@ a.glass-btn:hover,
 }
 
 .switch__input:checked~.switch__icon .switch__icon-part--3 {
-  box-shadow: 0 0 0 0.25em hsl(var(--hue), 10%, 10%) inset;
+  box-shadow: none !important;
   transform: scale(1);
 }
 
@@ -1596,4 +1600,90 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
 
 .night-dive #preloader-container canvas {
   filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)) !important;
+}
+
+/* ==========================================================================
+   GLOBAL NIGHT DIVE RULES (User Requirements):
+   ========================================================================== */
+
+/* 1. If background is white, text HAS to be in dark blue (#001e3d) */
+body.night-dive .bg-white,
+body.night-dive [style*="background-color: rgb(255, 255, 255)"],
+body.night-dive [style*="background-color: #ffffff"],
+body.night-dive [style*="background: #ffffff"],
+.night-dive .bg-white,
+.night-dive [style*="background-color: #ffffff"],
+.night-dive [style*="background: #ffffff"] {
+  color: #001e3d !important;
+}
+
+body.night-dive .bg-white h1,
+body.night-dive .bg-white h2,
+body.night-dive .bg-white h3,
+body.night-dive .bg-white h4,
+body.night-dive .bg-white h5,
+body.night-dive .bg-white p,
+body.night-dive .bg-white span:not(.text-accent):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="text-amber"]):not([class*="text-cyan"]),
+.night-dive .bg-white h1,
+.night-dive .bg-white h2,
+.night-dive .bg-white h3,
+.night-dive .bg-white h4,
+.night-dive .bg-white h5,
+.night-dive .bg-white p,
+.night-dive .bg-white span:not(.text-accent):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="text-amber"]):not([class*="text-cyan"]) {
+  color: #001e3d !important;
+}
+
+/* 2. White buttons must have dark blue text (#001e3d) across all pages */
+body.night-dive button.bg-white,
+body.night-dive a.bg-white,
+body.night-dive button[class*="bg-white"],
+body.night-dive a[class*="bg-white"],
+.night-dive button.bg-white,
+.night-dive a.bg-white,
+.night-dive button[class*="bg-white"],
+.night-dive a[class*="bg-white"] {
+  color: #001e3d !important;
+}
+
+body.night-dive button.bg-white span,
+body.night-dive a.bg-white span,
+body.night-dive button[class*="bg-white"] span,
+body.night-dive a[class*="bg-white"] span,
+.night-dive button.bg-white span,
+.night-dive a.bg-white span,
+.night-dive button[class*="bg-white"] span,
+.night-dive a[class*="bg-white"] span {
+  color: #001e3d !important;
+}
+
+/* 3. Shop page: product names are dark blue in night dive mode */
+body.night-dive [data-product-card] .product-card-title,
+body.night-dive [data-product-card] h3,
+.night-dive [data-product-card] .product-card-title,
+.night-dive [data-product-card] h3 {
+  color: #001e3d !important;
+}
+
+/* 4. Any button in 'selected mode' has a white border around it in night dive mode (preserving yellow services category) */
+body.night-dive button[aria-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
+body.night-dive button[data-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
+body.night-dive button.selected:not([class*="border-[#FFCD00]"]):not(.border-accent),
+body.night-dive button[data-active="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
+.night-dive button[aria-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
+.night-dive button[data-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
+.night-dive button.selected:not([class*="border-[#FFCD00]"]):not(.border-accent),
+.night-dive button[data-active="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent) {
+  border: 2px solid #ffffff !important;
+}
+
+/* 5. Lightbox video: hide volume/mute button and overflow 3-dots */
+.gallery-lightbox-video::-webkit-media-controls-volume-control-container,
+.gallery-lightbox-video::-webkit-media-controls-mute-button,
+.gallery-lightbox-video::-internal-media-controls-overflow-button,
+.gallery-lightbox-video::-webkit-media-controls-overflow-button {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }

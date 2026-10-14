@@ -34,6 +34,23 @@ import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandsForCountry, getSitesForIsland, getIslandForSite } from '../utils/diveIslandCatalog'
 
 
+const FUN_TIMING_OPTIONS = [
+  { key: 'day', label: 'Day Dive' },
+  { key: 'dawn', label: 'Dawn Dive' },
+  { key: 'night', label: 'Night Dive' },
+]
+
+const FUN_DIVE_OPTIONS = [
+  { id: '1-dive', label: '1 Dive' },
+  { id: '2-dives', label: '2 Dives' },
+  { id: '4-dives', label: '4 Dives' },
+  { id: '6-dives', label: '6 Dives' },
+  { id: '8-dives', label: '8 Dives' },
+  { id: '10-dives', label: '10 Dives' },
+  { id: '12-dives', label: '12 Dives' },
+  { id: 'post-12', label: 'Post 12 (extra 2 dives)' },
+]
+
 // Maps service page IDs → { courseId, experience, funDivesCount? }
 // When a user arrives from services page via 'Book Now', experience is auto-selected (Scuba Diving, FreeDiving, Surfing),
 // certifications are hidden in Step 2, and Step 3 is skipped.
@@ -71,7 +88,7 @@ const SERVICE_TO_PROGRAM = {
   'combo-1': { courseId: 'dsd-ow-combo', experience: 'Scuba Diving' },
   'combo-2': { courseId: 'ow-aow-combo', experience: 'Scuba Diving' },
   'combo-3': { courseId: 'efr-rescue-combo', experience: 'Scuba Diving' },
-  'combo-fundives': { courseId: 'fun-day-dive', experience: 'Scuba Diving', funDivesCount: 'fun-2' },
+  'combo-fundives': { courseId: 'fun-dives', experience: 'Scuba Diving', funDivesCount: 'Day Dive: 2 Dives' },
   // Pro Courses -> Scuba Diving
   'pro-1': { courseId: 'divemaster', experience: 'Scuba Diving' },
   'pro-2': { courseId: 'efr-rescue-dm-combo', experience: 'Scuba Diving' },
@@ -968,10 +985,14 @@ export default function BookUs() {
         return false
       }
 
-      const hasMissingFunDivesCount = participants.some((p) => ['fun-day-dive', 'fun-dawn-dive', 'fun-night-dive'].includes(p.selectedProgram) && !p.funDivesCount)
+      const hasMissingFunDivesCount = participants.some((p) => {
+        if (!['fun-dives', 'fun-day-dive', 'fun-dawn-dive', 'fun-night-dive'].includes(p.selectedProgram)) return false
+        const timings = p.funTimings && p.funTimings.length > 0 ? p.funTimings : ['day']
+        return !p.funDivesCount || timings.some(t => !p.funDivesCounts?.[t])
+      })
       if (hasMissingFunDivesCount) {
         triggerErrorHaptic()
-        setStepError('Please select a dive package (number of dives) for each Fun Dive participant.')
+        setStepError('Please select your dive timing and number of dives for each Fun Dive participant.')
         return false
       }
 
@@ -1768,8 +1789,6 @@ export default function BookUs() {
                               const val = parseInt(groupSize, 10)
                               if (isNaN(val) || val < 1) {
                                 setGroupSize(1)
-                              } else if (val > 20) {
-                                setGroupSize(20)
                               } else {
                                 setGroupSize(val)
                               }
@@ -2108,28 +2127,77 @@ export default function BookUs() {
                                             })}
                                           </div>
 
-                                          {/* Fun Dives Package Selector if Fun Dives is picked */}
-                                          {['fun-day-dive', 'fun-dawn-dive', 'fun-night-dive'].includes(p.selectedProgram) && (
-                                            <div className="mt-2.5 pt-2.5 border-t border-navy/10">
-                                              <label className="text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider mb-1.5 block">
-                                                Select Number of Dives <span className="text-red-500">*</span>
-                                              </label>
-                                              <div className="relative">
-                                                <select
-                                                  value={p.funDivesCount || ''}
-                                                  onChange={(e) => handleParticipantChange(idx, 'funDivesCount', e.target.value)}
-                                                  required
-                                                  className="w-full rounded-lg sm:rounded-2xl bg-[#F0F2F5] border border-navy/5 px-2.5 py-2 sm:px-4 sm:py-3.5 text-[11px] sm:text-sm font-semibold sm:font-bold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none shadow-inner cursor-pointer pr-8"
-                                                >
-                                                  <option value="" disabled>Choose your dive package...</option>
-                                                  {FUN_DIVES_PACKAGES.map((pkg) => (
-                                                    <option key={pkg.id} value={pkg.id}>{pkg.title} - {pkg.duration}</option>
-                                                  ))}
-                                                </select>
-                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy/50">
-                                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
+                                          {/* Fun Dives Timing & Package Selector */}
+                                          {['fun-dives', 'fun-day-dive', 'fun-dawn-dive', 'fun-night-dive'].includes(p.selectedProgram) && (
+                                            <div className="mt-2.5 pt-2.5 border-t border-navy/10 space-y-3">
+                                              <div>
+                                                <label className="text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider mb-1.5 block">
+                                                  Select Dive Timing(s) <span className="text-navy/40 font-normal lowercase">(Multiple choice)</span> <span className="text-red-500">*</span>
+                                                </label>
+                                                <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                                                  {FUN_TIMING_OPTIONS.map((timing) => {
+                                                    const timings = p.funTimings || []
+                                                    const isSelected = timings.includes(timing.key)
+                                                    return (
+                                                      <button
+                                                        key={timing.key}
+                                                        type="button"
+                                                        onClick={() => {
+                                                          const nextTimings = isSelected
+                                                            ? timings.filter((t) => t !== timing.key)
+                                                            : [...timings, timing.key]
+                                                          handleParticipantChange(idx, 'funTimings', nextTimings)
+                                                          const counts = p.funDivesCounts || {}
+                                                          const summary = nextTimings.map((t) => `${t.toUpperCase()}: ${counts[t] || 'Not chosen'}`).join(' | ')
+                                                          handleParticipantChange(idx, 'funDivesCount', summary)
+                                                        }}
+                                                        className={`py-2 px-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold border transition-all text-center flex items-center justify-center gap-1 cursor-pointer ${
+                                                          isSelected
+                                                            ? 'bg-navy text-white border-navy shadow-sm'
+                                                            : 'bg-[#F0F2F5] text-navy/70 border-navy/10 hover:border-navy/30'
+                                                        }`}
+                                                      >
+                                                        <span>{isSelected ? '✓ ' : '+ '}{timing.label}</span>
+                                                      </button>
+                                                    )
+                                                  })}
                                                 </div>
                                               </div>
+
+                                              {(p.funTimings || []).map((tKey) => {
+                                                const timingObj = FUN_TIMING_OPTIONS.find((opt) => opt.key === tKey)
+                                                const label = timingObj ? timingObj.label : tKey
+                                                const selectedCount = p.funDivesCounts?.[tKey] || ''
+                                                return (
+                                                  <div key={tKey} className="rounded-lg sm:rounded-xl bg-[#F8F9FA] p-2.5 border border-navy/10">
+                                                    <label className="text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider mb-1 block">
+                                                      Number of Dives for {label} <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <div className="relative">
+                                                      <select
+                                                        value={selectedCount}
+                                                        onChange={(e) => {
+                                                          const newCounts = { ...(p.funDivesCounts || {}), [tKey]: e.target.value }
+                                                          handleParticipantChange(idx, 'funDivesCounts', newCounts)
+                                                          const timings = p.funTimings || []
+                                                          const summary = timings.map((t) => `${t.toUpperCase()}: ${newCounts[t] || 'Not chosen'}`).join(' | ')
+                                                          handleParticipantChange(idx, 'funDivesCount', summary)
+                                                        }}
+                                                        required
+                                                        className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/10 px-2.5 py-2 sm:px-3 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none shadow-sm cursor-pointer pr-8"
+                                                      >
+                                                        <option value="" disabled>Choose number of dives for {label}...</option>
+                                                        {FUN_DIVE_OPTIONS.map((opt) => (
+                                                          <option key={opt.id} value={opt.label}>{opt.label}</option>
+                                                        ))}
+                                                      </select>
+                                                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy/50">
+                                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                )
+                                              })}
                                             </div>
                                           )}
                                         </div>
@@ -2305,7 +2373,7 @@ export default function BookUs() {
           {showSummaryModal && (
             <div
               data-lenis-prevent="true"
-              className="fixed left-0 right-0 bottom-0 top-[64px] lg:top-[68px] z-[9990] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md overflow-hidden"
+              className="fixed left-0 right-0 bottom-0 top-[64px] lg:top-[68px] z-[9990] flex items-center justify-center p-3 sm:p-6 bg-black/60 overflow-hidden"
               style={{ top: 'var(--toolbar-bottom, 64px)' }}
               onClick={(e) => {
                 if (e.target === e.currentTarget && !isSubmitting) {

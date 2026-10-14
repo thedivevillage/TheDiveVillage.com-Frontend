@@ -214,9 +214,9 @@ export default function LazyVideo({
           loading="lazy"
           decoding="async"
           onLoad={handlePosterSuccess}
-          className={`absolute inset-0 w-full h-full ${fitClass} z-[1] pointer-events-none ${
-            posterLoaded ? 'opacity-100' : 'opacity-0'
-          } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'}`}
+          className={`absolute inset-0 w-full h-full ${fitClass} z-[1] pointer-events-none transition-opacity duration-500 ease-out ${
+            posterLoaded && !isVideoPlaying ? 'opacity-100' : 'opacity-0'
+          }`}
         />
       )}
 
@@ -259,7 +259,13 @@ export default function LazyVideo({
           }}
           onPlay={(e) => {
             applyPlaybackRate(e)
+            setIsVideoPlaying(true)
             props.onPlay?.(e)
+          }}
+          onLoadedData={(e) => {
+            applyPlaybackRate(e)
+            setIsVideoPlaying(true)
+            props.onLoadedData?.(e)
           }}
           onLoadedMetadata={(e) => {
             applyPlaybackRate(e)

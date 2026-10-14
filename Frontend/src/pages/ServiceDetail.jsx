@@ -26,7 +26,17 @@ export default function ServiceDetail() {
   const { id } = useParams()
   const [openFaq, setOpenFaq] = useState(null)
   const [selectedFunPackage, setSelectedFunPackage] = useState(FUN_DIVES_PACKAGES[1] || FUN_DIVES_PACKAGES[0])
-  const [funCategoryFilter, setFunCategoryFilter] = useState('day')
+  const [selectedTimings, setSelectedTimings] = useState(['day'])
+
+  const toggleTiming = (timingKey) => {
+    setSelectedTimings((prev) => {
+      if (prev.includes(timingKey)) {
+        if (prev.length === 1) return prev
+        return prev.filter((t) => t !== timingKey)
+      }
+      return [...prev, timingKey]
+    })
+  }
 
   const service = SERVICES_DATA.find((s) => s.id === id) || (id === 'combo-fundives' ? SERVICES_DATA.find(s => s.id === 'combo-fundives') : null)
 
@@ -34,13 +44,13 @@ export default function ServiceDetail() {
     return <Navigate to="/services" replace />
   }
 
-  const isFunDivesCombo = service.id === 'combo-fundives' || service.isFunDivesContainer
+  const isFunDivesCombo = service.id === 'combo-fundives' || service.isFunDivesContainer || service.id?.startsWith('fun-')
   const isSingleFunDive = service.category === 'fundives'
   const categoryLabel = CATEGORIES.find(c => c.key === service.category)?.label || (isFunDivesCombo ? 'Combos & Packages' : 'Services')
   const activeFaqs = service.faqs && service.faqs.length > 0 ? service.faqs : DEFAULT_FAQS
 
   const filteredFunPackages = FUN_DIVES_PACKAGES.filter(
-    (pkg) => !pkg.funType || pkg.funType === funCategoryFilter
+    (pkg) => pkg.funType === 'day' || !pkg.funType
   )
 
   // Parse highlight string into pills
@@ -50,7 +60,7 @@ export default function ServiceDetail() {
 
   const activeHeroVideo = (isFunDivesCombo && selectedFunPackage?.video) ? selectedFunPackage.video : service.video
   const activeHeroImage = (isFunDivesCombo && selectedFunPackage?.image) ? selectedFunPackage.image : service.image
-  const activeHeroTitle = (isFunDivesCombo && selectedFunPackage?.title) ? `${selectedFunPackage.title} Package` : service.title
+  const activeHeroTitle = isFunDivesCombo ? 'Fun Dives - Multiple' : service.title
   const activeHeroDesc = (isFunDivesCombo && selectedFunPackage?.short_desc) ? selectedFunPackage.short_desc : service.short_desc
 
   return (
@@ -175,25 +185,34 @@ export default function ServiceDetail() {
                 </p>
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
-                {[
-                  { key: 'day', label: 'Day Dive' },
-                  { key: 'dawn', label: 'Dawn Dive' },
-                  { key: 'night', label: 'Night Dive' },
-                ].map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setFunCategoryFilter(tab.key)}
-                    className={`rounded-full px-4 py-2 text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer ${
-                      funCategoryFilter === tab.key
-                        ? 'bg-navy text-white shadow-md'
-                        : 'bg-[#F0F2F5] text-navy/70 hover:bg-navy/10 hover:text-navy'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+              {/* Timing Selection Pills (Multiple Choice) */}
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-navy/50 block mb-1.5 md:text-right">
+                  Dive Timings (Multiple Choice)
+                </span>
+                <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
+                  {[
+                    { key: 'day', label: 'Day Dive' },
+                    { key: 'dawn', label: 'Dawn Dive' },
+                    { key: 'night', label: 'Night Dive' },
+                  ].map((tab) => {
+                    const isSelected = selectedTimings.includes(tab.key)
+                    return (
+                      <button
+                        key={tab.key}
+                        type="button"
+                        onClick={() => toggleTiming(tab.key)}
+                        className={`rounded-full px-4 py-2 text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-navy text-white shadow-md'
+                            : 'bg-[#F0F2F5] text-navy/70 hover:bg-navy/10 hover:text-navy'
+                        }`}
+                      >
+                        <span>{isSelected ? '✓ ' : '+ '}{tab.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             </div>
 
@@ -262,7 +281,7 @@ export default function ServiceDetail() {
                     <div className="pt-2 border-t border-navy/10 flex items-center gap-2">
                       <Button
                         as={Link}
-                        to={`/book-us?service=${pkg.id}`}
+                        to={`/book-us?service=combo-fundives&package=${pkg.id}&timings=${selectedTimings.join(',')}`}
                         variant={isSelected ? 'gold' : 'navy'}
                         className="flex-1 justify-center py-2.5 text-xs font-bold shadow-sm"
                       >
@@ -317,7 +336,7 @@ export default function ServiceDetail() {
                 <div className="w-full lg:w-auto shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3">
                   <Button
                     as={Link}
-                    to={`/book-us?service=${selectedFunPackage.id}`}
+                    to={`/book-us?service=combo-fundives&package=${selectedFunPackage.id}&timings=${selectedTimings.join(',')}`}
                     variant="gold"
                     className="w-full justify-center py-4 px-8 text-sm sm:text-base font-black shadow-lg"
                   >

@@ -10,8 +10,10 @@ import Product3DViewer from '../components/Product3DViewer'
 import SEOHead from '../components/SEOHead'
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
+import useNightDive from '../hooks/useNightDive'
 
 export default function ProductDetail() {
+  const isNightDive = useNightDive()
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -667,7 +669,9 @@ export default function ProductDetail() {
                 <button
                   onClick={handleAddToCart}
                   disabled={isAdding}
-                  className="w-full sm:w-44 lg:w-48 bg-navy hover:bg-[#002b4e] active:scale-[0.98] text-white font-bold py-3.5 sm:py-4 px-4 sm:px-5 rounded-full transition shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer shrink-0"
+                  className={`w-full sm:w-44 lg:w-48 bg-navy hover:bg-[#002b4e] active:scale-[0.98] text-white font-bold py-3.5 sm:py-4 px-4 sm:px-5 rounded-full transition shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer shrink-0 ${
+                    isNightDive ? 'ring-2 ring-white border-2 border-white' : ''
+                  }`}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
@@ -786,13 +790,13 @@ export default function ProductDetail() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs sm:text-sm border-collapse">
                   <thead>
-                    <tr className="bg-[#F0F2F5] text-navy font-bold">
-                      <th className="p-3.5 rounded-l-xl">Option</th>
-                      <th className="p-3.5">Fits Sizes</th>
-                      <th className="p-3.5">Chest / Bust (in)</th>
-                      <th className="p-3.5">Waist (in)</th>
-                      <th className="p-3.5">Height (cm)</th>
-                      <th className="p-3.5 rounded-r-xl">Weight (kg)</th>
+                    <tr className="bg-[#F0F2F5] !text-[#001e3d] font-bold">
+                      <th className="p-3.5 rounded-l-xl !text-[#001e3d]">Option</th>
+                      <th className="p-3.5 !text-[#001e3d]">Fits Sizes</th>
+                      <th className="p-3.5 !text-[#001e3d]">Chest / Bust (in)</th>
+                      <th className="p-3.5 !text-[#001e3d]">Waist (in)</th>
+                      <th className="p-3.5 !text-[#001e3d]">Height (cm)</th>
+                      <th className="p-3.5 rounded-r-xl !text-[#001e3d]">Weight (kg)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-navy/10 text-navy/80">
