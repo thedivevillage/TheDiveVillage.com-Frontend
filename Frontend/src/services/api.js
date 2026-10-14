@@ -2,13 +2,19 @@ import axios from 'axios'
 
 const rawApiUrl = (import.meta.env.VITE_API_BASE_URL || '').trim()
 
+const isLocalhostHost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+
+export const isApiConfigured = Boolean(
+  rawApiUrl || (import.meta.env.DEV && isLocalhostHost)
+)
+
 export const apiBaseUrl =
   rawApiUrl ||
-  (import.meta.env.DEV
+  (isApiConfigured
     ? 'http://localhost:5000'
-    : 'https://thedivevillage-backend.onrender.com')
-
-export const isApiConfigured = Boolean(apiBaseUrl)
+    : 'https://api.thedivevillage.com')
 
 const api = axios.create({
   baseURL: apiBaseUrl,

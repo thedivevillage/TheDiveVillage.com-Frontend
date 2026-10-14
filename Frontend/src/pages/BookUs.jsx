@@ -1180,7 +1180,58 @@ export default function BookUs() {
     }
 
     return (
-      <div className="bg-[#FAFAFA] flex min-h-[80vh] flex-col items-center justify-center px-4 py-16 text-center">
+      <div className={`flex min-h-[80vh] flex-col items-center justify-center px-4 py-16 text-center transition-colors duration-300 ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`}>
+        {/* Scoped CSS to enforce high-contrast white ticket in Night Mode strictly on this confirmation card */}
+        <style>{`
+          body.night-dive .booking-confirmation-ticket,
+          .night-dive .booking-confirmation-ticket {
+            background-color: #ffffff !important;
+            border-color: rgba(0, 30, 61, 0.2) !important;
+            box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.25) !important;
+          }
+          body.night-dive .booking-confirmation-ticket span,
+          body.night-dive .booking-confirmation-ticket div,
+          body.night-dive .booking-confirmation-ticket p,
+          body.night-dive .booking-confirmation-ticket strong,
+          body.night-dive .booking-confirmation-ticket [class*="text-navy"],
+          body.night-dive .booking-confirmation-ticket [class*="text-navy/"],
+          .night-dive .booking-confirmation-ticket span,
+          .night-dive .booking-confirmation-ticket div,
+          .night-dive .booking-confirmation-ticket p,
+          .night-dive .booking-confirmation-ticket strong,
+          .night-dive .booking-confirmation-ticket [class*="text-navy"],
+          .night-dive .booking-confirmation-ticket [class*="text-navy/"] {
+            color: #001e3d !important;
+          }
+          body.night-dive .booking-confirmation-ticket .ticket-label,
+          .night-dive .booking-confirmation-ticket .ticket-label {
+            color: rgba(0, 30, 61, 0.6) !important;
+          }
+          body.night-dive .booking-confirmation-ticket .ticket-subvalue,
+          .night-dive .booking-confirmation-ticket .ticket-subvalue {
+            color: rgba(0, 30, 61, 0.72) !important;
+          }
+          body.night-dive .booking-confirmation-ticket .ticket-participant-card,
+          .night-dive .booking-confirmation-ticket .ticket-participant-card {
+            background-color: #F3F5F8 !important;
+            border-color: rgba(0, 30, 61, 0.1) !important;
+            color: #001e3d !important;
+          }
+          body.night-dive .booking-confirmation-ticket .ticket-addon-badge,
+          .night-dive .booking-confirmation-ticket .ticket-addon-badge,
+          body.night-dive .booking-confirmation-ticket .ticket-course-badge,
+          .night-dive .booking-confirmation-ticket .ticket-course-badge {
+            background-color: #FFF3C4 !important;
+            color: #7A5500 !important;
+            border: 1px solid rgba(255, 205, 0, 0.45) !important;
+          }
+          body.night-dive .booking-confirmation-ticket div[class*="border-b"],
+          body.night-dive .booking-confirmation-ticket div[class*="border-t"],
+          .night-dive .booking-confirmation-ticket div[class*="border-b"],
+          .night-dive .booking-confirmation-ticket div[class*="border-t"] {
+            border-color: rgba(0, 30, 61, 0.1) !important;
+          }
+        `}</style>
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1209,21 +1260,21 @@ export default function BookUs() {
           </p>
 
           <div className="my-10 relative">
-            {/* Ticket Cutout Effect */}
-            <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#FAFAFA] rounded-full shadow-[inset_-3px_0_6px_rgba(0,0,0,0.02)] z-10" />
-            <div className="absolute -right-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#FAFAFA] rounded-full shadow-[inset_3px_0_6px_rgba(0,0,0,0.02)] z-10" />
+            {/* Ticket Cutout Effect matching outer card background */}
+            <div className={`absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full shadow-[inset_-3px_0_6px_rgba(0,0,0,0.02)] z-10 transition-colors ${isNightDive ? '!bg-[#001e3d]' : 'bg-[#FAFAFA]'}`} />
+            <div className={`absolute -right-12 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full shadow-[inset_3px_0_6px_rgba(0,0,0,0.02)] z-10 transition-colors ${isNightDive ? '!bg-[#001e3d]' : 'bg-[#FAFAFA]'}`} />
 
-            <div className="rounded-3xl bg-[#F8F9FA] p-6 text-left space-y-4 text-xs sm:text-sm border border-dashed border-navy/20 relative z-0">
+            <div className={`booking-confirmation-ticket rounded-3xl p-6 text-left space-y-4 text-xs sm:text-sm border border-dashed relative z-0 transition-all ${isNightDive ? '!bg-white border-[#001e3d]/25 shadow-md' : 'bg-[#F8F9FA] border-navy/20'}`}>
               <div className="flex justify-between items-start border-b border-navy/5 pb-3">
-                <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Experience & Location</span>
-                <span className="font-bold text-navy text-right leading-tight max-w-[60%]">{bookingExperience} <br /><span className="text-navy/60 font-medium text-[11px] sm:text-xs">{bookingLocation}</span></span>
+                <span className={`ticket-label font-semibold uppercase tracking-wider text-[10px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/60' : 'text-navy/50'}`}>Experience & Location</span>
+                <span className={`ticket-value font-bold text-right leading-tight max-w-[60%] ${isNightDive ? '!text-[#001e3d]' : 'text-navy'}`}>{bookingExperience} <br /><span className={`ticket-subvalue font-medium text-[11px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/70' : 'text-navy/60'}`}>{bookingLocation}</span></span>
               </div>
               {activeAddOns.length > 0 && booking.experience && (
                 <div className="flex justify-between items-start border-b border-navy/5 pb-3">
-                  <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Add Ons</span>
+                  <span className={`ticket-label font-semibold uppercase tracking-wider text-[10px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/60' : 'text-navy/50'}`}>Add Ons</span>
                   <div className="flex flex-wrap gap-1 justify-end max-w-[65%]">
                     {activeAddOns.map((addOn) => (
-                      <span key={addOn} className="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[11px] font-bold">
+                      <span key={addOn} className={`ticket-addon-badge px-2 py-0.5 rounded-full text-[11px] font-bold ${isNightDive ? '!bg-[#FFF3C4] !text-[#7A5500] border border-[#FFCD00]/40' : 'bg-accent/15 text-accent'}`}>
                         {addOn}
                       </span>
                     ))}
@@ -1231,13 +1282,13 @@ export default function BookUs() {
                 </div>
               )}
               <div className="flex justify-between items-start border-b border-navy/5 pb-3">
-                <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Date & Group</span>
-                <span className="font-bold text-navy text-right leading-tight max-w-[60%]">{formatDateToDDMMYYYY(bookingDate)} <br /><span className="text-navy/60 font-medium text-[11px] sm:text-xs">{bookingParticipants.length} Person{bookingParticipants.length > 1 ? 's' : ''}</span></span>
+                <span className={`ticket-label font-semibold uppercase tracking-wider text-[10px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/60' : 'text-navy/50'}`}>Date & Group</span>
+                <span className={`ticket-value font-bold text-right leading-tight max-w-[60%] ${isNightDive ? '!text-[#001e3d]' : 'text-navy'}`}>{formatDateToDDMMYYYY(bookingDate)} <br /><span className={`ticket-subvalue font-medium text-[11px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/70' : 'text-navy/60'}`}>{bookingParticipants.length} Person{bookingParticipants.length > 1 ? 's' : ''}</span></span>
               </div>
 
               {!isDirect && (
                 <div className="space-y-3 pt-1">
-                  <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs block mb-2">Participants & Programs</span>
+                  <span className={`ticket-label font-semibold uppercase tracking-wider text-[10px] sm:text-xs block mb-2 ${isNightDive ? '!text-[#001e3d]/60' : 'text-navy/50'}`}>Participants & Programs</span>
                   {bookingParticipants.map((p, idx) => {
                     const prog = COURSE_CATALOG.find((pr) => pr.id === p.selectedProgram)
                     const certNames = (p.certifications || [])
@@ -1251,12 +1302,12 @@ export default function BookUs() {
                       : `${booking.experience} Program`
 
                     return (
-                      <div key={idx} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-navy/5">
+                      <div key={idx} className={`ticket-participant-card flex justify-between items-center p-4 rounded-2xl shadow-sm border ${isNightDive ? '!bg-[#F3F5F8] !border-[#001e3d]/10' : 'bg-white border-navy/5'}`}>
                         <div className="pr-3">
-                          <span className="font-bold text-navy text-sm block mb-0.5">{p.name || `Participant ${idx + 1}`}</span>
-                          <span className="text-[10px] sm:text-[11px] text-navy/50 leading-tight block">Age: {p.age || 'N/A'} • {certSummary}</span>
+                          <span className={`ticket-name font-bold text-sm block mb-0.5 ${isNightDive ? '!text-[#001e3d]' : 'text-navy'}`}>{p.name || `Participant ${idx + 1}`}</span>
+                          <span className={`ticket-subvalue text-[10px] sm:text-[11px] leading-tight block ${isNightDive ? '!text-[#001e3d]/65' : 'text-navy/50'}`}>Age: {p.age || 'N/A'} • {certSummary}</span>
                         </div>
-                        <span className="font-bold text-accent text-[10px] bg-accent/10 px-2.5 py-1.5 rounded-full text-center shrink-0 max-w-[110px] leading-tight">
+                        <span className={`ticket-course-badge font-bold text-[10px] px-2.5 py-1.5 rounded-full text-center shrink-0 max-w-[110px] leading-tight ${isNightDive ? '!bg-[#FFF3C4] !text-[#7A5500] border border-[#FFCD00]/40' : 'text-accent bg-accent/10'}`}>
                           {getCourseDisplayName(prog?.name || 'Selected Course')}
                         </span>
                       </div>
@@ -1266,8 +1317,8 @@ export default function BookUs() {
               )}
 
               <div className="flex justify-between items-start border-t border-navy/10 pt-4 mt-2">
-                <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Contact Info</span>
-                <span className="font-bold text-navy text-right leading-tight max-w-[60%]">{bookingContact.email} <br /><span className="text-navy/60 font-medium text-[11px] sm:text-xs">{bookingContact.phone || 'N/A'}</span></span>
+                <span className={`ticket-label font-semibold uppercase tracking-wider text-[10px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/60' : 'text-navy/50'}`}>Contact Info</span>
+                <span className={`ticket-value font-bold text-right leading-tight max-w-[60%] ${isNightDive ? '!text-[#001e3d]' : 'text-navy'}`}>{bookingContact.email} <br /><span className={`ticket-subvalue font-medium text-[11px] sm:text-xs ${isNightDive ? '!text-[#001e3d]/70' : 'text-navy/60'}`}>{bookingContact.phone || 'N/A'}</span></span>
               </div>
             </div>
           </div>
@@ -1283,7 +1334,7 @@ export default function BookUs() {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }
             }}
-            className="relative z-10 rounded-full bg-navy px-8 py-4 sm:py-5 text-sm sm:text-base font-bold text-white transition-all hover:bg-accent hover:text-navy hover:scale-[1.02] active:scale-[0.98] w-full shadow-[0_8px_20px_rgba(0,56,101,0.15)] cursor-pointer"
+            className={`relative z-10 rounded-full px-8 py-4 sm:py-5 text-sm sm:text-base font-bold transition-all hover:scale-[1.02] active:scale-[0.98] w-full shadow-[0_8px_20px_rgba(0,56,101,0.15)] cursor-pointer ${isNightDive ? '!bg-[#FFCD00] !text-[#001e3d] hover:!bg-white' : 'bg-navy text-white hover:bg-accent hover:text-navy'}`}
           >
             Submit Another Booking
           </button>
