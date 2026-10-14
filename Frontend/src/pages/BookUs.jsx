@@ -1158,7 +1158,12 @@ export default function BookUs() {
       }
     } catch (err) {
       triggerErrorHaptic()
-      setStepError(err.message || 'Failed to submit booking. Please check your network and try again.')
+      const rawMsg = err.message || ''
+      if (rawMsg.toLowerCase().includes('timeout')) {
+        setStepError('The server took longer than expected to reply. Please check your connection or contact us.')
+      } else {
+        setStepError(rawMsg || 'Failed to submit booking. Please check your network and try again.')
+      }
     } finally {
       setIsSubmitting(false)
     }

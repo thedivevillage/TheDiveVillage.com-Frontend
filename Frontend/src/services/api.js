@@ -18,7 +18,7 @@ export const isApiConfigured = true
 const api = axios.create({
   baseURL: apiBaseUrl,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30000,
+  timeout: 45000,
 })
 
 api.interceptors.request.use((config) => {
