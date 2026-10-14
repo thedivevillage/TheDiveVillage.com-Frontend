@@ -885,6 +885,27 @@ html body.night-dive a.hero-btn:hover * {
   box-shadow: none !important;
 }
 
+.night-dive #main-toolbar button,
+.night-dive #main-toolbar a,
+.night-dive #main-toolbar span,
+.night-dive #main-toolbar p,
+.night-dive #main-toolbar svg {
+  color: #ffffff !important;
+}
+
+.night-dive #main-toolbar button:hover,
+.night-dive #main-toolbar a:hover {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+}
+
+.night-dive #main-toolbar button:hover *,
+.night-dive #main-toolbar a:hover * {
+  color: #001e3d !important;
+  stroke: #001e3d !important;
+}
+
 .night-dive footer,
 .night-dive footer>div,
 .night-dive footer .bg-navy,
@@ -1123,6 +1144,31 @@ a.glass-btn:hover,
 
 .faq-box-btn:hover {
   background-color: rgba(0, 56, 101, 0.05) !important;
+}
+
+/* In Night Dive Mode: FAQ Button and text MUST BE WHITE */
+.night-dive .faq-box-btn,
+.night-dive .faq-box-btn:focus,
+.night-dive .faq-box-btn:active {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.night-dive .faq-box-btn *,
+.night-dive .faq-box-btn span {
+  color: #ffffff !important;
+}
+
+.night-dive .faq-box-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #FFCD00 !important;
+}
+
+.night-dive .faq-box-btn:hover * {
+  color: #FFCD00 !important;
 }
 
 /* Night-dive button contrast adjustment */
@@ -1604,8 +1650,8 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
 
 /* ==========================================================================
    GLOBAL NIGHT DIVE RULES (User Requirements):
-   1. IN NIGHT DIVE MODE ALL THE TEXT ON A DARK BG SHD BE WHITE across all pages
-   2. If background is white, text HAS to be in dark blue (#001e3d)
+   1. IN NIGHT DIVE MODE ALL THE TEXT ON A DARK BG MUST BE WHITE across all pages
+   2. If background is white (e.g. Shop Product Cards), text HAS to be in dark blue (#001e3d)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -1614,60 +1660,104 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
    -------------------------------------------------------------------------- */
 
 /* A. Any dark-colored text classes on dark background become crisp white */
-body.night-dive [class*="text-navy"],
-body.night-dive [class*="text-slate-"],
-body.night-dive [class*="text-gray-"],
-body.night-dive [class*="text-zinc-"],
-body.night-dive [class*="text-neutral-"],
-body.night-dive [class*="text-black"],
-body.night-dive [class*="text-[#001e3d]"],
-body.night-dive [class*="text-[#001428]"],
-body.night-dive [class*="text-[#003865]"],
-body.night-dive [class*="text-[#00223D]"],
-.night-dive [class*="text-navy"],
-.night-dive [class*="text-slate-"],
-.night-dive [class*="text-gray-"],
-.night-dive [class*="text-zinc-"],
-.night-dive [class*="text-neutral-"],
-.night-dive [class*="text-black"],
-.night-dive [class*="text-[#001e3d]"],
-.night-dive [class*="text-[#001428]"],
-.night-dive [class*="text-[#003865]"],
-.night-dive [class*="text-[#00223D]"] {
+body.night-dive [class*="text-navy"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-slate-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-gray-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-zinc-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-neutral-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-black"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#001e3d]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#001428]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#003865]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#00223D]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-navy"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-slate-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-gray-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-zinc-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-neutral-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-black"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#001e3d]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#001428]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#003865]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#00223D]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *) {
   color: #ffffff !important;
 }
 
-/* B. All headings, labels, paragraphs, list items, table text on dark containers become white */
-body.night-dive h1:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive h2:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive h3:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive h4:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive h5:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive h6:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive p:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive label:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive li:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive dt:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive dd:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-body.night-dive th:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *),
-body.night-dive td:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *),
-.night-dive h1:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive h2:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive h3:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive h4:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive h5:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive h6:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive p:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive label:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive li:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive dt:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive dd:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
-.night-dive th:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *),
-.night-dive td:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *) {
+/* B. All typography on dark containers become crisp white */
+body.night-dive h1:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h2:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h3:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h4:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h5:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h6:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive p:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive label:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive li:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive dt:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive dd:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive th:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive td:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive span:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
+body.night-dive a:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+body.night-dive button:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+.night-dive h1:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h2:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h3:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h4:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h5:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h6:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive p:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive label:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive li:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive dt:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive dd:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive th:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive td:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive span:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
+.night-dive a:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+.night-dive button:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover) {
   color: #ffffff !important;
 }
 
-/* C. Form input values, selects, textareas on dark background */
+/* C. Secondary / Muted subtext on dark background */
+body.night-dive [class*="text-navy/70"]:not([data-product-card] *),
+body.night-dive [class*="text-navy/80"]:not([data-product-card] *),
+body.night-dive [class*="text-navy/60"]:not([data-product-card] *),
+body.night-dive [class*="text-navy/50"]:not([data-product-card] *),
+body.night-dive [class*="text-slate-600"]:not([data-product-card] *),
+body.night-dive [class*="text-slate-500"]:not([data-product-card] *),
+body.night-dive [class*="text-slate-400"]:not([data-product-card] *),
+body.night-dive [class*="text-gray-600"]:not([data-product-card] *),
+body.night-dive [class*="text-gray-500"]:not([data-product-card] *),
+body.night-dive [class*="text-gray-400"]:not([data-product-card] *),
+.night-dive [class*="text-navy/70"]:not([data-product-card] *),
+.night-dive [class*="text-navy/80"]:not([data-product-card] *),
+.night-dive [class*="text-navy/60"]:not([data-product-card] *),
+.night-dive [class*="text-navy/50"]:not([data-product-card] *),
+.night-dive [class*="text-slate-600"]:not([data-product-card] *),
+.night-dive [class*="text-slate-500"]:not([data-product-card] *),
+.night-dive [class*="text-slate-400"]:not([data-product-card] *),
+.night-dive [class*="text-gray-600"]:not([data-product-card] *),
+.night-dive [class*="text-gray-500"]:not([data-product-card] *),
+.night-dive [class*="text-gray-400"]:not([data-product-card] *) {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+/* D. Icon circles and sub-widgets on dark cards */
+.night-dive [class*="bg-navy/5"],
+.night-dive [class*="bg-navy/10"],
+.night-dive [class*="bg-navy/[0.04]"],
+.night-dive [class*="bg-[#F0F2F5]"]:not(form *):not(input):not(select):not(textarea):not(.PhoneInput):not(.PhoneInput *) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.night-dive svg:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="stroke-[#FF"]):not([class*="stroke-accent"]) {
+  stroke: currentColor;
+}
+
+/* E. Form input values, selects, textareas on dark background */
 body.night-dive input:not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
 body.night-dive textarea:not([data-product-card] *),
 body.night-dive select:not([data-product-card] *),
@@ -1683,7 +1773,7 @@ body.night-dive select option,
   color: #ffffff !important;
 }
 
-/* D. Preserve accent colored text (do not turn yellow/gold, emerald, red, cyan white) */
+/* F. Preserve accent colored text (do not turn yellow/gold, emerald, red, cyan white) */
 body.night-dive .text-accent,
 body.night-dive [class*="text-accent"],
 body.night-dive [class*="text-[#FFCD00]"],
@@ -1720,57 +1810,48 @@ body.night-dive [class*="text-sky-"],
 
 /* --------------------------------------------------------------------------
    RULE 2: TEXT ON A WHITE BACKGROUND MUST BE DARK BLUE (#001e3d)
-   Preserved exclusively on surfaces that maintain a white background in Night Mode.
+   Preserved exclusively on surfaces that maintain a genuine white background in Night Mode.
    -------------------------------------------------------------------------- */
 
 /* A. Shop Product Cards: white cards with dark blue title & text */
 body.night-dive [data-product-card],
+body.night-dive [data-product-card] h1,
+body.night-dive [data-product-card] h2,
 body.night-dive [data-product-card] h3,
+body.night-dive [data-product-card] h4,
 body.night-dive [data-product-card] .product-card-title,
 body.night-dive [data-product-card] p,
-body.night-dive [data-product-card] span:not([class*="bg-"]):not([class*="text-[#FF"]):not([class*="text-accent"]),
+body.night-dive [data-product-card] span:not([class*="bg-"]):not([class*="text-[#FF"]):not([class*="text-accent"]):not([class*="text-[#00AEC7]"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]),
+body.night-dive [data-product-card] a:not([class*="text-[#00AEC7]"]):not(.product-card-link):not(.product-add-btn):not(.product-wishlist-btn),
 .night-dive [data-product-card],
+.night-dive [data-product-card] h1,
+.night-dive [data-product-card] h2,
 .night-dive [data-product-card] h3,
+.night-dive [data-product-card] h4,
 .night-dive [data-product-card] .product-card-title,
 .night-dive [data-product-card] p,
-.night-dive [data-product-card] span:not([class*="bg-"]):not([class*="text-[#FF"]):not([class*="text-accent"]) {
+.night-dive [data-product-card] span:not([class*="bg-"]):not([class*="text-[#FF"]):not([class*="text-accent"]):not([class*="text-[#00AEC7]"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]),
+.night-dive [data-product-card] a:not([class*="text-[#00AEC7]"]):not(.product-card-link):not(.product-add-btn):not(.product-wishlist-btn) {
   color: #001e3d !important;
 }
 
-/* B. White Buttons across all pages: dark blue text */
-body.night-dive button.bg-white,
-body.night-dive a.bg-white,
-body.night-dive button[class*="bg-white"],
-body.night-dive a[class*="bg-white"],
-body.night-dive .btn-white,
-.night-dive button.bg-white,
-.night-dive a.bg-white,
-.night-dive button[class*="bg-white"],
-.night-dive a[class*="bg-white"],
-.night-dive .btn-white {
-  color: #001e3d !important;
-}
-
-body.night-dive button.bg-white *,
-body.night-dive a.bg-white *,
-body.night-dive button[class*="bg-white"] *,
-body.night-dive a[class*="bg-white"] *,
-body.night-dive .btn-white *,
-.night-dive button.bg-white *,
-.night-dive a.bg-white *,
-.night-dive button[class*="bg-white"] *,
-.night-dive a[class*="bg-white"] *,
-.night-dive .btn-white * {
-  color: #001e3d !important;
-}
-
-/* C. Booking confirmation white ticket */
+/* B. Booking confirmation white ticket */
 body.night-dive .booking-confirmation-ticket,
 body.night-dive .booking-confirmation-ticket .ticket-value,
 body.night-dive .booking-confirmation-ticket .ticket-name,
+body.night-dive .booking-confirmation-ticket h1,
+body.night-dive .booking-confirmation-ticket h2,
+body.night-dive .booking-confirmation-ticket h3,
+body.night-dive .booking-confirmation-ticket h4,
+body.night-dive .booking-confirmation-ticket p,
 .night-dive .booking-confirmation-ticket,
 .night-dive .booking-confirmation-ticket .ticket-value,
-.night-dive .booking-confirmation-ticket .ticket-name {
+.night-dive .booking-confirmation-ticket .ticket-name,
+.night-dive .booking-confirmation-ticket h1,
+.night-dive .booking-confirmation-ticket h2,
+.night-dive .booking-confirmation-ticket h3,
+.night-dive .booking-confirmation-ticket h4,
+.night-dive .booking-confirmation-ticket p {
   color: #001e3d !important;
 }
 
@@ -1784,13 +1865,15 @@ body.night-dive .booking-confirmation-ticket .ticket-subvalue,
   color: rgba(0, 30, 61, 0.75) !important;
 }
 
-/* D. Sizing Table Header in Product Detail */
+/* C. Sizing Table Header in Product Detail */
 body.night-dive .sizing-table-header,
-.night-dive .sizing-table-header {
+body.night-dive .sizing-table-header th,
+.night-dive .sizing-table-header,
+.night-dive .sizing-table-header th {
   color: #001e3d !important;
 }
 
-/* E. Any element explicitly keeping a white background */
+/* D. Any element explicitly keeping a white background */
 body.night-dive [data-bg-white],
 body.night-dive [data-bg-white] *,
 .night-dive [data-bg-white],
