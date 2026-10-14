@@ -2,14 +2,14 @@ let app = null
 let auth = null
 let authModule = null
 
-// Fallback configuration strictly for local development when environment variables are omitted
+// Default configuration pointing to production project (the-dive-village)
 const DEV_FALLBACK_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyC5-WeuVzMZxq5A31jMqoTq33TZH9Mx008',
-  authDomain: 'dive-village-testing.firebaseapp.com',
-  projectId: 'dive-village-testing',
-  storageBucket: 'dive-village-testing.firebasestorage.app',
-  messagingSenderId: '65243166255',
-  appId: '1:65243166255:web:f4d281ac4e5bf9525c38da',
+  apiKey: 'AIzaSyDAxPsEFVub2IVrpSuCQxCn-JnsBU0NbdY',
+  authDomain: 'the-dive-village.firebaseapp.com',
+  projectId: 'the-dive-village',
+  storageBucket: 'the-dive-village.firebasestorage.app',
+  messagingSenderId: '458045547653',
+  appId: '1:458045547653:web:54a40c550a07edf8d8b5ec',
 }
 
 const getEnvVar = (key) => (import.meta.env[key] || '').trim()
