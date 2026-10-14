@@ -10,6 +10,7 @@ import { triggerHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { useLenis } from '../utils/lenisReact'
 import { getOptimizedImageUrl, getOptimizedVideoPoster } from '../utils/mediaOptimizer'
+import useNightDive from '../hooks/useNightDive'
 
 const diversBg = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791458258/TDV-Media/Products/Group/4M7A6732.jpg'
 
@@ -20,6 +21,7 @@ const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
 }))
 
 export default function Gallery() {
+  const isNightDive = useNightDive()
   const [itemsList, setItemsList] = useState(SANITIZED_GALLERY_ITEMS)
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(null)
   const reduce = useReducedMotion()
@@ -185,7 +187,7 @@ export default function Gallery() {
   }
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden" style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden transition-colors duration-300 ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'}`} style={{ textShadow: 'none' }}>
       <SEOHead
         title="Underwater Photography & Scuba Gallery | The Dive Village"
         description="Explore our visual gallery of underwater expeditions, vibrant coral reefs, sea turtle encounters, and diving moments captured at The Dive Village."
@@ -223,17 +225,21 @@ export default function Gallery() {
         </div>
 
         {/* 4. INSTAGRAM & COMMUNITY SECTION */}
-        <div className="rounded-[40px] bg-[#F0F2F5] p-8 sm:p-14 mb-24">
+        <div className={`rounded-[40px] p-8 sm:p-14 mb-24 transition-colors duration-300 ${
+          isNightDive
+            ? 'bg-[#001e3d] text-white border border-white/10 shadow-lg'
+            : 'bg-[#F0F2F5] text-navy'
+        }`}>
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8">
               <span className="text-accent font-bold tracking-widest uppercase text-xs mb-3 block">
                 #TheDiveVillage
               </span>
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-navy mb-4">
+              <h2 className={`font-heading text-3xl sm:text-4xl font-bold mb-4 ${isNightDive ? 'text-white' : 'text-navy'}`}>
                 Tag Us in Your Ocean Adventures
               </h2>
-              <p className="text-navy/75 text-sm sm:text-base leading-relaxed max-w-2xl">
-                Every moment tells a story of discovery and courage. Share your dive logs, underwater encounters, and island moments with <span className="font-bold text-navy">@TheDiveVillage</span> on Instagram to get featured on our wall.
+              <p className={`text-sm sm:text-base leading-relaxed max-w-2xl ${isNightDive ? 'text-white/80' : 'text-navy/75'}`}>
+                Every moment tells a story of discovery and courage. Share your dive logs, underwater encounters, and island moments with <span className={`font-bold ${isNightDive ? 'text-[#FFCD00]' : 'text-navy'}`}>@TheDiveVillage</span> on Instagram to get featured on our wall.
               </p>
             </div>
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
@@ -241,11 +247,24 @@ export default function Gallery() {
                 href="https://www.instagram.com/thedivevillage"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-navy text-white px-8 py-4 text-center text-sm font-bold shadow-soft hover:bg-accent hover:text-navy transition"
+                className={`rounded-full px-8 py-4 text-center text-sm font-bold shadow-soft transition ${
+                  isNightDive
+                    ? 'bg-accent text-[#001e3d] hover:bg-white hover:text-navy'
+                    : 'bg-navy text-white hover:bg-accent hover:text-navy'
+                }`}
               >
                 Follow on Instagram →
               </a>
-              <Button as={Link} to="/book-us" variant="secondary" className="justify-center !border-navy/20 !text-navy hover:!bg-navy/5">
+              <Button
+                as={Link}
+                to="/book-us"
+                variant="secondary"
+                className={`justify-center ${
+                  isNightDive
+                    ? '!border-white/20 !text-white hover:!bg-white/10'
+                    : '!border-navy/20 !text-navy hover:!bg-navy/5'
+                }`}
+              >
                 Join Next Expedition
               </Button>
             </div>

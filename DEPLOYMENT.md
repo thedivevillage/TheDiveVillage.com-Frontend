@@ -1,6 +1,6 @@
-# 🚀 Deployment Guide (Cloudflare Pages & Vercel)
+# 🚀 Deployment Guide (Cloudflare Pages)
 
-This guide outlines everything you need to deploy **The Dive Village Frontend** to **Cloudflare Pages** or **Vercel** seamlessly.
+This guide outlines everything you need to deploy **The Dive Village Frontend** to **Cloudflare Pages** seamlessly.
 
 ---
 
@@ -25,29 +25,13 @@ This guide outlines everything you need to deploy **The Dive Village Frontend** 
 
 ---
 
-## ⚡ Vercel Deployment
+## 🔑 Environment Variables Reference
 
-1. **Push to GitHub**: Make sure all changes on `TheDiveVillage.com-Frontend` are committed and pushed.
-2. **Import to Vercel**:
-   - Go to [vercel.com](https://vercel.com) and click **"Add New..." > "Project"**.
-   - Select and import your **`TheDiveVillage.com-Frontend`** GitHub repository.
-3. **Configure Settings**:
-   - **Framework Preset**: Vite (detected automatically)
-   - **Root Directory**: `./` (Default - root monorepo config handles workspaces automatically)
-   - **Build Command**: `npm run build --workspace=Frontend` (configured in `vercel.json`)
-   - **Output Directory**: `Frontend/dist` (configured in `vercel.json`)
-4. **Environment Variables**: Add your backend URL and Firebase configuration (see list below).
-5. **Deploy**: Click **Deploy**!
-
----
-
-## 🔑 Environment Variables
-
-In your Vercel Dashboard, go to **Project Settings > Environment Variables** and add the following:
+In Cloudflare Pages Dashboard, go to **Settings > Environment variables** and add:
 
 | Variable Name | Description | Example / Fallback |
 | :--- | :--- | :--- |
-| `VITE_API_BASE_URL` | Your Backend API base URL | `https://api.thedivevillage.com` (or your deployed backend) |
+| `VITE_API_BASE_URL` | Your Backend API base URL | `https://the-dive-village-backend.onrender.com` (or left blank for static fallback) |
 | `VITE_FIREBASE_API_KEY` | Firebase Web API Key | `AIzaSy...` |
 | `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | `thedivevillage.firebaseapp.com` |
 | `VITE_FIREBASE_PROJECT_ID` | Firebase Project ID | `thedivevillage` |
@@ -55,7 +39,7 @@ In your Vercel Dashboard, go to **Project Settings > Environment Variables** and
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase Sender ID | `1234567890` |
 | `VITE_FIREBASE_APP_ID` | Firebase App ID | `1:1234567890:web:abcdef` |
 
-*(Note: If Firebase environment variables are not provided, the app will gracefully run in guest/demo mode without crashing).*
+*(Note: When `VITE_API_BASE_URL` is omitted, the frontend automatically serves catalog items and experiences using static offline assets and will never request local device permissions).*
 
 ---
 
