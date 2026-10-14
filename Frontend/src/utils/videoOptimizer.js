@@ -64,7 +64,8 @@ export function get360PosterUrl(url, { width = 3840, quality = 'best' } = {}) {
 
   if (url.startsWith('/media/')) {
     const cleanKey = url.replace(/^\/media\//, '').replace(/\.(mp4|m3u8|webm)$/i, '')
-    return `https://res.cloudinary.com/qvbunv8y/video/upload/so_0,f_webp,q_auto:${quality},c_limit,w_${width}/${encodeURI(cleanKey)}.webp`
+    const baseKey = cleanKey.split('/').pop()
+    return `https://res.cloudinary.com/q7b4kjd9/video/upload/so_0,f_webp,q_auto:${quality},c_limit,w_${width}/${encodeURI(baseKey)}.webp`
   }
 
   if (url.includes('res.cloudinary.com') && url.includes('/video/upload/')) {

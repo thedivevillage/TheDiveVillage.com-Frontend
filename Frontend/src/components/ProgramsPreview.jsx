@@ -2,7 +2,7 @@ import LazyVideo from './LazyVideo'
 import { Link, useNavigate } from 'react-router'
 import SectionReveal, { StaggerGrid, StaggerItem } from './SectionReveal'
 import { CAROUSEL_IMAGES } from '../utils/images'
-// Legacy bbgt5nk7 video retired; falls back to CAROUSEL_IMAGES[2]
+// Merch suit video retired; falls back to CAROUSEL_IMAGES[2]
 const diveSuitVid = null;
 const tryDiveVid = '/media/TDV-Media/Services/Try_Dive.mp4';
 const certVid = '/media/TDV-Media/Services/Open_Water_Diver.mp4';

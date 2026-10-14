@@ -48,7 +48,7 @@ export function getLqipUrl(url, { isVideo = false } = {}) {
 
   if (url.startsWith('/media/')) {
     const cleanKey = url.replace(/^\/media\//, '').replace(/\.(mp4|mov|webm)$/i, '')
-    return `https://res.cloudinary.com/qvbunv8y/video/upload/so_2,w_40,q_20,f_auto,e_blur:200/${encodeURI(cleanKey)}.jpg`
+    return `https://res.cloudinary.com/q7b4kjd9/video/upload/so_2,w_40,q_20,f_auto,e_blur:200/${encodeURI(cleanKey)}.jpg`
   }
 
   if (url.includes('res.cloudinary.com')) {
@@ -85,7 +85,7 @@ export function getOptimizedVideoPoster(url, { width = 1200 } = {}) {
 
   if (url.startsWith('/media/')) {
     const cleanKey = url.replace(/^\/media\//, '').replace(/\.(mp4|mov|webm)$/i, '')
-    return `https://res.cloudinary.com/qvbunv8y/video/upload/so_2,w_${width},q_auto:best,f_auto/${encodeURI(cleanKey)}.webp`
+    return `https://res.cloudinary.com/q7b4kjd9/video/upload/so_2,w_${width},q_auto:best,f_auto/${encodeURI(cleanKey)}.webp`
   }
 
   if (!url.includes('res.cloudinary.com')) {

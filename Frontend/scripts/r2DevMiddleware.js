@@ -7,24 +7,32 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Read credentials from backend env
-const envPath = path.resolve(__dirname, '../../../TheDiveVillage.com-Backend/server/env');
+const envPaths = [
+  path.resolve(__dirname, '../../../TheDiveVillage.com-Backend/server/.env'),
+  path.resolve(__dirname, '../../../TheDiveVillage.com-Backend/server/env'),
+  path.resolve(__dirname, '../.env')
+];
 const env = {};
 
-if (fs.existsSync(envPath)) {
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  envContent.split('\n').forEach(line => {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) return;
-    const eq = trimmed.indexOf('=');
-    if (eq > 0) {
-      const k = trimmed.substring(0, eq).trim();
-      let v = trimmed.substring(eq + 1).trim();
-      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
-        v = v.slice(1, -1);
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const eq = trimmed.indexOf('=');
+      if (eq > 0) {
+        const k = trimmed.substring(0, eq).trim();
+        let v = trimmed.substring(eq + 1).trim();
+        if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+          v = v.slice(1, -1);
+        }
+        if (!env[k]) {
+          env[k] = v;
+        }
       }
-      env[k] = v;
-    }
-  });
+    });
+  }
 }
 
 const r2Creds = {
