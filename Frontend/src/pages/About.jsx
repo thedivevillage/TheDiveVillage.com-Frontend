@@ -1,10 +1,8 @@
 import LazyVideo from '../components/LazyVideo'
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router'
-import { motion, useReducedMotion } from 'framer-motion'
-import Button from '../components/Button'
+import { motion } from 'framer-motion'
 import SafeImage from '../components/SafeImage'
-import SectionReveal, { StaggerGrid, StaggerItem } from '../components/SectionReveal'
+import SectionReveal from '../components/SectionReveal'
 import SEOHead from '../components/SEOHead'
 import MerchBannerCTA from '../components/MerchBannerCTA'
 import { CAROUSEL_IMAGES } from '../utils/images'
@@ -93,7 +91,6 @@ const wordVariants = {
 }
 
 export default function About() {
-  const reduce = useReducedMotion()
   const isNightDive = useNightDive()
   const { approvedReviews } = useReviews()
   const reviewsToDisplay = approvedReviews && approvedReviews.length > 0 ? approvedReviews.slice(0, 3) : TESTIMONIALS
@@ -118,7 +115,7 @@ export default function About() {
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
         <LazyVideo
           key={isNightDive ? 'night-dive-bg' : 'day-diving-bg'}
-          src={isNightDive ? nightDiveVideo : divingVid}
+          src={isNightDive ? nightDiveVideo : aboutVid}
           autoPlay
           loop
           muted
