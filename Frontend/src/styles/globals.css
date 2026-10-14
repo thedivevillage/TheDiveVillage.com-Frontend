@@ -363,14 +363,44 @@
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
-  /* Completely remove hover glow and scale transform on header / toolbar elements */
+  /* Completely remove hover glow, scale transform, focus rings, outlines, and yellow boxes on header / toolbar elements */
   header .proximity-active,
   header button.proximity-active,
   header a.proximity-active,
   header div.proximity-active,
   header button:hover,
-  header a:hover {
+  header a:hover,
+  header button:focus,
+  header a:focus,
+  header button:focus-visible,
+  header a:focus-visible,
+  header button:active,
+  header a:active,
+  #main-toolbar,
+  #main-toolbar *,
+  header#main-toolbar,
+  header#main-toolbar * {
+    outline: none !important;
+    outline-color: transparent !important;
     box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* Prevent yellow box border when tapping toolbar elements on touch devices */
+  @media (hover: none), (pointer: coarse) {
+    #main-toolbar button:active,
+    #main-toolbar a:active,
+    #main-toolbar button:focus,
+    #main-toolbar a:focus,
+    header#main-toolbar button:active,
+    header#main-toolbar a:active,
+    header#main-toolbar button:focus,
+    header#main-toolbar a:focus {
+      outline: none !important;
+      outline-color: transparent !important;
+      box-shadow: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
   }
 
   /* Completely remove hover glow and box shadows on footer elements */

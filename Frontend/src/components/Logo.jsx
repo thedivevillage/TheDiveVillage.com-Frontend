@@ -5,7 +5,7 @@ export default function Logo({ className = '', compact = false, light = false })
   return (
     <Link
       to="/"
-      className={`group inline-flex items-center gap-2.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
+      className={`group inline-flex items-center gap-2.5 outline-none focus:outline-none focus-visible:outline-none ${className}`}
       aria-label="TheDiveVillage home"
     >
       <img 
