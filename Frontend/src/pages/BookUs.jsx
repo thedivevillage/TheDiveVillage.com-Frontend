@@ -1370,7 +1370,7 @@ export default function BookUs() {
   }
 
   return (
-    <div className={`min-h-screen text-navy font-body overflow-x-clip ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`} style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen font-body overflow-x-clip ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'}`} style={{ textShadow: 'none' }}>
       <SEOHead
         title="Book Scuba Diving Courses & Expeditions Online | The Dive Village"
         description="Book certified scuba diving courses, Discovery dives, snorkeling trips, and freediving packages online with instant confirmation at The Dive Village."

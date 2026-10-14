@@ -277,7 +277,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-[68px] sm:pt-[70px] lg:pt-[72px] xl:pt-[74px] 2xl:pt-24 pb-32 sm:pb-24 overflow-x-hidden">
+    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body pt-[68px] sm:pt-[70px] lg:pt-[72px] xl:pt-[74px] 2xl:pt-24 pb-32 sm:pb-24 overflow-x-hidden`}>
       <SEOHead
         title={`${product.title || product.name} | Ocean Apparel | The Dive Village`}
         description={`${product.description}. Premium quality dive gear and eco-friendly apparel crafted by The Dive Village.`}

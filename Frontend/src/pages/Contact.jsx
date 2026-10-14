@@ -279,7 +279,7 @@ export default function Contact() {
   }
 
   return (
-    <div className={`min-h-screen text-navy font-body overflow-x-hidden ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`} style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen font-body overflow-x-hidden ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'}`} style={{ textShadow: 'none' }}>
       <SEOHead
         title="Contact Us & Custom Dive Charters | The Dive Village"
         description="Get in touch with The Dive Village for custom scuba itineraries, diving course enquiries, private boat charters, partnerships, careers, and island travel logistics."

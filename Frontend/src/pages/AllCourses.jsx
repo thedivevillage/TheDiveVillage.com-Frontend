@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'framer-motion'
 import { IMAGES } from '../utils/images'
 import Button from '../components/Button'
+import useNightDive from '../hooks/useNightDive'
 
 const scubaVid = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
 const snorkelingVid = '/media/TDV-Media/Services/Discover_Snorkelling.mp4';
@@ -10,6 +11,7 @@ const freedivingVid = '/media/TDV-Media/Services/Freediver.mp4';
 
 export default function AllCourses() {
   const reduce = useReducedMotion()
+  const isNightDive = useNightDive()
 
   const CATEGORIES = [
     {
@@ -36,7 +38,7 @@ export default function AllCourses() {
   ]
 
   return (
-    <div className="bg-[#f0f9ff] min-h-screen text-navy font-body overflow-x-hidden pt-24 sm:pt-[120px]">
+    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#f0f9ff] text-navy'} min-h-screen font-body overflow-x-hidden pt-24 sm:pt-[120px]`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-20 text-center">
         <span className="text-accent font-bold tracking-widest uppercase text-xs mb-4 block">Our Programs</span>
         <h1 className="font-serif text-5xl sm:text-7xl text-navy leading-[1.1] mb-6">

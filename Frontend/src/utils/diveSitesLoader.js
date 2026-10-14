@@ -1,4 +1,5 @@
 import Papa from 'papaparse'
+import { getCountryBounds } from './countryBounds'
 
 // In-memory cache for parsed dive site data
 let cachedData = null
@@ -506,6 +507,7 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
           const lng = canonical ? canonical[0] : (entry.sumLng / entry.count)
           const lat = canonical ? canonical[1] : (entry.sumLat / entry.count)
 
+          const geoBounds = getCountryBounds(entry.country)
           let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity
           entry.sites.forEach((s) => {
             if (s.longitude < minLng) minLng = s.longitude
@@ -519,7 +521,7 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
             count: entry.count,
             latitude: lat,
             longitude: lng,
-            bounds: minLng !== Infinity ? [[minLng, minLat], [maxLng, maxLat]] : null,
+            bounds: geoBounds || (minLng !== Infinity ? [[minLng, minLat], [maxLng, maxLat]] : null),
             sites: entry.sites,
           }
         })

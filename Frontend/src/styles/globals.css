@@ -1604,68 +1604,203 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
 
 /* ==========================================================================
    GLOBAL NIGHT DIVE RULES (User Requirements):
+   1. IN NIGHT DIVE MODE ALL THE TEXT ON A DARK BG SHD BE WHITE across all pages
+   2. If background is white, text HAS to be in dark blue (#001e3d)
    ========================================================================== */
 
-/* 1. If background is white, text HAS to be in dark blue (#001e3d) */
-body.night-dive .bg-white,
-body.night-dive [style*="background-color: rgb(255, 255, 255)"],
-body.night-dive [style*="background-color: #ffffff"],
-body.night-dive [style*="background: #ffffff"],
-.night-dive .bg-white,
-.night-dive [style*="background-color: #ffffff"],
-.night-dive [style*="background: #ffffff"] {
+/* --------------------------------------------------------------------------
+   RULE 1: ALL TEXT ON A DARK BACKGROUND MUST BE WHITE (#ffffff)
+   Applies across all pages whenever Night Dive mode is active.
+   -------------------------------------------------------------------------- */
+
+/* A. Any dark-colored text classes on dark background become crisp white */
+body.night-dive [class*="text-navy"],
+body.night-dive [class*="text-slate-"],
+body.night-dive [class*="text-gray-"],
+body.night-dive [class*="text-zinc-"],
+body.night-dive [class*="text-neutral-"],
+body.night-dive [class*="text-black"],
+body.night-dive [class*="text-[#001e3d]"],
+body.night-dive [class*="text-[#001428]"],
+body.night-dive [class*="text-[#003865]"],
+body.night-dive [class*="text-[#00223D]"],
+.night-dive [class*="text-navy"],
+.night-dive [class*="text-slate-"],
+.night-dive [class*="text-gray-"],
+.night-dive [class*="text-zinc-"],
+.night-dive [class*="text-neutral-"],
+.night-dive [class*="text-black"],
+.night-dive [class*="text-[#001e3d]"],
+.night-dive [class*="text-[#001428]"],
+.night-dive [class*="text-[#003865]"],
+.night-dive [class*="text-[#00223D]"] {
+  color: #ffffff !important;
+}
+
+/* B. All headings, labels, paragraphs, list items, table text on dark containers become white */
+body.night-dive h1:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive h2:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive h3:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive h4:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive h5:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive h6:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive p:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive label:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive li:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive dt:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive dd:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+body.night-dive th:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *),
+body.night-dive td:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *),
+.night-dive h1:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive h2:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive h3:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive h4:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive h5:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive h6:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive p:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive label:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive li:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive dt:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive dd:not([data-product-card] *):not(button.bg-white *):not(a.bg-white *):not(.booking-confirmation-ticket *),
+.night-dive th:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *),
+.night-dive td:not([data-product-card] *):not(.sizing-table-header):not(.booking-confirmation-ticket *) {
+  color: #ffffff !important;
+}
+
+/* C. Form input values, selects, textareas on dark background */
+body.night-dive input:not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
+body.night-dive textarea:not([data-product-card] *),
+body.night-dive select:not([data-product-card] *),
+.night-dive input:not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
+.night-dive textarea:not([data-product-card] *),
+.night-dive select:not([data-product-card] *) {
+  color: #ffffff !important;
+}
+
+body.night-dive select option,
+.night-dive select option {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+}
+
+/* D. Preserve accent colored text (do not turn yellow/gold, emerald, red, cyan white) */
+body.night-dive .text-accent,
+body.night-dive [class*="text-accent"],
+body.night-dive [class*="text-[#FFCD00]"],
+body.night-dive [class*="text-[#FFD500]"],
+body.night-dive [class*="text-yellow-"],
+body.night-dive [class*="text-amber-"],
+.night-dive .text-accent,
+.night-dive [class*="text-accent"],
+.night-dive [class*="text-[#FFCD00]"],
+.night-dive [class*="text-[#FFD500]"],
+.night-dive [class*="text-yellow-"],
+.night-dive [class*="text-amber-"] {
+  color: #FFCD00 !important;
+}
+
+body.night-dive [class*="text-emerald-"],
+body.night-dive [class*="text-green-"],
+.night-dive [class*="text-emerald-"],
+.night-dive [class*="text-green-"] {
+  color: #10B981 !important;
+}
+
+body.night-dive [class*="text-red-"],
+.night-dive [class*="text-red-"] {
+  color: #EF4444 !important;
+}
+
+body.night-dive [class*="text-cyan-"],
+body.night-dive [class*="text-sky-"],
+.night-dive [class*="text-cyan-"],
+.night-dive [class*="text-sky-"] {
+  color: #00AEC7 !important;
+}
+
+/* --------------------------------------------------------------------------
+   RULE 2: TEXT ON A WHITE BACKGROUND MUST BE DARK BLUE (#001e3d)
+   Preserved exclusively on surfaces that maintain a white background in Night Mode.
+   -------------------------------------------------------------------------- */
+
+/* A. Shop Product Cards: white cards with dark blue title & text */
+body.night-dive [data-product-card],
+body.night-dive [data-product-card] h3,
+body.night-dive [data-product-card] .product-card-title,
+body.night-dive [data-product-card] p,
+body.night-dive [data-product-card] span:not([class*="bg-"]):not([class*="text-[#FF"]):not([class*="text-accent"]),
+.night-dive [data-product-card],
+.night-dive [data-product-card] h3,
+.night-dive [data-product-card] .product-card-title,
+.night-dive [data-product-card] p,
+.night-dive [data-product-card] span:not([class*="bg-"]):not([class*="text-[#FF"]):not([class*="text-accent"]) {
   color: #001e3d !important;
 }
 
-body.night-dive .bg-white h1,
-body.night-dive .bg-white h2,
-body.night-dive .bg-white h3,
-body.night-dive .bg-white h4,
-body.night-dive .bg-white h5,
-body.night-dive .bg-white p,
-body.night-dive .bg-white span:not(.text-accent):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="text-amber"]):not([class*="text-cyan"]),
-.night-dive .bg-white h1,
-.night-dive .bg-white h2,
-.night-dive .bg-white h3,
-.night-dive .bg-white h4,
-.night-dive .bg-white h5,
-.night-dive .bg-white p,
-.night-dive .bg-white span:not(.text-accent):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="text-amber"]):not([class*="text-cyan"]) {
-  color: #001e3d !important;
-}
-
-/* 2. White buttons must have dark blue text (#001e3d) across all pages */
+/* B. White Buttons across all pages: dark blue text */
 body.night-dive button.bg-white,
 body.night-dive a.bg-white,
 body.night-dive button[class*="bg-white"],
 body.night-dive a[class*="bg-white"],
+body.night-dive .btn-white,
 .night-dive button.bg-white,
 .night-dive a.bg-white,
 .night-dive button[class*="bg-white"],
-.night-dive a[class*="bg-white"] {
+.night-dive a[class*="bg-white"],
+.night-dive .btn-white {
   color: #001e3d !important;
 }
 
-body.night-dive button.bg-white span,
-body.night-dive a.bg-white span,
-body.night-dive button[class*="bg-white"] span,
-body.night-dive a[class*="bg-white"] span,
-.night-dive button.bg-white span,
-.night-dive a.bg-white span,
-.night-dive button[class*="bg-white"] span,
-.night-dive a[class*="bg-white"] span {
+body.night-dive button.bg-white *,
+body.night-dive a.bg-white *,
+body.night-dive button[class*="bg-white"] *,
+body.night-dive a[class*="bg-white"] *,
+body.night-dive .btn-white *,
+.night-dive button.bg-white *,
+.night-dive a.bg-white *,
+.night-dive button[class*="bg-white"] *,
+.night-dive a[class*="bg-white"] *,
+.night-dive .btn-white * {
   color: #001e3d !important;
 }
 
-/* 3. Shop page: product names are dark blue in night dive mode */
-body.night-dive [data-product-card] .product-card-title,
-body.night-dive [data-product-card] h3,
-.night-dive [data-product-card] .product-card-title,
-.night-dive [data-product-card] h3 {
+/* C. Booking confirmation white ticket */
+body.night-dive .booking-confirmation-ticket,
+body.night-dive .booking-confirmation-ticket .ticket-value,
+body.night-dive .booking-confirmation-ticket .ticket-name,
+.night-dive .booking-confirmation-ticket,
+.night-dive .booking-confirmation-ticket .ticket-value,
+.night-dive .booking-confirmation-ticket .ticket-name {
   color: #001e3d !important;
 }
 
-/* 4. Any button in 'selected mode' has a white border around it in night dive mode (preserving yellow services category) */
+body.night-dive .booking-confirmation-ticket .ticket-label,
+.night-dive .booking-confirmation-ticket .ticket-label {
+  color: rgba(0, 30, 61, 0.65) !important;
+}
+
+body.night-dive .booking-confirmation-ticket .ticket-subvalue,
+.night-dive .booking-confirmation-ticket .ticket-subvalue {
+  color: rgba(0, 30, 61, 0.75) !important;
+}
+
+/* D. Sizing Table Header in Product Detail */
+body.night-dive .sizing-table-header,
+.night-dive .sizing-table-header {
+  color: #001e3d !important;
+}
+
+/* E. Any element explicitly keeping a white background */
+body.night-dive [data-bg-white],
+body.night-dive [data-bg-white] *,
+.night-dive [data-bg-white],
+.night-dive [data-bg-white] * {
+  color: #001e3d !important;
+}
+
+/* --------------------------------------------------------------------------
+   RULE 3: SELECTED BUTTON BORDERS & VIDEO LIGHTBOX
+   -------------------------------------------------------------------------- */
 body.night-dive button[aria-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
 body.night-dive button[data-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
 body.night-dive button.selected:not([class*="border-[#FFCD00]"]):not(.border-accent),

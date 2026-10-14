@@ -6,8 +6,10 @@ import { useAuth } from '../hooks/useAuth'
 import { formatCurrency } from '../utils/formatCurrency'
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import Button from '../components/Button'
+import useNightDive from '../hooks/useNightDive'
 
 export default function Wishlist() {
+  const isNightDive = useNightDive()
   const { user } = useAuth()
   const { items, count, remove } = useWishlist()
   const { addItem } = useCart()
@@ -72,7 +74,7 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-navy font-body pt-20 sm:pt-32 pb-24" style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} font-body pt-20 sm:pt-32 pb-24`} style={{ textShadow: 'none' }}>
       <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8">
 
         {/* Toast Notification */}

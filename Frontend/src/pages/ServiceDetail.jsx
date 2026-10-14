@@ -6,6 +6,7 @@ import SafeImage from '../components/SafeImage'
 import LazyVideo from '../components/LazyVideo'
 import Button from '../components/Button'
 import SEOHead from '../components/SEOHead'
+import useNightDive from '../hooks/useNightDive'
 
 const DEFAULT_FAQS = [
   {
@@ -24,6 +25,7 @@ const DEFAULT_FAQS = [
 
 export default function ServiceDetail() {
   const { id } = useParams()
+  const isNightDive = useNightDive()
   const [openFaq, setOpenFaq] = useState(null)
   const [selectedFunPackage, setSelectedFunPackage] = useState(FUN_DIVES_PACKAGES[1] || FUN_DIVES_PACKAGES[0])
   const [selectedTimings, setSelectedTimings] = useState(['day'])
@@ -64,7 +66,7 @@ export default function ServiceDetail() {
   const activeHeroDesc = (isFunDivesCombo && selectedFunPackage?.short_desc) ? selectedFunPackage.short_desc : service.short_desc
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body overflow-x-hidden" style={{ textShadow: 'none' }}>
+    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body overflow-x-hidden`} style={{ textShadow: 'none' }}>
       <SEOHead
         title={`${activeHeroTitle} | The Dive Village Services`}
         description={activeHeroDesc || service.long_desc}
@@ -115,7 +117,7 @@ export default function ServiceDetail() {
         </div>
         
         {/* Bottom Ultra-Smooth Dissolve & Merge Layer into page background */}
-        <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent" />
+        <div className={`absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] ${isNightDive ? 'bg-gradient-to-t from-[#003865] via-[#003865]/90 via-45% to-transparent' : 'bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent'}`} />
         
         <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div

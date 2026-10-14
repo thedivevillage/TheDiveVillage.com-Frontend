@@ -7,8 +7,10 @@ import { useAuth } from '../hooks/useAuth'
 import { formatCurrency } from '../utils/formatCurrency'
 import { LOCATION_DATA, COUNTRY_NAMES } from '../data/locationData'
 import { orderService } from '../services/orderService'
+import useNightDive from '../hooks/useNightDive'
 
 export default function Checkout() {
+  const isNightDive = useNightDive()
   const { items, subtotal, clearCart } = useCart()
   const { user } = useAuth()
   const [success, setSuccess] = useState(false)
@@ -289,7 +291,7 @@ export default function Checkout() {
 
   if (success) {
     return (
-      <div className="bg-[#FAFAFA] min-h-screen flex flex-col items-center justify-center px-4 py-24 text-navy font-body" style={{ textShadow: 'none' }}>
+      <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen flex flex-col items-center justify-center px-4 py-24 font-body`} style={{ textShadow: 'none' }}>
         <div className="rounded-[40px] bg-white p-8 sm:p-14 shadow-float max-w-xl w-full border border-navy/5 text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-3xl shadow-soft">
             ✓
@@ -344,7 +346,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-navy font-body pt-24 sm:pt-32 pb-24" style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} font-body pt-24 sm:pt-32 pb-24`} style={{ textShadow: 'none' }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}

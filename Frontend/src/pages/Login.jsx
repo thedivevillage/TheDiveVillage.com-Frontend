@@ -3,9 +3,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import { firebaseAuth } from '../services/firebase'
+import useNightDive from '../hooks/useNightDive'
 const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4'
 
 export default function Login() {
+  const isNightDive = useNightDive()
   const navigate = useNavigate()
   const { login, loginWithGoogle } = useAuth()
   const [email, setEmail] = useState('')
@@ -77,7 +79,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white text-navy font-body relative overflow-hidden">
+    <div className={`min-h-screen flex ${isNightDive ? 'bg-[#001e3d] text-white' : 'bg-white text-navy'} font-body relative overflow-hidden`}>
       
       {/* Left side - Background Video (hidden on mobile) */}
       <div className="hidden lg:block lg:w-[60%] xl:w-[62%] shrink-0 relative bg-white overflow-hidden">

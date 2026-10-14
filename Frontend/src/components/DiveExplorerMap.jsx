@@ -4,6 +4,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandForSite } from '../utils/diveIslandCatalog'
+import { getCountryBounds } from '../utils/countryBounds'
 
 import pinIconUrl from '../assets/pin.png'
 
@@ -581,16 +582,16 @@ export default function DiveExplorerMap({
           if (onSelectCountry) onSelectCountry(countryName)
 
           const countryData = countryCentroidsRef.current.find((c) => c.country === countryName)
-          if (countryData && countryData.bounds) {
-            map.fitBounds(countryData.bounds, {
-              padding: { top: 60, bottom: 60, left: 60, right: 60 },
-              maxZoom: 8.5,
+          const boundsToFit = getCountryBounds(countryName) || countryData?.bounds
+          if (boundsToFit) {
+            map.fitBounds(boundsToFit, {
+              padding: { top: 24, bottom: 24, left: 24, right: 24 },
               duration: 1200,
             })
           } else {
             map.flyTo({
               center: coords,
-              zoom: 7.2,
+              zoom: 6.5,
               duration: 1200,
             })
           }
@@ -846,20 +847,18 @@ export default function DiveExplorerMap({
         const centroid = countryCentroids.find(
           (item) => item.country.toLowerCase() === target.toLowerCase()
         )
-        if (centroid) {
-          if (centroid.bounds) {
-            mapRef.current.fitBounds(centroid.bounds, {
-              padding: { top: 60, bottom: 60, left: 60, right: 60 },
-              maxZoom: 8.5,
-              duration: 1200,
-            })
-          } else {
-            mapRef.current.flyTo({
-              center: [centroid.longitude, centroid.latitude],
-              zoom: 7.2,
-              duration: 1200,
-            })
-          }
+        const boundsToFit = getCountryBounds(target) || centroid?.bounds
+        if (boundsToFit) {
+          mapRef.current.fitBounds(boundsToFit, {
+            padding: { top: 24, bottom: 24, left: 24, right: 24 },
+            duration: 1200,
+          })
+        } else if (centroid) {
+          mapRef.current.flyTo({
+            center: [centroid.longitude, centroid.latitude],
+            zoom: 6.5,
+            duration: 1200,
+          })
         }
       }
     }
@@ -975,17 +974,17 @@ export default function DiveExplorerMap({
     setActiveSite(null)
     if (onSelectCountry) onSelectCountry(c)
     const centroid = countryCentroids.find((item) => item.country === c)
-    if (centroid && mapRef.current) {
-      if (centroid.bounds) {
-        mapRef.current.fitBounds(centroid.bounds, {
-          padding: { top: 60, bottom: 60, left: 60, right: 60 },
-          maxZoom: 8.5,
+    const boundsToFit = getCountryBounds(c) || centroid?.bounds
+    if (mapRef.current) {
+      if (boundsToFit) {
+        mapRef.current.fitBounds(boundsToFit, {
+          padding: { top: 24, bottom: 24, left: 24, right: 24 },
           duration: 1200,
         })
-      } else {
+      } else if (centroid) {
         mapRef.current.flyTo({
           center: [centroid.longitude, centroid.latitude],
-          zoom: 7.2,
+          zoom: 6.5,
           duration: 1200,
         })
       }
