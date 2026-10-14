@@ -516,12 +516,24 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
             if (s.latitude > maxLat) maxLat = s.latitude
           })
 
+          let bounds = geoBounds
+          if (minLng !== Infinity) {
+            if (geoBounds) {
+              bounds = [
+                [Math.min(geoBounds[0][0], minLng - 0.12), Math.min(geoBounds[0][1], minLat - 0.12)],
+                [Math.max(geoBounds[1][0], maxLng + 0.12), Math.max(geoBounds[1][1], maxLat + 0.12)],
+              ]
+            } else {
+              bounds = [[minLng - 0.2, minLat - 0.2], [maxLng + 0.2, maxLat + 0.2]]
+            }
+          }
+
           return {
             country: entry.country,
             count: entry.count,
             latitude: lat,
             longitude: lng,
-            bounds: geoBounds || (minLng !== Infinity ? [[minLng, minLat], [maxLng, maxLat]] : null),
+            bounds,
             sites: entry.sites,
           }
         })

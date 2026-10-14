@@ -4,7 +4,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandForSite } from '../utils/diveIslandCatalog'
-import { getCountryBounds } from '../utils/countryBounds'
+import { getCountryBounds, matchCountryName } from '../utils/countryBounds'
 
 import pinIconUrl from '../assets/pin.png'
 
@@ -340,6 +340,89 @@ export default function DiveExplorerMap({
     }
   }, [geojsonCountries, countrySitesGeoJSON, selectedCountry, searchQuery])
 
+  // Helper: Zoom into a country keeping the whole country fully framed within the viewport
+  const zoomToCountry = useCallback((countryName) => {
+    if (!countryName || !mapRef.current) return
+
+    const canonical = matchCountryName(countryName) || countryName
+    const countryData = countryCentroidsRef.current.find(
+      (c) => c.country.toLowerCase() === canonical.toLowerCase()
+    )
+    const geoBounds = getCountryBounds(canonical)
+    const boundsToFit = countryData?.bounds || geoBounds
+
+    if (boundsToFit && mapRef.current) {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+      // Generous padding so top header banner, bottom control buttons, and nav controls never overlap the country
+      const padding = isMobile
+        ? { top: 72, bottom: 58, left: 24, right: 28 }
+        : { top: 82, bottom: 64, left: 52, right: 56 }
+
+      // Calculate geographic span to prevent over-zooming on tiny island nations
+      const lngSpan = Math.abs(boundsToFit[1][0] - boundsToFit[0][0])
+      const latSpan = Math.abs(boundsToFit[1][1] - boundsToFit[0][1])
+      const maxSpan = Math.max(lngSpan, latSpan)
+
+      let maxZoom = 13.5
+      if (maxSpan < 0.35) {
+        maxZoom = 10.5
+      } else if (maxSpan < 1.0) {
+        maxZoom = 9.5
+      } else if (maxSpan < 2.5) {
+        maxZoom = 8.5
+      }
+
+      mapRef.current.fitBounds(boundsToFit, {
+        padding,
+        maxZoom,
+        duration: 1200,
+        essential: true,
+      })
+    } else if (countryData && mapRef.current) {
+      mapRef.current.flyTo({
+        center: [countryData.longitude, countryData.latitude],
+        zoom: 6.5,
+        duration: 1200,
+        essential: true,
+      })
+    }
+  }, [])
+
+  // Return to World Overview (show all countries)
+  const handleResetWorldView = useCallback(() => {
+    setSelectedCountry(null)
+    setSearchQuery('')
+    setActiveSite(null)
+    if (onSelectCountry) onSelectCountry('')
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: DEFAULT_CENTER,
+        zoom: DEFAULT_ZOOM,
+        duration: 1000,
+        essential: true,
+      })
+    }
+  }, [onSelectCountry])
+
+  // Select country and immediately frame it
+  const handleSelectCountry = useCallback((rawName) => {
+    if (!rawName) return
+    const canonical = matchCountryName(rawName) || rawName
+    setSelectedCountry(canonical)
+    setActiveSite(null)
+    if (onSelectCountry) onSelectCountry(canonical)
+    zoomToCountry(canonical)
+  }, [onSelectCountry, zoomToCountry])
+
+  // Recenter current view: if inside a country, re-frame that country; otherwise reset to world view
+  const handleRecenter = useCallback(() => {
+    if (selectedCountry) {
+      zoomToCountry(selectedCountry)
+    } else {
+      handleResetWorldView()
+    }
+  }, [selectedCountry, zoomToCountry, handleResetWorldView])
+
   // 3. Initialize MapLibre GL Map with OpenFreeMap Liberty Style
   useEffect(() => {
     if (!mapContainerRef.current) return
@@ -571,29 +654,96 @@ export default function DiveExplorerMap({
         // ----------------------------------------------------
         // INTERACTION HANDLERS: Country Click & Hover
         // ----------------------------------------------------
+        // ----------------------------------------------------
+        // INTERACTION HANDLERS: Country Click & Hover
+        // ----------------------------------------------------
         map.on('click', 'country-pin', (e) => {
           if (!e.features || !e.features.length) return
           const p = e.features[0].properties
-          const countryName = p.country
-          const coords = e.features[0].geometry.coordinates
+          handleSelectCountry(p.country)
+        })
 
-          setSelectedCountry(countryName)
-          setActiveSite(null)
-          if (onSelectCountry) onSelectCountry(countryName)
+        // Basemap country text labels (e.g. "Australia", "Spain", "Egypt", "United States", etc.)
+        const countryLabelLayers = ['label_country_1', 'label_country_2', 'label_country_3'].filter((id) => map.getLayer(id))
+        countryLabelLayers.forEach((layerId) => {
+          map.on('click', layerId, (e) => {
+            if (selectedCountryRef.current) return
+            if (!e.features || !e.features.length) return
+            const feat = e.features[0]
+            const rawName = feat.properties?.['name:en'] || feat.properties?.['name_en'] || feat.properties?.['name'] || feat.properties?.['name:latin']
+            if (!rawName) return
+            const matched = matchCountryName(rawName)
+            if (matched) {
+              handleSelectCountry(matched)
+            }
+          })
+          map.on('mouseenter', layerId, () => {
+            if (!selectedCountryRef.current) map.getCanvas().style.cursor = 'pointer'
+          })
+          map.on('mouseleave', layerId, () => {
+            map.getCanvas().style.cursor = ''
+          })
+        })
 
-          const countryData = countryCentroidsRef.current.find((c) => c.country === countryName)
-          const boundsToFit = getCountryBounds(countryName) || countryData?.bounds
-          if (boundsToFit) {
-            map.fitBounds(boundsToFit, {
-              padding: { top: 24, bottom: 24, left: 24, right: 24 },
-              duration: 1200,
-            })
-          } else {
-            map.flyTo({
-              center: coords,
-              zoom: 6.5,
-              duration: 1200,
-            })
+        // Map canvas touch tolerance & country landmass tap detection
+        map.on('click', (e) => {
+          // If already in a country view, skip
+          if (selectedCountryRef.current) return
+
+          // If clicked directly on country-pin, handled by pin layer listener
+          const directPin = map.queryRenderedFeatures(e.point, { layers: ['country-pin'] })
+          if (directPin.length > 0) return
+
+          // Generous touch tolerance bounding box (24px) for mobile taps
+          const touchBBox = [
+            [e.point.x - 12, e.point.y - 12],
+            [e.point.x + 12, e.point.y + 12]
+          ]
+          const nearbyPins = map.queryRenderedFeatures(touchBBox, { layers: ['country-pin'] })
+          if (nearbyPins.length > 0) {
+            const countryName = nearbyPins[0].properties?.country
+            if (countryName) {
+              handleSelectCountry(countryName)
+              return
+            }
+          }
+
+          if (countryLabelLayers.length > 0) {
+            const nearbyLabels = map.queryRenderedFeatures(touchBBox, { layers: countryLabelLayers })
+            if (nearbyLabels.length > 0) {
+              for (const feat of nearbyLabels) {
+                const rawName = feat.properties?.['name:en'] || feat.properties?.['name_en'] || feat.properties?.['name'] || feat.properties?.['name:latin']
+                const matched = matchCountryName(rawName)
+                if (matched) {
+                  handleSelectCountry(matched)
+                  return
+                }
+              }
+            }
+          }
+
+          // Check if click point lies inside any country's geographic bounds
+          const clickLng = e.lngLat.lng
+          const clickLat = e.lngLat.lat
+          let bestMatch = null
+          let minDistance = Infinity
+
+          for (const c of countryCentroidsRef.current) {
+            const bounds = c.bounds || getCountryBounds(c.country)
+            if (bounds) {
+              const [[minLng, minLat], [maxLng, maxLat]] = bounds
+              if (clickLng >= minLng && clickLng <= maxLng && clickLat >= minLat && clickLat <= maxLat) {
+                const d2 = Math.pow(clickLng - c.longitude, 2) + Math.pow(clickLat - c.latitude, 2)
+                if (d2 < minDistance) {
+                  minDistance = d2
+                  bestMatch = c.country
+                }
+              }
+            }
+          }
+
+          if (bestMatch && minDistance < 250) {
+            handleSelectCountry(bestMatch)
           }
         })
 
@@ -844,22 +994,7 @@ export default function DiveExplorerMap({
           })
         }
       } else if (mapRef.current && countryCentroids.length > 0) {
-        const centroid = countryCentroids.find(
-          (item) => item.country.toLowerCase() === target.toLowerCase()
-        )
-        const boundsToFit = getCountryBounds(target) || centroid?.bounds
-        if (boundsToFit) {
-          mapRef.current.fitBounds(boundsToFit, {
-            padding: { top: 24, bottom: 24, left: 24, right: 24 },
-            duration: 1200,
-          })
-        } else if (centroid) {
-          mapRef.current.flyTo({
-            center: [centroid.longitude, centroid.latitude],
-            zoom: 6.5,
-            duration: 1200,
-          })
-        }
+        zoomToCountry(target)
       }
     }
   }, [controlledCountry, countryCentroids, selectedCountry])
@@ -949,46 +1084,13 @@ export default function DiveExplorerMap({
     }
   }, [controlledSite, selectedSiteId, allSites, selectedCountry, onSelectCountry])
 
-  // Return to World Overview (show all countries)
-  const handleResetWorldView = useCallback(() => {
-    setSelectedCountry(null)
-    setSearchQuery('')
-    setActiveSite(null)
-    if (onSelectCountry) onSelectCountry('')
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: DEFAULT_CENTER,
-        zoom: DEFAULT_ZOOM,
-        duration: 1000,
-      })
-    }
-  }, [onSelectCountry])
-
   // When a user picks a country from the dropdown
   const handleDropdownCountryChange = (c) => {
     if (c === 'all' || !c) {
       handleResetWorldView()
       return
     }
-    setSelectedCountry(c)
-    setActiveSite(null)
-    if (onSelectCountry) onSelectCountry(c)
-    const centroid = countryCentroids.find((item) => item.country === c)
-    const boundsToFit = getCountryBounds(c) || centroid?.bounds
-    if (mapRef.current) {
-      if (boundsToFit) {
-        mapRef.current.fitBounds(boundsToFit, {
-          padding: { top: 24, bottom: 24, left: 24, right: 24 },
-          duration: 1200,
-        })
-      } else if (centroid) {
-        mapRef.current.flyTo({
-          center: [centroid.longitude, centroid.latitude],
-          zoom: 6.5,
-          duration: 1200,
-        })
-      }
-    }
+    handleSelectCountry(c)
   }
 
   // Count of currently visible items
@@ -1329,7 +1431,7 @@ export default function DiveExplorerMap({
           <div className="absolute bottom-5 left-4 z-10 flex flex-col gap-2">
             <button
               type="button"
-              onClick={handleResetWorldView}
+              onClick={handleRecenter}
               className="w-10 h-10 rounded-full bg-white text-navy shadow-float border border-navy/15 flex items-center justify-center transition active:scale-95 cursor-pointer backdrop-blur-md"
               title="Reset Map / Recenter"
               aria-label="Reset Map"
