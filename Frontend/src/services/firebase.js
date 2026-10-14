@@ -2,38 +2,16 @@ let app = null
 let auth = null
 let authModule = null
 
-// Default configuration pointing to production project (the-dive-village)
-const DEV_FALLBACK_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyDAxPsEFVub2IVrpSuCQxCn-JnsBU0NbdY',
-  authDomain: 'the-dive-village.firebaseapp.com',
-  projectId: 'the-dive-village',
-  storageBucket: 'the-dive-village.firebasestorage.app',
-  messagingSenderId: '458045547653',
-  appId: '1:458045547653:web:54a40c550a07edf8d8b5ec',
-}
-
 const getEnvVar = (key) => (import.meta.env[key] || '').trim()
 
-// Primary Vercel Production environment variables
-const envApiKey = getEnvVar('VITE_FIREBASE_API_KEY')
-const envAuthDomain = getEnvVar('VITE_FIREBASE_AUTH_DOMAIN')
-const envProjectId = getEnvVar('VITE_FIREBASE_PROJECT_ID')
-const envStorageBucket = getEnvVar('VITE_FIREBASE_STORAGE_BUCKET')
-const envMessagingSenderId = getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID')
-const envAppId = getEnvVar('VITE_FIREBASE_APP_ID')
-
-const hasEnvConfig = Boolean(envApiKey && envProjectId && envApiKey !== 'placeholder')
-
-// Allow fallback if environment variables are omitted, ensuring seamless authentication on deployed previews and production
-const useFallback = !hasEnvConfig
-
+// Firebase configuration loaded strictly from build-time environment variables
 const firebaseConfig = {
-  apiKey: envApiKey || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.apiKey : ''),
-  authDomain: envAuthDomain || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.authDomain : ''),
-  projectId: envProjectId || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.projectId : ''),
-  storageBucket: envStorageBucket || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.storageBucket : ''),
-  messagingSenderId: envMessagingSenderId || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.messagingSenderId : ''),
-  appId: envAppId || (useFallback ? DEV_FALLBACK_FIREBASE_CONFIG.appId : ''),
+  apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
+  authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') || 'the-dive-village.firebaseapp.com',
+  projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID') || 'the-dive-village',
+  storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET') || 'the-dive-village.firebasestorage.app',
+  messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID') || '458045547653',
+  appId: getEnvVar('VITE_FIREBASE_APP_ID') || '1:458045547653:web:54a40c550a07edf8d8b5ec',
 }
 
 export const isFirebaseConfigured = Boolean(
