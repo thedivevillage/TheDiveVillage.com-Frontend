@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getDateAvailability } from '../data/bookingAvailability'
+import useNightDive from '../hooks/useNightDive'
 
 const FULL_MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -18,6 +19,7 @@ export default function CompactTwoMonthCalendarPopover({
   maxDate, // "YYYY-MM-DD" (1 year max)
   toggleBtnRef
 }) {
+  const isNightDive = useNightDive()
   const popoverRef = useRef(null)
 
   // Parse today's year & month or selected date's year & month as starting view

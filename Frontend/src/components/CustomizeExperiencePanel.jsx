@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PANEL_IMAGES } from '../utils/images'
+import FloatingVideoPip from './FloatingVideoPip'
 
 // Activity Media (Cloudflare R2 video URLs & Cloudinary poster URLs)
 const vidSafari = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
-const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
+const imgSafari = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
 const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
-const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
+const imgTrekking = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
 const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
-const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
+const imgSightseeing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
 const vidCampers = '/media/TDV-Media/AddOns/Campers.mp4'
-const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
+const imgCampers = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
 const vidLiveaboard = '/media/TDV-Media/AddOns/liveaboard.mp4'
-const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
-import { useRef } from 'react'
+const imgLiveaboard = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
 
 function HoverVideoPreview({ videoSrc, poster, displayName }) {
   const videoRef = useRef(null)
@@ -33,6 +33,15 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
 
   return (
     <div className="absolute inset-0 w-full h-full bg-[#001428] overflow-hidden">
+      {poster && (
+        <img
+          src={poster}
+          alt={displayName}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+            isLoaded ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
+      )}
       <video
         ref={videoRef}
         src={videoSrc}
@@ -42,7 +51,6 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
         muted
         playsInline
         preload="auto"
-        crossOrigin="anonymous"
         onLoadedData={() => setIsLoaded(true)}
         onCanPlay={() => setIsLoaded(true)}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
@@ -112,7 +120,30 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
   const [selectedActivities, setSelectedActivities] = useState([])
   const [customText, setCustomText] = useState('')
   const [hoveredActivity, setHoveredActivity] = useState(null)
+  const [pipVideo, setPipVideo] = useState(null)
   const navigate = useNavigate()
+
+  const openPipForCampers = () => {
+    setPipVideo({
+      id: 'camping_camper',
+      title: 'Campers Adventure',
+      subtitle: 'Overland Island Road Trips & Coastal Camping',
+      description:
+        'Hit the open road in fully equipped camper vehicles with sleeping quarters, outdoor cooking gear, and off-grid amenities.',
+      video: vidCampers,
+      fallbackVideo:
+        'https://res.cloudinary.com/qvbunv8y/video/upload/v1791686777/TDV-Media/AddOns/Campers.mp4',
+      poster: imgCampers,
+    })
+    setHoveredActivity(null)
+  }
+
+  const handleActivityClick = (activity) => {
+    toggleActivity(activity.id)
+    if (activity.id === 'camping_camper') {
+      openPipForCampers()
+    }
+  }
   
   // Dynamic Background Image Carousel (Identical to Come for Adventure panel)
   const [index, setIndex] = useState(0)
@@ -255,7 +286,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                         onMouseLeave={() => setHoveredActivity(null)}
                       >
                         <AnimatePresence>
-                          {isHovered && activity.video && (
+                          {isHovered && activity.video && (!pipVideo || pipVideo.id !== activity.id) && (
                             <motion.div
                               initial={{ opacity: 0, y: 10, scale: 0.88 }}
                               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -274,16 +305,29 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
 
                         <button
                           type="button"
-                          onClick={() => toggleActivity(activity.id)}
-                          className={`group inline-flex items-center gap-1 px-2.5 py-1.5 xs:px-3.5 xs:py-2 rounded-full text-[10.5px] xs:text-xs font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 whitespace-nowrap ${
+                          onClick={() => handleActivityClick(activity)}
+                          className={`group inline-flex items-center gap-1.5 px-2.5 py-1.5 xs:px-3.5 xs:py-2 rounded-full text-[10.5px] xs:text-xs font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 whitespace-nowrap ${
                             isSelected
                               ? 'bg-navy text-white border-white/40 scale-105 shadow-md'
                               : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-[#FFCD00] backdrop-blur-md hover:text-[#FFCD00]'
                           }`}
                         >
                           <span>{displayName}</span>
+                          {activity.id === 'camping_camper' && (
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                openPipForCampers()
+                              }}
+                              className="inline-flex items-center gap-1 text-[9px] font-bold text-[#FFCD00] bg-[#FFCD00]/20 border border-[#FFCD00]/40 px-1.5 py-0.5 rounded-full hover:bg-[#FFCD00] hover:text-[#001e3d] transition-colors"
+                              title="Watch Camper Video in PiP"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#FFCD00] animate-pulse" />
+                              PiP
+                            </span>
+                          )}
                           {isSelected && (
-                            <span className="ml-0.5 text-[10px] font-black">✓</span>
+                            <span className="ml-0.5 text-[10px] font-black text-[#FFCD00]">✓</span>
                           )}
                         </button>
                       </div>
@@ -308,7 +352,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                   >
                     {/* Hover Floating Video Preview Box */}
                     <AnimatePresence>
-                      {isHovered && activity.video && (
+                      {isHovered && activity.video && (!pipVideo || pipVideo.id !== activity.id) && (
                         <motion.div
                           initial={{ opacity: 0, y: 10, scale: 0.88 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -327,16 +371,29 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
 
                     <button
                       type="button"
-                      onClick={() => toggleActivity(activity.id)}
-                      className={`group inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 ${
+                      onClick={() => handleActivityClick(activity)}
+                      className={`group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 ${
                         isSelected
                           ? 'bg-navy text-white border-white/40 scale-105 shadow-md'
                           : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-[#FFCD00] backdrop-blur-md hover:text-[#FFCD00]'
                       }`}
                     >
                       <span>{activity.name}</span>
+                      {activity.id === 'camping_camper' && (
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            openPipForCampers()
+                          }}
+                          className="inline-flex items-center gap-1 text-[10px] font-bold text-[#FFCD00] bg-[#FFCD00]/20 border border-[#FFCD00]/40 px-2 py-0.5 rounded-full hover:bg-[#FFCD00] hover:text-[#001e3d] transition-colors"
+                          title="Watch Camper Video in Picture-in-Picture"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FFCD00] animate-pulse" />
+                          PiP Video
+                        </span>
+                      )}
                       {isSelected && (
-                        <span className="ml-1 text-[11px] font-black">✓</span>
+                        <span className="ml-1 text-[11px] font-black text-[#FFCD00]">✓</span>
                       )}
                     </button>
                   </div>
@@ -379,6 +436,21 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
 
         </div>
       </div>
+
+      {/* Floating Picture-in-Picture Player */}
+      {pipVideo && (
+        <FloatingVideoPip
+          videoSrc={pipVideo.video}
+          fallbackSrc={pipVideo.fallbackVideo}
+          poster={pipVideo.poster}
+          title={pipVideo.title}
+          subtitle={pipVideo.subtitle}
+          description={pipVideo.description}
+          isSelected={selectedActivities.includes(pipVideo.id)}
+          onToggleSelect={() => toggleActivity(pipVideo.id)}
+          onClose={() => setPipVideo(null)}
+        />
+      )}
     </div>
   )
 }

@@ -1043,12 +1043,50 @@ body.night-dive [data-shop-banner],
   color: #ffffff !important;
 }
 
-.night-dive .popover-calendar * {
+.night-dive .popover-calendar div,
+.night-dive .popover-calendar span:not(.calendar-date-unavailable):not(.calendar-date-unavailable *):not([disabled] *):not(.calendar-date-selected *):not([aria-selected="true"] *):not([data-selected="true"] *),
+.night-dive .popover-calendar button:not(.calendar-date-unavailable):not([disabled]):not(.calendar-date-selected):not([aria-selected="true"]):not([data-selected="true"]) {
   color: #ffffff !important;
 }
 
 .night-dive .popover-calendar button[class*="bg-[#F0F2F5]"] {
   background-color: #003865 !important;
+  color: #ffffff !important;
+}
+
+/* Calendar: Unavailable dates MUST look greyed out */
+.night-dive .popover-calendar button:disabled,
+.night-dive .popover-calendar button[disabled],
+.night-dive .popover-calendar .calendar-date-unavailable,
+.night-dive .popover-calendar [data-calendar-disabled="true"],
+.night-dive .popover-calendar button:disabled *,
+.night-dive .popover-calendar button[disabled] *,
+.night-dive .popover-calendar .calendar-date-unavailable *,
+.night-dive .popover-calendar [data-calendar-disabled="true"] * {
+  color: rgba(255, 255, 255, 0.25) !important;
+  opacity: 0.3 !important;
+  text-decoration: line-through !important;
+  cursor: not-allowed !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  pointer-events: none !important;
+}
+
+/* Calendar: Selected date MUST BE YELLOW WITH DARK BLUE */
+.night-dive .popover-calendar button[aria-selected="true"],
+.night-dive .popover-calendar button[data-selected="true"],
+.night-dive .popover-calendar button.calendar-date-selected,
+.night-dive .popover-calendar button.calendar-date-selected * {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+  font-weight: 800 !important;
+}
+
+/* Calendar: Available date on hover has yellow border */
+.night-dive .popover-calendar button:not([disabled]):not([aria-selected="true"]):not([data-selected="true"]):not(.calendar-date-selected):hover {
+  border: 2px solid #FFCD00 !important;
+  background-color: rgba(255, 205, 0, 0.15) !important;
   color: #ffffff !important;
 }
 
@@ -1058,27 +1096,172 @@ body.night-dive [data-shop-banner],
 .night-dive form label *,
 .night-dive form legend,
 .night-dive form p,
-.night-dive form span:not([class*="bg-accent"]):not(.bg-accent):not(.text-red-500):not(.text-red-600),
+.night-dive form span:not([class*="bg-accent"]):not(.bg-accent):not(.text-red-500):not(.text-red-600):not([data-booking-addon="true"] *):not(.cert-toggle-btn[data-selected="true"] *):not([data-selected="true"] *),
 .night-dive form h1,
 .night-dive form h2,
 .night-dive form h3,
 .night-dive form h4,
 .night-dive form h5,
 .night-dive form h6,
-.night-dive form [class*="text-navy"],
-.night-dive form [class*="text-slate"],
-.night-dive form [class*="text-gray"],
+.night-dive form [class*="text-navy"]:not([data-booking-addon="true"]):not([data-booking-addon="true"] *):not([data-selected="true"]):not([data-selected="true"] *),
+.night-dive form [class*="text-slate"]:not([data-selected="true"] *),
+.night-dive form [class*="text-gray"]:not([data-selected="true"] *),
 .night-dive form [class*="text-blue-600"],
-.night-dive form button:not([type="submit"]):not([class*="bg-accent"]):not([class*="bg-navy"]) {
+.night-dive form button:not([type="submit"]):not([class*="bg-accent"]):not([class*="bg-navy"]):not([data-booking-addon="true"]):not([data-selected="true"]):not(.cert-toggle-btn[data-selected="true"]) {
   color: #ffffff !important;
 }
 
-/* Outside form container text (e.g. Contact Us card heading & intro) */
+/* Booking Form Add-ons in Night Mode: unselected text MUST BE BLUE */
+.night-dive button[data-booking-addon="true"]:not([data-selected="true"]),
+.night-dive button[data-booking-addon="true"]:not([data-selected="true"]) span,
+.night-dive button[data-booking-addon="true"]:not([data-selected="true"]) * {
+  background-color: #ffffff !important;
+  color: #001e3d !important;
+}
+
+.night-dive button[data-booking-addon="true"]:not([data-selected="true"]):hover {
+  border-color: #FFCD00 !important;
+}
+
+/* Booking Form Add-ons in Night Mode: selected MUST BE YELLOW WITH DARK BLUE */
+.night-dive button[data-booking-addon="true"][data-selected="true"],
+.night-dive button[data-booking-addon="true"][data-selected="true"] span,
+.night-dive button[data-booking-addon="true"][data-selected="true"] * {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+}
+
+.night-dive button[data-booking-addon="true"][data-selected="true"]:hover {
+  border-color: #FFCD00 !important;
+}
+
+/* Booking Form "With Certificate" and "Without Certificate" in Night Mode:
+   Normally darkblue with white border and white text,
+   On selecting: yellow with dark blue text,
+   On hover: yellow border */
+.night-dive .cert-toggle-btn:not([data-selected="true"]),
+.night-dive .cert-toggle-btn:not([data-selected="true"]) * {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.night-dive .cert-toggle-btn:not([data-selected="true"]):hover {
+  border-color: #FFCD00 !important;
+}
+
+.night-dive .cert-toggle-btn[data-selected="true"],
+.night-dive .cert-toggle-btn[data-selected="true"] * {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+}
+
+.night-dive .cert-toggle-btn[data-selected="true"]:hover {
+  border-color: #FFCD00 !important;
+}
+
+/* Services page categories: on hover text MUST BE WHITE and border YELLOW.
+   When selected: yellow with dark blue text */
+.night-dive .services-category-btn:not([data-selected="true"]),
+.night-dive .services-category-btn:not([data-selected="true"]) span {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.night-dive .services-category-btn:not([data-selected="true"]):hover,
+.night-dive .services-category-btn:not([data-selected="true"]):hover span {
+  color: #ffffff !important;
+  border-color: #FFCD00 !important;
+  background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.night-dive .services-category-btn[data-selected="true"],
+.night-dive .services-category-btn[data-selected="true"] span {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+  font-weight: 700 !important;
+}
+
+.night-dive .services-category-btn[data-selected="true"]:hover {
+  border-color: #FFCD00 !important;
+}
+
+/* Contact Us Page: text in the panel and boxes MUST BE WHITE */
 .night-dive #contact-form-container,
+.night-dive #contact-form-container *,
 .night-dive #contact-form-container h2,
 .night-dive #contact-form-container p,
-.night-dive #contact-form-container span:not(.text-accent) {
+.night-dive #contact-form-container label,
+.night-dive #contact-form-container span:not(.text-accent):not(.bg-accent):not(.text-red-500) {
   color: #ffffff !important;
+}
+
+.night-dive #contact-form-container input,
+.night-dive #contact-form-container select,
+.night-dive #contact-form-container textarea,
+.night-dive #contact-form-container .PhoneInput,
+.night-dive #contact-form-container .PhoneInputInput,
+.night-dive #contact-form-container div[class*="bg-[#F0F2F5]"],
+.night-dive #contact-form-container div[class*="bg-white"] {
+  background-color: #002747 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.night-dive #contact-form-container input::placeholder,
+.night-dive #contact-form-container textarea::placeholder,
+.night-dive #contact-form-container .PhoneInputInput::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Contact Us Page 3 info boxes: Call Us, Mail Us, Available 24/7 */
+.night-dive #contact-info-boxes a,
+.night-dive #contact-info-boxes button,
+.night-dive .contact-info-card,
+.night-dive a[href^="tel:"],
+.night-dive a[href^="mailto:"],
+.night-dive a[href*="wa.me"] {
+  background-color: #001e3d !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.night-dive #contact-info-boxes h4,
+.night-dive .contact-info-card h4,
+.night-dive a[href^="tel:"] h4,
+.night-dive a[href^="mailto:"] h4,
+.night-dive a[href*="wa.me"] h4 {
+  color: #ffffff !important;
+}
+
+.night-dive #contact-info-boxes span,
+.night-dive .contact-info-card span,
+.night-dive a[href^="tel:"] span,
+.night-dive a[href^="mailto:"] span,
+.night-dive a[href*="wa.me"] span {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.night-dive #contact-info-boxes a:hover,
+.night-dive #contact-info-boxes button:hover,
+.night-dive .contact-info-card:hover,
+.night-dive a[href^="tel:"]:hover,
+.night-dive a[href^="mailto:"]:hover,
+.night-dive a[href*="wa.me"]:hover {
+  border-color: #FFCD00 !important;
+}
+
+.night-dive #contact-info-boxes a:hover span,
+.night-dive #contact-info-boxes button:hover span,
+.night-dive .contact-info-card:hover span,
+.night-dive a[href^="tel:"]:hover span,
+.night-dive a[href^="mailto:"]:hover span,
+.night-dive a[href*="wa.me"]:hover span {
+  color: #FFCD00 !important;
 }
 
 /* Ensure SVG icons inside forms are white */
@@ -1882,17 +2065,37 @@ body.night-dive [data-bg-white] *,
 }
 
 /* --------------------------------------------------------------------------
-   RULE 3: SELECTED BUTTON BORDERS & VIDEO LIGHTBOX
+   RULE 3: IN NIGHT DIVE ANYTHING THAT IS SELECTED MUST BE YELLOW (#FFCD00)
+   WITH DARK BLUE (#001e3d) AND ON HOVER IT SHOULD HAVE A YELLOW BORDER (#FFCD00)
    -------------------------------------------------------------------------- */
-body.night-dive button[aria-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
-body.night-dive button[data-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
-body.night-dive button.selected:not([class*="border-[#FFCD00]"]):not(.border-accent),
-body.night-dive button[data-active="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
-.night-dive button[aria-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
-.night-dive button[data-selected="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent),
-.night-dive button.selected:not([class*="border-[#FFCD00]"]):not(.border-accent),
-.night-dive button[data-active="true"]:not([class*="border-[#FFCD00]"]):not(.border-accent) {
-  border: 2px solid #ffffff !important;
+body.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+body.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+body.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+}
+
+body.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+body.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+body.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) * {
+  color: #001e3d !important;
+}
+
+/* Hover on interactive selectable buttons: YELLOW BORDER */
+body.night-dive button:not([disabled]):hover,
+body.night-dive a.btn:hover,
+body.night-dive .hover-yellow-border:hover,
+.night-dive button:not([disabled]):hover,
+.night-dive a.btn:hover,
+.night-dive .hover-yellow-border:hover {
+  border-color: #FFCD00 !important;
 }
 
 /* 5. Lightbox video: hide volume/mute button and overflow 3-dots */

@@ -40,6 +40,16 @@
 </head>
 
 <body style="background-color: #001e3d; margin: 0; padding: 0;">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('tdv_night_dive') === 'true') {
+          document.documentElement.classList.add('night-dive');
+          document.body.classList.add('night-dive');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <!-- Global Ambient Audio Stream (Loaded and playing from millisecond zero) -->
   <audio
     id="tdv-global-ambient-audio"

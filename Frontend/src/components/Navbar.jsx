@@ -88,10 +88,12 @@ export default function Navbar() {
     const isNight = document.body.classList.contains('night-dive')
     if (isNight) {
       document.body.classList.remove('night-dive')
+      document.documentElement.classList.remove('night-dive')
       setIsNightDive(false)
       try { localStorage.setItem('tdv_night_dive', 'false') } catch (e) {}
     } else {
       document.body.classList.add('night-dive')
+      document.documentElement.classList.add('night-dive')
       setIsNightDive(true)
       try { localStorage.setItem('tdv_night_dive', 'true') } catch (e) {}
     }

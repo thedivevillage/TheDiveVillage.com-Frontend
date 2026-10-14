@@ -344,11 +344,11 @@ export default function Contact() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-16 sm:pb-24 w-full min-w-0">
 
         {/* Form Container - Wide 2-Column Side-by-Side (Half & Half) Layout */}
-        <div id="contact-form-container" className={`max-w-4xl lg:max-w-5xl mx-auto w-full ${isNightDive ? 'bg-[#001e3d] border-white/10 shadow-none' : 'bg-white border-navy/5 shadow-card'} rounded-2xl sm:rounded-[36px] p-5 xs:p-7 sm:p-10 border transition-all duration-300`}>
+        <div id="contact-form-container" className={`max-w-4xl lg:max-w-5xl mx-auto w-full ${isNightDive ? 'bg-[#001e3d] text-white border-white/15 shadow-none' : 'bg-white border-navy/5 shadow-card'} rounded-2xl sm:rounded-[36px] p-5 xs:p-7 sm:p-10 border transition-all duration-300`}>
           <div className="mb-6 sm:mb-8 text-left pb-4 border-b border-navy/10">
             <span className="text-accent font-bold tracking-widest uppercase text-[9px] sm:text-xs mb-1 block">Direct Inquiry</span>
-            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-navy">Send Us a Message</h2>
-            <p className="text-xs sm:text-sm text-navy/70 mt-1">Fill out the details below and our team will get back to you promptly.</p>
+            <h2 className={`font-heading text-2xl sm:text-3xl lg:text-4xl font-bold ${isNightDive ? 'text-white' : 'text-navy'}`}>Send Us a Message</h2>
+            <p className={`text-xs sm:text-sm mt-1 ${isNightDive ? 'text-white/70' : 'text-navy/70'}`}>Fill out the details below and our team will get back to you promptly.</p>
           </div>
 
           {success && (
@@ -375,13 +375,13 @@ export default function Contact() {
               
               {/* LEFT COLUMN: Contact Information */}
               <div className="space-y-3.5 sm:space-y-4 flex flex-col justify-start">
-                <div className="flex items-center gap-2 pb-1 text-xs font-bold uppercase tracking-wider text-navy/70 border-b border-navy/5">
-                  <span className="w-5 h-5 rounded-full bg-accent/20 text-navy flex items-center justify-center text-[10px] font-extrabold">1</span>
+                <div className={`flex items-center gap-2 pb-1 text-xs font-bold uppercase tracking-wider border-b ${isNightDive ? 'text-white border-white/10' : 'text-navy/70 border-navy/5'}`}>
+                  <span className="w-5 h-5 rounded-full bg-accent text-[#001e3d] flex items-center justify-center text-[10px] font-extrabold">1</span>
                   <span>Contact Information</span>
                 </div>
 
                 <div>
-                  <label className="mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider">Name</label>
+                  <label className={`mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold uppercase tracking-wider ${isNightDive ? 'text-white/85' : 'text-navy/70'}`}>Name</label>
                   <input
                     type="text"
                     name="name"
@@ -389,12 +389,16 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-xl bg-[#F0F2F5] px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition placeholder:text-navy/30"
+                    className={`w-full rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-accent/50 transition ${
+                      isNightDive
+                        ? 'bg-[#002747] text-white border border-white/20 placeholder:text-white/40 focus:border-[#FFCD00]'
+                        : 'bg-[#F0F2F5] text-navy placeholder:text-navy/30'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider">Email</label>
+                  <label className={`mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold uppercase tracking-wider ${isNightDive ? 'text-white/85' : 'text-navy/70'}`}>Email</label>
                   <input
                     type="email"
                     name="email"
@@ -402,13 +406,19 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-xl bg-[#F0F2F5] px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition placeholder:text-navy/30"
+                    className={`w-full rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-accent/50 transition ${
+                      isNightDive
+                        ? 'bg-[#002747] text-white border border-white/20 placeholder:text-white/40 focus:border-[#FFCD00]'
+                        : 'bg-[#F0F2F5] text-navy placeholder:text-navy/30'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider">Phone Number</label>
-                  <div className="w-full rounded-xl bg-[#F0F2F5] px-3.5 py-2.5 sm:px-4 sm:py-3 focus-within:ring-2 focus-within:ring-accent/50 transition">
+                  <label className={`mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold uppercase tracking-wider ${isNightDive ? 'text-white/85' : 'text-navy/70'}`}>Phone Number</label>
+                  <div className={`w-full rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 focus-within:ring-2 focus-within:ring-accent/50 transition ${
+                    isNightDive ? 'bg-[#002747] text-white border border-white/20' : 'bg-[#F0F2F5]'
+                  }`}>
                     <PhoneInput
                       flags={flags}
                       defaultCountry="IN"
@@ -417,19 +427,25 @@ export default function Contact() {
                       placeholder="Enter phone number"
                       value={formData.phone}
                       onChange={(value) => setFormData((prev) => ({ ...prev, phone: value || '' }))}
-                      className="w-full text-xs sm:text-sm font-semibold text-navy outline-none placeholder:text-navy/30"
+                      className={`w-full text-xs sm:text-sm font-semibold outline-none ${
+                        isNightDive ? 'text-white placeholder:text-white/40' : 'text-navy placeholder:text-navy/30'
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider">Select Your Subject</label>
+                  <label className={`mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold uppercase tracking-wider ${isNightDive ? 'text-white/85' : 'text-navy/70'}`}>Select Your Subject</label>
                   <div className="relative">
                     <select
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full rounded-xl bg-[#F0F2F5] px-3.5 py-2.5 sm:px-4 sm:py-3 pr-8 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none cursor-pointer"
+                      className={`w-full rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 pr-8 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none cursor-pointer ${
+                        isNightDive
+                          ? 'bg-[#002747] text-white border border-white/20'
+                          : 'bg-[#F0F2F5] text-navy'
+                      }`}
                     >
                       <option value="General Enquiry">General Enquiry</option>
                       <option value="Partnership">Partnership</option>
@@ -438,7 +454,7 @@ export default function Contact() {
                       <option value="Support">Support</option>
                       <option value="Other">Other</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-navy/60">
+                    <div className={`pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 ${isNightDive ? 'text-white/70' : 'text-navy/60'}`}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="sm:w-4 sm:h-4">
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
@@ -699,7 +715,7 @@ export default function Contact() {
                   )}
 
                   <div className="flex-1 flex flex-col">
-                    <label className="mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider">Message / Special Requests</label>
+                    <label className={`mb-1 sm:mb-1.5 block text-[9px] sm:text-xs font-bold uppercase tracking-wider ${isNightDive ? 'text-white/85' : 'text-navy/70'}`}>Message / Special Requests</label>
                     <textarea
                       name="message"
                       placeholder="Anything else we should know?"
@@ -707,7 +723,11 @@ export default function Contact() {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      className="w-full flex-1 rounded-xl sm:rounded-2xl bg-[#F0F2F5] p-3 sm:p-4 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition placeholder:text-navy/30 resize-none min-h-[120px]"
+                      className={`w-full flex-1 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-accent/50 transition resize-none min-h-[120px] ${
+                        isNightDive
+                          ? 'bg-[#002747] text-white border border-white/20 placeholder:text-white/40 focus:border-[#FFCD00]'
+                          : 'bg-[#F0F2F5] text-navy placeholder:text-navy/30'
+                      }`}
                     ></textarea>
                   </div>
                 </div>
@@ -716,7 +736,11 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-full bg-navy text-white hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold transition-all duration-300 shadow-md cursor-pointer disabled:opacity-50"
+                    className={`w-full rounded-full px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold transition-all duration-300 shadow-md cursor-pointer disabled:opacity-50 ${
+                      isNightDive
+                        ? 'bg-[#FFCD00] text-[#001e3d] border-2 border-[#FFCD00] hover:bg-white hover:text-[#001e3d] hover:border-white'
+                        : 'bg-navy text-white hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00]'
+                    }`}
                   >
                     {loading ? 'Sending...' : 'Send Message'}
                   </button>
@@ -728,30 +752,54 @@ export default function Contact() {
         </div>
 
         {/* Info Blocks - 3 buttons in a single line, whole box acts as clickable redirect button */}
-        <div className="mt-10 sm:mt-16 lg:mt-20 grid grid-cols-3 gap-2 xs:gap-3 sm:gap-6 text-center max-w-4xl mx-auto w-full min-w-0">
+        <div id="contact-info-boxes" className="mt-10 sm:mt-16 lg:mt-20 grid grid-cols-3 gap-2 xs:gap-3 sm:gap-6 text-center max-w-4xl mx-auto w-full min-w-0">
           
           {/* Box 1: Call & WhatsApp */}
           <a
             href="tel:+917338257002"
-            className="flex flex-col items-center justify-center bg-white p-2.5 xs:p-3.5 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border border-navy/5 shadow-card hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0"
+            className={`contact-info-card flex flex-col items-center justify-center p-2.5 xs:p-3.5 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0 ${
+              isNightDive
+                ? 'bg-[#001e3d] text-white border-white/15 hover:border-[#FFCD00] shadow-none hover:-translate-y-1'
+                : 'bg-white border-navy/5 shadow-card hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1'
+            }`}
           >
-            <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full bg-navy/5 text-navy group-hover:bg-[#FFCD00] group-hover:text-navy flex items-center justify-center mb-1.5 sm:mb-3 transition-colors shrink-0">
+            <div className={`w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-1.5 sm:mb-3 transition-colors shrink-0 ${
+              isNightDive
+                ? 'bg-white/10 text-white group-hover:bg-[#FFCD00] group-hover:text-[#001e3d]'
+                : 'bg-navy/5 text-navy group-hover:bg-[#FFCD00] group-hover:text-navy'
+            }`}>
               <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" /></svg>
             </div>
-            <h4 className="font-bold text-navy mb-0.5 sm:mb-1.5 text-[11px] xs:text-xs sm:text-base group-hover:text-navy truncate max-w-full">Call Us</h4>
-            <span className="text-[9px] xs:text-[10px] sm:text-sm text-navy/70 group-hover:text-[#FFCD00] font-bold transition-colors truncate max-w-full block">+91 7338257002</span>
+            <h4 className={`font-bold mb-0.5 sm:mb-1.5 text-[11px] xs:text-xs sm:text-base truncate max-w-full ${
+              isNightDive ? '!text-white' : 'text-navy group-hover:text-navy'
+            }`}>Call Us</h4>
+            <span className={`text-[9px] xs:text-[10px] sm:text-sm font-bold transition-colors truncate max-w-full block ${
+              isNightDive ? '!text-white/80 group-hover:!text-[#FFCD00]' : 'text-navy/70 group-hover:text-[#FFCD00]'
+            }`}>+91 7338257002</span>
           </a>
 
           {/* Box 2: Write to Us */}
           <a
             href="mailto:sanjeev.bajaj@thedivevillage.com"
-            className="flex flex-col items-center justify-center bg-white p-2.5 xs:p-3.5 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border border-navy/5 shadow-card hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0"
+            className={`contact-info-card flex flex-col items-center justify-center p-2.5 xs:p-3.5 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0 ${
+              isNightDive
+                ? 'bg-[#001e3d] text-white border-white/15 hover:border-[#FFCD00] shadow-none hover:-translate-y-1'
+                : 'bg-white border-navy/5 shadow-card hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1'
+            }`}
           >
-            <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full bg-navy/5 text-navy group-hover:bg-[#FFCD00] group-hover:text-navy flex items-center justify-center mb-1.5 sm:mb-3 transition-colors shrink-0">
+            <div className={`w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-1.5 sm:mb-3 transition-colors shrink-0 ${
+              isNightDive
+                ? 'bg-white/10 text-white group-hover:bg-[#FFCD00] group-hover:text-[#001e3d]'
+                : 'bg-navy/5 text-navy group-hover:bg-[#FFCD00] group-hover:text-navy'
+            }`}>
               <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><path d="M22 6l-10 7L2 6" /></svg>
             </div>
-            <h4 className="font-bold text-navy mb-0.5 sm:mb-1.5 text-[11px] xs:text-xs sm:text-base group-hover:text-navy truncate max-w-full">Mail Us</h4>
-            <span className="text-[9px] xs:text-[10px] sm:text-sm text-navy/70 group-hover:text-[#FFCD00] font-bold transition-colors truncate max-w-full block">sanjeev.bajaj@thedivevillage.com</span>
+            <h4 className={`font-bold mb-0.5 sm:mb-1.5 text-[11px] xs:text-xs sm:text-base truncate max-w-full ${
+              isNightDive ? '!text-white' : 'text-navy group-hover:text-navy'
+            }`}>Mail Us</h4>
+            <span className={`text-[9px] xs:text-[10px] sm:text-sm font-bold transition-colors truncate max-w-full block ${
+              isNightDive ? '!text-white/80 group-hover:!text-[#FFCD00]' : 'text-navy/70 group-hover:text-[#FFCD00]'
+            }`}>sanjeev.bajaj@thedivevillage.com</span>
           </a>
 
           {/* Box 3: Availability */}
@@ -759,13 +807,25 @@ export default function Contact() {
             href="https://wa.me/917338257002"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center bg-white p-2.5 xs:p-3.5 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border border-navy/5 shadow-card hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0"
+            className={`contact-info-card flex flex-col items-center justify-center p-2.5 xs:p-3.5 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0 ${
+              isNightDive
+                ? 'bg-[#001e3d] text-white border-white/15 hover:border-[#FFCD00] shadow-none hover:-translate-y-1'
+                : 'bg-white border-navy/5 shadow-card hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1'
+            }`}
           >
-            <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full bg-navy/5 text-navy group-hover:bg-[#FFCD00] group-hover:text-navy flex items-center justify-center mb-1.5 sm:mb-3 transition-colors shrink-0">
+            <div className={`w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-1.5 sm:mb-3 transition-colors shrink-0 ${
+              isNightDive
+                ? 'bg-white/10 text-white group-hover:bg-[#FFCD00] group-hover:text-[#001e3d]'
+                : 'bg-navy/5 text-navy group-hover:bg-[#FFCD00] group-hover:text-navy'
+            }`}>
               <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" /></svg>
             </div>
-            <h4 className="font-bold text-navy mb-0.5 sm:mb-1.5 text-[11px] xs:text-xs sm:text-base group-hover:text-navy truncate max-w-full">Available 24/7</h4>
-            <span className="text-[9px] xs:text-[10px] sm:text-sm text-navy/70 group-hover:text-[#FFCD00] font-bold transition-colors truncate max-w-full block">On WhatsApp</span>
+            <h4 className={`font-bold mb-0.5 sm:mb-1.5 text-[11px] xs:text-xs sm:text-base truncate max-w-full ${
+              isNightDive ? '!text-white' : 'text-navy group-hover:text-navy'
+            }`}>Available 24/7</h4>
+            <span className={`text-[9px] xs:text-[10px] sm:text-sm font-bold transition-colors truncate max-w-full block ${
+              isNightDive ? '!text-white/80 group-hover:!text-[#FFCD00]' : 'text-navy/70 group-hover:text-[#FFCD00]'
+            }`}>On WhatsApp</span>
           </a>
         </div>
 
