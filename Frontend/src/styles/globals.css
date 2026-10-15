@@ -2401,18 +2401,46 @@ body.night-dive select option:not([data-booking-page] *),
 }
 
 /* F. Preserve accent colored text (do not turn yellow/gold, emerald, red, cyan white) */
-body.night-dive .text-accent,
-body.night-dive [class*="text-accent"],
-body.night-dive [class*="text-[#FFCD00]"],
-body.night-dive [class*="text-[#FFD500]"],
-body.night-dive [class*="text-yellow-"],
-body.night-dive [class*="text-amber-"],
-.night-dive .text-accent,
-.night-dive [class*="text-accent"],
-.night-dive [class*="text-[#FFCD00]"],
-.night-dive [class*="text-[#FFD500]"],
-.night-dive [class*="text-yellow-"],
-.night-dive [class*="text-amber-"] {
+body.night-dive .text-accent:not(#main-toolbar *):not(header *),
+body.night-dive [class*=" text-accent"]:not(#main-toolbar *):not(header *),
+body.night-dive [class^="text-accent"]:not(#main-toolbar *):not(header *),
+body.night-dive [class*=" text-[#FFCD00]"]:not(#main-toolbar *):not(header *),
+body.night-dive [class^="text-[#FFCD00]"]:not(#main-toolbar *):not(header *),
+body.night-dive [class*=" text-[#FFD500]"]:not(#main-toolbar *):not(header *),
+body.night-dive [class^="text-[#FFD500]"]:not(#main-toolbar *):not(header *),
+body.night-dive [class*=" text-yellow-"]:not(#main-toolbar *):not(header *),
+body.night-dive [class^="text-yellow-"]:not(#main-toolbar *):not(header *),
+body.night-dive [class*=" text-amber-"]:not(#main-toolbar *):not(header *),
+body.night-dive [class^="text-amber-"]:not(#main-toolbar *):not(header *),
+.night-dive .text-accent:not(#main-toolbar *):not(header *),
+.night-dive [class*=" text-accent"]:not(#main-toolbar *):not(header *),
+.night-dive [class^="text-accent"]:not(#main-toolbar *):not(header *),
+.night-dive [class*=" text-[#FFCD00]"]:not(#main-toolbar *):not(header *),
+.night-dive [class^="text-[#FFCD00]"]:not(#main-toolbar *):not(header *),
+.night-dive [class*=" text-[#FFD500]"]:not(#main-toolbar *):not(header *),
+.night-dive [class^="text-[#FFD500]"]:not(#main-toolbar *):not(header *),
+.night-dive [class*=" text-yellow-"]:not(#main-toolbar *):not(header *),
+.night-dive [class^="text-yellow-"]:not(#main-toolbar *):not(header *),
+.night-dive [class*=" text-amber-"]:not(#main-toolbar *):not(header *),
+.night-dive [class^="text-amber-"]:not(#main-toolbar *):not(header *) {
+  color: #FFCD00 !important;
+}
+
+/* Main Toolbar NavLinks in Night Mode: Inactive links are white, Active link is yellow */
+body.night-dive #main-toolbar a:not(.active):not([aria-current="page"]):not(:hover),
+.night-dive #main-toolbar a:not(.active):not([aria-current="page"]):not(:hover) {
+  color: #ffffff !important;
+}
+
+body.night-dive #main-toolbar a.active,
+body.night-dive #main-toolbar a[aria-current="page"],
+.night-dive #main-toolbar a.active,
+.night-dive #main-toolbar a[aria-current="page"] {
+  color: #FFCD00 !important;
+}
+
+body.night-dive #main-toolbar a:hover,
+.night-dive #main-toolbar a:hover {
   color: #FFCD00 !important;
 }
 
