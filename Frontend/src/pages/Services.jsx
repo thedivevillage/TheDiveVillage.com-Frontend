@@ -72,7 +72,7 @@ export default function Services() {
         title="Scuba Diving & Ocean Services | Certified Courses, Snorkeling & Charters | The Dive Village"
         description="Explore professional scuba diving courses, certifications, guided snorkeling safaris, freediving, and bespoke dive charters at The Dive Village."
         keywords="scuba diving services, diving courses, snorkeling excursions, freediving lessons, dive charters, marine gear rental"
-        canonicalUrl="https://thedivevillage.comm/services"
+        canonicalUrl="https://thedivevillage.com/services"
       />
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
 

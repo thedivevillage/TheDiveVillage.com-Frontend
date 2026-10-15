@@ -166,7 +166,7 @@ export default function Shop() {
         title="Dive Shop & Sustainable Marine Apparel | The Dive Village"
         description="Shop high-performance ocean gear, eco-friendly dive apparel, dive suits, and diving accessories. Designed for comfort, durability, and marine conservation."
         keywords="scuba diving shop, dive gear store, ocean apparel, dive suits, eco-friendly swimsuits, dive village merch"
-        canonicalUrl="https://thedivevillage.comm/shop"
+        canonicalUrl="https://thedivevillage.com/shop"
       />
       {/* Toast Notification */}
       <AnimatePresence>

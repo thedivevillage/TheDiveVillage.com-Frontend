@@ -1734,7 +1734,7 @@ export default function BookUs() {
         title="Book Scuba Diving Courses & Expeditions Online | The Dive Village"
         description="Book certified scuba diving courses, Discovery dives, snorkeling trips, and freediving packages online with instant confirmation at The Dive Village."
         keywords="book scuba dive online, scuba course reservation, dive charter booking, snorkeling trip reservation, dive village booking"
-        canonicalUrl="https://thedivevillage.comm/book-us"
+        canonicalUrl="https://thedivevillage.com/book-us"
       />
 
       {/* 1. HEADER VIDEO HERO (DYNAMIC COMPILED NIGHT DIVE VIDEO - DESKTOP ONLY) */}

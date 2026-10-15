@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 const TEST_DOMAIN = 'https://tdv-test.mkavs.com';
-const PROD_DOMAIN = 'https://www.thedivevillage.co';
-const APEX_DOMAIN = 'https://thedivevillage.co';
+const PROD_DOMAIN = 'https://www.thedivevillage.com';
+const APEX_DOMAIN = 'https://thedivevillage.com';
 
 const ROUTES = [
   '/',
@@ -39,7 +39,7 @@ async function runParityAudit() {
     console.log(`Location Header: ${apexRes.headers.get('location')}`);
     console.log(`x-vercel-id: ${apexRes.headers.get('x-vercel-id')}`);
     const isCleanRedirect = apexRes.status === 307 || apexRes.status === 308 || apexRes.status === 301;
-    const targetsWww = apexRes.headers.get('location') === 'https://www.thedivevillage.co/';
+    const targetsWww = apexRes.headers.get('location') === 'https://www.thedivevillage.com/';
     console.log(`Result: ${isCleanRedirect && targetsWww ? 'PASS (Single clean redirect to WWW)' : 'FAIL'}\n`);
   } catch (err) {
     console.error(`Apex Check Error: ${err.message}\n`);

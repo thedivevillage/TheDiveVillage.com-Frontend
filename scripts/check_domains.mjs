@@ -3,8 +3,8 @@ import https from 'https';
 async function checkDomains() {
   const domains = [
     'https://tdv-test.mkavs.com/',
-    'https://www.thedivevillage.co/',
-    'https://thedivevillage.co/'
+    'https://www.thedivevillage.com/',
+    'https://thedivevillage.com/'
   ];
 
   for (const url of domains) {

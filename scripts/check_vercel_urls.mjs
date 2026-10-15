@@ -3,7 +3,7 @@ async function check() {
     'https://the-dive-village-frontend-1m8q506ez-mkavs-projects.vercel.app',
     'https://the-dive-village-frontend.vercel.app',
     'https://tdv-test.mkavs.com',
-    'https://www.thedivevillage.co'
+    'https://www.thedivevillage.com'
   ];
 
   for (const u of urls) {

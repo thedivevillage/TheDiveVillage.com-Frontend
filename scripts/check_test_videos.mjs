@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 const TEST_BASE = 'https://tdv-test.mkavs.com';
-const PROD_BASE = 'https://www.thedivevillage.co';
+const PROD_BASE = 'https://www.thedivevillage.com';
 
 async function testTestSiteVideos() {
   const distDir = './Frontend/dist/assets';

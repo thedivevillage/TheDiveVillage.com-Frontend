@@ -269,7 +269,7 @@
   }
 
   .hide-cursors,
-  .hide-cursors *:not(input):not(textarea):not(select):not([contenteditable="true"]):not(.normal-cursor):not(.normal-cursor *):not(#dive-map-container):not(#dive-map-container *):not([data-globe]):not([data-globe] *):not(.cesium-widget):not(.cesium-widget *) {
+  .hide-cursors *:not(input):not(textarea):not(select):not([contenteditable="true"]):not(.normal-cursor):not(.normal-cursor *):not([data-normal-cursor]):not([data-normal-cursor] *):not(form):not(form *):not(#dive-map-container):not(#dive-map-container *):not([data-globe]):not([data-globe] *):not(.cesium-widget):not(.cesium-widget *) {
     cursor: none !important;
   }
 
@@ -278,7 +278,11 @@
   .hide-cursors select,
   .hide-cursors [contenteditable="true"],
   .hide-cursors .normal-cursor,
-  .hide-cursors .normal-cursor * {
+  .hide-cursors .normal-cursor *,
+  .hide-cursors [data-normal-cursor],
+  .hide-cursors [data-normal-cursor] *,
+  .hide-cursors form,
+  .hide-cursors form * {
     cursor: auto !important;
   }
 
@@ -296,7 +300,15 @@
   .hide-cursors .normal-cursor button,
   .hide-cursors .normal-cursor a,
   .hide-cursors .normal-cursor [role="button"],
-  .hide-cursors .normal-cursor .cursor-pointer {
+  .hide-cursors .normal-cursor .cursor-pointer,
+  .hide-cursors [data-normal-cursor] button,
+  .hide-cursors [data-normal-cursor] a,
+  .hide-cursors [data-normal-cursor] [role="button"],
+  .hide-cursors [data-normal-cursor] .cursor-pointer,
+  .hide-cursors form button,
+  .hide-cursors form a,
+  .hide-cursors form [role="button"],
+  .hide-cursors form .cursor-pointer {
     cursor: pointer !important;
   }
 
@@ -2380,8 +2392,27 @@ body.night-dive [class*="text-gray-400"]:not([data-booking-page]):not([data-book
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-.night-dive svg:not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="stroke-[#FF"]):not([class*="stroke-accent"]) {
+.night-dive svg:not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="stroke-[#FF"]):not([class*="stroke-accent"]):not(.google-logo):not(.google-logo *):not([data-brand-logo]):not([data-brand-logo] *) {
   stroke: currentColor;
+}
+
+/* Brand logos (Google, etc.) must NEVER have stroke/outline in day or night mode */
+.google-logo,
+.google-logo *,
+svg.google-logo,
+svg.google-logo *,
+[data-brand-logo],
+[data-brand-logo] * {
+  stroke: none !important;
+  stroke-width: 0 !important;
+}
+
+body.night-dive .google-logo,
+body.night-dive .google-logo *,
+.night-dive .google-logo,
+.night-dive .google-logo * {
+  stroke: none !important;
+  stroke-width: 0 !important;
 }
 
 /* E. Form input values, selects, textareas on dark background */

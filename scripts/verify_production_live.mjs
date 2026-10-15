@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const PROD_BASE = 'https://www.thedivevillage.co';
+const PROD_BASE = 'https://www.thedivevillage.com';
 const TEST_BASE = 'https://tdv-test.mkavs.com';
 
 const ROUTES = [

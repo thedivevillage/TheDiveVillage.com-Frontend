@@ -243,7 +243,7 @@ export default function Gallery() {
         title="Underwater Photography & Scuba Gallery | The Dive Village"
         description="Explore our visual gallery of underwater expeditions, vibrant coral reefs, sea turtle encounters, and diving moments captured at The Dive Village."
         keywords="underwater photography, scuba diving gallery, marine life photos, coral reef images, dive village photos"
-        canonicalUrl="https://thedivevillage.comm/gallery"
+        canonicalUrl="https://thedivevillage.com/gallery"
       />
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         
@@ -277,17 +277,17 @@ export default function Gallery() {
         </div>
 
         {/* 4. INSTAGRAM & COMMUNITY SECTION */}
-        <div className="rounded-3xl sm:rounded-[40px] bg-[#F0F2F5] p-6 sm:p-14 mb-16 sm:mb-24 border border-navy/10 night-dive-panel transition-colors">
+        <div className="rounded-3xl sm:rounded-[40px] bg-[#001e3d] text-white p-6 sm:p-14 mb-16 sm:mb-24 border border-white/10 shadow-lift transition-colors">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8">
               <span className="text-accent font-bold tracking-widest uppercase text-xs mb-3 block">
                 #TheDiveVillage
               </span>
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-navy mb-4">
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
                 Tag Us in Your Ocean Adventures
               </h2>
-              <p className="text-navy/75 text-sm sm:text-base leading-relaxed max-w-2xl">
-                Every moment tells a story of discovery and courage. Share your dive logs, underwater encounters, and island moments with <span className="font-bold text-navy">@TheDiveVillage</span> on Instagram to get featured on our wall.
+              <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-2xl">
+                Every moment tells a story of discovery and courage. Share your dive logs, underwater encounters, and island moments with <span className="font-bold text-white">@TheDiveVillage</span> on Instagram to get featured on our wall.
               </p>
             </div>
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
@@ -295,11 +295,11 @@ export default function Gallery() {
                 href="https://www.instagram.com/thedivevillage"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-navy text-white px-8 py-4 text-center text-sm font-bold shadow-soft hover:bg-accent hover:text-navy transition"
+                className="rounded-full bg-[#003865] text-white px-8 py-4 text-center text-sm font-bold shadow-soft hover:bg-accent hover:text-navy transition border border-white/10"
               >
                 Follow on Instagram →
               </a>
-              <Button as={Link} to="/book-us" variant="secondary" className="justify-center !border-navy/20 !text-navy hover:!bg-navy/5 night-dive-btn-secondary">
+              <Button as={Link} to="/book-us" variant="secondary" className="justify-center">
                 Join Next Expedition
               </Button>
             </div>
@@ -618,6 +618,16 @@ function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
               playsInline
               autoPlay={false}
               playbackRate={item.playbackRate || (item.title?.toLowerCase().includes('clownfish and sea anemone') || item.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
+              zoom={
+                item.title?.toLowerCase().includes('moray eel') || item.id === 'gallery-item-0'
+                  ? 1
+                  : (item.zoom || (
+                      ['gallery-item-7', 'gallery-item-8', 'gallery-item-18', 'gallery-item-19', 'gallery-item-20'].includes(item.id) ||
+                      ['Giant Barrel Sponge', 'Hawksbill Sea Turtle', 'Whale Shark', 'Whitetip Reef Shark'].some((t) => item.title?.trim() === t)
+                        ? 2.85
+                        : 1
+                    ))
+              }
               className="w-full h-full object-cover"
             />
           </div>

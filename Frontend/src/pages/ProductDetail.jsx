@@ -339,7 +339,7 @@ export default function ProductDetail() {
         title={`${product.title || product.name} | Ocean Apparel | The Dive Village`}
         description={`${product.description}. Premium quality dive gear and eco-friendly apparel crafted by The Dive Village.`}
         keywords={`${product.title || product.name}, dive apparel, ocean wear, scuba gear, sustainable marine clothing, ${product.category}`}
-        canonicalUrl={`https://thedivevillage.comm/shop/${product.id}`}
+        canonicalUrl={`https://thedivevillage.com/shop/${product.id}`}
         ogImage={product.image || (product.images && product.images[0])}
       />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

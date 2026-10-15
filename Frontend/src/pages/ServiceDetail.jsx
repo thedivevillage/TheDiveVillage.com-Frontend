@@ -77,7 +77,7 @@ export default function ServiceDetail() {
         title={`${activeHeroTitle} | The Dive Village Services`}
         description={activeHeroDesc || service.long_desc}
         keywords="scuba diving, fun dives, diving packages, andaman dive village"
-        canonicalUrl={`https://thedivevillage.comm/services/${service.id}`}
+        canonicalUrl={`https://thedivevillage.com/services/${service.id}`}
       />
       
       {/* 1. HERO BANNER WITH SMOOTH FADE OUT */}

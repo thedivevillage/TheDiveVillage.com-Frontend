@@ -2,8 +2,8 @@ import fs from 'fs';
 
 async function audit() {
   const testUrl = 'https://tdv-test.mkavs.com';
-  const mainUrl = 'https://www.thedivevillage.co';
-  const nakedUrl = 'https://thedivevillage.co';
+  const mainUrl = 'https://www.thedivevillage.com';
+  const nakedUrl = 'https://thedivevillage.com';
 
   console.log('==================================================');
   console.log('1. REDIRECT CHAIN AUDIT');

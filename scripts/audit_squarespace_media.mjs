@@ -9,8 +9,6 @@ async function main() {
   const targets = [
     'https://thedivevillage.com',
     'https://www.thedivevillage.com',
-    'https://thedivevillage.co',
-    'https://www.thedivevillage.co',
     'https://tdv-test.mkavs.com'
   ];
 

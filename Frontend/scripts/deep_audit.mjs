@@ -2,7 +2,7 @@ import fs from 'fs';
 
 async function deepAudit() {
   const testUrl = 'https://tdv-test.mkavs.com';
-  const mainUrl = 'https://www.thedivevillage.co';
+  const mainUrl = 'https://www.thedivevillage.com';
 
   // 1. Fetch test index JS and main index JS
   const tHtml = await (await fetch(testUrl)).text();

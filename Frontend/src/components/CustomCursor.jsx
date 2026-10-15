@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useLocation } from 'react-router'
 const cursorVideo = '/media/TDV-Media/UI/cursor.webm'
 const cursorPng = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
 const cursorHoverPng = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
@@ -9,11 +10,20 @@ export default function CustomCursor() {
   const cursorRef = useRef(null)
   const videoRef = useRef(null)
   const isNightDive = useNightDive()
+  const location = useLocation()
   const [isHovering, setIsHovering] = useState(false)
   const [videoError, setVideoError] = useState(false)
 
+  const isAuthPage = location?.pathname === '/login' || 
+    location?.pathname === '/signup' || 
+    location?.pathname?.startsWith('/login/') || 
+    location?.pathname?.startsWith('/signup/')
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
+    if (isAuthPage || (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)) {
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('hide-cursors')
+      }
       return
     }
 
@@ -34,7 +44,7 @@ export default function CustomCursor() {
       if (!target) return false
       const el = target instanceof Element ? target : target.parentElement
       if (!el || !(el instanceof Element)) return false
-      return !!el.closest('input, textarea, select, [contenteditable="true"], .normal-cursor, [data-normal-cursor], model-viewer, .maplibregl-map, .maplibregl-canvas, .maplibregl-canvas-container, [data-dive-map]')
+      return !!el.closest('input, textarea, select, [contenteditable="true"], .normal-cursor, [data-normal-cursor], form, [data-auth-container], model-viewer, .maplibregl-map, .maplibregl-canvas, .maplibregl-canvas-container, [data-dive-map]')
     }
 
     const checkInteractive = (target) => {
@@ -328,7 +338,7 @@ export default function CustomCursor() {
       window.removeEventListener('click', ensureVideoPlaying)
       document.body.classList.remove('hide-cursors')
     }
-  }, [])
+  }, [isAuthPage])
 
   // Keep video playing continuously across theme toggles and visibility changes
   useEffect(() => {
@@ -337,7 +347,7 @@ export default function CustomCursor() {
     }
   }, [isNightDive])
 
-  if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
+  if (isAuthPage || (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)) {
     return null
   }
 

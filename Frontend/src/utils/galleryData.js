@@ -64,7 +64,8 @@ export const GALLERY_ITEMS = [
     "src": "/media/TDV-Media/Extras for Gallery/Giant_Barrel_Sponge.mp4",
     "title": "Giant Barrel Sponge",
     "category": "marine",
-    "filename": "Giant Barrel Sponge.mp4"
+    "filename": "Giant Barrel Sponge.mp4",
+    "zoom": 2.85
   },
   {
     "id": "gallery-item-8",
@@ -72,7 +73,8 @@ export const GALLERY_ITEMS = [
     "src": "/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4",
     "title": "Hawksbill Sea Turtle",
     "category": "marine",
-    "filename": "Hawksbill Sea Turtle.mp4"
+    "filename": "Hawksbill Sea Turtle.mp4",
+    "zoom": 2.85
   },
 
   {
@@ -129,7 +131,8 @@ export const GALLERY_ITEMS = [
     "src": "/media/TDV-Media/Extras for Gallery/Whale_Shark_2.mp4",
     "title": "Whale Shark",
     "category": "marine",
-    "filename": "Whale Shark (2).mp4"
+    "filename": "Whale Shark (2).mp4",
+    "zoom": 2.85
   },
   {
     "id": "gallery-item-19",
@@ -137,7 +140,8 @@ export const GALLERY_ITEMS = [
     "src": "/media/TDV-Media/Extras for Gallery/Whale_Shark.mp4",
     "title": "Whale Shark",
     "category": "marine",
-    "filename": "Whale Shark.mp4"
+    "filename": "Whale Shark.mp4",
+    "zoom": 2.85
   },
   {
     "id": "gallery-item-20",
@@ -145,7 +149,8 @@ export const GALLERY_ITEMS = [
     "src": "/media/TDV-Media/Services/AdventureDiver.mp4",
     "title": "Whitetip Reef Shark",
     "category": "marine",
-    "filename": "Whitetip Reef Shark.mp4"
+    "filename": "Whitetip Reef Shark.mp4",
+    "zoom": 2.85
   },
   {
     "id": "gallery-item-21",

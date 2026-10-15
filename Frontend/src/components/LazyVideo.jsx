@@ -24,6 +24,7 @@ export default function LazyVideo({
   disablePictureInPicture,
   preload = 'auto',
   playbackRate = 1,
+  zoom = 1,
   ...props
 }) {
   const videoRef = useRef(null)
@@ -185,6 +186,7 @@ export default function LazyVideo({
   }
 
   const fitClass = className.includes('object-contain') ? 'object-contain' : 'object-cover'
+  const zoomStyle = zoom && zoom !== 1 ? { transform: `scale(${zoom})`, transformOrigin: 'center center' } : {}
 
   return (
     <div
@@ -204,6 +206,7 @@ export default function LazyVideo({
           fetchPriority="high"
           decoding="async"
           className={`absolute inset-0 w-full h-full ${fitClass} filter blur-[10px] scale-110 pointer-events-none z-0`}
+          style={zoomStyle}
         />
       )}
 
@@ -219,6 +222,7 @@ export default function LazyVideo({
           className={`absolute inset-0 w-full h-full ${fitClass} z-[1] pointer-events-none ${
             posterLoaded && !isVideoPlaying ? 'opacity-100' : 'opacity-0'
           } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'}`}
+          style={zoomStyle}
         />
       )}
 
@@ -291,7 +295,7 @@ export default function LazyVideo({
           className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-300 ease-out z-[2] ${
             isVideoPlaying ? 'opacity-100' : 'opacity-0'
           } ${videoClassName}`}
-          style={{ objectFit: fitClass === 'object-contain' ? 'contain' : 'cover' }}
+          style={{ objectFit: fitClass === 'object-contain' ? 'contain' : 'cover', ...zoomStyle, ...(props.style || {}) }}
           {...props}
         />
       )}

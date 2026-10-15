@@ -278,7 +278,7 @@ export default function Contact() {
         title="Contact Us & Custom Dive Charters | The Dive Village"
         description="Get in touch with The Dive Village for custom scuba itineraries, diving course enquiries, private boat charters, partnerships, careers, and island travel logistics."
         keywords="contact dive village, scuba diving inquiry, course booking, dive center partnership, scuba careers, island travel assistance"
-        canonicalUrl="https://thedivevillage.comm/contact"
+        canonicalUrl="https://thedivevillage.com/contact"
       />
 
       {/* 1. HEADER VIDEO HERO (DYNAMIC COMPILED NIGHT DIVE VIDEO) */}
@@ -739,8 +739,8 @@ export default function Contact() {
 
           {/* Box 2: Mail Us */}
           <a
-            href="mailto:sanjeev.bajaj@thedivevillage.comm"
-            aria-label="Email Us at sanjeev.bajaj@thedivevillage.comm"
+            href="mailto:sanjeev.bajaj@thedivevillage.com"
+            aria-label="Email Us at sanjeev.bajaj@thedivevillage.com"
             data-contact-box="true"
             className={`flex flex-col items-center justify-center ${isNightDive ? 'bg-[#001e3d] border-white/10 shadow-none' : 'bg-white border-navy/5 shadow-card'} p-3 xs:p-4 sm:p-6 rounded-xl xs:rounded-2xl sm:rounded-3xl border hover:shadow-float hover:border-[#FFCD00]/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer active:scale-95 text-center min-w-0`}
           >

@@ -35,7 +35,7 @@ export default function Surfing() {
         title="Freediving Courses & Breath-Hold Training | The Dive Village"
         description="Master breath-hold diving with certified freediving instructors at The Dive Village. Learn relaxation, equalizing techniques, and deep diving safety."
         keywords="freediving courses, breath hold diving, skin diving certification, apnea training, freedive school"
-        canonicalUrl="https://thedivevillage.comm/freediving"
+        canonicalUrl="https://thedivevillage.com/freediving"
       />
       <CourseTemplate
         heroVideo={freediveVideo}

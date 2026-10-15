@@ -112,7 +112,7 @@ export default function About() {
         title="About Us | Certified Scuba Instructors & Ocean Sanctuary | The Dive Village"
         description="Discover the story behind The Dive Village. Dedicated to safety, marine conservation, diving excellence, and building an inclusive underwater community."
         keywords="about the dive village, certified instructors, marine conservation dive center, eco scuba diving, ocean community"
-        canonicalUrl="https://thedivevillage.comm/about"
+        canonicalUrl="https://thedivevillage.com/about"
       />
       
       {/* FULL-SCREEN VIDEO BACKGROUND (DYNAMIC FOR NIGHT DIVE ACROSS ENTIRE PAGE) */}
