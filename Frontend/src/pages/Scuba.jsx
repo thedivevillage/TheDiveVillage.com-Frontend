@@ -29,7 +29,7 @@ export default function Scuba() {
         title="Scuba Diving Certification & Courses | The Dive Village"
         description="Learn to scuba dive with certified professional instructors. From Discover Scuba Diving for beginners to Advanced Open Water & Divemaster courses."
         keywords="scuba diving certification, open water dive course, scuba diving lessons, deep sea diving, divemaster training"
-        canonicalUrl="https://thedivevillage.com/scuba"
+        canonicalUrl="https://thedivevillage.comm/scuba"
       />
       <CourseTemplate
         heroVideo={scubaDiveVideo}

@@ -363,44 +363,14 @@
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
-  /* Completely remove hover glow, scale transform, focus rings, outlines, and yellow boxes on header / toolbar elements */
+  /* Completely remove hover glow and scale transform on header / toolbar elements */
   header .proximity-active,
   header button.proximity-active,
   header a.proximity-active,
   header div.proximity-active,
   header button:hover,
-  header a:hover,
-  header button:focus,
-  header a:focus,
-  header button:focus-visible,
-  header a:focus-visible,
-  header button:active,
-  header a:active,
-  #main-toolbar,
-  #main-toolbar *,
-  header#main-toolbar,
-  header#main-toolbar * {
-    outline: none !important;
-    outline-color: transparent !important;
+  header a:hover {
     box-shadow: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-  }
-
-  /* Prevent yellow box border when tapping toolbar elements on touch devices */
-  @media (hover: none), (pointer: coarse) {
-    #main-toolbar button:active,
-    #main-toolbar a:active,
-    #main-toolbar button:focus,
-    #main-toolbar a:focus,
-    header#main-toolbar button:active,
-    header#main-toolbar a:active,
-    header#main-toolbar button:focus,
-    header#main-toolbar a:focus {
-      outline: none !important;
-      outline-color: transparent !important;
-      box-shadow: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
   }
 
   /* Completely remove hover glow and box shadows on footer elements */
@@ -431,6 +401,32 @@
     background-color: #FFCD00 !important;
     color: #00223D !important;
     border-color: #FFCD00 !important;
+    transform: translateY(-50%) !important;
+  }
+
+  /* Related products carousel arrow buttons: locked position with zero shift on hover, cyan hover without yellow */
+  .related-carousel-btn {
+    transform: translateY(-50%) !important;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .related-carousel-btn:hover {
+    transform: translateY(-50%) !important;
+    color: #00AEC7 !important;
+    border-color: rgba(0, 174, 199, 0.4) !important;
+  }
+
+  .night-dive .related-carousel-btn {
+    background-color: rgba(0, 30, 61, 0.9) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .night-dive .related-carousel-btn:hover {
+    background-color: #002b4e !important;
+    color: #00AEC7 !important;
+    border-color: #00AEC7 !important;
     transform: translateY(-50%) !important;
   }
 
@@ -562,16 +558,12 @@
     opacity: 0.6;
   }
 
-  .PhoneInputInput,
-  input.PhoneInputInput,
-  .PhoneInput input {
+  .PhoneInputInput {
     flex: 1;
     min-width: 0;
-    background: transparent !important;
-    background-color: transparent !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
+    background: transparent;
+    border: none;
+    outline: none;
   }
 
   ::selection {
@@ -726,17 +718,17 @@ body.night-dive #root,
 }
 
 /* Night Dive mode background is #003865 */
-.night-dive [class*="bg-[#FAFAFA]"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#F8FAFC]"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#f0f9ff]"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#0b1726]"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#030a12]"]:not(input):not(select):not(textarea) {
+.night-dive [class*="bg-[#FAFAFA]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#F8FAFC]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#f0f9ff]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#0b1726]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#030a12]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea) {
   background-color: #003865 !important;
   color: #ffffff !important;
 }
 
 /* Primary surface cards, panels & modals in Night Dive Mode */
-.night-dive [class*="bg-white"]:not([data-product-card]):not([data-product-card] *):not([data-product-media]):not([data-product-media] *):not([data-product-showcase]):not([data-product-showcase] *):not(.product-media-panel):not(.product-media-panel *):not(.product-3d-wrapper):not(.product-3d-wrapper *):not([data-floating-image-card]):not([data-floating-image-card] *):not(model-viewer):not(model-viewer *):not(.hero-btn):not(input):not(select):not(textarea),
+.night-dive [class*="bg-white"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not([data-product-media]):not([data-product-media] *):not([data-product-showcase]):not([data-product-showcase] *):not(.product-media-panel):not(.product-media-panel *):not(.product-3d-wrapper):not(.product-3d-wrapper *):not([data-floating-image-card]):not([data-floating-image-card] *):not(model-viewer):not(model-viewer *):not(.hero-btn):not(input):not(select):not(textarea):not(button):not(button *):not(a.btn):not(a[class*="rounded"]):not(a[role="button"]),
 .night-dive aside nav {
   background-color: #001e3d !important;
   color: #ffffff !important;
@@ -744,81 +736,81 @@ body.night-dive #root,
 }
 
 /* Sub-cards, metrics, widgets, empty states & table rows */
-.night-dive [class*="bg-slate-50"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-slate-100"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-gray-50"]:not(input):not(select):not(textarea),
-.night-dive [class*="bg-gray-100"]:not(input):not(select):not(textarea) {
+.night-dive [class*="bg-slate-50"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-slate-100"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-gray-50"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-gray-100"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea) {
   background-color: #002747 !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Remove box or panel shadows in Night Dive */
-.night-dive .shadow-card,
-.night-dive .shadow-lift,
-.night-dive .shadow-float,
-.night-dive .shadow-xs,
-.night-dive .shadow-sm,
-.night-dive .shadow-md,
-.night-dive .shadow-lg,
-.night-dive .shadow-xl,
-.night-dive .shadow-2xl,
-.night-dive .shadow-2xs,
-.night-dive .shadow,
-.night-dive [class*="shadow"],
-.night-dive [class*="drop-shadow"],
-.night-dive .card,
-.night-dive [class*="card"],
-.night-dive [class*="panel"],
-.night-dive [class*="box"],
-.night-dive dialog,
-.night-dive [role="dialog"],
+.night-dive .shadow-card:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-lift:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-float:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-xs:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-sm:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-md:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-lg:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-xl:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-2xl:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-2xs:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="shadow"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="drop-shadow"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .card:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="card"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="panel"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="box"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive dialog:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [role="dialog"]:not([data-booking-page]):not([data-booking-page] *),
 .night-dive aside,
 .night-dive section>div[class*="rounded"] {
   box-shadow: none !important;
 }
 
-/* Headings and high-contrast text elements */
-.night-dive h1,
-.night-dive h2,
-.night-dive h3,
-.night-dive h4,
-.night-dive h5,
-.night-dive h6,
-.night-dive [class*="text-slate-900"],
-.night-dive [class*="text-slate-800"],
-.night-dive [class*="text-slate-700"],
-.night-dive [class*="text-gray-900"],
-.night-dive [class*="text-gray-800"],
-.night-dive [class*="text-navy"],
-.night-dive [class*="text-[#003865]"] {
+/* Headings and high-contrast text elements (excluded inside product cards, white backgrounds, and booking page) */
+.night-dive h1:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h2:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h3:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-title),
+.night-dive h4:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h5:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h6:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive [class*="text-slate-900"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-slate-800"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-slate-700"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-900"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-800"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-navy"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-title):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-[#003865]"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *) {
   color: #ffffff !important;
 }
 
-/* Muted / secondary subtext */
-.night-dive [class*="text-slate-600"],
-.night-dive [class*="text-slate-500"],
-.night-dive [class*="text-slate-400"],
-.night-dive [class*="text-gray-600"],
-.night-dive [class*="text-gray-500"],
-.night-dive [class*="text-gray-400"],
-.night-dive [class*="text-navy/"] {
+/* Muted / secondary subtext (excluded inside product cards, white backgrounds, and booking page) */
+.night-dive [class*="text-slate-600"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-slate-500"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-slate-400"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-600"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-500"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-400"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-navy/"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-desc):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *) {
   color: rgba(255, 255, 255, 0.75) !important;
 }
 
-.night-dive [class*="text-[#00AEC7]"]:not([data-product-card] *):not([data-product-card]),
-.night-dive [class*="text-accent"]:not([data-product-card] *):not([data-product-card]) {
+.night-dive [class*="text-[#00AEC7]"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-product-card]):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive [class*="text-accent"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-product-card]):not([data-white-bg] *):not([style*="#ffffff"] *) {
   color: #FFCD00 !important;
 }
 
 /* Borders */
-.night-dive [class*="border-gray-100"],
-.night-dive [class*="border-gray-200"],
-.night-dive [class*="border-gray-300"],
-.night-dive [class*="border-slate-100"],
-.night-dive [class*="border-slate-200"],
-.night-dive [class*="border-slate-300"],
-.night-dive [class*="border-navy"] {
+.night-dive [class*="border-gray-100"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
+.night-dive [class*="border-gray-200"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
+.night-dive [class*="border-gray-300"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
+.night-dive [class*="border-slate-100"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
+.night-dive [class*="border-slate-200"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
+.night-dive [class*="border-slate-300"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
+.night-dive [class*="border-navy"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *) {
   border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
@@ -879,6 +871,51 @@ body.night-dive #root,
   color: #ffffff !important;
 }
 
+/* Contact Page 3 Info Action Boxes in Night Dive Mode */
+body.night-dive [data-contact-box],
+.night-dive [data-contact-box] {
+  background-color: #001e3d !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+body.night-dive [data-contact-box]:hover,
+.night-dive [data-contact-box]:hover {
+  border-color: rgba(255, 205, 0, 0.5) !important;
+}
+
+body.night-dive [data-contact-box] .contact-box-icon,
+.night-dive [data-contact-box] .contact-box-icon {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+body.night-dive [data-contact-box] .contact-box-icon svg,
+.night-dive [data-contact-box] .contact-box-icon svg {
+  stroke: #ffffff !important;
+}
+
+body.night-dive [data-contact-box]:hover .contact-box-icon,
+.night-dive [data-contact-box]:hover .contact-box-icon {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+}
+
+body.night-dive [data-contact-box]:hover .contact-box-icon svg,
+.night-dive [data-contact-box]:hover .contact-box-icon svg {
+  stroke: #001e3d !important;
+}
+
+body.night-dive [data-contact-box] h4,
+.night-dive [data-contact-box] h4 {
+  color: #ffffff !important;
+}
+
+body.night-dive [data-contact-box]:hover h4,
+.night-dive [data-contact-box]:hover h4 {
+  color: #FFCD00 !important;
+}
+
 /* Hero section buttons hover in Night Dive mode: yellow #FFCD00 with navy text/border/icon */
 .night-dive a.hero-btn {
   background-color: rgba(255, 255, 255, 0.12) !important;
@@ -913,27 +950,6 @@ html body.night-dive a.hero-btn:hover * {
 .night-dive #main-toolbar .pointer-events-auto:not(button):not(a):not(input) {
   background-color: #001C39 !important;
   box-shadow: none !important;
-}
-
-.night-dive #main-toolbar button,
-.night-dive #main-toolbar a,
-.night-dive #main-toolbar span,
-.night-dive #main-toolbar p,
-.night-dive #main-toolbar svg {
-  color: #ffffff !important;
-}
-
-.night-dive #main-toolbar button:hover,
-.night-dive #main-toolbar a:hover {
-  background-color: #FFCD00 !important;
-  color: #001e3d !important;
-  border-color: #FFCD00 !important;
-}
-
-.night-dive #main-toolbar button:hover *,
-.night-dive #main-toolbar a:hover * {
-  color: #001e3d !important;
-  stroke: #001e3d !important;
 }
 
 .night-dive footer,
@@ -1015,288 +1031,655 @@ body.night-dive [data-shop-banner],
    NIGHT DIVE MODE: FORM INPUT BOXES (#003865) & WHITE TEXT ON FORMS
    ========================================================================== */
 
+/* Primary surface panels & containers with #F0F2F5 in Night Dive Mode */
+.night-dive div[class*="bg-[#F0F2F5]"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea):not(form),
+.night-dive section[class*="bg-[#F0F2F5]"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .night-dive-panel:not([data-booking-page]):not([data-booking-page] *) {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
 /* Boxes where you type in content like name, phone number, email, date, etc. */
-.night-dive input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not(.switch__input),
-.night-dive select,
-.night-dive textarea,
-.night-dive .PhoneInput,
-.night-dive .PhoneInputInput,
-.night-dive form div[class*="bg-[#F0F2F5]"],
-.night-dive form div[class*="bg-white"],
-.night-dive form button[class*="bg-[#F0F2F5]"],
-.night-dive form [class*="border-dashed"],
-.night-dive [data-input-box],
-.night-dive .phone-input-wrapper {
+.night-dive input:not([data-booking-page] *):not([data-booking-page]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not(.switch__input):not(.PhoneInputInput),
+.night-dive select:not([data-booking-page] *):not([data-booking-page]),
+.night-dive textarea:not([data-booking-page] *):not([data-booking-page]),
+.night-dive .PhoneInput:not([data-booking-page] *):not([data-booking-page]),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) div[class*="bg-[#F0F2F5]"],
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) div[class*="bg-white"]:not(button):not(button *),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) [class*="border-dashed"],
+.night-dive [data-input-box]:not([data-booking-page] *):not([data-booking-page]),
+.night-dive .phone-input-wrapper:not([data-booking-page] *):not([data-booking-page]) {
   background-color: #003865 !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
   color-scheme: dark;
 }
 
-.night-dive input:focus,
-.night-dive select:focus,
-.night-dive textarea:focus,
+/* PhoneInput input element inside wrapper must ALWAYS be transparent with NO border or box */
+.PhoneInputInput,
+.PhoneInput input,
+input.PhoneInputInput,
+.night-dive .PhoneInputInput,
+.night-dive .PhoneInput input,
+.night-dive input.PhoneInputInput {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.PhoneInputInput:focus,
+.PhoneInput input:focus,
+input.PhoneInputInput:focus,
 .night-dive .PhoneInputInput:focus,
-.night-dive form div[class*="bg-[#F0F2F5]"]:focus-within {
+.night-dive .PhoneInput input:focus,
+.night-dive input.PhoneInputInput:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.night-dive input:not([data-booking-page] *):not(.PhoneInputInput):focus,
+.night-dive select:not([data-booking-page] *):focus,
+.night-dive textarea:not([data-booking-page] *):focus,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) div[class*="bg-[#F0F2F5]"]:focus-within {
   border-color: #FFCD00 !important;
   box-shadow: 0 0 0 2px rgba(255, 205, 0, 0.35) !important;
 }
 
-.night-dive input::placeholder,
-.night-dive textarea::placeholder,
-.night-dive .PhoneInputInput::placeholder {
+.night-dive input:not([data-booking-page] *)::placeholder,
+.night-dive textarea:not([data-booking-page] *)::placeholder,
+.night-dive .PhoneInputInput:not([data-booking-page] *)::placeholder {
   color: rgba(255, 255, 255, 0.65) !important;
   opacity: 1 !important;
 }
 
-.night-dive select option,
-.night-dive .PhoneInputCountrySelect option {
+.night-dive select:not([data-booking-page] *) option,
+.night-dive .PhoneInputCountrySelect:not([data-booking-page] *) option {
   background-color: #003865 !important;
   color: #ffffff !important;
 }
 
-.night-dive .PhoneInputCountrySelect {
+.night-dive .PhoneInputCountrySelect:not([data-booking-page] *) {
   background-color: transparent !important;
   color: #ffffff !important;
 }
 
-.night-dive .PhoneInputCountryIcon,
-.night-dive .PhoneInputCountrySelectArrow {
+.night-dive .PhoneInputCountryIcon:not([data-booking-page] *),
+.night-dive .PhoneInputCountrySelectArrow:not([data-booking-page] *) {
   opacity: 0.9 !important;
 }
 
-/* Calendar popover in night dive mode */
-.night-dive .popover-calendar,
-.night-dive [role="dialog"][aria-label*="preferred dive date"] {
+/* Calendar popover in night dive mode (excluded on booking page) */
+.night-dive .popover-calendar:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [role="dialog"][aria-label*="preferred dive date"]:not([data-booking-page]):not([data-booking-page] *) {
   background-color: #001e3d !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
 }
 
-.night-dive .popover-calendar div,
-.night-dive .popover-calendar span:not(.calendar-date-unavailable):not(.calendar-date-unavailable *):not([disabled] *):not(.calendar-date-selected *):not([aria-selected="true"] *):not([data-selected="true"] *),
-.night-dive .popover-calendar button:not(.calendar-date-unavailable):not([disabled]):not(.calendar-date-selected):not([aria-selected="true"]):not([data-selected="true"]) {
+.night-dive .popover-calendar:not([data-booking-page]):not([data-booking-page] *) * {
   color: #ffffff !important;
 }
 
-.night-dive .popover-calendar button[class*="bg-[#F0F2F5]"] {
+.night-dive .popover-calendar:not([data-booking-page]):not([data-booking-page] *) button[class*="bg-[#F0F2F5]"] {
   background-color: #003865 !important;
-  color: #ffffff !important;
-}
-
-/* Calendar: Unavailable dates MUST look greyed out */
-.night-dive .popover-calendar button:disabled,
-.night-dive .popover-calendar button[disabled],
-.night-dive .popover-calendar .calendar-date-unavailable,
-.night-dive .popover-calendar [data-calendar-disabled="true"],
-.night-dive .popover-calendar button:disabled *,
-.night-dive .popover-calendar button[disabled] *,
-.night-dive .popover-calendar .calendar-date-unavailable *,
-.night-dive .popover-calendar [data-calendar-disabled="true"] * {
-  color: rgba(255, 255, 255, 0.25) !important;
-  opacity: 0.3 !important;
-  text-decoration: line-through !important;
-  cursor: not-allowed !important;
-  background-color: transparent !important;
-  border-color: transparent !important;
-  pointer-events: none !important;
-}
-
-/* Calendar: Selected date MUST BE YELLOW WITH DARK BLUE */
-.night-dive .popover-calendar button[aria-selected="true"],
-.night-dive .popover-calendar button[data-selected="true"],
-.night-dive .popover-calendar button.calendar-date-selected,
-.night-dive .popover-calendar button.calendar-date-selected * {
-  background-color: #FFCD00 !important;
-  color: #001e3d !important;
-  border-color: #FFCD00 !important;
-  font-weight: 800 !important;
-}
-
-/* Calendar: Available date on hover has yellow border */
-.night-dive .popover-calendar button:not([disabled]):not([aria-selected="true"]):not([data-selected="true"]):not(.calendar-date-selected):hover {
-  border: 2px solid #FFCD00 !important;
-  background-color: rgba(255, 205, 0, 0.15) !important;
   color: #ffffff !important;
 }
 
 /* --- TEXT COLOR WHITE ON THE FORMS --- */
-.night-dive form,
-.night-dive form label,
-.night-dive form label *,
-.night-dive form legend,
-.night-dive form p,
-.night-dive form span:not([class*="bg-accent"]):not(.bg-accent):not(.text-red-500):not(.text-red-600):not([data-booking-addon="true"] *):not(.cert-toggle-btn[data-selected="true"] *):not([data-selected="true"] *),
-.night-dive form h1,
-.night-dive form h2,
-.night-dive form h3,
-.night-dive form h4,
-.night-dive form h5,
-.night-dive form h6,
-.night-dive form [class*="text-navy"]:not([data-booking-addon="true"]):not([data-booking-addon="true"] *):not([data-selected="true"]):not([data-selected="true"] *),
-.night-dive form [class*="text-slate"]:not([data-selected="true"] *),
-.night-dive form [class*="text-gray"]:not([data-selected="true"] *),
-.night-dive form [class*="text-blue-600"],
-.night-dive form button:not([type="submit"]):not([class*="bg-accent"]):not([class*="bg-navy"]):not([data-booking-addon="true"]):not([data-selected="true"]):not(.cert-toggle-btn[data-selected="true"]) {
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) label,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) label *,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) legend,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) p,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) span:not([class*="bg-accent"]):not(.bg-accent):not(.text-red-500):not(.text-red-600):not(button[class*="bg-white"] *):not(button[class*="bg-[#F0F2F5]"] *):not(button[class*="bg-[#fff]"] *):not(.white-btn *):not([data-white-btn] *),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) h1,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) h2,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) h3,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) h4,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) h5,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) h6,
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) [class*="text-navy"]:not(button[class*="bg-white"] *):not(button[class*="bg-[#F0F2F5]"] *):not(button[class*="bg-[#fff]"] *):not(.white-btn *):not([data-white-btn] *),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) [class*="text-slate"]:not(button[class*="bg-white"] *):not(button[class*="bg-[#F0F2F5]"] *):not(button[class*="bg-[#fff]"] *):not(.white-btn *):not([data-white-btn] *),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) [class*="text-gray"]:not(button[class*="bg-white"] *):not(button[class*="bg-[#F0F2F5]"] *):not(button[class*="bg-[#fff]"] *):not(.white-btn *):not([data-white-btn] *),
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) [class*="text-blue-600"],
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) button:not([type="submit"]):not([class*="bg-accent"]):not([class*="bg-navy"]):not([class*="bg-white"]):not([class*="bg-[#F0F2F5]"]):not([class*="bg-[#fff]"]):not([class*="bg-slate-50"]):not(.white-btn):not([data-white-btn]):not(.night-dive-btn-white) {
   color: #ffffff !important;
 }
 
-/* Booking Form Add-ons in Night Mode: unselected text MUST BE BLUE */
-.night-dive button[data-booking-addon="true"]:not([data-selected="true"]),
-.night-dive button[data-booking-addon="true"]:not([data-selected="true"]) span,
-.night-dive button[data-booking-addon="true"]:not([data-selected="true"]) * {
+/* Outside form container text (e.g. Contact Us card heading & intro) */
+.night-dive #contact-form-container,
+.night-dive #contact-form-container h2,
+.night-dive #contact-form-container p,
+.night-dive #contact-form-container span:not(.text-accent) {
+  color: #ffffff !important;
+}
+
+/* Ensure SVG icons inside forms are white */
+.night-dive form:not([data-booking-page] form):not([data-booking-page] *) svg:not(.text-accent):not([fill*="#FFCD00"]):not(.text-red-500):not(.text-red-600):not(.text-emerald-600) {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+BOOKING PAGE: KEEP FORMS, MAP & CARDS IDENTICAL TO DAY DIVE IN NIGHT DIVE MODE
+   When night dive mode is turned on:
+   - Only the video changes to night dive
+   - The page background changes to blue (#003865)
+   - All forms, inputs, selects, labels, cards, buttons, modals, calendar popover,
+     and map controls remain strictly identical to their day dive appearance.
+   ========================================================================== */
+html body.night-dive [data-booking-page] #booking-wizard-form,
+html body.night-dive [data-booking-page] form,
+html body.night-dive [data-booking-page] .bg-white:not([class*="bg-navy"]):not([class*="bg-accent"]):not(button[class*="bg-navy"]),
+html body.night-dive [data-booking-page] div[class*="bg-white"]:not([class*="bg-navy"]):not([class*="bg-accent"]):not(button[class*="bg-navy"]),
+html body.night-dive [data-booking-page] [data-booking-modal] .bg-white,
+html body.night-dive [data-booking-page] #dive-explorer-map .bg-white,
+html body.night-dive [data-booking-page] .popover-calendar {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #001e3d !important;
+  border-color: rgba(0, 30, 61, 0.1) !important;
+}
+
+/* Card shadows restored */
+html body.night-dive [data-booking-page] .shadow-card,
+html body.night-dive [data-booking-page] .shadow-sm {
+  box-shadow: 0 4px 20px -2px rgba(0, 30, 61, 0.08), 0 2px 6px -1px rgba(0, 30, 61, 0.04) !important;
+}
+html body.night-dive [data-booking-page] .shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 30, 61, 0.15) !important;
+}
+html body.night-dive [data-booking-page] .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Participant cards & summary modal inner cards */
+html body.night-dive [data-booking-page] [class*="bg-[#FAFAFA]"],
+html body.night-dive [data-booking-modal] [class*="bg-[#FAFAFA]"],
+html body.night-dive [data-booking-page] div[class*="bg-[#FAFAFA]"],
+html body.night-dive [data-booking-modal] div[class*="bg-[#FAFAFA]"] {
+  background-color: #FAFAFA !important;
+  color: #001e3d !important;
+  border-color: rgba(0, 30, 61, 0.1) !important;
+}
+
+/* Light gray control bars / backgrounds (Map control bar, sub-panels) */
+html body.night-dive [data-booking-page] [class*="bg-slate-50"],
+html body.night-dive [data-booking-page] [class*="bg-slate-100"] {
+  background-color: rgba(248, 250, 252, 0.75) !important;
+  color: #001e3d !important;
+  border-color: rgba(0, 30, 61, 0.1) !important;
+}
+
+/* White inputs and selects in Step 2 */
+html body.night-dive [data-booking-page] input[class*="bg-white"],
+html body.night-dive [data-booking-page] select[class*="bg-white"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #001e3d !important;
+  border: 1px solid rgba(0, 30, 61, 0.15) !important;
+  color-scheme: light !important;
+}
+
+/* Light gray #F0F2F5 inputs, selects, textareas, and wrappers */
+html body.night-dive [data-booking-page] div[class*="bg-[#F0F2F5]"]:not([class*="bg-navy"]),
+html body.night-dive [data-booking-page] button[class*="bg-[#F0F2F5]"]:not([class*="bg-navy"]),
+html body.night-dive [data-booking-page] input:not([class*="bg-white"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+html body.night-dive [data-booking-page] select:not([class*="bg-white"]),
+html body.night-dive [data-booking-page] textarea,
+html body.night-dive [data-booking-page] .PhoneInput,
+html body.night-dive [data-booking-page] .phone-input-wrapper {
+  background-color: #F0F2F5 !important;
+  background: #F0F2F5 !important;
+  color: #001e3d !important;
+  border: 1px solid transparent !important;
+  color-scheme: light !important;
+}
+
+/* Search input & country select in DiveExplorerMap are crisp white with slate border */
+html body.night-dive [data-booking-page] #dive-explorer-map input[type="text"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map select {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #001e3d !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+}
+
+/* Select options inside booking page */
+html body.night-dive [data-booking-page] select option,
+html body.night-dive [data-booking-page] .PhoneInputCountrySelect option {
   background-color: #ffffff !important;
   color: #001e3d !important;
 }
 
-.night-dive button[data-booking-addon="true"]:not([data-selected="true"]):hover {
-  border-color: #FFCD00 !important;
-}
-
-/* Booking Form Add-ons in Night Mode: selected MUST BE YELLOW WITH DARK BLUE */
-.night-dive button[data-booking-addon="true"][data-selected="true"],
-.night-dive button[data-booking-addon="true"][data-selected="true"] span,
-.night-dive button[data-booking-addon="true"][data-selected="true"] * {
-  background-color: #FFCD00 !important;
+html body.night-dive [data-booking-page] .PhoneInputCountrySelect {
+  background-color: transparent !important;
   color: #001e3d !important;
-  border-color: #FFCD00 !important;
 }
 
-.night-dive button[data-booking-addon="true"][data-selected="true"]:hover {
-  border-color: #FFCD00 !important;
-}
-
-/* Booking Form "With Certificate" and "Without Certificate" in Night Mode:
-   Normally darkblue with white border and white text,
-   On selecting: yellow with dark blue text,
-   On hover: yellow border */
-.night-dive .cert-toggle-btn:not([data-selected="true"]),
-.night-dive .cert-toggle-btn:not([data-selected="true"]) * {
-  background-color: #001e3d !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.7) !important;
-}
-
-.night-dive .cert-toggle-btn:not([data-selected="true"]):hover {
-  border-color: #FFCD00 !important;
-}
-
-.night-dive .cert-toggle-btn[data-selected="true"],
-.night-dive .cert-toggle-btn[data-selected="true"] * {
-  background-color: #FFCD00 !important;
+/* Phone input element inside wrapper */
+html body.night-dive [data-booking-page] .PhoneInputInput,
+html body.night-dive [data-booking-page] .PhoneInput input {
+  background: transparent !important;
+  background-color: transparent !important;
   color: #001e3d !important;
-  border-color: #FFCD00 !important;
+  border: none !important;
 }
 
-.night-dive .cert-toggle-btn[data-selected="true"]:hover {
-  border-color: #FFCD00 !important;
+/* Placeholders */
+html body.night-dive [data-booking-page] input::placeholder,
+html body.night-dive [data-booking-page] textarea::placeholder,
+html body.night-dive [data-booking-page] .PhoneInputInput::placeholder {
+  color: rgba(0, 30, 61, 0.35) !important;
+  opacity: 1 !important;
 }
 
-/* Services page categories: on hover text MUST BE WHITE and border YELLOW.
-   When selected: yellow with dark blue text */
-.night-dive .services-category-btn:not([data-selected="true"]),
-.night-dive .services-category-btn:not([data-selected="true"]) span {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+/* Input focus states */
+html body.night-dive [data-booking-page] input:focus,
+html body.night-dive [data-booking-page] select:focus,
+html body.night-dive [data-booking-page] textarea:focus,
+html body.night-dive [data-booking-page] .focus-within\:ring-2:focus-within {
+  border-color: rgba(255, 205, 0, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(255, 205, 0, 0.35) !important;
 }
 
-.night-dive .services-category-btn:not([data-selected="true"]):hover,
-.night-dive .services-category-btn:not([data-selected="true"]):hover span {
-  color: #ffffff !important;
-  border-color: #FFCD00 !important;
-  background-color: rgba(255, 255, 255, 0.18) !important;
-}
-
-.night-dive .services-category-btn[data-selected="true"],
-.night-dive .services-category-btn[data-selected="true"] span {
-  background-color: #FFCD00 !important;
+/* Text & Labels inside booking wizard */
+html body.night-dive [data-booking-page] form,
+html body.night-dive [data-booking-page] form label,
+html body.night-dive [data-booking-page] form label *,
+html body.night-dive [data-booking-page] form legend,
+html body.night-dive [data-booking-page] form p:not(.text-red-500):not(.text-red-600),
+html body.night-dive [data-booking-page] form h1,
+html body.night-dive [data-booking-page] form h2,
+html body.night-dive [data-booking-page] form h3:not(.text-white),
+html body.night-dive [data-booking-page] form h4,
+html body.night-dive [data-booking-page] form h5:not(.text-white),
+html body.night-dive [data-booking-page] form h6,
+html body.night-dive [data-booking-page] [class*="text-navy"]:not(.text-white):not([class*="bg-navy"] *):not(.bg-navy *),
+html body.night-dive [data-booking-page] [class*="text-[#001e3d]"]:not(.text-white),
+html body.night-dive [data-booking-page] [class*="text-slate-800"],
+html body.night-dive [data-booking-page] [class*="text-slate-900"],
+html body.night-dive [data-booking-page] [class*="text-gray-800"],
+html body.night-dive [data-booking-page] [class*="text-gray-900"] {
   color: #001e3d !important;
-  border-color: #FFCD00 !important;
-  font-weight: 700 !important;
 }
 
-.night-dive .services-category-btn[data-selected="true"]:hover {
-  border-color: #FFCD00 !important;
+html body.night-dive [data-booking-page] [class*="text-navy/70"],
+html body.night-dive [data-booking-page] form label {
+  color: rgba(0, 30, 61, 0.7) !important;
 }
 
-/* Contact Us Page: text in the panel and boxes MUST BE WHITE */
-.night-dive #contact-form-container,
-.night-dive #contact-form-container *,
-.night-dive #contact-form-container h2,
-.night-dive #contact-form-container p,
-.night-dive #contact-form-container label,
-.night-dive #contact-form-container span:not(.text-accent):not(.bg-accent):not(.text-red-500) {
-  color: #ffffff !important;
+html body.night-dive [data-booking-page] [class*="text-navy/60"],
+html body.night-dive [data-booking-page] [class*="text-navy/50"] {
+  color: rgba(0, 30, 61, 0.6) !important;
 }
 
-.night-dive #contact-form-container input,
-.night-dive #contact-form-container select,
-.night-dive #contact-form-container textarea,
-.night-dive #contact-form-container .PhoneInput,
-.night-dive #contact-form-container .PhoneInputInput,
-.night-dive #contact-form-container div[class*="bg-[#F0F2F5]"],
-.night-dive #contact-form-container div[class*="bg-white"] {
-  background-color: #002747 !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
+html body.night-dive [data-booking-page] [class*="text-navy/40"],
+html body.night-dive [data-booking-page] [class*="text-navy/30"] {
+  color: rgba(0, 30, 61, 0.4) !important;
 }
 
-.night-dive #contact-form-container input::placeholder,
-.night-dive #contact-form-container textarea::placeholder,
-.night-dive #contact-form-container .PhoneInputInput::placeholder {
-  color: rgba(255, 255, 255, 0.5) !important;
+/* Colors for specific status & accents */
+html body.night-dive [data-booking-page] .text-blue-600,
+html body.night-dive [data-booking-page] [class*="text-blue-600"] {
+  color: #2563eb !important;
 }
 
-/* Contact Us Page 3 info boxes: Call Us, Mail Us, Available 24/7 */
-.night-dive #contact-info-boxes a,
-.night-dive #contact-info-boxes button,
-.night-dive .contact-info-card,
-.night-dive a[href^="tel:"],
-.night-dive a[href^="mailto:"],
-.night-dive a[href*="wa.me"] {
-  background-color: #001e3d !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
-  color: #ffffff !important;
-}
-
-.night-dive #contact-info-boxes h4,
-.night-dive .contact-info-card h4,
-.night-dive a[href^="tel:"] h4,
-.night-dive a[href^="mailto:"] h4,
-.night-dive a[href*="wa.me"] h4 {
-  color: #ffffff !important;
-}
-
-.night-dive #contact-info-boxes span,
-.night-dive .contact-info-card span,
-.night-dive a[href^="tel:"] span,
-.night-dive a[href^="mailto:"] span,
-.night-dive a[href*="wa.me"] span {
-  color: rgba(255, 255, 255, 0.85) !important;
-}
-
-.night-dive #contact-info-boxes a:hover,
-.night-dive #contact-info-boxes button:hover,
-.night-dive .contact-info-card:hover,
-.night-dive a[href^="tel:"]:hover,
-.night-dive a[href^="mailto:"]:hover,
-.night-dive a[href*="wa.me"]:hover {
-  border-color: #FFCD00 !important;
-}
-
-.night-dive #contact-info-boxes a:hover span,
-.night-dive #contact-info-boxes button:hover span,
-.night-dive .contact-info-card:hover span,
-.night-dive a[href^="tel:"]:hover span,
-.night-dive a[href^="mailto:"]:hover span,
-.night-dive a[href*="wa.me"]:hover span {
+html body.night-dive [data-booking-page] .text-accent,
+html body.night-dive [data-booking-page] [class*="text-accent"] {
   color: #FFCD00 !important;
 }
 
-/* Ensure SVG icons inside forms are white */
-.night-dive form svg:not(.text-accent):not([fill*="#FFCD00"]):not(.text-red-500):not(.text-red-600):not(.text-emerald-600) {
+html body.night-dive [data-booking-page] .text-red-500,
+html body.night-dive [data-booking-page] .text-red-600,
+html body.night-dive [data-booking-page] [class*="text-red-500"],
+html body.night-dive [data-booking-page] [class*="text-red-600"] {
+  color: #ef4444 !important;
+}
+
+/* SVG icons inside form and map */
+html body.night-dive [data-booking-page] form svg:not(.text-white):not([class*="bg-navy"] svg):not(.text-red-500):not(.text-red-600):not(.text-emerald-500):not(.text-accent):not([fill*="#EF4444"]):not([fill*="#FFCD00"]) {
+  color: #001e3d !important;
+  stroke: currentColor !important;
+}
+
+/* Selected state cards & pills (Must STAY dark navy with white text, exactly as Day dive) */
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) .bg-navy:not([data-booking-confirmation-modal] *),
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) [class*="bg-navy"]:not([data-booking-confirmation-modal] *),
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) button[class*="bg-navy"]:not([data-booking-confirmation-modal] *),
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) div[class*="bg-navy"]:not([data-booking-confirmation-modal] *) {
+  background-color: #001e3d !important;
   color: #ffffff !important;
+  border-color: #001e3d !important;
+}
+
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) .bg-navy *:not([data-booking-confirmation-modal] *),
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) [class*="bg-navy"] *:not([data-booking-confirmation-modal] *),
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) button[class*="bg-navy"] *:not([data-booking-confirmation-modal] *),
+html body.night-dive [data-booking-page]:not([data-booking-confirmation-modal]) div[class*="bg-navy"] *:not([data-booking-confirmation-modal] *) {
+  color: #ffffff !important;
+}
+
+/* Checkmark dot inside selected cards */
+html body.night-dive [data-booking-page] [class*="bg-navy"] .bg-white,
+html body.night-dive [data-booking-page] [class*="bg-navy"] .bg-white * {
+  background-color: #ffffff !important;
+  color: #001e3d !important;
+}
+
+/* Unselected cards: Experience, Add-Ons, Programs, Fun Dives timings */
+html body.night-dive [data-booking-page] .border-navy\/10,
+html body.night-dive [data-booking-page] .border-navy\/15,
+html body.night-dive [data-booking-page] .border-navy\/20,
+html body.night-dive [data-booking-page] [class*="border-navy/"] {
+  border-color: rgba(0, 30, 61, 0.12) !important;
+}
+
+/* Navigation buttons at bottom of booking form */
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="button"][class*="text-navy"] {
+  background-color: transparent !important;
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="button"][class*="text-navy"]:hover {
+  background-color: #F0F2F5 !important;
+  color: #001e3d !important;
+}
+
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="button"][class*="bg-navy"] {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+}
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="button"][class*="bg-navy"]:hover {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="button"][class*="bg-navy"]:hover * {
+  color: #001e3d !important;
+}
+
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="submit"][class*="bg-accent"] {
+  background-color: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+}
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="submit"][class*="bg-accent"] * {
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="submit"][class*="bg-accent"]:hover {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+  border-color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] #booking-wizard-form button[type="submit"][class*="bg-accent"]:hover * {
+  color: #ffffff !important;
+}
+
+/* Calendar Popover */
+html body.night-dive [data-booking-page] .popover-calendar,
+html body.night-dive [data-booking-page] [role="dialog"][aria-label*="preferred dive date"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-color: rgba(0, 30, 61, 0.15) !important;
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] .popover-calendar * {
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] .popover-calendar button[class*="bg-[#F0F2F5]"] {
+  background-color: #F0F2F5 !important;
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] .popover-calendar [class*="bg-navy"] {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+}
+html body.night-dive [data-booking-page] .popover-calendar [class*="bg-navy"] * {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   BOOKING CONFIRMATION MODALS & SUCCESS POPUP
+   1. Order Summary & Confirmation Review Modal (data-booking-confirmation-modal)
+   2. Booking Success Confirmation ("Great! We'll get in touch with you") (data-booking-confirmation)
+   Must strictly remain in default Day Dive mode styling at all times,
+   never corrupted by Night Dive mode, even when night dive mode is active.
+   ========================================================================== */
+
+/* 1. Review Modal Wrapper & Main Card */
+html body.night-dive [data-booking-confirmation-modal] [data-booking-modal-card],
+.night-dive [data-booking-confirmation-modal] [data-booking-modal-card] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #003865 !important;
+  border-color: rgba(0, 56, 101, 0.15) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Modal Header Gradient */
+html body.night-dive [data-booking-confirmation-modal] .from-navy,
+.night-dive [data-booking-confirmation-modal] .from-navy {
+  background: linear-gradient(to right, #001e3d, #003865) !important;
+  color: #ffffff !important;
+}
+html body.night-dive [data-booking-confirmation-modal] .from-navy h3,
+.night-dive [data-booking-confirmation-modal] .from-navy h3 {
+  color: #ffffff !important;
+}
+html body.night-dive [data-booking-confirmation-modal] .from-navy span,
+.night-dive [data-booking-confirmation-modal] .from-navy span {
+  color: #FFCD00 !important;
+}
+html body.night-dive [data-booking-confirmation-modal] .from-navy button,
+.night-dive [data-booking-confirmation-modal] .from-navy button {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+html body.night-dive [data-booking-confirmation-modal] .from-navy button:hover,
+.night-dive [data-booking-confirmation-modal] .from-navy button:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* Section Containers inside Review Modal */
+html body.night-dive [data-booking-confirmation-modal] [data-booking-summary-section],
+.night-dive [data-booking-confirmation-modal] [data-booking-summary-section],
+html body.night-dive [data-booking-confirmation-modal] [class*="bg-[#FAFAFA]"],
+.night-dive [data-booking-confirmation-modal] [class*="bg-[#FAFAFA]"] {
+  background-color: #FAFAFA !important;
+  background: #FAFAFA !important;
+  border-color: rgba(0, 56, 101, 0.1) !important;
+  color: #003865 !important;
+}
+
+/* Individual Participant Rows inside Review Modal */
+html body.night-dive [data-booking-confirmation-modal] [data-booking-participant-row],
+.night-dive [data-booking-confirmation-modal] [data-booking-participant-row] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-color: rgba(0, 56, 101, 0.1) !important;
+  color: #003865 !important;
+}
+
+/* COURSE PICKED BADGE (Pill) - Must NEVER turn dark blue on dark blue */
+html body.night-dive [data-booking-confirmation-modal] [data-booking-course-badge],
+.night-dive [data-booking-confirmation-modal] [data-booking-course-badge] {
+  background-color: rgba(0, 56, 101, 0.08) !important;
+  background: rgba(0, 56, 101, 0.08) !important;
+  color: #003865 !important;
+  border-color: rgba(0, 56, 101, 0.12) !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [data-booking-course-badge] * {
+  color: #003865 !important;
+}
+
+/* BACK BUTTON (Edit Booking) - Must stay clean light button with visible navy text */
+html body.night-dive [data-booking-confirmation-modal] [data-booking-back-btn],
+.night-dive [data-booking-confirmation-modal] [data-booking-back-btn] {
+  background-color: transparent !important;
+  background: transparent !important;
+  color: #003865 !important;
+  border: 1px solid rgba(0, 56, 101, 0.25) !important;
+  box-shadow: none !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [data-booking-back-btn]:hover,
+.night-dive [data-booking-confirmation-modal] [data-booking-back-btn]:hover {
+  background-color: rgba(0, 56, 101, 0.1) !important;
+  background: rgba(0, 56, 101, 0.1) !important;
+  color: #003865 !important;
+  border-color: rgba(0, 56, 101, 0.35) !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [data-booking-back-btn] * {
+  color: #003865 !important;
+}
+
+/* SUBMIT BUTTON (Confirm & Submit) */
+html body.night-dive [data-booking-confirmation-modal] [data-booking-submit-btn],
+.night-dive [data-booking-confirmation-modal] [data-booking-submit-btn] {
+  background-color: #FFCD00 !important;
+  background: #FFCD00 !important;
+  color: #001e3d !important;
+  border-color: #FFCD00 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [data-booking-submit-btn] * {
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [data-booking-submit-btn]:hover,
+.night-dive [data-booking-confirmation-modal] [data-booking-submit-btn]:hover {
+  background-color: #003865 !important;
+  background: #003865 !important;
+  color: #ffffff !important;
+  border-color: #003865 !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [data-booking-submit-btn]:hover * {
+  color: #ffffff !important;
+}
+
+/* Text elements inside confirmation modal */
+html body.night-dive [data-booking-confirmation-modal] strong,
+html body.night-dive [data-booking-confirmation-modal] [class*="text-navy"] {
+  color: #003865 !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [class*="text-navy/70"] {
+  color: rgba(0, 56, 101, 0.7) !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [class*="text-navy/60"] {
+  color: rgba(0, 56, 101, 0.6) !important;
+}
+html body.night-dive [data-booking-confirmation-modal] [class*="text-navy/50"] {
+  color: rgba(0, 56, 101, 0.5) !important;
+}
+
+/* DiveExplorerMap header & controls */
+html body.night-dive [data-booking-page] #dive-explorer-map h2 {
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map p {
+  color: rgba(0, 30, 61, 0.7) !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map [class*="bg-navy/5"] {
+  background-color: rgba(0, 30, 61, 0.05) !important;
+  color: #001e3d !important;
+  border-color: rgba(0, 30, 61, 0.15) !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map [class*="bg-navy/5"]:hover {
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map [class*="bg-navy/5"]:hover * {
+  color: #ffffff !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map .maplibregl-popup-content {
+  background-color: #ffffff !important;
+  color: #001e3d !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map .maplibregl-ctrl-group {
+  background-color: #ffffff !important;
+}
+html body.night-dive [data-booking-page] #dive-explorer-map .maplibregl-ctrl button {
+  background-color: #ffffff !important;
+}
+
+/* SUCCESS POPUP ("Great! We'll get in touch with you") */
+html body.night-dive [data-booking-confirmation],
+.night-dive [data-booking-confirmation] {
+  background-color: #FAFAFA !important;
+  color: #003865 !important;
+}
+
+html body.night-dive [data-booking-confirmation] [data-booking-confirmation-card],
+.night-dive [data-booking-confirmation] [data-booking-confirmation-card] {
+  background-color: #ffffff !important;
+  color: #003865 !important;
+  border-color: rgba(0, 56, 101, 0.05) !important;
+  box-shadow: 0 20px 60px -15px rgba(0, 56, 101, 0.1) !important;
+}
+
+html body.night-dive [data-booking-confirmation] [class*="bg-[#FAFAFA]"],
+.night-dive [data-booking-confirmation] [class*="bg-[#FAFAFA]"] {
+  background-color: #FAFAFA !important;
+}
+
+html body.night-dive [data-booking-confirmation] [class*="bg-[#F8F9FA]"],
+.night-dive [data-booking-confirmation] [class*="bg-[#F8F9FA]"] {
+  background-color: #F8F9FA !important;
+  border-color: rgba(0, 56, 101, 0.2) !important;
+}
+
+html body.night-dive [data-booking-confirmation] .bg-white,
+.night-dive [data-booking-confirmation] .bg-white {
+  background-color: #ffffff !important;
+  color: #003865 !important;
+  border-color: rgba(0, 56, 101, 0.05) !important;
+}
+
+html body.night-dive [data-booking-confirmation] h2,
+.night-dive [data-booking-confirmation] h2,
+html body.night-dive [data-booking-confirmation] [class*="text-navy"],
+.night-dive [data-booking-confirmation] [class*="text-navy"] {
+  color: #003865 !important;
+}
+
+html body.night-dive [data-booking-confirmation] [class*="text-navy/70"],
+.night-dive [data-booking-confirmation] [class*="text-navy/70"] {
+  color: rgba(0, 56, 101, 0.7) !important;
+}
+
+html body.night-dive [data-booking-confirmation] [class*="text-navy/60"],
+.night-dive [data-booking-confirmation] [class*="text-navy/60"] {
+  color: rgba(0, 56, 101, 0.6) !important;
+}
+
+html body.night-dive [data-booking-confirmation] [class*="text-navy/50"],
+.night-dive [data-booking-confirmation] [class*="text-navy/50"] {
+  color: rgba(0, 56, 101, 0.5) !important;
+}
+
+html body.night-dive [data-booking-confirmation] .text-accent,
+.night-dive [data-booking-confirmation] .text-accent {
+  color: #FFCD00 !important;
+}
+
+html body.night-dive [data-booking-confirmation] button[class*="bg-navy"],
+.night-dive [data-booking-confirmation] button[class*="bg-navy"] {
+  background-color: #003865 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(0, 56, 101, 0.15) !important;
+}
+
+html body.night-dive [data-booking-confirmation] button[class*="bg-navy"]:hover,
+.night-dive [data-booking-confirmation] button[class*="bg-navy"]:hover {
+  background-color: #FFCD00 !important;
+  color: #003865 !important;
 }
 
 /* ==========================================================================
@@ -1359,34 +1742,9 @@ a.glass-btn:hover,
   background-color: rgba(0, 56, 101, 0.05) !important;
 }
 
-/* In Night Dive Mode: FAQ Button and text MUST BE WHITE */
-.night-dive .faq-box-btn,
-.night-dive .faq-box-btn:focus,
-.night-dive .faq-box-btn:active {
-  background-color: transparent !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
-.night-dive .faq-box-btn *,
-.night-dive .faq-box-btn span {
-  color: #ffffff !important;
-}
-
-.night-dive .faq-box-btn:hover {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-  color: #FFCD00 !important;
-}
-
-.night-dive .faq-box-btn:hover * {
-  color: #FFCD00 !important;
-}
-
-/* Night-dive button contrast adjustment */
-.night-dive button.bg-accent,
-.night-dive a.bg-accent {
+/* Night-dive button contrast adjustment (excluding selected mode buttons and booking page) */
+.night-dive button.bg-accent:not([data-booking-page] *):not([data-booking-page]):not([data-selected="true"]):not([data-active="true"]):not([aria-selected="true"]):not(.selected),
+.night-dive a.bg-accent:not([data-booking-page] *):not([data-booking-page]):not([data-selected="true"]):not([data-active="true"]):not([aria-selected="true"]):not(.selected) {
   background-color: rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
@@ -1492,7 +1850,7 @@ a.glass-btn:hover,
 }
 
 .switch__icon-part--3 {
-  box-shadow: none !important;
+  box-shadow: 0 0 0 0.625em hsl(var(--hue), 10%, 10%) inset;
   width: 1.25em;
   height: 1.25em;
   transform: scale(0.25);
@@ -1562,7 +1920,7 @@ a.glass-btn:hover,
 }
 
 .switch__input:checked~.switch__icon .switch__icon-part--3 {
-  box-shadow: none !important;
+  box-shadow: 0 0 0 0.25em hsl(var(--hue), 10%, 10%) inset;
   transform: scale(1);
 }
 
@@ -1771,9 +2129,12 @@ html body.night-dive button[data-thumb-btn][data-active="false"] {
 
 html body.night-dive [data-product-card],
 html body.night-dive a[data-product-card],
-html body.night-dive div[data-product-card] {
+html body.night-dive div[data-product-card],
+html body.night-dive [data-product-card]:hover,
+html body.night-dive a[data-product-card]:hover,
+html body.night-dive div[data-product-card]:hover {
   border-color: rgba(0, 30, 61, 0.12) !important;
-  box-shadow: none !important;
+  box-shadow: 0 10px 28px rgba(0, 56, 101, 0.12) !important;
   color: #001e3d !important;
   background-color: #ffffff !important;
   background: #ffffff !important;
@@ -1781,40 +2142,40 @@ html body.night-dive div[data-product-card] {
 
 /* Headings and titles inside product cards */
 html body.night-dive [data-product-card] h3,
-html body.night-dive [data-product-card] .product-card-title {
-  color: #001e3d !important;
-}
-
+html body.night-dive [data-product-card] .product-card-title,
+html body.night-dive [data-product-card]:hover h3,
 html body.night-dive [data-product-card]:hover .product-card-title {
-  color: #00AEC7 !important;
+  color: #001e3d !important;
 }
 
 /* Descriptions inside product cards */
 html body.night-dive [data-product-card] p,
-html body.night-dive [data-product-card] .product-card-desc {
+html body.night-dive [data-product-card] .product-card-desc,
+html body.night-dive [data-product-card]:hover p,
+html body.night-dive [data-product-card]:hover .product-card-desc {
   color: rgba(0, 30, 61, 0.72) !important;
 }
 
 /* Category tags */
 html body.night-dive [data-product-card] span.product-card-category,
-html body.night-dive [data-product-card] .product-card-category {
+html body.night-dive [data-product-card] .product-card-category,
+html body.night-dive [data-product-card]:hover span.product-card-category,
+html body.night-dive [data-product-card]:hover .product-card-category {
   color: #00AEC7 !important;
 }
 
 /* Inquire within text */
-html body.night-dive [data-product-card] .product-card-inquire {
+html body.night-dive [data-product-card] .product-card-inquire,
+html body.night-dive [data-product-card]:hover .product-card-inquire {
   color: #059669 !important;
 }
 
 /* View Gear link */
 html body.night-dive [data-product-card] .product-card-link,
-html body.night-dive [data-product-card] span.text-\[\#00AEC7\] {
-  color: #00AEC7 !important;
-}
-
+html body.night-dive [data-product-card] span.text-\[\#00AEC7\],
 html body.night-dive [data-product-card]:hover .product-card-link,
 html body.night-dive [data-product-card]:hover span.text-\[\#00AEC7\] {
-  color: #00889c !important;
+  color: #00AEC7 !important;
 }
 
 /* Wishlist button */
@@ -1862,6 +2223,59 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
 }
 
 /* ==========================================================================
+   SERVICES PAGE: CATEGORY TABS IN NIGHT DIVE MODE
+   Hovering over an unselected category tab turns text white and background dark navy.
+   ========================================================================== */
+html body.night-dive button.services-category-tab:hover,
+html body.night-dive button[data-category-tab]:hover,
+html body.night-dive .services-category-tab:hover,
+html body.night-dive [data-category-tab]:hover,
+.night-dive button.services-category-tab:hover,
+.night-dive button[data-category-tab]:hover,
+.night-dive .services-category-tab:hover,
+.night-dive [data-category-tab]:hover {
+  background-color: #001e3d !important;
+  background: #001e3d !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+html body.night-dive button.services-category-tab:hover *,
+html body.night-dive button.services-category-tab:hover span,
+html body.night-dive button[data-category-tab]:hover *,
+html body.night-dive button[data-category-tab]:hover span,
+html body.night-dive .services-category-tab:hover *,
+html body.night-dive .services-category-tab:hover span,
+html body.night-dive [data-category-tab]:hover *,
+html body.night-dive [data-category-tab]:hover span,
+.night-dive button.services-category-tab:hover *,
+.night-dive button.services-category-tab:hover span,
+.night-dive button[data-category-tab]:hover *,
+.night-dive button[data-category-tab]:hover span,
+.night-dive .services-category-tab:hover *,
+.night-dive .services-category-tab:hover span,
+.night-dive [data-category-tab]:hover *,
+.night-dive [data-category-tab]:hover span {
+  color: #ffffff !important;
+}
+
+html body.night-dive button.services-category-tab[data-active="true"],
+html body.night-dive button.services-category-tab[data-active="true"]:hover,
+.night-dive button.services-category-tab[data-active="true"],
+.night-dive button.services-category-tab[data-active="true"]:hover {
+  border-color: #FFCD00 !important;
+  background-color: #001e3d !important;
+  color: #ffffff !important;
+}
+
+html body.night-dive button.services-category-tab[data-active="true"] *,
+html body.night-dive button.services-category-tab[data-active="true"]:hover *,
+.night-dive button.services-category-tab[data-active="true"] *,
+.night-dive button.services-category-tab[data-active="true"]:hover * {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
    GLOBAL NIGHT DIVE RULES (User Requirements):
    1. IN NIGHT DIVE MODE ALL THE TEXT ON A DARK BG MUST BE WHITE across all pages
    2. If background is white (e.g. Shop Product Cards), text HAS to be in dark blue (#001e3d)
@@ -1873,115 +2287,115 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
    -------------------------------------------------------------------------- */
 
 /* A. Any dark-colored text classes on dark background become crisp white */
-body.night-dive [class*="text-navy"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-slate-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-gray-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-zinc-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-neutral-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-black"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-[#001e3d]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-[#001428]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-[#003865]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive [class*="text-[#00223D]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-navy"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-slate-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-gray-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-zinc-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-neutral-"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-black"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#001e3d]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#001428]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#003865]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#00223D]"]:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *) {
+body.night-dive [class*="text-navy"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-slate-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-gray-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-zinc-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-neutral-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-black"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#001e3d]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#001428]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#003865]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive [class*="text-[#00223D]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-navy"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-slate-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-gray-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-zinc-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-neutral-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-black"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#001e3d]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#001428]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#003865]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#00223D]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *) {
   color: #ffffff !important;
 }
 
 /* B. All typography on dark containers become crisp white */
-body.night-dive h1:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h2:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h3:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h4:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h5:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h6:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive p:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive label:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive li:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive dt:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive dd:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive th:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive td:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive span:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
-body.night-dive a:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
-body.night-dive button:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
-.night-dive h1:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h2:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h3:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h4:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h5:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h6:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive p:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive label:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive li:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive dt:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive dd:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive th:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive td:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive span:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
-.night-dive a:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
-.night-dive button:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover) {
+body.night-dive h1:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h2:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h3:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h4:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h5:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h6:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive p:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive label:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive li:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive dt:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive dd:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive th:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive td:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive span:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
+body.night-dive a:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+body.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+.night-dive h1:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h2:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h3:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h4:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h5:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h6:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive p:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive label:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive li:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive dt:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive dd:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive th:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive td:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive span:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
+.night-dive a:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover) {
   color: #ffffff !important;
 }
 
 /* C. Secondary / Muted subtext on dark background */
-body.night-dive [class*="text-navy/70"]:not([data-product-card] *),
-body.night-dive [class*="text-navy/80"]:not([data-product-card] *),
-body.night-dive [class*="text-navy/60"]:not([data-product-card] *),
-body.night-dive [class*="text-navy/50"]:not([data-product-card] *),
-body.night-dive [class*="text-slate-600"]:not([data-product-card] *),
-body.night-dive [class*="text-slate-500"]:not([data-product-card] *),
-body.night-dive [class*="text-slate-400"]:not([data-product-card] *),
-body.night-dive [class*="text-gray-600"]:not([data-product-card] *),
-body.night-dive [class*="text-gray-500"]:not([data-product-card] *),
-body.night-dive [class*="text-gray-400"]:not([data-product-card] *),
-.night-dive [class*="text-navy/70"]:not([data-product-card] *),
-.night-dive [class*="text-navy/80"]:not([data-product-card] *),
-.night-dive [class*="text-navy/60"]:not([data-product-card] *),
-.night-dive [class*="text-navy/50"]:not([data-product-card] *),
-.night-dive [class*="text-slate-600"]:not([data-product-card] *),
-.night-dive [class*="text-slate-500"]:not([data-product-card] *),
-.night-dive [class*="text-slate-400"]:not([data-product-card] *),
-.night-dive [class*="text-gray-600"]:not([data-product-card] *),
-.night-dive [class*="text-gray-500"]:not([data-product-card] *),
-.night-dive [class*="text-gray-400"]:not([data-product-card] *) {
+body.night-dive [class*="text-navy/70"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-navy/80"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-navy/60"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-navy/50"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-slate-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-slate-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-slate-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-gray-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-gray-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-gray-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/70"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/80"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/60"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/50"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-slate-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-slate-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-slate-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-gray-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-gray-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-gray-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *) {
   color: rgba(255, 255, 255, 0.82) !important;
 }
 
 /* D. Icon circles and sub-widgets on dark cards */
-.night-dive [class*="bg-navy/5"],
-.night-dive [class*="bg-navy/10"],
-.night-dive [class*="bg-navy/[0.04]"],
-.night-dive [class*="bg-[#F0F2F5]"]:not(form *):not(input):not(select):not(textarea):not(.PhoneInput):not(.PhoneInput *) {
+.night-dive [class*="bg-navy/5"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="bg-navy/10"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="bg-navy/[0.04]"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="bg-[#F0F2F5]"]:not([data-booking-page]):not([data-booking-page] *):not(form *):not(input):not(select):not(textarea):not(.PhoneInput):not(.PhoneInput *) {
   background-color: rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-.night-dive svg:not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="stroke-[#FF"]):not([class*="stroke-accent"]) {
+.night-dive svg:not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="stroke-[#FF"]):not([class*="stroke-accent"]) {
   stroke: currentColor;
 }
 
 /* E. Form input values, selects, textareas on dark background */
-body.night-dive input:not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
-body.night-dive textarea:not([data-product-card] *),
-body.night-dive select:not([data-product-card] *),
-.night-dive input:not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
-.night-dive textarea:not([data-product-card] *),
-.night-dive select:not([data-product-card] *) {
+body.night-dive input:not([data-booking-page] *):not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
+body.night-dive textarea:not([data-booking-page] *):not([data-product-card] *),
+body.night-dive select:not([data-booking-page] *):not([data-product-card] *),
+.night-dive input:not([data-booking-page] *):not([type="checkbox"]):not([type="radio"]):not(.switch__input):not([data-product-card] *),
+.night-dive textarea:not([data-booking-page] *):not([data-product-card] *),
+.night-dive select:not([data-booking-page] *):not([data-product-card] *) {
   color: #ffffff !important;
 }
 
-body.night-dive select option,
-.night-dive select option {
+body.night-dive select option:not([data-booking-page] *),
+.night-dive select option:not([data-booking-page] *) {
   background-color: #001e3d !important;
   color: #ffffff !important;
 }
@@ -2098,33 +2512,33 @@ body.night-dive [data-bg-white] *,
    RULE 3: IN NIGHT DIVE ANYTHING THAT IS SELECTED MUST BE YELLOW (#FFCD00)
    WITH DARK BLUE (#001e3d) AND ON HOVER IT SHOULD HAVE A YELLOW BORDER (#FFCD00)
    -------------------------------------------------------------------------- */
-body.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
-body.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
-body.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
-.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
-.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
-.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) {
+body.night-dive [aria-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+body.night-dive [data-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+body.night-dive .selected:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+.night-dive [aria-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+.night-dive [data-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn),
+.night-dive .selected:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) {
   background-color: #FFCD00 !important;
   color: #001e3d !important;
   border-color: #FFCD00 !important;
 }
 
-body.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
-body.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
-body.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
-.night-dive [aria-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
-.night-dive [data-selected="true"]:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
-.night-dive .selected:not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) * {
+body.night-dive [aria-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+body.night-dive [data-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+body.night-dive .selected:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+.night-dive [aria-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+.night-dive [data-selected="true"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) *,
+.night-dive .selected:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not(nav *):not(header *):not(.product-thumb-btn) * {
   color: #001e3d !important;
 }
 
 /* Hover on interactive selectable buttons: YELLOW BORDER */
-body.night-dive button:not([disabled]):hover,
-body.night-dive a.btn:hover,
-body.night-dive .hover-yellow-border:hover,
-.night-dive button:not([disabled]):hover,
-.night-dive a.btn:hover,
-.night-dive .hover-yellow-border:hover {
+body.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([disabled]):hover,
+body.night-dive a.btn:not([data-booking-page]):not([data-booking-page] *):hover,
+body.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-page] *):hover,
+.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([disabled]):hover,
+.night-dive a.btn:not([data-booking-page]):not([data-booking-page] *):hover,
+.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-page] *):hover {
   border-color: #FFCD00 !important;
 }
 

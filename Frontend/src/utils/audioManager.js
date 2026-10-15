@@ -1,8 +1,8 @@
-// Cloudflare R2 Audio Streaming URL:
-const R2_AUDIO_URL = '/media/TDV-Media/Audio/Audio.mp3'
+// Production CDN Audio URLs:
+const CLOUDINARY_AUDIO_URL = '/media/TDV-Media/Audio/Audio.mp3'
 
 const AUDIO_SOURCES = [
-  R2_AUDIO_URL,
+  CLOUDINARY_AUDIO_URL,
 ].filter(Boolean)
 
 class AudioManager {

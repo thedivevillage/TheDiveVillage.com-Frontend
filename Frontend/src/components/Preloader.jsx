@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-const preloaderVideoLocal = '/media/TDV-Media/UI/preloader.mp4'
-const preloaderVideo = preloaderVideoLocal
+import preloaderVideoLocal from '../assets/preloader.mp4'
+
+const CLOUD_PRELOADER = '/media/TDV-Media/UI/preloader.mp4'
+const preloaderVideo = preloaderVideoLocal || CLOUD_PRELOADER
 import {
   subscribeHeroVideoReady,
   getHeroVideoReady,
@@ -12,11 +14,23 @@ import {
 import { usePageVisibility } from '../hooks/usePageVisibility'
 import useNightDive from '../hooks/useNightDive'
 
-function DiverAnimation({ src, className, isNightDive }) {
+function DiverAnimation({ src, fallbackSrc, className, isNightDive }) {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const isVisible = usePageVisibility()
   const isRunningRef = useRef(true)
+  const [currentSrc, setCurrentSrc] = useState(src)
+
+  useEffect(() => {
+    setCurrentSrc(src)
+  }, [src])
+
+  const handleVideoError = () => {
+    if (fallbackSrc && currentSrc !== fallbackSrc) {
+      console.warn('Preloader video failed to load, switching to fallback:', fallbackSrc)
+      setCurrentSrc(fallbackSrc)
+    }
+  }
 
   useEffect(() => {
     const video = videoRef.current
@@ -24,16 +38,22 @@ function DiverAnimation({ src, className, isNightDive }) {
     if (!video || !canvas) return
 
     video.muted = true
-    video.defaultMuted = true
     video.setAttribute('muted', '')
     video.setAttribute('playsinline', '')
     video.setAttribute('webkit-playsinline', '')
 
-    if (isVisible) {
-      video.play().catch(() => {})
-    } else {
-      video.pause()
+    const playVideo = () => {
+      if (isVisible) {
+        const p = video.play()
+        if (p && typeof p.catch === 'function') {
+          p.catch(() => {})
+        }
+      }
     }
+
+    playVideo()
+    video.addEventListener('canplay', playVideo)
+    video.addEventListener('loadeddata', playVideo)
 
     const ctx = canvas.getContext('2d', { willReadFrequently: true })
     let animId
@@ -88,23 +108,28 @@ function DiverAnimation({ src, className, isNightDive }) {
     return () => {
       isRunningRef.current = false
       if (animId) cancelAnimationFrame(animId)
+      video.removeEventListener('canplay', playVideo)
+      video.removeEventListener('loadeddata', playVideo)
     }
-  }, [src, isVisible, isNightDive])
+  }, [currentSrc, isVisible, isNightDive])
 
   return (
     <>
       <video
         ref={videoRef}
-        src={src || null}
+        src={currentSrc || null}
         autoPlay
         loop
         muted
         playsInline
         crossOrigin="anonymous"
+        onError={handleVideoError}
         style={{ position: 'fixed', left: '-9999px', top: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
       />
       <canvas
         ref={canvasRef}
+        width={320}
+        height={180}
         className={`${className} pointer-events-none`}
         style={isNightDive ? { filter: 'brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.4))' } : undefined}
       />
@@ -215,6 +240,7 @@ export default function Preloader({ onComplete }) {
       <div className="w-56 sm:w-68 md:w-80 mb-6 flex items-center justify-center overflow-hidden">
         <DiverAnimation
           src={preloaderVideo}
+          fallbackSrc={CLOUD_PRELOADER}
           isNightDive={isNightDive}
           className="w-full h-auto max-h-[160px] object-contain"
         />

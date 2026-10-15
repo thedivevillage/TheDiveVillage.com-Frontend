@@ -166,7 +166,7 @@ export default function Shop() {
         title="Dive Shop & Sustainable Marine Apparel | The Dive Village"
         description="Shop high-performance ocean gear, eco-friendly dive apparel, dive suits, and diving accessories. Designed for comfort, durability, and marine conservation."
         keywords="scuba diving shop, dive gear store, ocean apparel, dive suits, eco-friendly swimsuits, dive village merch"
-        canonicalUrl="https://thedivevillage.com/shop"
+        canonicalUrl="https://thedivevillage.comm/shop"
       />
       {/* Toast Notification */}
       <AnimatePresence>
@@ -300,22 +300,30 @@ export default function Shop() {
 
         {/* Category Pills Horizontal Scroll */}
         <div className="flex gap-2 overflow-x-auto pb-1 mt-3.5 scrollbar-none items-center">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => {
-                triggerHaptic(8)
-                setSelectedCategory(cat.key)
-              }}
-              className={`rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                selectedCategory === cat.key
-                  ? 'bg-[#FFCD00] text-slate-900 shadow-sm'
-                  : 'bg-white text-slate-700 border border-slate-300/80 hover:bg-slate-50'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+          {CATEGORIES.map((cat) => {
+            const isSelected = selectedCategory === cat.key
+            return (
+              <button
+                key={cat.key}
+                data-selected={isSelected ? 'true' : 'false'}
+                onClick={() => {
+                  triggerHaptic(8)
+                  setSelectedCategory(cat.key)
+                }}
+                className={`rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  isSelected
+                    ? isNightDive
+                      ? 'bg-[#FFCD00] text-slate-900 shadow-sm border-2 border-white ring-1 ring-white/50 font-extrabold'
+                      : 'bg-[#FFCD00] text-slate-900 shadow-sm border-2 border-transparent'
+                    : isNightDive
+                      ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+                      : 'bg-white text-slate-700 border border-slate-300/80 hover:bg-slate-50'
+                }`}
+              >
+                {cat.label}
+              </button>
+            )
+          })}
         </div>
 
         {/* Product Count & Filter Button */}
@@ -410,21 +418,30 @@ export default function Shop() {
         </div>
 
         <div className="flex gap-2.5 overflow-x-auto pb-2 mt-6 scrollbar-none">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => {
-                triggerHaptic(8)
-                setSelectedCategory(cat.key)
-              }}
-              className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${selectedCategory === cat.key
-                ? 'bg-accent text-[#001e3d] shadow-md font-extrabold'
-                : 'bg-white text-navy/70 border border-navy/10 hover:bg-[#003865] hover:text-white hover:border-[#003865]'
+          {CATEGORIES.map((cat) => {
+            const isSelected = selectedCategory === cat.key
+            return (
+              <button
+                key={cat.key}
+                data-selected={isSelected ? 'true' : 'false'}
+                onClick={() => {
+                  triggerHaptic(8)
+                  setSelectedCategory(cat.key)
+                }}
+                className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  isSelected
+                    ? isNightDive
+                      ? 'bg-accent text-[#001e3d] shadow-md font-extrabold border-2 border-white ring-1 ring-white/50'
+                      : 'bg-accent text-[#001e3d] shadow-md font-extrabold border-2 border-transparent'
+                    : isNightDive
+                      ? 'bg-white/10 text-white border border-white/20 hover:bg-[#00223D] hover:border-white/40'
+                      : 'bg-white text-navy/70 border border-navy/10 hover:bg-[#003865] hover:text-white hover:border-[#003865]'
                 }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+              >
+                {cat.label}
+              </button>
+            )
+          })}
         </div>
       </section>
 
@@ -516,23 +533,29 @@ export default function Shop() {
               <div className="mt-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Category</span>
                 <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.key}
-                      type="button"
-                      onClick={() => {
-                        triggerHaptic(8)
-                        setSelectedCategory(cat.key)
-                      }}
-                      className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
-                        selectedCategory === cat.key
-                          ? 'bg-[#FFCD00] text-black shadow-sm'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                      }`}
-                    >
-                      {cat.label}
-                    </button>
-                  ))}
+                  {CATEGORIES.map((cat) => {
+                    const isSelected = selectedCategory === cat.key
+                    return (
+                      <button
+                        key={cat.key}
+                        data-selected={isSelected ? 'true' : 'false'}
+                        type="button"
+                        onClick={() => {
+                          triggerHaptic(8)
+                          setSelectedCategory(cat.key)
+                        }}
+                        className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
+                          isSelected
+                            ? isNightDive
+                              ? 'bg-[#FFCD00] text-black shadow-sm border-2 border-white ring-1 ring-white/50'
+                              : 'bg-[#FFCD00] text-black shadow-sm border border-transparent'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
@@ -545,23 +568,29 @@ export default function Shop() {
                     { val: 'price-low', label: 'Price: Low to High' },
                     { val: 'price-high', label: 'Price: High to Low' },
                     { val: 'rating', label: 'Highest Rated' },
-                  ].map((opt) => (
-                    <button
-                      key={opt.val}
-                      type="button"
-                      onClick={() => {
-                        triggerHaptic(8)
-                        setSortBy(opt.val)
-                      }}
-                      className={`rounded-xl px-3 py-2 text-xs font-semibold text-left border transition cursor-pointer ${
-                        sortBy === opt.val
-                          ? 'border-[#FFCD00] bg-[#FFCD00]/20 text-slate-900 font-bold'
-                          : 'border-slate-200 bg-white text-slate-700'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
+                  ].map((opt) => {
+                    const isSelected = sortBy === opt.val
+                    return (
+                      <button
+                        key={opt.val}
+                        data-selected={isSelected ? 'true' : 'false'}
+                        type="button"
+                        onClick={() => {
+                          triggerHaptic(8)
+                          setSortBy(opt.val)
+                        }}
+                        className={`rounded-xl px-3 py-2 text-xs font-semibold text-left border transition cursor-pointer ${
+                          isSelected
+                            ? isNightDive
+                              ? 'border-2 border-white bg-[#FFCD00]/25 text-slate-900 font-bold ring-1 ring-white/50'
+                              : 'border-[#FFCD00] bg-[#FFCD00]/20 text-slate-900 font-bold'
+                            : 'border-slate-200 bg-white text-slate-700'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
@@ -597,12 +626,44 @@ export default function Shop() {
 }
 
 function GroupGallerySection() {
-  const [selectedPhoto, setSelectedPhoto] = useState(null)
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null)
   const lenis = useLenis()
 
-  // Lock background scroll when photo preview is open
+  const selectedPhoto = selectedPhotoIndex !== null ? GROUP_PHOTOS[selectedPhotoIndex] : null
+
+  const nextPhoto = () => {
+    triggerHaptic(8)
+    setSelectedPhotoIndex((prev) => (prev === null ? 0 : (prev + 1) % GROUP_PHOTOS.length))
+  }
+
+  const prevPhoto = () => {
+    triggerHaptic(8)
+    setSelectedPhotoIndex((prev) => (prev === null ? 0 : (prev - 1 + GROUP_PHOTOS.length) % GROUP_PHOTOS.length))
+  }
+
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e) => {
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current
+    if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      if (deltaX < 0) {
+        nextPhoto()
+      } else {
+        prevPhoto()
+      }
+    }
+  }
+
+  // Lock background scroll and handle arrow keys when photo preview is open
   useEffect(() => {
-    if (!selectedPhoto) return
+    if (selectedPhotoIndex === null) return
 
     if (lenis) lenis.stop()
     const origBodyOverflow = document.body.style.overflow
@@ -610,12 +671,26 @@ function GroupGallerySection() {
     document.body.style.overflow = 'hidden'
     document.documentElement.style.overflow = 'hidden'
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedPhotoIndex(null)
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        nextPhoto()
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        prevPhoto()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+
     return () => {
       if (lenis) lenis.start()
       document.body.style.overflow = origBodyOverflow
       document.documentElement.style.overflow = origHtmlOverflow
+      window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [selectedPhoto, lenis])
+  }, [selectedPhotoIndex, lenis])
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 border-t border-navy/10 mt-8">
@@ -638,7 +713,7 @@ function GroupGallerySection() {
             key={photo.id || idx}
             onClick={() => {
               triggerHaptic(8)
-              setSelectedPhoto(photo)
+              setSelectedPhotoIndex(idx)
             }}
             className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-white cursor-pointer shadow-sm hover:shadow-float transition duration-300 border border-navy/5"
           >
@@ -653,7 +728,7 @@ function GroupGallerySection() {
         ))}
       </div>
 
-      {/* Lightbox Modal - Clean with No Title */}
+      {/* Lightbox Modal - Full uncropped photo & Arrow Navigation */}
       <AnimatePresence>
         {selectedPhoto && (
           <motion.div
@@ -662,34 +737,108 @@ function GroupGallerySection() {
             exit={{ opacity: 0 }}
             data-lenis-prevent="true"
             style={{
-              top: 'var(--toolbar-bottom, 64px)',
               overscrollBehavior: 'contain',
               touchAction: 'none',
             }}
-            onClick={() => setSelectedPhoto(null)}
-            className="fixed left-0 right-0 bottom-0 top-[64px] lg:top-[68px] z-[9990] bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 cursor-pointer overflow-hidden"
+            onClick={() => setSelectedPhotoIndex(null)}
+            className="fixed inset-0 z-[9990] bg-black/90 backdrop-blur-md select-none overflow-hidden"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-w-5xl max-h-[calc(100vh-var(--toolbar-bottom,64px)-24px)] rounded-3xl overflow-hidden bg-navy/95 border border-white/15 shadow-2xl flex flex-col items-center justify-center p-2.5 sm:p-4 cursor-default"
+            {/* Modal Content Wrapper - Strictly positioned below toolbar */}
+            <div
+              className="absolute inset-x-0 bottom-0 top-[64px] lg:top-[68px] flex items-center justify-center p-3 sm:p-5 lg:p-7"
+              style={{
+                top: 'var(--toolbar-bottom, 68px)',
+              }}
+              onClick={() => setSelectedPhotoIndex(null)}
             >
-              <button
-                type="button"
-                onClick={() => setSelectedPhoto(null)}
-                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 text-white hover:bg-accent hover:text-navy flex items-center justify-center transition cursor-pointer font-bold shadow-lg"
-                aria-label="Close photo"
+              {/* Previous Photo Arrow */}
+              {GROUP_PHOTOS.length > 1 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    prevPhoto()
+                  }}
+                  className="absolute left-2 sm:left-4 lg:left-8 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-navy/85 hover:bg-[#FFCD00] text-white hover:text-[#001e3d] flex items-center justify-center transition shadow-2xl active:scale-90 cursor-pointer font-bold border border-white/20 backdrop-blur-md"
+                  aria-label="Previous photo (Left Arrow)"
+                  title="Previous photo (Left Arrow)"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Next Photo Arrow */}
+              {GROUP_PHOTOS.length > 1 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    nextPhoto()
+                  }}
+                  className="absolute right-2 sm:right-4 lg:right-8 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-navy/85 hover:bg-[#FFCD00] text-white hover:text-[#001e3d] flex items-center justify-center transition shadow-2xl active:scale-90 cursor-pointer font-bold border border-white/20 backdrop-blur-md"
+                  aria-label="Next photo (Right Arrow)"
+                  title="Next photo (Right Arrow)"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                style={{
+                  maxHeight: 'calc(100vh - var(--toolbar-bottom, 68px) - 36px)',
+                  maxWidth: 'calc(100vw - 32px)',
+                }}
+                className="relative rounded-2xl sm:rounded-3xl bg-navy/95 border border-white/15 shadow-2xl flex flex-col items-center justify-center p-2.5 sm:p-4 cursor-default select-none"
               >
-                ✕
-              </button>
-              <img
-                src={selectedPhoto.src}
-                alt="Community Photo"
-                className="max-h-[calc(100vh-var(--toolbar-bottom,64px)-48px)] w-auto max-w-full object-contain rounded-2xl shadow-inner"
-              />
-            </motion.div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPhotoIndex(null)}
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/60 text-white hover:bg-accent hover:text-navy flex items-center justify-center transition cursor-pointer font-bold shadow-lg border border-white/10 backdrop-blur-md"
+                  aria-label="Close photo"
+                >
+                  ✕
+                </button>
+                <img
+                  key={selectedPhoto.src}
+                  src={selectedPhoto.src}
+                  alt={selectedPhoto.title || "Community Photo"}
+                  style={{
+                    objectFit: 'contain',
+                    maxHeight: 'calc(100vh - var(--toolbar-bottom, 68px) - 72px)',
+                    maxWidth: 'min(calc(100vw - 64px), 1100px)',
+                    width: 'auto',
+                    height: 'auto',
+                  }}
+                  className="rounded-xl sm:rounded-2xl shadow-inner select-none block"
+                  draggable={false}
+                />
+
+                {/* Bottom Image Counter & Title Badge */}
+                {GROUP_PHOTOS.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold shadow-md border border-white/15 pointer-events-none flex items-center gap-2">
+                    <span className="text-[#FFCD00]">
+                      {selectedPhotoIndex + 1} / {GROUP_PHOTOS.length}
+                    </span>
+                    {selectedPhoto.title && (
+                      <>
+                        <span className="w-1 h-1 rounded-full bg-white/40" />
+                        <span className="text-white/90">{selectedPhoto.title}</span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -704,6 +853,25 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
   const [isLoaded, setIsLoaded] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
   const viewerRef = useRef(null)
+
+  const isFullSleeves = Boolean(
+    product?.id === 'product-full-sleeves-unisex' ||
+    (product?.glb && (
+      product.glb.toLowerCase().includes('full_sleeves') ||
+      product.glb.toLowerCase().includes('full-sleeves')
+    )) ||
+    (product?.title && (
+      (product.title.toLowerCase().includes('full sleeve') && product.title.toLowerCase().includes('top'))
+    ))
+  )
+
+  const isBottomsCompression = Boolean(
+    product?.id === 'product-womens-pants' ||
+    (product?.glb && product.glb.toLowerCase().includes('bottoms_with_compression')) ||
+    (product?.title && (
+      (product.title.toLowerCase().includes('bottom') && product.title.toLowerCase().includes('compression'))
+    ))
+  )
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !customElements.get('model-viewer')) {
@@ -824,7 +992,7 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
             threeMat.metalness = 0.0
 
             // Rich ambient diffuse lighting so garments are brightly lit and fully visible
-            threeMat.envMapIntensity = 0.95
+            threeMat.envMapIntensity = isFullSleeves ? 1.45 : (isBottomsCompression ? 1.25 : 0.95)
 
             if ('clearcoat' in threeMat) threeMat.clearcoat = 0.0
             if ('clearcoatRoughness' in threeMat) threeMat.clearcoatRoughness = 1.0
@@ -845,11 +1013,12 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
               threeMat.normalScale.set(0.75, 0.75)
             }
 
-            // Lift dark tones so black models have rich graphite visibility instead of pitch-dark silhouettes
+            // Lift dark tones: slightly more brighter for full sleeves unisex top, slightly brighter for bottoms with compression
             if (threeMat.color) {
-              threeMat.color.r = Math.max(threeMat.color.r, 0.22)
-              threeMat.color.g = Math.max(threeMat.color.g, 0.22)
-              threeMat.color.b = Math.max(threeMat.color.b, 0.22)
+              const minTone = isFullSleeves ? 0.38 : (isBottomsCompression ? 0.32 : 0.22)
+              threeMat.color.r = Math.max(threeMat.color.r, minTone)
+              threeMat.color.g = Math.max(threeMat.color.g, minTone)
+              threeMat.color.b = Math.max(threeMat.color.b, minTone)
             }
 
             threeMat.needsUpdate = true
@@ -895,13 +1064,15 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
       {/* MOBILE PRODUCT CARD (md:hidden - White Card) */}
       <div
         data-product-card="true"
+        data-white-bg="true"
         onClick={() => navigate(`/shop/${product.id}`)}
-        style={{ backgroundColor: '#ffffff' }}
-        className="md:hidden group rounded-2xl bg-white border border-slate-200/90 text-navy shadow-sm p-2.5 xs:p-3 flex flex-col justify-between cursor-pointer relative transition active:scale-[0.99]"
+        style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#001e3d' }}
+        className="md:hidden group rounded-2xl bg-white border border-slate-200/90 text-[#001e3d] shadow-sm p-2.5 xs:p-3 flex flex-col justify-between cursor-pointer relative transition active:scale-[0.99]"
       >
         {/* Wishlist Button (Top Right) */}
         <button
           type="button"
+          data-selected={isWishlisted ? 'true' : 'false'}
           onClick={(e) => {
             e.stopPropagation()
             onToggleWishlist(e)
@@ -939,7 +1110,10 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
             <span className="product-card-category text-[10px] font-semibold uppercase tracking-wider text-[#00AEC7] block mb-0.5">
               {product.category || 'MERCH'}
             </span>
-            <h3 className="product-card-title font-bold text-navy text-xs xs:text-[13px] leading-snug line-clamp-2 min-h-[32px]">
+            <h3
+              className="product-card-title font-bold text-[#001e3d] text-xs xs:text-[13px] leading-snug line-clamp-2 min-h-[32px]"
+              style={{ color: '#001e3d' }}
+            >
               {product.title || product.name}
             </h3>
           </div>
@@ -963,14 +1137,15 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
       {/* DESKTOP PRODUCT CARD (hidden md:flex - White Card) */}
       <div
         data-product-card="true"
+        data-white-bg="true"
         onClick={() => navigate(`/shop/${product.id}`)}
         onMouseEnter={() => {
           setIsHovered(true)
           setHasHovered(true)
         }}
         onMouseLeave={() => setIsHovered(false)}
-        style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
-        className="hidden md:flex group rounded-2xl sm:rounded-[32px] bg-white border border-navy/10 text-navy p-3 sm:p-6 shadow-card hover:shadow-float transition duration-300 flex-col justify-between cursor-pointer relative"
+        style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#001e3d' }}
+        className="hidden md:flex group rounded-2xl sm:rounded-[32px] bg-white border border-navy/10 text-[#001e3d] p-3 sm:p-6 shadow-card hover:shadow-float transition duration-300 flex-col justify-between cursor-pointer relative"
       >
         <div style={{ backgroundColor: '#ffffff', background: '#ffffff' }}>
           <div data-product-media="true" style={{ backgroundColor: '#ffffff', background: '#ffffff' }} className="relative mb-3 sm:mb-5">
@@ -1011,7 +1186,7 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
                     max-camera-orbit="auto 75deg auto"
                     interaction-prompt="none"
                     environment-image="neutral"
-                    exposure="1.85"
+                    exposure={isFullSleeves ? "2.75" : (isBottomsCompression ? "2.35" : "1.85")}
                     shadow-intensity="0.10"
                     shadow-softness="1.0"
                     tone-mapping="neutral"
@@ -1039,8 +1214,18 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
 
           <div className="mb-2 sm:mb-4">
             <span className="product-card-category text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-[#00AEC7] block mb-0.5 sm:mb-1">{product.category}</span>
-            <h3 className="product-card-title font-heading text-xs xs:text-sm sm:text-xl font-bold text-navy leading-tight sm:leading-snug transition line-clamp-2 sm:line-clamp-none">{product.title}</h3>
-            <p className="product-card-desc text-[10px] sm:text-xs text-navy/70 line-clamp-1 sm:line-clamp-2 mt-1 sm:mt-2 leading-relaxed hidden xs:block">{product.description}</p>
+            <h3
+              className="product-card-title font-heading text-xs xs:text-sm sm:text-xl font-bold text-[#001e3d] leading-tight sm:leading-snug transition line-clamp-2 sm:line-clamp-none group-hover:text-[#00AEC7]"
+              style={{ color: '#001e3d' }}
+            >
+              {product.title}
+            </h3>
+            <p
+              className="product-card-desc text-[10px] sm:text-xs text-[#001e3d]/75 line-clamp-1 sm:line-clamp-2 mt-1 sm:mt-2 leading-relaxed hidden xs:block"
+              style={{ color: '#001e3d', opacity: 0.75 }}
+            >
+              {product.description}
+            </p>
           </div>
         </div>
 
@@ -1049,6 +1234,7 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
           <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-0">
             <button
               type="button"
+              data-selected={isWishlisted ? 'true' : 'false'}
               onClick={onToggleWishlist}
               className="product-wishlist-btn w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-navy/5 hover:bg-navy border border-navy/15 text-navy hover:text-white flex items-center justify-center shadow-sm transition duration-200 hover:scale-110 active:scale-95 cursor-pointer shrink-0"
               aria-label="Wishlist"

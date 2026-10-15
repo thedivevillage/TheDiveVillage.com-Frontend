@@ -4,7 +4,6 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandForSite } from '../utils/diveIslandCatalog'
-import { getCountryBounds, matchCountryName } from '../utils/countryBounds'
 
 import pinIconUrl from '../assets/pin.png'
 
@@ -45,7 +44,7 @@ if (typeof window !== 'undefined') {
  * Generates a crisp #FFD500 yellow dive goggles pin icon from assets/pin.png for MapLibre WebGL.
  * Features a subtle dark drop shadow so it pops cleanly over both deep blue ocean and light coastlines.
  */
-function createDiveGogglesPinIcon(img, width = 28, height = 16) {
+function createDiveGogglesPinIcon(img, width = 30, height = 17) {
   const dpr = 2
   const pad = 3
   const canvas = document.createElement('canvas')
@@ -131,6 +130,104 @@ function createRedDropPinIcon(width = 15, height = 21) {
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }
 
+// Clean country name string for reliable matching across basemap labels and geojson properties
+function cleanCountryName(str) {
+  if (!str) return ''
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+}
+
+const COUNTRY_NAME_ALIASES = {
+  usa: 'United States of America (USA)',
+  unitedstates: 'United States of America (USA)',
+  unitedstatesofamerica: 'United States of America (USA)',
+  us: 'United States of America (USA)',
+  uk: 'United Kingdom',
+  greatbritain: 'United Kingdom',
+  britain: 'United Kingdom',
+  england: 'United Kingdom',
+  scotland: 'United Kingdom',
+  wales: 'United Kingdom',
+  uae: 'United Arab Emirates',
+  unitedarabemirates: 'United Arab Emirates',
+  russia: 'Russia',
+  russianfederation: 'Russia',
+  southkorea: 'South Korea',
+  korea: 'South Korea',
+  republicofkorea: 'South Korea',
+  tanzania: 'Tanzania',
+  unitedrepublicoftanzania: 'Tanzania',
+  micronesia: 'Federated States of Micronesia',
+  federatedstatesofmicronesia: 'Federated States of Micronesia',
+  stkittsandnevis: 'Saint Kitts & Nevis',
+  stkittsnevis: 'Saint Kitts & Nevis',
+  saintkittsandnevis: 'Saint Kitts & Nevis',
+  stvincentandthegrenadines: 'Saint Vincent & the Grenadines',
+  stvincent: 'Saint Vincent & the Grenadines',
+  saintvincentandthegrenadines: 'Saint Vincent & the Grenadines',
+  saintvincentthegrenadines: 'Saint Vincent & the Grenadines',
+  turksandcaicos: 'Turks and Caicos Islands',
+  turksandcaicosislands: 'Turks and Caicos Islands',
+  britishvirginislands: 'British Virgin Islands',
+  virginislandsbritish: 'British Virgin Islands',
+  usvirginislands: 'U.S. Virgin Islands',
+  virginislandsus: 'U.S. Virgin Islands',
+  unitedstatesvirginislands: 'U.S. Virgin Islands',
+  caymanislands: 'Cayman Islands',
+  curacao: 'Curaçao',
+  reunion: 'Réunion',
+  republicofmauritius: 'Republic of Mauritius',
+  mauritius: 'Republic of Mauritius',
+  guadeloupe: 'The Guadeloupe Islands',
+  theguadeloupeislands: 'The Guadeloupe Islands',
+  timorleste: 'Timor Leste (East Timor)',
+  easttimor: 'Timor Leste (East Timor)',
+  trinidadandtobago: 'Trinidad and Tobago',
+  trinidadtobago: 'Trinidad and Tobago',
+  caribbeannetherlands: 'Caribbean Netherlands',
+  bonaire: 'Caribbean Netherlands',
+  sintmaarten: 'Sint Maarten',
+  saintmartin: 'Sint Maarten',
+  northernmarianaislands: 'Northern Mariana Islands',
+  frenchpolynesia: 'French Polynesia',
+  tahiti: 'French Polynesia',
+  capeverde: 'Cape Verde',
+  caboverde: 'Cape Verde',
+}
+
+function findMatchingCountry(candidateName, countriesList) {
+  if (!candidateName || !countriesList || countriesList.length === 0) return null
+  const cleaned = cleanCountryName(candidateName)
+  if (!cleaned) return null
+
+  // 1. Direct alias check
+  if (COUNTRY_NAME_ALIASES[cleaned]) {
+    const aliased = COUNTRY_NAME_ALIASES[cleaned]
+    const found = countriesList.find((c) => cleanCountryName(c) === cleanCountryName(aliased))
+    if (found) return found
+    return aliased
+  }
+
+  // 2. Exact match in countries list
+  const exact = countriesList.find((c) => cleanCountryName(c) === cleaned)
+  if (exact) return exact
+
+  // 3. Substring match
+  const sub = countriesList.find((c) => {
+    const cClean = cleanCountryName(c)
+    return (
+      (cleaned.includes(cClean) && cClean.length >= 4) ||
+      (cClean.includes(cleaned) && cleaned.length >= 4)
+    )
+  })
+  if (sub) return sub
+
+  return null
+}
+
 export default function DiveExplorerMap({
   onSelectSite,
   onSelectCountry = null,
@@ -203,11 +300,135 @@ export default function DiveExplorerMap({
   const countrySitesGeoJSONRef = useRef({ type: 'FeatureCollection', features: [] })
   const selectedCountryRef = useRef(selectedCountry)
   const searchQueryRef = useRef(searchQuery)
+  const countriesListRef = useRef(countriesList)
+  const onSelectCountryRef = useRef(onSelectCountry)
+  const onSelectSiteRef = useRef(onSelectSite)
+  const onBookSiteRef = useRef(onBookSite)
 
   geojsonCountriesRef.current = geojsonCountries
   countryCentroidsRef.current = countryCentroids
   selectedCountryRef.current = selectedCountry
   searchQueryRef.current = searchQuery
+  countriesListRef.current = countriesList
+  onSelectCountryRef.current = onSelectCountry
+  onSelectSiteRef.current = onSelectSite
+  onBookSiteRef.current = onBookSite
+
+  // Unified helper: camera zoom to country with guaranteed minZoom & bounds handling
+  const zoomToCountry = useCallback((countryName, clickedLngLat = null) => {
+    const map = mapRef.current
+    if (!map || !countryName) return
+
+    // If map style is still loading, wait for load event
+    if (!map.loaded()) {
+      map.once('load', () => {
+        zoomToCountry(countryName, clickedLngLat)
+      })
+      return
+    }
+
+    const canonicalCountry = findMatchingCountry(countryName, countriesListRef.current) || countryName
+    const countryData = countryCentroidsRef.current.find(
+      (c) => cleanCountryName(c.country) === cleanCountryName(canonicalCountry)
+    )
+
+    if (!countryData) {
+      if (clickedLngLat) {
+        map.flyTo({
+          center: [clickedLngLat.lng ?? clickedLngLat[0], clickedLngLat.lat ?? clickedLngLat[1]],
+          zoom: 6.5,
+          duration: 1200,
+        })
+      }
+      return
+    }
+
+    // Check bounds
+    if (countryData.bounds && Array.isArray(countryData.bounds) && countryData.bounds.length === 2) {
+      const [sw, ne] = countryData.bounds
+      const dLng = Math.abs(ne[0] - sw[0])
+      const dLat = Math.abs(ne[1] - sw[1])
+
+      // Single-site or zero-area bounding box (e.g. Libya, Iran, Russia, Romania, Senegal)
+      if (dLng < 0.05 && dLat < 0.05) {
+        map.flyTo({
+          center: [sw[0], sw[1]],
+          zoom: 7.5,
+          duration: 1200,
+        })
+        return
+      }
+
+      // Very wide territory spanning oceans (e.g. USA with Hawaii, huge archipelago)
+      if (dLng > 65) {
+        const centerCoord = clickedLngLat
+          ? [clickedLngLat.lng ?? clickedLngLat[0], clickedLngLat.lat ?? clickedLngLat[1]]
+          : [countryData.longitude, countryData.latitude]
+        map.flyTo({
+          center: centerCoord,
+          zoom: 5.2,
+          duration: 1200,
+        })
+        return
+      }
+
+      // Normal multi-site country: compute camera ensuring minZoom >= 4.5
+      try {
+        const camera = map.cameraForBounds(countryData.bounds, {
+          padding: { top: 60, bottom: 60, left: 60, right: 60 },
+          maxZoom: 8.5,
+        })
+        if (camera && camera.center) {
+          const clampedZoom = Math.max(4.5, Math.min(8.5, camera.zoom))
+          const centerCoord = [
+            camera.center.lng ?? (Array.isArray(camera.center) ? camera.center[0] : countryData.longitude),
+            camera.center.lat ?? (Array.isArray(camera.center) ? camera.center[1] : countryData.latitude),
+          ]
+          map.flyTo({
+            center: centerCoord,
+            zoom: clampedZoom,
+            duration: 1200,
+          })
+          return
+        }
+      } catch (err) {
+        console.warn('[DiveExplorer] cameraForBounds notice:', err)
+      }
+
+      map.fitBounds(countryData.bounds, {
+        padding: 60,
+        maxZoom: 8.5,
+        duration: 1200,
+      })
+      return
+    }
+
+    // Fallback if no bounds: center on centroid
+    map.flyTo({
+      center: [countryData.longitude, countryData.latitude],
+      zoom: 6.8,
+      duration: 1200,
+    })
+  }, [])
+
+  // Two-tier navigation trigger (World View -> Specific Country)
+  const navigateToCountry = useCallback((rawCountryName, clickedLngLat = null) => {
+    if (!rawCountryName) return
+    const canonical = findMatchingCountry(rawCountryName, countriesListRef.current) || rawCountryName
+
+    setSelectedCountry(canonical)
+    selectedCountryRef.current = canonical
+    setActiveSite(null)
+    setTooltipInfo(null)
+    if (onSelectCountryRef.current) onSelectCountryRef.current(canonical)
+
+    zoomToCountry(canonical, clickedLngLat)
+  }, [zoomToCountry])
+
+  const navigateToCountryRef = useRef(navigateToCountry)
+  navigateToCountryRef.current = navigateToCountry
+  const zoomToCountryRef = useRef(zoomToCountry)
+  zoomToCountryRef.current = zoomToCountry
 
   useEffect(() => {
     pinStyleRef.current = pinStyle
@@ -240,8 +461,15 @@ export default function DiveExplorerMap({
         } else {
           setAllSites(data.sites || [])
           setCountryCentroids(data.countryCentroids || [])
+          countryCentroidsRef.current = data.countryCentroids || []
           setGeojsonCountries(data.geojsonCountries || { type: 'FeatureCollection', features: [] })
+          geojsonCountriesRef.current = data.geojsonCountries || { type: 'FeatureCollection', features: [] }
           setCountriesList(data.countries || [])
+          countriesListRef.current = data.countries || []
+
+          if (selectedCountryRef.current && zoomToCountryRef.current) {
+            zoomToCountryRef.current(selectedCountryRef.current)
+          }
         }
       } catch (err) {
         if (mounted) setError(err.message || 'Failed to initialize dive site dataset.')
@@ -269,14 +497,15 @@ export default function DiveExplorerMap({
     const q = searchQuery.trim().toLowerCase()
     const filtered = allSites.filter((site) => {
       // Must match selected country if active
-      if (selectedCountry && site.country !== selectedCountry) {
+      if (selectedCountry && site.country?.trim().toLowerCase() !== selectedCountry.trim().toLowerCase()) {
         return false
       }
       // Search query
       if (q) {
         const nameMatch = (site.siteName || '').toLowerCase().includes(q)
         const countryMatch = (site.country || '').toLowerCase().includes(q)
-        if (!nameMatch && !countryMatch) return false
+        const typeMatch = (site.naturalTypes || '').toLowerCase().includes(q)
+        if (!nameMatch && !countryMatch && !typeMatch) return false
       }
       return true
     })
@@ -317,20 +546,26 @@ export default function DiveExplorerMap({
     try {
       const cs = map.getSource('country-centroids-source')
       if (cs) {
-        cs.setData(geojsonCountries)
+        cs.setData(geojsonCountriesRef.current)
       }
 
       const ds = map.getSource('dive-sites-source')
       if (ds) {
-        ds.setData(countrySitesGeoJSON)
+        ds.setData(countrySitesGeoJSONRef.current)
       }
 
-      const isCountryView = Boolean(selectedCountry || searchQuery)
+      const isCountryView = Boolean(selectedCountryRef.current || searchQueryRef.current)
       const countryVis = isCountryView ? 'none' : 'visible'
       const siteVis = isCountryView ? 'visible' : 'none'
 
       if (map.getLayer('country-pin')) {
         map.setLayoutProperty('country-pin', 'visibility', countryVis)
+      }
+      if (map.getLayer('country-polygons-fill')) {
+        map.setLayoutProperty('country-polygons-fill', 'visibility', countryVis)
+      }
+      if (map.getLayer('country-polygons-stroke')) {
+        map.setLayoutProperty('country-polygons-stroke', 'visibility', countryVis)
       }
       if (map.getLayer('site-pin')) {
         map.setLayoutProperty('site-pin', 'visibility', siteVis)
@@ -338,90 +573,10 @@ export default function DiveExplorerMap({
     } catch (e) {
       console.warn('[DiveExplorer] syncMapData warning:', e)
     }
-  }, [geojsonCountries, countrySitesGeoJSON, selectedCountry, searchQuery])
-
-  // Helper: Zoom into a country keeping the whole country fully framed within the viewport
-  const zoomToCountry = useCallback((countryName) => {
-    if (!countryName || !mapRef.current) return
-
-    const canonical = matchCountryName(countryName) || countryName
-    const countryData = countryCentroidsRef.current.find(
-      (c) => c.country.toLowerCase() === canonical.toLowerCase()
-    )
-    const geoBounds = getCountryBounds(canonical)
-    const boundsToFit = countryData?.bounds || geoBounds
-
-    if (boundsToFit && mapRef.current) {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-      // Generous padding so top header banner, bottom control buttons, and nav controls never overlap the country
-      const padding = isMobile
-        ? { top: 72, bottom: 58, left: 24, right: 28 }
-        : { top: 82, bottom: 64, left: 52, right: 56 }
-
-      // Calculate geographic span to prevent over-zooming on tiny island nations
-      const lngSpan = Math.abs(boundsToFit[1][0] - boundsToFit[0][0])
-      const latSpan = Math.abs(boundsToFit[1][1] - boundsToFit[0][1])
-      const maxSpan = Math.max(lngSpan, latSpan)
-
-      let maxZoom = 13.5
-      if (maxSpan < 0.35) {
-        maxZoom = 10.5
-      } else if (maxSpan < 1.0) {
-        maxZoom = 9.5
-      } else if (maxSpan < 2.5) {
-        maxZoom = 8.5
-      }
-
-      mapRef.current.fitBounds(boundsToFit, {
-        padding,
-        maxZoom,
-        duration: 1200,
-        essential: true,
-      })
-    } else if (countryData && mapRef.current) {
-      mapRef.current.flyTo({
-        center: [countryData.longitude, countryData.latitude],
-        zoom: 6.5,
-        duration: 1200,
-        essential: true,
-      })
-    }
   }, [])
 
-  // Return to World Overview (show all countries)
-  const handleResetWorldView = useCallback(() => {
-    setSelectedCountry(null)
-    setSearchQuery('')
-    setActiveSite(null)
-    if (onSelectCountry) onSelectCountry('')
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: DEFAULT_CENTER,
-        zoom: DEFAULT_ZOOM,
-        duration: 1000,
-        essential: true,
-      })
-    }
-  }, [onSelectCountry])
-
-  // Select country and immediately frame it
-  const handleSelectCountry = useCallback((rawName) => {
-    if (!rawName) return
-    const canonical = matchCountryName(rawName) || rawName
-    setSelectedCountry(canonical)
-    setActiveSite(null)
-    if (onSelectCountry) onSelectCountry(canonical)
-    zoomToCountry(canonical)
-  }, [onSelectCountry, zoomToCountry])
-
-  // Recenter current view: if inside a country, re-frame that country; otherwise reset to world view
-  const handleRecenter = useCallback(() => {
-    if (selectedCountry) {
-      zoomToCountry(selectedCountry)
-    } else {
-      handleResetWorldView()
-    }
-  }, [selectedCountry, zoomToCountry, handleResetWorldView])
+  const syncMapDataRef = useRef(syncMapData)
+  syncMapDataRef.current = syncMapData
 
   // 3. Initialize MapLibre GL Map with OpenFreeMap Liberty Style
   useEffect(() => {
@@ -438,12 +593,15 @@ export default function DiveExplorerMap({
         zoom: DEFAULT_ZOOM,
         minZoom: 1.2,
         maxZoom: 18,
+        clickTolerance: 12, // Critical for mobile touch - prevents natural finger drift from cancelling single tap!
         attributionControl: true,
         renderWorldCopies: true,
         dragRotate: false,
         touchPitch: false,
         scrollZoom: false,
       })
+
+      mapRef.current = map
 
       // Ensure touchPitch, rotation, and scrollZoom are disabled so 2-finger gestures move the map cleanly
       if (map.touchPitch) map.touchPitch.disable()
@@ -459,21 +617,20 @@ export default function DiveExplorerMap({
         if (id === 'country-pin-custom' || id === 'country-pin-icon') {
           const pinImg = await preloadPinImage()
           if (pinImg && !map.hasImage(id)) {
-            map.addImage(id, createDiveGogglesPinIcon(pinImg, 28, 16), { pixelRatio: 2 })
+            map.addImage(id, createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
           }
         } else if (id === 'site-pin-custom' || id === 'site-pin-icon') {
           const pinImg = await preloadPinImage()
           if (pinImg && !map.hasImage(id)) {
-            // Smaller dive site custom goggles icon
-            map.addImage(id, createDiveGogglesPinIcon(pinImg, 18, 10), { pixelRatio: 2 })
+            map.addImage(id, createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
           }
         } else if (id === 'country-pin-red') {
           if (!map.hasImage(id)) {
-            map.addImage(id, createRedDropPinIcon(20, 28), { pixelRatio: 2 })
+            map.addImage(id, createRedDropPinIcon(18, 25), { pixelRatio: 2 })
           }
         } else if (id === 'site-pin-red') {
           if (!map.hasImage(id)) {
-            map.addImage(id, createRedDropPinIcon(15, 21), { pixelRatio: 2 })
+            map.addImage(id, createRedDropPinIcon(14, 20), { pixelRatio: 2 })
           }
         }
       })
@@ -483,17 +640,28 @@ export default function DiveExplorerMap({
 
         mapRef.current = map
 
-        // 1. Force English ONLY on all basemap place names (removes regional scripts like "Bharat / भारत")
+        // 1. Force English ONLY on all basemap place names & ensure clean Havelock Island name (removes "Swaraj Dweep / Swarajdeep")
         try {
           const styleLayers = map.getStyle().layers || []
           styleLayers.forEach((layer) => {
             if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
               map.setLayoutProperty(layer.id, 'text-field', [
-                'coalesce',
-                ['get', 'name:en'],
-                ['get', 'name_en'],
-                ['get', 'name:latin'],
-                ['get', 'name'],
+                'case',
+                [
+                  'any',
+                  ['in', 'Swaraj', ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name'], '']],
+                  ['in', 'swaraj', ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name'], '']],
+                  ['in', 'Swarajdeep', ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name'], '']],
+                  ['in', 'swarajdeep', ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name'], '']],
+                ],
+                'Havelock Island',
+                [
+                  'coalesce',
+                  ['get', 'name:en'],
+                  ['get', 'name_en'],
+                  ['get', 'name:latin'],
+                  ['get', 'name'],
+                ],
               ])
             }
           })
@@ -537,35 +705,34 @@ export default function DiveExplorerMap({
           const pinImg = await preloadPinImage()
           if (pinImg) {
             if (!map.hasImage('country-pin-custom')) {
-              map.addImage('country-pin-custom', createDiveGogglesPinIcon(pinImg, 28, 16), { pixelRatio: 2 })
+              map.addImage('country-pin-custom', createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
             }
             if (!map.hasImage('site-pin-custom')) {
-              // Made dive sites pin smaller as requested: 18x10 instead of 28x16
-              map.addImage('site-pin-custom', createDiveGogglesPinIcon(pinImg, 18, 10), { pixelRatio: 2 })
+              map.addImage('site-pin-custom', createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
             }
             // Backwards-compatible aliases
             if (!map.hasImage('country-pin-icon')) {
-              map.addImage('country-pin-icon', createDiveGogglesPinIcon(pinImg, 28, 16), { pixelRatio: 2 })
+              map.addImage('country-pin-icon', createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
             }
             if (!map.hasImage('site-pin-icon')) {
-              map.addImage('site-pin-icon', createDiveGogglesPinIcon(pinImg, 18, 10), { pixelRatio: 2 })
+              map.addImage('site-pin-icon', createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
             }
           } else {
             const res = await map.loadImage(pinIconUrl)
             if (res && res.data) {
-              if (!map.hasImage('country-pin-custom')) map.addImage('country-pin-custom', res.data, { pixelRatio: 4.4 })
-              if (!map.hasImage('site-pin-custom')) map.addImage('site-pin-custom', res.data, { pixelRatio: 6.5 })
-              if (!map.hasImage('country-pin-icon')) map.addImage('country-pin-icon', res.data, { pixelRatio: 4.4 })
-              if (!map.hasImage('site-pin-icon')) map.addImage('site-pin-icon', res.data, { pixelRatio: 6.5 })
+              if (!map.hasImage('country-pin-custom')) map.addImage('country-pin-custom', res.data, { pixelRatio: 4.1 })
+              if (!map.hasImage('site-pin-custom')) map.addImage('site-pin-custom', res.data, { pixelRatio: 5.6 })
+              if (!map.hasImage('country-pin-icon')) map.addImage('country-pin-icon', res.data, { pixelRatio: 4.1 })
+              if (!map.hasImage('site-pin-icon')) map.addImage('site-pin-icon', res.data, { pixelRatio: 5.6 })
             }
           }
 
           // Register classic red drop pins
           if (!map.hasImage('country-pin-red')) {
-            map.addImage('country-pin-red', createRedDropPinIcon(20, 28), { pixelRatio: 2 })
+            map.addImage('country-pin-red', createRedDropPinIcon(18, 25), { pixelRatio: 2 })
           }
           if (!map.hasImage('site-pin-red')) {
-            map.addImage('site-pin-red', createRedDropPinIcon(15, 21), { pixelRatio: 2 })
+            map.addImage('site-pin-red', createRedDropPinIcon(14, 20), { pixelRatio: 2 })
           }
         } catch (e) {
           console.warn('[DiveExplorer] Icon registration notice:', e)
@@ -573,6 +740,46 @@ export default function DiveExplorerMap({
 
         const initialCountryIcon = pinStyleRef.current === 'red' ? 'country-pin-red' : 'country-pin-custom'
         const initialSiteIcon = pinStyleRef.current === 'red' ? 'site-pin-red' : 'site-pin-custom'
+
+        // ----------------------------------------------------
+        // SOURCE 0: Country Boundary Polygons (World Overview)
+        // ----------------------------------------------------
+        map.addSource('countries-polygons-source', {
+          type: 'geojson',
+          data: '/data/countries.geojson',
+        })
+
+        // Subtle interactive country boundary fill (captures taps/clicks anywhere on land)
+        map.addLayer({
+          id: 'country-polygons-fill',
+          type: 'fill',
+          source: 'countries-polygons-source',
+          paint: {
+            'fill-color': '#0284c7',
+            'fill-opacity': [
+              'case',
+              ['boolean', ['feature-state', 'hover'], false],
+              0.16,
+              0.001,
+            ],
+          },
+        })
+
+        map.addLayer({
+          id: 'country-polygons-stroke',
+          type: 'line',
+          source: 'countries-polygons-source',
+          paint: {
+            'line-color': '#38bdf8',
+            'line-width': 1.5,
+            'line-opacity': [
+              'case',
+              ['boolean', ['feature-state', 'hover'], false],
+              0.8,
+              0,
+            ],
+          },
+        })
 
         // ----------------------------------------------------
         // SOURCE 1: Country Centroid Points (World Overview)
@@ -590,18 +797,26 @@ export default function DiveExplorerMap({
           layout: {
             'icon-image': initialCountryIcon,
             'icon-size': [
-              'interpolate', ['linear'], ['zoom'],
-              1, 0.75,
-              4, 0.9,
-              7, 1.35,
-              11, 2.0
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              1.5, 0.72,
+              3.5, 0.95,
+              6.5, 1.25,
             ],
             'icon-anchor': 'bottom',
             'icon-allow-overlap': true,
             'icon-ignore-placement': true,
             'text-field': ['get', 'country'],
             'text-font': ['Noto Sans Bold'],
-            'text-size': 10,
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              1.5, 8.5,
+              4.0, 10,
+              6.5, 11.5,
+            ],
             'text-offset': [0, 0.35],
             'text-anchor': 'top',
             'text-optional': true,
@@ -629,17 +844,26 @@ export default function DiveExplorerMap({
           layout: {
             'icon-image': initialSiteIcon,
             'icon-size': [
-              'interpolate', ['linear'], ['zoom'],
-              4, 0.75,
-              7, 1.1,
-              10, 1.6,
-              13, 2.0
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              4.0, 0.65,
+              7.5, 0.90,
+              10.5, 1.20,
+              13.5, 1.50,
             ],
             'icon-anchor': 'bottom',
             'icon-allow-overlap': true,
             'text-field': ['get', 'siteName'],
             'text-font': ['Noto Sans Bold'],
-            'text-size': 9.5,
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              4.0, 8.0,
+              8.0, 9.5,
+              12.0, 11.5,
+            ],
             'text-offset': [0, 0.35],
             'text-anchor': 'top',
             'text-optional': true,
@@ -654,100 +878,127 @@ export default function DiveExplorerMap({
         // ----------------------------------------------------
         // INTERACTION HANDLERS: Country Click & Hover
         // ----------------------------------------------------
-        // ----------------------------------------------------
-        // INTERACTION HANDLERS: Country Click & Hover
-        // ----------------------------------------------------
+        // A) Direct tap / click on country pin marker
         map.on('click', 'country-pin', (e) => {
           if (!e.features || !e.features.length) return
+          if (e.originalEvent) e.originalEvent._countryHandled = true
           const p = e.features[0].properties
-          handleSelectCountry(p.country)
+          if (navigateToCountryRef.current && p?.country) {
+            navigateToCountryRef.current(p.country, e.lngLat)
+          }
         })
 
-        // Basemap country text labels (e.g. "Australia", "Spain", "Egypt", "United States", etc.)
-        const countryLabelLayers = ['label_country_1', 'label_country_2', 'label_country_3'].filter((id) => map.getLayer(id))
-        countryLabelLayers.forEach((layerId) => {
-          map.on('click', layerId, (e) => {
-            if (selectedCountryRef.current) return
-            if (!e.features || !e.features.length) return
-            const feat = e.features[0]
-            const rawName = feat.properties?.['name:en'] || feat.properties?.['name_en'] || feat.properties?.['name'] || feat.properties?.['name:latin']
-            if (!rawName) return
-            const matched = matchCountryName(rawName)
-            if (matched) {
-              handleSelectCountry(matched)
-            }
-          })
-          map.on('mouseenter', layerId, () => {
-            if (!selectedCountryRef.current) map.getCanvas().style.cursor = 'pointer'
-          })
-          map.on('mouseleave', layerId, () => {
-            map.getCanvas().style.cursor = ''
-          })
+        // B) Direct tap / click anywhere on country landmass polygon
+        map.on('click', 'country-polygons-fill', (e) => {
+          if (!e.features || !e.features.length) return
+          if (e.originalEvent) e.originalEvent._countryHandled = true
+          const p = e.features[0].properties || {}
+          const candidate = p.name_long || p.name || p.admin || p.sovereignt || p.formal_en
+          const matched = findMatchingCountry(candidate, countriesListRef.current)
+          if (matched && navigateToCountryRef.current) {
+            navigateToCountryRef.current(matched, e.lngLat)
+          }
         })
 
-        // Map canvas touch tolerance & country landmass tap detection
+        // C) Comprehensive single-tap detection:
+        // Catches touches near pins, on basemap country text labels, and near islands
         map.on('click', (e) => {
-          // If already in a country view, skip
-          if (selectedCountryRef.current) return
+          if (e.originalEvent?._countryHandled) return
+          // If already in country-specific view or searching, dive site clicks are handled by site-pin
+          if (selectedCountryRef.current || searchQueryRef.current) return
 
-          // If clicked directly on country-pin, handled by pin layer listener
-          const directPin = map.queryRenderedFeatures(e.point, { layers: ['country-pin'] })
-          if (directPin.length > 0) return
-
-          // Generous touch tolerance bounding box (24px) for mobile taps
-          const touchBBox = [
-            [e.point.x - 12, e.point.y - 12],
-            [e.point.x + 12, e.point.y + 12]
+          // 1. Touch hit box (24px padding around tap)
+          const pad = 24
+          const bbox = [
+            [e.point.x - pad, e.point.y - pad],
+            [e.point.x + pad, e.point.y + pad],
           ]
-          const nearbyPins = map.queryRenderedFeatures(touchBBox, { layers: ['country-pin'] })
-          if (nearbyPins.length > 0) {
-            const countryName = nearbyPins[0].properties?.country
-            if (countryName) {
-              handleSelectCountry(countryName)
+
+          // Check country-pin hit within touch radius
+          const pinFeatures = map.queryRenderedFeatures(bbox, { layers: ['country-pin'] })
+          if (pinFeatures.length > 0 && pinFeatures[0].properties?.country) {
+            if (navigateToCountryRef.current) {
+              navigateToCountryRef.current(pinFeatures[0].properties.country, e.lngLat)
+            }
+            return
+          }
+
+          // Check country polygon fill
+          const polyFeatures = map.queryRenderedFeatures(e.point, { layers: ['country-polygons-fill'] })
+          if (polyFeatures.length > 0) {
+            const p = polyFeatures[0].properties || {}
+            const candidate = p.name_long || p.name || p.admin || p.sovereignt || p.formal_en
+            const matched = findMatchingCountry(candidate, countriesListRef.current)
+            if (matched && navigateToCountryRef.current) {
+              navigateToCountryRef.current(matched, e.lngLat)
               return
             }
           }
 
-          if (countryLabelLayers.length > 0) {
-            const nearbyLabels = map.queryRenderedFeatures(touchBBox, { layers: countryLabelLayers })
-            if (nearbyLabels.length > 0) {
-              for (const feat of nearbyLabels) {
-                const rawName = feat.properties?.['name:en'] || feat.properties?.['name_en'] || feat.properties?.['name'] || feat.properties?.['name:latin']
-                const matched = matchCountryName(rawName)
-                if (matched) {
-                  handleSelectCountry(matched)
-                  return
-                }
+          // Check basemap place country/state labels
+          const labelLayers = ['label_country_1', 'label_country_2', 'label_country_3', 'label_state'].filter(
+            (id) => map.getLayer(id)
+          )
+          if (labelLayers.length > 0) {
+            const labelFeatures = map.queryRenderedFeatures(bbox, { layers: labelLayers })
+            for (const feat of labelFeatures) {
+              const p = feat.properties || {}
+              const candidate = p['name:en'] || p.name_en || p.name || p['name:latin']
+              const matched = findMatchingCountry(candidate, countriesListRef.current)
+              if (matched && navigateToCountryRef.current) {
+                navigateToCountryRef.current(matched, e.lngLat)
+                return
               }
             }
           }
 
-          // Check if click point lies inside any country's geographic bounds
-          const clickLng = e.lngLat.lng
-          const clickLat = e.lngLat.lat
-          let bestMatch = null
-          let minDistance = Infinity
-
+          // Island & proximity fallback: if tap landed in ocean near an island country (within 65px on screen)
+          let closestCountry = null
+          let minScreenDist = Infinity
           for (const c of countryCentroidsRef.current) {
-            const bounds = c.bounds || getCountryBounds(c.country)
-            if (bounds) {
-              const [[minLng, minLat], [maxLng, maxLat]] = bounds
-              if (clickLng >= minLng && clickLng <= maxLng && clickLat >= minLat && clickLat <= maxLat) {
-                const d2 = Math.pow(clickLng - c.longitude, 2) + Math.pow(clickLat - c.latitude, 2)
-                if (d2 < minDistance) {
-                  minDistance = d2
-                  bestMatch = c.country
-                }
-              }
+            const pt = map.project([c.longitude, c.latitude])
+            const dist = Math.hypot(pt.x - e.point.x, pt.y - e.point.y)
+            if (dist < minScreenDist) {
+              minScreenDist = dist
+              closestCountry = c.country
             }
           }
 
-          if (bestMatch && minDistance < 250) {
-            handleSelectCountry(bestMatch)
+          if (minScreenDist <= 65 && closestCountry && navigateToCountryRef.current) {
+            navigateToCountryRef.current(closestCountry, e.lngLat)
           }
         })
 
+        // Desktop hover handlers: guarded so they NEVER trigger on touch devices (pointer: coarse)
+        map.on('mousemove', 'country-polygons-fill', (e) => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
+          if (selectedCountryRef.current || searchQueryRef.current) return
+          if (e.features && e.features.length > 0) {
+            const p = e.features[0].properties || {}
+            const candidate = p.name_long || p.name || p.admin || p.sovereignt
+            const matched = findMatchingCountry(candidate, countriesListRef.current)
+            if (matched) {
+              map.getCanvas().style.cursor = 'pointer'
+              const cData = countryCentroidsRef.current.find(
+                (c) => cleanCountryName(c.country) === cleanCountryName(matched)
+              )
+              setTooltipInfo({
+                x: e.point.x,
+                y: e.point.y,
+                name: matched,
+                subtitle: cData ? `${cData.count} Dive Sites • Click to explore` : 'Click to explore',
+              })
+            }
+          }
+        })
+        map.on('mouseleave', 'country-polygons-fill', () => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
+          map.getCanvas().style.cursor = ''
+          setTooltipInfo(null)
+        })
+
         map.on('mouseenter', 'country-pin', (e) => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
           map.getCanvas().style.cursor = 'pointer'
           if (e.features && e.features[0]) {
             const p = e.features[0].properties
@@ -760,6 +1011,7 @@ export default function DiveExplorerMap({
           }
         })
         map.on('mouseleave', 'country-pin', () => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
           map.getCanvas().style.cursor = ''
           setTooltipInfo(null)
         })
@@ -781,7 +1033,7 @@ export default function DiveExplorerMap({
             sourceUrl: p.sourceUrl || '',
           }
           setActiveSite(site)
-          if (onSelectSite) onSelectSite(site)
+          if (onSelectSiteRef.current) onSelectSiteRef.current(site)
 
           map.flyTo({
             center: coords,
@@ -791,6 +1043,7 @@ export default function DiveExplorerMap({
         })
 
         map.on('mouseenter', 'site-pin', (e) => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
           map.getCanvas().style.cursor = 'pointer'
           if (e.features && e.features[0]) {
             const p = e.features[0].properties
@@ -798,17 +1051,20 @@ export default function DiveExplorerMap({
               x: e.point.x,
               y: e.point.y,
               name: p.siteName,
-              subtitle: p.naturalTypes ? `${p.naturalTypes}` : p.country,
+              subtitle: p.naturalTypes ? p.naturalTypes : p.country,
             })
           }
         })
         map.on('mouseleave', 'site-pin', () => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
           map.getCanvas().style.cursor = ''
           setTooltipInfo(null)
         })
 
         // Initial sync of layers and data
-        syncMapData(map)
+        if (syncMapDataRef.current) {
+          syncMapDataRef.current(map)
+        }
       })
     } catch (err) {
       if (!isCancelled) {
@@ -824,7 +1080,20 @@ export default function DiveExplorerMap({
         mapRef.current = null
       }
     }
-  }, [syncMapData, onSelectSite])
+  }, [])
+
+  // Auto-resize MapLibre GL whenever map container dimensions change
+  useEffect(() => {
+    const el = mapContainerRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize()
+      }
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   // 3b. Two-finger Pan & Zoom Navigation (Trackpad 2-finger move & Touchscreen 2-finger drag)
   useEffect(() => {
@@ -981,8 +1250,10 @@ export default function DiveExplorerMap({
   useEffect(() => {
     if (controlledCountry === undefined) return
     const target = controlledCountry ? controlledCountry.trim() : null
-    if (target !== selectedCountry) {
+    const current = selectedCountry ? selectedCountry.trim() : null
+    if ((target || '').toLowerCase() !== (current || '').toLowerCase()) {
       setSelectedCountry(target)
+      selectedCountryRef.current = target
       setActiveSite(null)
 
       if (!target) {
@@ -993,11 +1264,11 @@ export default function DiveExplorerMap({
             duration: 1000,
           })
         }
-      } else if (mapRef.current && countryCentroids.length > 0) {
+      } else if (mapRef.current) {
         zoomToCountry(target)
       }
     }
-  }, [controlledCountry, countryCentroids, selectedCountry])
+  }, [controlledCountry, selectedCountry, zoomToCountry])
 
   // 5b. External selectedIsland synchronization (Booking Form -> Map)
   useEffect(() => {
@@ -1071,7 +1342,7 @@ export default function DiveExplorerMap({
     }
 
     if (match && mapRef.current) {
-      if (match.country && match.country !== selectedCountry) {
+      if (match.country && match.country.toLowerCase() !== (selectedCountry || '').toLowerCase()) {
         setSelectedCountry(match.country)
         if (onSelectCountry) onSelectCountry(match.country)
       }
@@ -1084,19 +1355,36 @@ export default function DiveExplorerMap({
     }
   }, [controlledSite, selectedSiteId, allSites, selectedCountry, onSelectCountry])
 
+  // Return to World Overview (show all countries)
+  const handleResetWorldView = useCallback(() => {
+    setSelectedCountry(null)
+    selectedCountryRef.current = null
+    setSearchQuery('')
+    searchQueryRef.current = ''
+    setActiveSite(null)
+    if (onSelectCountryRef.current) onSelectCountryRef.current('')
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: DEFAULT_CENTER,
+        zoom: DEFAULT_ZOOM,
+        duration: 1000,
+      })
+    }
+  }, [])
+
   // When a user picks a country from the dropdown
   const handleDropdownCountryChange = (c) => {
     if (c === 'all' || !c) {
       handleResetWorldView()
       return
     }
-    handleSelectCountry(c)
+    navigateToCountry(c)
   }
 
   // Count of currently visible items
   const activeCountryStats = useMemo(() => {
     if (!selectedCountry) return null
-    return countryCentroids.find((c) => c.country === selectedCountry) || null
+    return countryCentroids.find((c) => c.country?.toLowerCase() === selectedCountry.toLowerCase()) || null
   }, [selectedCountry, countryCentroids])
 
   return (
@@ -1410,7 +1698,7 @@ export default function DiveExplorerMap({
           {!selectedCountry && !searchQuery && (
             <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 hidden sm:flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-navy/15 shadow-sm text-[11px] font-bold text-navy max-w-[calc(100%-4.5rem)]">
               <span className="w-2 h-2 rounded-full bg-accent animate-ping shrink-0" />
-              <span className="truncate">Tap any country point to explore its dive sites</span>
+              <span className="truncate">Tap any country to explore its dive sites</span>
             </div>
           )}
 
@@ -1431,7 +1719,7 @@ export default function DiveExplorerMap({
           <div className="absolute bottom-5 left-4 z-10 flex flex-col gap-2">
             <button
               type="button"
-              onClick={handleRecenter}
+              onClick={handleResetWorldView}
               className="w-10 h-10 rounded-full bg-white text-navy shadow-float border border-navy/15 flex items-center justify-center transition active:scale-95 cursor-pointer backdrop-blur-md"
               title="Reset Map / Recenter"
               aria-label="Reset Map"

@@ -2,8 +2,7 @@ import LazyVideo from './LazyVideo'
 import { Link, useNavigate } from 'react-router'
 import SectionReveal, { StaggerGrid, StaggerItem } from './SectionReveal'
 import { CAROUSEL_IMAGES } from '../utils/images'
-// Merch suit video retired; falls back to CAROUSEL_IMAGES[2]
-const diveSuitVid = null;
+const diveSuitVid = '/media/TDV-Media/Reviews/merch_5_mp4.mp4';
 const tryDiveVid = '/media/TDV-Media/Services/Try_Dive.mp4';
 const certVid = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
 

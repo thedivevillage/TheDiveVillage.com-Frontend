@@ -13,11 +13,15 @@ export default function LazyVideo({
   src,
   poster,
   className = '',
+  videoClassName = '',
   autoPlay = true,
   loop = true,
   muted = true,
+  defaultMuted,
   playsInline = true,
   controls = false,
+  controlsList,
+  disablePictureInPicture,
   preload = 'auto',
   playbackRate = 1,
   ...props
@@ -50,7 +54,7 @@ export default function LazyVideo({
 
   // Optimized video stream URL
   const optimizedVideoSrc = useMemo(() => {
-    return getOptimizedVideoUrl(src, { width: 720 })
+    return getOptimizedVideoUrl(src)
   }, [src])
 
   // Reset states when src changes
@@ -120,9 +124,7 @@ export default function LazyVideo({
         const p = video.play()
         if (p !== undefined) {
           p.then(() => {
-            if (video.currentTime > 0) {
-              setIsVideoPlaying(true)
-            }
+            setIsVideoPlaying(true)
           }).catch(() => {})
         }
       }
@@ -214,9 +216,9 @@ export default function LazyVideo({
           loading="lazy"
           decoding="async"
           onLoad={handlePosterSuccess}
-          className={`absolute inset-0 w-full h-full ${fitClass} z-[1] pointer-events-none transition-opacity duration-500 ease-out ${
+          className={`absolute inset-0 w-full h-full ${fitClass} z-[1] pointer-events-none ${
             posterLoaded && !isVideoPlaying ? 'opacity-100' : 'opacity-0'
-          }`}
+          } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'}`}
         />
       )}
 
@@ -251,6 +253,8 @@ export default function LazyVideo({
           webkit-playsinline=""
           x5-playsinline=""
           controls={controls}
+          controlsList={controlsList}
+          disablePictureInPicture={disablePictureInPicture}
           preload={preload}
           onPlaying={(e) => {
             applyPlaybackRate(e)
@@ -286,7 +290,7 @@ export default function LazyVideo({
           }}
           className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-300 ease-out z-[2] ${
             isVideoPlaying ? 'opacity-100' : 'opacity-0'
-          }`}
+          } ${videoClassName}`}
           style={{ objectFit: fitClass === 'object-contain' ? 'contain' : 'cover' }}
           {...props}
         />

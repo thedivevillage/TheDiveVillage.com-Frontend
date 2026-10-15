@@ -7,10 +7,8 @@ import { useAuth } from '../hooks/useAuth'
 import { formatCurrency } from '../utils/formatCurrency'
 import { LOCATION_DATA, COUNTRY_NAMES } from '../data/locationData'
 import { orderService } from '../services/orderService'
-import useNightDive from '../hooks/useNightDive'
 
 export default function Checkout() {
-  const isNightDive = useNightDive()
   const { items, subtotal, clearCart } = useCart()
   const { user } = useAuth()
   const [success, setSuccess] = useState(false)
@@ -291,7 +289,7 @@ export default function Checkout() {
 
   if (success) {
     return (
-      <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen flex flex-col items-center justify-center px-4 py-24 font-body`} style={{ textShadow: 'none' }}>
+      <div className="bg-[#FAFAFA] min-h-screen flex flex-col items-center justify-center px-4 py-24 text-navy font-body" style={{ textShadow: 'none' }}>
         <div className="rounded-[40px] bg-white p-8 sm:p-14 shadow-float max-w-xl w-full border border-navy/5 text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-3xl shadow-soft">
             ✓
@@ -346,7 +344,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className={`min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} font-body pt-24 sm:pt-32 pb-24`} style={{ textShadow: 'none' }}>
+    <div className="min-h-screen bg-[#FAFAFA] text-navy font-body pt-24 sm:pt-32 pb-24" style={{ textShadow: 'none' }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -892,18 +890,34 @@ export default function Checkout() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed left-0 right-0 bottom-0 top-[64px] lg:top-[68px] z-[9990] flex items-center justify-center p-3 sm:p-6 bg-navy/80 backdrop-blur-md animate-fade-in overflow-hidden"
-          style={{ top: 'var(--toolbar-bottom, 64px)' }}
+          className="fixed inset-x-0 bottom-0 z-[9990] flex flex-col items-center justify-start sm:justify-center overflow-y-auto overscroll-contain p-2 xs:p-3 sm:p-6 bg-black/60 backdrop-blur-sm animate-fade-in"
+          style={{
+            top: 'var(--toolbar-bottom, 64px)',
+            height: 'calc(100dvh - var(--toolbar-bottom, 64px))',
+            maxHeight: 'calc(100dvh - var(--toolbar-bottom, 64px))',
+            paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isPlacingOrder) {
+              setShowOrderReviewModal(false)
+            }
+          }}
         >
-          <div className="relative w-full max-w-2xl bg-white rounded-[28px] sm:rounded-[36px] shadow-2xl border border-navy/10 overflow-hidden my-auto max-h-[calc(100vh-var(--toolbar-bottom,64px)-24px)] flex flex-col animate-scale-up">
+          <div
+            className="relative w-full max-w-2xl bg-white rounded-2xl xs:rounded-[28px] sm:rounded-[36px] shadow-2xl border border-navy/10 overflow-hidden my-auto flex flex-col min-h-0 animate-scale-up"
+            style={{
+              maxHeight: 'calc(100dvh - var(--toolbar-bottom, 64px) - 1.25rem - env(safe-area-inset-bottom, 0px))',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             
             {/* Modal Header */}
-            <div className="px-6 sm:px-8 pt-6 sm:pt-7 pb-5 border-b border-navy/10 flex items-start justify-between bg-gradient-to-r from-navy/[0.03] to-transparent">
+            <div className="px-4 xs:px-6 sm:px-8 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b border-navy/10 flex items-start justify-between bg-gradient-to-r from-navy/[0.03] to-transparent shrink-0">
               <div>
                 <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#00AEC7] block mb-1">
                   Order Confirmation Review
                 </span>
-                <h3 className="font-heading text-xl sm:text-2xl font-bold text-navy">
+                <h3 className="font-heading text-lg xs:text-xl sm:text-2xl font-bold text-navy">
                   Confirm Your Booking & Order Details
                 </h3>
                 <p className="text-xs text-navy/60 mt-0.5">
@@ -913,7 +927,7 @@ export default function Checkout() {
               <button
                 type="button"
                 onClick={() => setShowOrderReviewModal(false)}
-                className="w-8 h-8 rounded-full bg-navy/5 hover:bg-navy/10 flex items-center justify-center text-navy text-sm font-bold transition cursor-pointer"
+                className="w-8 h-8 rounded-full bg-navy/5 hover:bg-navy/10 flex items-center justify-center text-navy text-sm font-bold transition cursor-pointer shrink-0 ml-2"
                 aria-label="Close review modal"
               >
                 ✕
@@ -921,7 +935,10 @@ export default function Checkout() {
             </div>
 
             {/* Modal Scrollable Content */}
-            <div className="px-6 sm:px-8 py-6 space-y-6 overflow-y-auto flex-1">
+            <div
+              className="px-4 xs:px-6 sm:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 overflow-y-auto overscroll-contain flex-1 min-h-0"
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
               
               {/* 1. Customer & Contact Summary */}
               <div className="rounded-2xl bg-[#F8FAFC] border border-navy/10 p-4 sm:p-5">

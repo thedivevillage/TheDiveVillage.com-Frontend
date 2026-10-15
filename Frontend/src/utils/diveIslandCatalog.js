@@ -148,6 +148,9 @@ export const POPULAR_ISLAND_REGIONS = {
     { name: 'Malta Island (Valletta & Cirkewwa)', lat: 35.9, lng: 14.4 },
     { name: 'Gozo & Comino (Blue Hole)', lat: 36.05, lng: 14.25 },
   ],
+  'Libya': [
+    { name: 'Tripoli Coastal Waters (Mediterranean)', lat: 32.9035, lng: 13.1707 },
+  ],
   'India': [
     { name: 'Andaman & Nicobar Islands', lat: 12.0, lng: 92.95 },
     { name: 'Lakshadweep Islands', lat: 10.7, lng: 72.4 },

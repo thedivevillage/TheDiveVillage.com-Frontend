@@ -1,14 +1,17 @@
 import LazyVideo from '../components/LazyVideo'
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { Link } from 'react-router'
+import { motion, useReducedMotion } from 'framer-motion'
+import Button from '../components/Button'
 import SafeImage from '../components/SafeImage'
-import SectionReveal from '../components/SectionReveal'
+import SectionReveal, { StaggerGrid, StaggerItem } from '../components/SectionReveal'
 import SEOHead from '../components/SEOHead'
 import MerchBannerCTA from '../components/MerchBannerCTA'
 import { CAROUSEL_IMAGES } from '../utils/images'
 import { useReviews } from '../contexts/ReviewsContext'
-const aboutVid = '/media/TDV-Media/Background/About.mp4'
+const backgroundVideo = '/media/TDV-Media/Background/About.mp4'
 const nightDiveVideo = '/media/TDV-Media/Background/Night_Dive.mp4'
+const founderVideo = '/media/TDV-Media/About/Founder.mp4'
 import useNightDive from '../hooks/useNightDive'
 
 const certifiedCoursesImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp'
@@ -91,6 +94,7 @@ const wordVariants = {
 }
 
 export default function About() {
+  const reduce = useReducedMotion()
   const isNightDive = useNightDive()
   const { approvedReviews } = useReviews()
   const reviewsToDisplay = approvedReviews && approvedReviews.length > 0 ? approvedReviews.slice(0, 3) : TESTIMONIALS
@@ -103,19 +107,19 @@ export default function About() {
   }, [])
 
   return (
-    <div className="min-h-screen font-body overflow-x-hidden pointer-events-none relative bg-[#001e3d] text-white">
+    <div className="min-h-screen font-body overflow-x-hidden pointer-events-none relative bg-transparent text-white">
       <SEOHead
         title="About Us | Certified Scuba Instructors & Ocean Sanctuary | The Dive Village"
         description="Discover the story behind The Dive Village. Dedicated to safety, marine conservation, diving excellence, and building an inclusive underwater community."
         keywords="about the dive village, certified instructors, marine conservation dive center, eco scuba diving, ocean community"
-        canonicalUrl="https://thedivevillage.com/about"
+        canonicalUrl="https://thedivevillage.comm/about"
       />
       
       {/* FULL-SCREEN VIDEO BACKGROUND (DYNAMIC FOR NIGHT DIVE ACROSS ENTIRE PAGE) */}
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
         <LazyVideo
-          key={isNightDive ? 'night-dive-bg' : 'day-diving-bg'}
-          src={isNightDive ? nightDiveVideo : aboutVid}
+          key={isNightDive ? 'night-dive-bg' : 'day-about-bg'}
+          src={isNightDive ? nightDiveVideo : backgroundVideo}
           autoPlay
           loop
           muted
@@ -123,11 +127,10 @@ export default function About() {
           onPlay={(e) => { e.currentTarget.playbackRate = 0.7 }}
           className="w-full h-full object-cover transition-opacity duration-700 opacity-95 sm:opacity-100"
         />
-        <div className={`absolute inset-0 transition-colors duration-700 ${
-          isNightDive
-            ? 'bg-[#030a12]/30'
-            : 'bg-[#00223D]/25'
-        }`} />
+        <div 
+          className="absolute inset-0 pointer-events-none transition-colors duration-700" 
+          style={{ backgroundColor: isNightDive ? 'rgba(0, 14, 28, 0.4)' : 'rgba(0, 34, 61, 0.25)' }} 
+        />
       </div>
 
       {/* 1. HERO BANNER — STAGGERED WORD ANIMATION */}
@@ -255,7 +258,7 @@ export default function About() {
             {/* Right Video Frame next to Sanjeev's Story */}
             <div className="lg:col-span-5 relative min-h-[360px] lg:min-h-full overflow-hidden rounded-b-[40px] lg:rounded-b-none lg:rounded-r-[40px]">
               <LazyVideo
-                src={aboutVid} 
+                src={founderVideo} 
                 autoPlay
                 loop
                 muted

@@ -4,17 +4,26 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { PANEL_IMAGES } from '../utils/images'
 import FloatingVideoPip from './FloatingVideoPip'
 
-// Activity Media (Cloudflare R2 video URLs & Cloudinary poster URLs)
+// Activity Media (High-Performance Cloudinary Video & Poster URLs)
 const vidSafari = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
-const imgSafari = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
+const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
+
 const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
-const imgTrekking = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
+const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
+
 const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
-const imgSightseeing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
+const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
+
 const vidCampers = '/media/TDV-Media/AddOns/Campers.mp4'
-const imgCampers = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
+const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
+
 const vidLiveaboard = '/media/TDV-Media/AddOns/liveaboard.mp4'
-const imgLiveaboard = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
+const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
+
+const vidCanoneering = '/media/TDV-Media/Services/Other/Canoneering.mp4'
+const vidSurfing = '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4'
+const vidSnorkeling = '/media/TDV-Media/Services/Discover_Snorkelling.mp4'
+const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
 
 function HoverVideoPreview({ videoSrc, poster, displayName }) {
   const videoRef = useRef(null)
@@ -25,9 +34,13 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
     if (!v) return
     v.muted = true
     v.defaultMuted = true
+    v.volume = 0
+    if (v.readyState >= 2) {
+      setIsLoaded(true)
+    }
     const p = v.play()
     if (p !== undefined) {
-      p.catch(() => {})
+      p.then(() => setIsLoaded(true)).catch(() => {})
     }
   }, [videoSrc])
 
@@ -50,9 +63,14 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
         loop
         muted
         playsInline
+        webkit-playsinline=""
+        x5-playsinline=""
         preload="auto"
+        onLoadedMetadata={() => setIsLoaded(true)}
         onLoadedData={() => setIsLoaded(true)}
         onCanPlay={() => setIsLoaded(true)}
+        onPlay={() => setIsLoaded(true)}
+        onPlaying={() => setIsLoaded(true)}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
           isLoaded ? 'opacity-100' : 'opacity-0'
         }`}
@@ -72,7 +90,8 @@ const CUSTOM_ACTIVITIES = [
   {
     id: 'canyoneering',
     name: 'Canyoneering',
-    video: '/media/TDV-Media/Services/Other/Canoneering.mp4',
+    video: vidCanoneering,
+    poster: imgTrekking,
   },
   {
     id: 'safari',
@@ -89,7 +108,8 @@ const CUSTOM_ACTIVITIES = [
   {
     id: 'surfing',
     name: 'Surfing',
-    video: '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4',
+    video: vidSurfing,
+    poster: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp',
   },
   {
     id: 'sightseeing',
@@ -100,7 +120,8 @@ const CUSTOM_ACTIVITIES = [
   {
     id: 'snorkeling',
     name: 'Snorkeling',
-    video: '/media/TDV-Media/Services/Discover_Snorkelling.mp4',
+    video: vidSnorkeling,
+    poster: imgSnorkeling,
   },
   {
     id: 'camping_camper',
@@ -126,13 +147,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
   const openPipForCampers = () => {
     setPipVideo({
       id: 'camping_camper',
-      title: 'Campers Adventure',
-      subtitle: 'Overland Island Road Trips & Coastal Camping',
-      description:
-        'Hit the open road in fully equipped camper vehicles with sleeping quarters, outdoor cooking gear, and off-grid amenities.',
       video: vidCampers,
-      fallbackVideo:
-        'https://res.cloudinary.com/qvbunv8y/video/upload/v1791686777/TDV-Media/AddOns/Campers.mp4',
       poster: imgCampers,
     })
     setHoveredActivity(null)
@@ -141,7 +156,11 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
   const handleActivityClick = (activity) => {
     toggleActivity(activity.id)
     if (activity.id === 'camping_camper') {
-      openPipForCampers()
+      if (pipVideo) {
+        setPipVideo(null)
+      } else {
+        openPipForCampers()
+      }
     }
   }
   
@@ -306,26 +325,13 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                         <button
                           type="button"
                           onClick={() => handleActivityClick(activity)}
-                          className={`group inline-flex items-center gap-1.5 px-2.5 py-1.5 xs:px-3.5 xs:py-2 rounded-full text-[10.5px] xs:text-xs font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 whitespace-nowrap ${
+                          className={`group inline-flex items-center gap-1 px-2.5 py-1.5 xs:px-3.5 xs:py-2 rounded-full text-[10.5px] xs:text-xs font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 whitespace-nowrap ${
                             isSelected
                               ? 'bg-navy text-white border-white/40 scale-105 shadow-md'
                               : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-[#FFCD00] backdrop-blur-md hover:text-[#FFCD00]'
                           }`}
                         >
                           <span>{displayName}</span>
-                          {activity.id === 'camping_camper' && (
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                openPipForCampers()
-                              }}
-                              className="inline-flex items-center gap-1 text-[9px] font-bold text-[#FFCD00] bg-[#FFCD00]/20 border border-[#FFCD00]/40 px-1.5 py-0.5 rounded-full hover:bg-[#FFCD00] hover:text-[#001e3d] transition-colors"
-                              title="Watch Camper Video in PiP"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#FFCD00] animate-pulse" />
-                              PiP
-                            </span>
-                          )}
                           {isSelected && (
                             <span className="ml-0.5 text-[10px] font-black text-[#FFCD00]">✓</span>
                           )}
@@ -372,26 +378,13 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                     <button
                       type="button"
                       onClick={() => handleActivityClick(activity)}
-                      className={`group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 ${
+                      className={`group inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 ${
                         isSelected
                           ? 'bg-navy text-white border-white/40 scale-105 shadow-md'
                           : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-[#FFCD00] backdrop-blur-md hover:text-[#FFCD00]'
                       }`}
                     >
                       <span>{activity.name}</span>
-                      {activity.id === 'camping_camper' && (
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            openPipForCampers()
-                          }}
-                          className="inline-flex items-center gap-1 text-[10px] font-bold text-[#FFCD00] bg-[#FFCD00]/20 border border-[#FFCD00]/40 px-2 py-0.5 rounded-full hover:bg-[#FFCD00] hover:text-[#001e3d] transition-colors"
-                          title="Watch Camper Video in Picture-in-Picture"
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FFCD00] animate-pulse" />
-                          PiP Video
-                        </span>
-                      )}
                       {isSelected && (
                         <span className="ml-1 text-[11px] font-black text-[#FFCD00]">✓</span>
                       )}
@@ -443,11 +436,6 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
           videoSrc={pipVideo.video}
           fallbackSrc={pipVideo.fallbackVideo}
           poster={pipVideo.poster}
-          title={pipVideo.title}
-          subtitle={pipVideo.subtitle}
-          description={pipVideo.description}
-          isSelected={selectedActivities.includes(pipVideo.id)}
-          onToggleSelect={() => toggleActivity(pipVideo.id)}
           onClose={() => setPipVideo(null)}
         />
       )}

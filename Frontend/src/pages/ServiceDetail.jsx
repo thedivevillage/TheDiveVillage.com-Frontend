@@ -6,7 +6,7 @@ import SafeImage from '../components/SafeImage'
 import LazyVideo from '../components/LazyVideo'
 import Button from '../components/Button'
 import SEOHead from '../components/SEOHead'
-import useNightDive from '../hooks/useNightDive'
+import { Sun, Sunrise, Moon } from 'lucide-react'
 
 const DEFAULT_FAQS = [
   {
@@ -25,20 +25,9 @@ const DEFAULT_FAQS = [
 
 export default function ServiceDetail() {
   const { id } = useParams()
-  const isNightDive = useNightDive()
   const [openFaq, setOpenFaq] = useState(null)
   const [selectedFunPackage, setSelectedFunPackage] = useState(FUN_DIVES_PACKAGES[1] || FUN_DIVES_PACKAGES[0])
-  const [selectedTimings, setSelectedTimings] = useState(['day'])
-
-  const toggleTiming = (timingKey) => {
-    setSelectedTimings((prev) => {
-      if (prev.includes(timingKey)) {
-        if (prev.length === 1) return prev
-        return prev.filter((t) => t !== timingKey)
-      }
-      return [...prev, timingKey]
-    })
-  }
+  const [selectedDiveTimings, setSelectedDiveTimings] = useState(['day'])
 
   const service = SERVICES_DATA.find((s) => s.id === id) || (id === 'combo-fundives' ? SERVICES_DATA.find(s => s.id === 'combo-fundives') : null)
 
@@ -46,32 +35,49 @@ export default function ServiceDetail() {
     return <Navigate to="/services" replace />
   }
 
-  const isFunDivesCombo = service.id === 'combo-fundives' || service.isFunDivesContainer || service.id?.startsWith('fun-')
+  const isFunDivesCombo = service.id === 'combo-fundives' || service.isFunDivesContainer
   const isSingleFunDive = service.category === 'fundives'
   const categoryLabel = CATEGORIES.find(c => c.key === service.category)?.label || (isFunDivesCombo ? 'Combos & Packages' : 'Services')
   const activeFaqs = service.faqs && service.faqs.length > 0 ? service.faqs : DEFAULT_FAQS
 
-  const filteredFunPackages = FUN_DIVES_PACKAGES.filter(
-    (pkg) => pkg.funType === 'day' || !pkg.funType
-  )
+  const DIVE_TIMINGS = [
+    { key: 'day', label: 'Day Dives', icon: Sun, desc: 'Reef & wall exploration' },
+    { key: 'dawn', label: 'Dawn Dives', icon: Sunrise, desc: 'First light sunrise pelagic safari' },
+    { key: 'night', label: 'Night Dives', icon: Moon, desc: 'Bioluminescence & nocturnal safari' },
+  ]
+
+  const handleToggleDiveTiming = (key) => {
+    setSelectedDiveTimings((prev) => {
+      if (prev.includes(key)) {
+        if (prev.length === 1) return prev // Keep at least one selected
+        return prev.filter((t) => t !== key)
+      }
+      return [...prev, key]
+    })
+  }
+
+  const getBookingUrl = (pkgId) => {
+    const timingsParam = selectedDiveTimings.join(',')
+    return `/book-us?service=${pkgId}${timingsParam ? `&timings=${timingsParam}` : ''}`
+  }
 
   // Parse highlight string into pills
   const highlightItems = service.highlights
     ? service.highlights.split('|').map(item => item.trim()).filter(Boolean)
     : []
 
-  const activeHeroVideo = (isFunDivesCombo && selectedFunPackage?.video) ? selectedFunPackage.video : service.video
-  const activeHeroImage = (isFunDivesCombo && selectedFunPackage?.image) ? selectedFunPackage.image : service.image
-  const activeHeroTitle = isFunDivesCombo ? 'Fun Dives - Multiple' : service.title
-  const activeHeroDesc = (isFunDivesCombo && selectedFunPackage?.short_desc) ? selectedFunPackage.short_desc : service.short_desc
+  const activeHeroVideo = service.video
+  const activeHeroImage = service.image
+  const activeHeroTitle = service.title
+  const activeHeroDesc = service.short_desc
 
   return (
-    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body overflow-x-hidden`} style={{ textShadow: 'none' }}>
+    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body overflow-x-hidden" style={{ textShadow: 'none' }}>
       <SEOHead
         title={`${activeHeroTitle} | The Dive Village Services`}
         description={activeHeroDesc || service.long_desc}
         keywords="scuba diving, fun dives, diving packages, andaman dive village"
-        canonicalUrl={`https://thedivevillage.com/services/${service.id}`}
+        canonicalUrl={`https://thedivevillage.comm/services/${service.id}`}
       />
       
       {/* 1. HERO BANNER WITH SMOOTH FADE OUT */}
@@ -117,7 +123,7 @@ export default function ServiceDetail() {
         </div>
         
         {/* Bottom Ultra-Smooth Dissolve & Merge Layer into page background */}
-        <div className={`absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] ${isNightDive ? 'bg-gradient-to-t from-[#003865] via-[#003865]/90 via-45% to-transparent' : 'bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent'}`} />
+        <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent" />
         
         <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
@@ -173,8 +179,8 @@ export default function ServiceDetail() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           <div className="rounded-[36px] bg-white border border-navy/10 p-6 sm:p-10 lg:p-12 shadow-card">
             
-            {/* Header & Filter Tabs */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10 pb-8 border-b border-navy/10">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 pb-6 border-b border-navy/10">
               <div>
                 <span className="inline-block bg-accent/20 text-[#003865] rounded-full px-3.5 py-1 text-xs font-black uppercase tracking-wider mb-2">
                   Certified Diver Packages
@@ -186,41 +192,87 @@ export default function ServiceDetail() {
                   Select how many dives you want to explore. From quick 1-day visits to 12-dive comprehensive island expeditions.
                 </p>
               </div>
+            </div>
 
-              {/* Timing Selection Pills (Multiple Choice) */}
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-navy/50 block mb-1.5 md:text-right">
-                  Dive Timings (Multiple Choice)
-                </span>
-                <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
-                  {[
-                    { key: 'day', label: 'Day Dive' },
-                    { key: 'dawn', label: 'Dawn Dive' },
-                    { key: 'night', label: 'Night Dive' },
-                  ].map((tab) => {
-                    const isSelected = selectedTimings.includes(tab.key)
-                    return (
-                      <button
-                        key={tab.key}
-                        type="button"
-                        onClick={() => toggleTiming(tab.key)}
-                        className={`rounded-full px-4 py-2 text-xs sm:text-sm font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
-                          isSelected
-                            ? 'bg-navy text-white shadow-md'
-                            : 'bg-[#F0F2F5] text-navy/70 hover:bg-navy/10 hover:text-navy'
+            {/* Dive Timings Multi-Select Bar (Multiple Choice) */}
+            <div className="mb-10 p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#F0F2F5]/80 border border-navy/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-navy">
+                      When would you like to dive?
+                    </span>
+                    <span className="bg-accent/25 text-[#003865] px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wide">
+                      Multiple Choice
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-navy/60 font-medium mt-1">
+                    Select one or more dive timings. Picking dawn dive or night dive lets us know when you want to dive.
+                  </p>
+                </div>
+                {selectedDiveTimings.length > 0 && (
+                  <div className="text-xs font-bold text-navy/70 shrink-0 self-start sm:self-auto bg-white px-3.5 py-1.5 rounded-full border border-navy/10 shadow-xs">
+                    Selected:{' '}
+                    <span className="text-[#003865] font-black">
+                      {selectedDiveTimings.map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(' + ')}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Multiple Choice Timing Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {DIVE_TIMINGS.map((timing) => {
+                  const isChecked = selectedDiveTimings.includes(timing.key)
+                  const TimingIcon = timing.icon
+                  return (
+                    <button
+                      key={timing.key}
+                      type="button"
+                      onClick={() => handleToggleDiveTiming(timing.key)}
+                      className={`p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer flex items-center justify-between ${
+                        isChecked
+                          ? 'border-navy bg-navy text-white shadow-md'
+                          : 'border-navy/15 bg-white text-navy hover:border-navy/35 hover:bg-white/80'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                            isChecked ? 'bg-white/15 text-accent' : 'bg-navy/5 text-navy/70'
+                          }`}
+                        >
+                          <TimingIcon className="w-5 h-5 sm:w-5.5 sm:h-5.5" strokeWidth={2} />
+                        </div>
+                        <div>
+                          <span className="font-heading font-bold text-sm sm:text-base block leading-tight">
+                            {timing.label}
+                          </span>
+                          <span
+                            className={`text-[11px] sm:text-xs font-medium block mt-0.5 line-clamp-1 ${
+                              isChecked ? 'text-white/75' : 'text-navy/55'
+                            }`}
+                          >
+                            {timing.desc}
+                          </span>
+                        </div>
+                      </div>
+                      <span
+                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 text-xs font-black ml-2 transition ${
+                          isChecked ? 'bg-accent border-accent text-navy' : 'border-navy/30 bg-transparent'
                         }`}
                       >
-                        <span>{isSelected ? '✓ ' : '+ '}{tab.label}</span>
-                      </button>
-                    )
-                  })}
-                </div>
+                        {isChecked ? '✓' : ''}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
-            {/* Grid of Fun Dive Packages */}
+            {/* Grid of Fun Dive Packages - Permanent Day Dives Programs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {filteredFunPackages.map((pkg) => {
+              {FUN_DIVES_PACKAGES.map((pkg) => {
                 const isSelected = selectedFunPackage?.id === pkg.id
                 return (
                   <div
@@ -283,7 +335,7 @@ export default function ServiceDetail() {
                     <div className="pt-2 border-t border-navy/10 flex items-center gap-2">
                       <Button
                         as={Link}
-                        to={`/book-us?service=combo-fundives&package=${pkg.id}&timings=${selectedTimings.join(',')}`}
+                        to={getBookingUrl(pkg.id)}
                         variant={isSelected ? 'gold' : 'navy'}
                         className="flex-1 justify-center py-2.5 text-xs font-bold shadow-sm"
                       >
@@ -338,7 +390,7 @@ export default function ServiceDetail() {
                 <div className="w-full lg:w-auto shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3">
                   <Button
                     as={Link}
-                    to={`/book-us?service=combo-fundives&package=${selectedFunPackage.id}&timings=${selectedTimings.join(',')}`}
+                    to={getBookingUrl(selectedFunPackage.id)}
                     variant="gold"
                     className="w-full justify-center py-4 px-8 text-sm sm:text-base font-black shadow-lg"
                   >
@@ -526,7 +578,7 @@ export default function ServiceDetail() {
             <div className="flex flex-col gap-3">
               <Button
                 as={Link}
-                to={isFunDivesCombo && selectedFunPackage ? `/book-us?service=${selectedFunPackage.id}` : `/book-us?service=${service.id}`}
+                to={isFunDivesCombo && selectedFunPackage ? getBookingUrl(selectedFunPackage.id) : `/book-us?service=${service.id}`}
                 variant="gold"
                 className="w-full justify-center py-4 text-base shadow-md"
               >

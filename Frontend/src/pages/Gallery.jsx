@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useLocation, useSearchParams } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Button from '../components/Button'
 import SafeImage from '../components/SafeImage'
@@ -10,7 +10,6 @@ import { triggerHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { useLenis } from '../utils/lenisReact'
 import { getOptimizedImageUrl, getOptimizedVideoPoster } from '../utils/mediaOptimizer'
-import useNightDive from '../hooks/useNightDive'
 
 const diversBg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458258/TDV-Media/Products/Group/4M7A6732.jpg'
 
@@ -21,10 +20,11 @@ const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
 }))
 
 export default function Gallery() {
-  const isNightDive = useNightDive()
-  const [searchParams] = useSearchParams()
   const [itemsList, setItemsList] = useState(SANITIZED_GALLERY_ITEMS)
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(null)
+  const [highlightedItemId, setHighlightedItemId] = useState(null)
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
   const reduce = useReducedMotion()
   const lenis = useLenis()
 
@@ -32,33 +32,72 @@ export default function Gallery() {
   const touchStartY = useRef(0)
 
   const filteredItems = itemsList
+  const targetItemId = searchParams.get('item') || (location.hash ? location.hash.replace('#', '') : null)
 
-  // Scroll to targeted item if URL has ?item=id, or scroll to top
+  // Scroll handling: If arriving for a specific item, smoothly scroll to that image. Otherwise scroll to top.
   useEffect(() => {
-    const targetItemId = searchParams.get('item')
     if (targetItemId) {
-      const timer = setTimeout(() => {
-        const el = document.getElementById(`gallery-item-${targetItemId}`)
+      setHighlightedItemId(targetItemId)
+
+      let attempts = 0
+
+      const performScroll = (smooth = true) => {
+        const el = document.getElementById(targetItemId)
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          const activeLenis = lenis || (typeof window !== 'undefined' ? window.lenis : null)
+          if (activeLenis && typeof activeLenis.scrollTo === 'function') {
+            activeLenis.scrollTo(el, { offset: -100, duration: smooth ? 1.0 : 0, immediate: !smooth })
+          } else {
+            const rect = el.getBoundingClientRect()
+            const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0
+            const targetY = rect.top + scrollTop - 100
+            window.scrollTo({ top: Math.max(0, targetY), behavior: smooth ? 'smooth' : 'auto' })
+          }
+          return true
         }
-      }, 300)
-      return () => clearTimeout(timer)
+        return false
+      }
+
+      // Initial jump if element is already present, then smooth staggered reinforcement as layout settles
+      performScroll(false)
+      const t1 = setTimeout(() => performScroll(true), 60)
+      const t2 = setTimeout(() => performScroll(true), 250)
+      const t3 = setTimeout(() => performScroll(true), 600)
+
+      const pollInterval = setInterval(() => {
+        attempts++
+        if (performScroll(true) || attempts > 20) {
+          clearInterval(pollInterval)
+        }
+      }, 100)
+
+      const highlightTimer = setTimeout(() => {
+        setHighlightedItemId(null)
+      }, 4500)
+
+      return () => {
+        clearTimeout(t1)
+        clearTimeout(t2)
+        clearTimeout(t3)
+        clearInterval(pollInterval)
+        clearTimeout(highlightTimer)
+      }
     } else {
       if ('scrollRestoration' in window.history) {
         window.history.scrollRestoration = 'manual'
       }
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-      if (lenis) {
-        lenis.scrollTo(0, { immediate: true })
+      const activeLenis = lenis || (typeof window !== 'undefined' ? window.lenis : null)
+      if (activeLenis && typeof activeLenis.scrollTo === 'function') {
+        activeLenis.scrollTo(0, { immediate: true })
       }
       const timer = setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-        if (lenis) lenis.scrollTo(0, { immediate: true })
+        if (activeLenis && typeof activeLenis.scrollTo === 'function') activeLenis.scrollTo(0, { immediate: true })
       }, 50)
       return () => clearTimeout(timer)
     }
-  }, [searchParams, lenis])
+  }, [targetItemId, lenis])
 
   // High-Res Preloading for adjacent images in Lightbox
   useEffect(() => {
@@ -199,12 +238,12 @@ export default function Gallery() {
   }
 
   return (
-    <div className={`min-h-screen font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden transition-colors duration-300 ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'}`} style={{ textShadow: 'none' }}>
+    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden" style={{ textShadow: 'none' }}>
       <SEOHead
         title="Underwater Photography & Scuba Gallery | The Dive Village"
         description="Explore our visual gallery of underwater expeditions, vibrant coral reefs, sea turtle encounters, and diving moments captured at The Dive Village."
         keywords="underwater photography, scuba diving gallery, marine life photos, coral reef images, dive village photos"
-        canonicalUrl="https://thedivevillage.com/gallery"
+        canonicalUrl="https://thedivevillage.comm/gallery"
       />
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         
@@ -232,26 +271,23 @@ export default function Gallery() {
               idx={idx}
               reduce={reduce}
               onClick={() => openLightbox(idx)}
+              isHighlighted={highlightedItemId === item.id}
             />
           ))}
         </div>
 
         {/* 4. INSTAGRAM & COMMUNITY SECTION */}
-        <div className={`rounded-[40px] p-8 sm:p-14 mb-24 transition-colors duration-300 ${
-          isNightDive
-            ? 'bg-[#001e3d] text-white border border-white/10 shadow-lg'
-            : 'bg-[#F0F2F5] text-navy'
-        }`}>
+        <div className="rounded-3xl sm:rounded-[40px] bg-[#F0F2F5] p-6 sm:p-14 mb-16 sm:mb-24 border border-navy/10 night-dive-panel transition-colors">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8">
               <span className="text-accent font-bold tracking-widest uppercase text-xs mb-3 block">
                 #TheDiveVillage
               </span>
-              <h2 className={`font-heading text-3xl sm:text-4xl font-bold mb-4 ${isNightDive ? 'text-white' : 'text-navy'}`}>
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-navy mb-4">
                 Tag Us in Your Ocean Adventures
               </h2>
-              <p className={`text-sm sm:text-base leading-relaxed max-w-2xl ${isNightDive ? 'text-white/80' : 'text-navy/75'}`}>
-                Every moment tells a story of discovery and courage. Share your dive logs, underwater encounters, and island moments with <span className={`font-bold ${isNightDive ? 'text-[#FFCD00]' : 'text-navy'}`}>@TheDiveVillage</span> on Instagram to get featured on our wall.
+              <p className="text-navy/75 text-sm sm:text-base leading-relaxed max-w-2xl">
+                Every moment tells a story of discovery and courage. Share your dive logs, underwater encounters, and island moments with <span className="font-bold text-navy">@TheDiveVillage</span> on Instagram to get featured on our wall.
               </p>
             </div>
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
@@ -259,24 +295,11 @@ export default function Gallery() {
                 href="https://www.instagram.com/thedivevillage"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`rounded-full px-8 py-4 text-center text-sm font-bold shadow-soft transition ${
-                  isNightDive
-                    ? 'bg-accent text-[#001e3d] hover:bg-white hover:text-navy'
-                    : 'bg-navy text-white hover:bg-accent hover:text-navy'
-                }`}
+                className="rounded-full bg-navy text-white px-8 py-4 text-center text-sm font-bold shadow-soft hover:bg-accent hover:text-navy transition"
               >
                 Follow on Instagram →
               </a>
-              <Button
-                as={Link}
-                to="/book-us"
-                variant="secondary"
-                className={`justify-center ${
-                  isNightDive
-                    ? '!border-white/20 !text-white hover:!bg-white/10'
-                    : '!border-navy/20 !text-navy hover:!bg-navy/5'
-                }`}
-              >
+              <Button as={Link} to="/book-us" variant="secondary" className="justify-center !border-navy/20 !text-navy hover:!bg-navy/5 night-dive-btn-secondary">
                 Join Next Expedition
               </Button>
             </div>
@@ -322,9 +345,8 @@ export default function Gallery() {
         {selectedMediaIndex !== null && currentItem && (
           <div 
             data-lenis-prevent="true"
-            className="fixed left-0 right-0 bottom-0 top-[64px] lg:top-[68px] z-[9990] flex flex-col items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-sm overflow-hidden select-none"
+            className="fixed inset-0 z-[9990] bg-black/90 backdrop-blur-sm select-none overflow-hidden"
             style={{
-              top: 'var(--toolbar-bottom, 64px)',
               overscrollBehavior: 'contain',
               touchAction: 'none',
             }}
@@ -332,15 +354,23 @@ export default function Gallery() {
             onTouchStart={handleLightboxTouchStart}
             onTouchEnd={handleLightboxTouchEnd}
           >
-            {/* Dark Blue, Preview Panel strictly below toolbar */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.97, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="relative bg-navy rounded-2xl sm:rounded-3xl shadow-2xl p-2 sm:p-3.5 max-w-4xl sm:max-w-5xl lg:max-w-6xl w-full h-full max-h-[calc(100vh-var(--toolbar-bottom,64px)-16px)] flex flex-col gap-2 select-none border border-white/15 overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+            {/* Modal Content Wrapper - Strictly positioned in space below toolbar */}
+            <div
+              className="absolute inset-x-0 bottom-0 top-[64px] lg:top-[68px] flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6"
+              style={{
+                top: 'var(--toolbar-bottom, 68px)',
+              }}
+              onClick={() => setSelectedMediaIndex(null)}
             >
+              {/* Dark Blue, Preview Panel strictly below toolbar */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="gallery-preview-modal relative bg-navy rounded-2xl sm:rounded-3xl shadow-2xl p-2 sm:p-3.5 max-w-4xl sm:max-w-5xl lg:max-w-6xl w-full h-full max-h-[calc(100vh-var(--toolbar-bottom,68px)-36px)] flex flex-col gap-2 select-none border border-white/15 overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
               {/* Floating Top-Right Close Button */}
               <button
                 id="gallery-preview-close"
@@ -384,23 +414,27 @@ export default function Gallery() {
                   <LazyVideo
                     src={currentItem.src}
                     controls
-                    controlsList="nodownload noplaybackrate nofullscreen"
+                    controlsList="nodownload noplaybackrate noremoteplayback"
+                    disablePictureInPicture={true}
                     autoPlay
                     loop
                     playsInline
                     muted={true}
                     defaultMuted={true}
                     playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-                    className="gallery-lightbox-video w-full h-full max-w-full max-h-full object-contain flex items-center justify-center"
+                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                    className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video"
+                    videoClassName="gallery-preview-video-element"
                   />
                 ) : (
-                  <SafeImage
+                  <img
                     src={currentItem.src}
                     alt={currentItem.title || 'Gallery visual'}
-                    targetWidth={1600}
-                    disableParallax={true}
-                    className="w-full h-full max-w-full max-h-full flex items-center justify-center"
-                    imgClassName="w-full h-full max-w-full max-h-full object-contain select-none m-auto"
+                    loading="eager"
+                    decoding="async"
+                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                    className="w-full h-full max-w-full max-h-full object-contain select-none m-auto block pointer-events-auto"
+                    draggable={false}
                   />
                 )}
               </div>
@@ -504,13 +538,14 @@ export default function Gallery() {
               )}
             </motion.div>
           </div>
-        )}
+        </div>
+      )}
       </AnimatePresence>
     </div>
   )
 }
 
-function GalleryGridCard({ item, idx, reduce, onClick }) {
+function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
   const cardRef = useRef(null)
   const hoverTimerRef = useRef(null)
 
@@ -561,12 +596,12 @@ function GalleryGridCard({ item, idx, reduce, onClick }) {
 
   return (
     <motion.div
-      id={`gallery-item-${item.id}`}
       ref={cardRef}
+      id={item.id}
       initial={reduce ? false : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(idx * 0.02, 0.25) }}
-      className="group flex flex-col rounded-2xl sm:rounded-[24px] overflow-hidden bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-300 cursor-pointer active:scale-[0.99]"
+      className={`scroll-mt-28 group flex flex-col rounded-2xl sm:rounded-[24px] overflow-hidden bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-500 cursor-pointer active:scale-[0.99]`}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -606,10 +641,17 @@ function GalleryGridCard({ item, idx, reduce, onClick }) {
       </div>
 
       {/* Information Panel Below Media - Title */}
-      <div className="p-2 sm:p-5 bg-white text-[#001e3d]">
-        <h3 className="font-heading text-xs sm:text-lg font-bold text-[#001e3d] group-hover:text-accent transition duration-200 line-clamp-1 leading-tight">
+      <div className="p-2 sm:p-5 bg-white flex items-center justify-between gap-2">
+        <h3 className={`font-heading text-xs sm:text-lg font-bold group-hover:text-accent transition duration-200 line-clamp-1 leading-tight ${
+          isHighlighted ? 'text-accent font-extrabold' : 'text-navy'
+        }`}>
           {item.title}
         </h3>
+        {isHighlighted && (
+          <span className="shrink-0 text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#FFCD00] text-[#001e3d] px-2.5 py-0.5 rounded-full shadow-sm">
+            Selected
+          </span>
+        )}
       </div>
     </motion.div>
   )

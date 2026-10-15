@@ -3,10 +3,8 @@ import { Link, useLocation } from 'react-router'
 import { useCart } from '../hooks/useCart'
 import { formatCurrency } from '../utils/formatCurrency'
 import Button from '../components/Button'
-import useNightDive from '../hooks/useNightDive'
 
 export default function Cart() {
-  const isNightDive = useNightDive()
   const { items, itemCount, subtotal, loading, removeItem, updateQuantity } = useCart()
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
@@ -14,7 +12,7 @@ export default function Cart() {
 
   return (
     <div
-      className={isDashboard ? (isNightDive ? 'text-white font-body' : 'text-navy font-body') : `min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} font-body pt-24 sm:pt-32 pb-32 sm:pb-24`}
+      className={isDashboard ? 'text-navy font-body' : 'min-h-screen bg-[#FAFAFA] text-navy font-body pt-24 sm:pt-32 pb-32 sm:pb-24'}
       style={{ textShadow: 'none' }}
     >
       <div className={isDashboard ? 'w-full' : 'mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'}>

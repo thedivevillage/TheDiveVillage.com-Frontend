@@ -1,21 +1,6 @@
 // Helper to generate optimized Cloudinary video poster/thumbnail frame
-export const getVideoThumbnail = (videoUrl) => {
-  if (!videoUrl) return ''
-  if (videoUrl.startsWith('/media/')) {
-    const cleanKey = videoUrl.replace(/^\/media\//, '').replace(/\.(mp4|MP4)$/i, '')
-    return `https://res.cloudinary.com/q7b4kjd9/video/upload/so_2,w_1200,q_auto:best,f_auto/${encodeURI(cleanKey)}.jpg`
-  }
-  if (videoUrl.includes('res.cloudinary.com') && videoUrl.includes('/video/upload/')) {
-    if (videoUrl.includes('/c_crop,ar_9:16/')) {
-      return videoUrl
-        .replace('/c_crop,ar_9:16/', '/c_crop,ar_9:16/so_2,w_800,q_auto,f_auto/')
-        .replace(/\.(mp4|MP4)$/i, '.jpg')
-    }
-    return videoUrl
-      .replace('/video/upload/', '/video/upload/so_2,w_800,q_auto,f_auto/')
-      .replace(/\.(mp4|MP4)$/i, '.jpg')
-  }
-  return videoUrl.replace(/\.(mp4|MP4)$/i, '.jpg')
+export const getVideoThumbnail = (_videoUrl) => {
+  return ''
 }
 
 // Distinct High-Res Images
@@ -83,7 +68,7 @@ const extBubbleCoral = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v179145
 const extBaitball = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp';
 const extMantaRayVid = '/media/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4';
 const extBarracudasVid = '/media/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4';
-const extTurtleVid = '/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4';
+const extTurtleVid = '/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4';
 const extTrevallyVid = '/media/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4';
 const extStingrayVid = '/media/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4';
 const extScubaDiverVid = '/media/TDV-Media/Services/Scuba_Diver.mp4';
@@ -91,7 +76,7 @@ const extMorayEelVid = '/media/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Gia
 const extAnemoneVid = '/media/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4';
 const extSeafanVid = '/media/TDV-Media/Extras for Gallery/A_Seafan.mp4';
 
-// Exact Service Media Video Imports from Assets/Media/Services (Cloudflare R2 endpoints)
+// Exact Service Media Video Imports from Assets/Media/Services
 const vidTryDive = '/media/TDV-Media/Services/Try_Dive.mp4';
 const vidDSDLite = '/media/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4';
 const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4';
@@ -131,7 +116,7 @@ const vid3DaySurf = '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4';
 const vidDiscoverSurfing = '/media/TDV-Media/Services/discover_surfing.mp4';
 const vidCanoneering = '/media/TDV-Media/Services/Other/Canoneering.mp4';
 
-// Add Ons Media (Cloudflare R2 video URLs & Cloudinary poster URLs)
+// Add Ons Media (Cloudinary URLs)
 const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
 const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
 const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
@@ -286,7 +271,7 @@ export const SERVICES_DATA = [
     short_desc: 'Learn the basics of snorkeling in a safe, guided setting.',
     long_desc: 'Includes briefing, equipment use orientation, and a 1 hour open water snorkeling session with a professional leading you.',
     video: vidDiscoverSnorkelling,
-    image: getVideoThumbnail(vidDiscoverSnorkelling),
+    image: imgSnorkelingPng,
     highlights: 'Total Time: 1 hr | Knowledge development + water session',
     faqs: [
       {
@@ -306,7 +291,7 @@ export const SERVICES_DATA = [
     short_desc: 'Guided reef snorkeling for beginners.',
     long_desc: 'Perfect shallow-water snorkel trip to see colorful reef fish, corals, and safe lagoon sites.',
     video: vidReefExplorer,
-    image: getVideoThumbnail(vidReefExplorer),
+    image: imgSnorkelingPng,
     highlights: 'Total Time: 1–1.5 hrs | Suitable for all ages',
     faqs: [
       {
@@ -326,7 +311,7 @@ export const SERVICES_DATA = [
     short_desc: 'Snorkel further into the blue.',
     long_desc: 'Explore deeper reef areas, spot turtles and bigger marine life, with guided safety.',
     video: vidOceanExplorer,
-    image: getVideoThumbnail(vidOceanExplorer),
+    image: imgSnorkelingPng,
     highlights: 'Total Time: 1.5–2 hrs | Includes equipment & guide',
     faqs: [
       {
@@ -974,7 +959,7 @@ export const SERVICES_DATA = [
     short_desc: 'Introductory surfboard lesson for beginners.',
     long_desc: 'Learn pop-up techniques, wave timing, board balance, and safety in shallow ocean breaks with an experienced instructor.',
     video: vidDiscoverSurfing,
-    image: getVideoThumbnail(vidDiscoverSurfing),
+    image: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp',
     highlights: 'Total Time: 2 hrs | Includes surfboard, rashguard & instructor',
     min_age: 8.0,
     faqs: [
@@ -995,7 +980,7 @@ export const SERVICES_DATA = [
     short_desc: 'Master wave reading, paddling, and maneuvers.',
     long_desc: 'Comprehensive 3-day surfing course covering ocean currents, line-up positioning, turns, and riding green waves.',
     video: vid3DaySurf,
-    image: getVideoThumbnail(vid3DaySurf),
+    image: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp',
     highlights: 'Duration: 3 Days | Video analysis & surf log included',
     days_min: 3.0,
     days_max: 3.0,
@@ -1020,7 +1005,7 @@ export const SERVICES_DATA = [
     short_desc: 'An adventurous canoneering experience.',
     long_desc: 'Explore the rugged terrains, rappel down waterfalls, and navigate through natural canyons in this thrilling canoneering adventure.',
     video: vidCanoneering,
-    image: getVideoThumbnail(vidCanoneering),
+    image: imgTrekking,
     highlights: 'Adventurous | Guided Tour',
     faqs: [
       {
@@ -1244,66 +1229,6 @@ export const FUN_DIVES_PACKAGES = [
     highlights: 'Certified divers only | Extension Pack',
     badge: 'Add-On',
     duration: '1 Extra Day',
-  },
-
-  // Dawn Dives
-  {
-    id: 'fun-dawn-1',
-    dives: 1,
-    title: 'Dawn Dive (Single)',
-    tag: 'Sunrise Special',
-    funType: 'dawn',
-    short_desc: 'Witness early morning pelagic activity as the reef awakens.',
-    long_desc: 'Drop in at first light to experience schooling trevally, hunting sharks, and pristine visibility.',
-    video: vidAdventureDiver,
-    image: getVideoThumbnail(vidAdventureDiver),
-    highlights: 'Certified divers only | First Light Departure',
-    badge: 'Dawn Special',
-    duration: 'Early Morning (1 Dive)',
-  },
-  {
-    id: 'fun-dawn-2',
-    dives: 2,
-    title: 'Dawn + Morning 2-Dive Combo',
-    tag: 'Dawn Explorer',
-    funType: 'dawn',
-    short_desc: 'Catch the sunrise surge followed by a relaxed morning reef dive.',
-    long_desc: 'Experience the active morning feeding hour followed by high-visibility coral exploration.',
-    video: extMantaRayVid,
-    image: getVideoThumbnail(extMantaRayVid),
-    highlights: 'Certified divers only | 2 Morning Dives',
-    badge: 'Dawn Combo',
-    duration: 'Morning (2 Dives)',
-  },
-
-  // Night Dives
-  {
-    id: 'fun-night-1',
-    dives: 1,
-    title: 'Night Dive (Single)',
-    tag: 'Nocturnal Safari',
-    funType: 'night',
-    short_desc: 'Experience bioluminescence and nocturnal marine hunters in the dark.',
-    long_desc: 'Descend under torchlight to see sleeping turtles, hunting octopus, and glowing plankton.',
-    video: vidNightDiveBackground,
-    image: getVideoThumbnail(vidNightDiveBackground),
-    highlights: 'Certified divers only | Torch & Guide Included',
-    badge: 'Night Special',
-    duration: 'Evening (1 Dive)',
-  },
-  {
-    id: 'fun-night-2',
-    dives: 2,
-    title: 'Dusk to Dark 2-Dive Combo',
-    tag: 'Twilight & Night',
-    funType: 'night',
-    short_desc: 'Start at golden sunset and complete your second dive in full darkness.',
-    long_desc: 'Watch day shift to night underwater as nocturnal predators emerge and reef fish hide.',
-    video: vidNightDiveBackground,
-    image: getVideoThumbnail(vidNightDiveBackground),
-    highlights: 'Certified divers only | Sunset + Night',
-    badge: 'Twilight Combo',
-    duration: 'Late Afternoon / Night (2 Dives)',
   }
 ]
 

@@ -105,7 +105,7 @@ export default function SafeImage({
           loading="eager"
           fetchPriority="high"
           decoding="async"
-          className={`absolute inset-0 w-full h-full object-cover filter blur-[10px] scale-110 pointer-events-none z-0 ${imgClassName}`}
+          className={`absolute inset-0 w-full h-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} filter blur-[10px] scale-110 pointer-events-none z-0 ${imgClassName}`}
         />
       )}
 
@@ -120,7 +120,7 @@ export default function SafeImage({
           decoding="async"
           onLoad={handleLoadSuccess}
           onError={() => setFailed(true)}
-          className={`h-full w-full object-cover relative z-[1] ${
+          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${
             loaded ? 'opacity-100' : 'opacity-0'
           } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'} ${imgClassName}`}
           {...props}
@@ -134,7 +134,7 @@ export default function SafeImage({
           decoding="async"
           onLoad={handleLoadSuccess}
           onError={() => setFailed(true)}
-          className={`h-full w-full object-cover relative z-[1] ${
+          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${
             loaded ? 'opacity-100' : 'opacity-0'
           } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'} ${imgClassName}`}
           {...props}

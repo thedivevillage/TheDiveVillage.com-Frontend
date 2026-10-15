@@ -29,7 +29,7 @@ export default function ViberQRModal({ isOpen, onClose }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer"
+            className="absolute inset-0 cursor-pointer"
             aria-hidden="true"
           />
 

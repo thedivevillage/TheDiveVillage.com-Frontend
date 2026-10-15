@@ -341,7 +341,7 @@ export const COURSE_CATALOG = [
     category: 'Fun Dives',
     minimumAge: 10,
     maxAge: null,
-    certLabel: 'Certified Diver',
+    certLabel: 'Open Water to Dive Master',
     experience: 'Scuba Diving',
   },
   {
@@ -475,6 +475,32 @@ export function getAvailableCertificationsForAge(age, experience = 'Scuba Diving
 
 /**
  * Master Course Eligibility Function based on user's exact specification:
+ *
+ * 1. User is 8 and above (without certificate):
+ *    - Try Dive
+ *    - Discover Scuba Dive Lite
+ *    - Discover Scuba Dive
+ *    - Discover Scuba Dive + Open Water Dive
+ *    - Zero to Hero
+ *    - Open Water Dive
+ *
+ * 2. User is exact 8 (with certificate):
+ *    - Try Dive
+ *    - Discover Scuba Dive Lite
+ *    - Discover Scuba Dive
+ *    - Zero to Hero
+ *    - Open Water Dive
+ *    - Scuba Dive
+ *
+ * 3. User is above 8+ (with certificate): ask which certificate:
+ *    - Scuba Diver: Zero to Hero, Skin Dive, Open Water Dive, Open Water + Advanced Open Water, Reactivate (with dive)
+ *    - Skin Diver: Reactivate (with dive), Open Water Dive
+ *    - Open Water Diver: Advanced Open Water + all specialties (Peak Performance Buoyancy, Deep Diver, Wreck Diver, Night Diver, Enriched Air Nitrox, Project AWARE, Drift Diver)
+ *    - Advanced Open Water Diver: Adventure Dive + all specialties
+ *    - Adventure Diver: Rescue Diver, Emergency First Response + Rescue Diver, Emergency First Response + Rescue Diver+ Dive Master(Prerequisites), Emergency First Response + Rescue Diver+ Dive Master
+ *    - Rescue Diver: Emergency First Response Primary & Secondary Care, Lite Refresher (confined only), Full Refresher (with Dive), Dive Master + all specialties
+ *    - Emergency First Response (EFR): all specialties
+ *    - Dive Master: all specialties
  */
 export function getEligibleCourses(age, hasCert = false, userCerts = [], experience = 'Scuba Diving', catalog = COURSE_CATALOG) {
   const numericAge = parseInt(age, 10)
@@ -521,7 +547,7 @@ export function getEligibleCourses(age, hasCert = false, userCerts = [], experie
       .filter(Boolean)
   }
 
-  // Case 2: Exact 8 with certificate (Try Dive, DSD Lite, and DSD removed per user request)
+  // Case 2: Exact 8 with certificate (Try Dive, DSD Lite, and DSD removed)
   if (numericAge === 8) {
     const targetIds = [
       'zero-to-hero',
@@ -556,21 +582,21 @@ export function getEligibleCourses(age, hasCert = false, userCerts = [], experie
         'open-water'
       )
     } else if (normCert.includes('openwater') && !normCert.includes('advanced')) {
-      // Open Water Diver: Fun Dives + Advanced Open Water + all specialties
+      // Open Water Diver: Fun Dives, Advanced Open Water + all specialties
       allTargetIds.push(
         'fun-dives',
         'advanced-ow',
         ...SPECIALTY_COURSE_IDS
       )
     } else if (normCert.includes('advancedopenwater') || normCert.includes('aow')) {
-      // Advanced Open Water Diver: Fun Dives + Adventure Dive + all specialties
+      // Advanced Open Water Diver: Fun Dives, Adventure Dive + all specialties
       allTargetIds.push(
         'fun-dives',
         'adventure-diver',
         ...SPECIALTY_COURSE_IDS
       )
     } else if (normCert.includes('adventurediver')) {
-      // Adventure Diver: Fun Dives + Rescue Diver + EFR Combos
+      // Adventure Diver: Fun Dives, Rescue Diver, Emergency First Response + Rescue Diver, Emergency First Response + Rescue Diver+ Dive Master(Prerequisites), Emergency First Response + Rescue Diver+ Dive Master
       allTargetIds.push(
         'fun-dives',
         'rescue-diver',
@@ -579,7 +605,7 @@ export function getEligibleCourses(age, hasCert = false, userCerts = [], experie
         'efr-rescue-dm-combo'
       )
     } else if (normCert.includes('rescue')) {
-      // Rescue Diver: Fun Dives + EFR Primary & Secondary Care + Refresher + Dive Master + all specialties
+      // Rescue Diver: Fun Dives, Emergency First Response Primary & Secondary Care, Lite Refresher (confined only), Full Refresher (with Dive), Dive Master + all specialties
       allTargetIds.push(
         'fun-dives',
         'efr-primary-secondary',
@@ -654,6 +680,11 @@ export function validateParticipantBooking(participant, experience = 'Scuba Divi
   return { valid: true }
 }
 
+export function isFunDivesProgram(courseId) {
+  if (!courseId) return false
+  return ['fun-dives', 'fun-day-dive', 'fun-dawn-dive', 'fun-night-dive'].includes(courseId)
+}
+
 export default {
   EXPERIENCE_OPTIONS,
   ADD_ON_OPTIONS,
@@ -670,4 +701,5 @@ export default {
   sortCoursesByDifficulty,
   validateParticipantBooking,
   normalizeExperienceKey,
+  isFunDivesProgram,
 }

@@ -81,8 +81,8 @@ export default function ScrollToTop() {
         return
       }
 
-      // If it's an anchor to a hash on the current page, let native hash scrolling take over
-      if (href.startsWith('#')) return
+      // If it's an anchor to a hash or specific item, let target scrolling take over
+      if (href.startsWith('#') || href.includes('#') || href.includes('item=')) return
 
       // Mark navigation timestamp and reset scroll to top immediately upon tap
       lastNavTimeRef.current = Date.now()
@@ -119,18 +119,25 @@ export default function ScrollToTop() {
     lastNavTimeRef.current = Date.now()
     userInterruptedRef.current = false
 
-    // If URL has a specific hash element, scroll to that element instead
-    if (location.hash) {
-      const hashId = decodeURIComponent(location.hash.replace('#', ''))
-      const targetElement = document.getElementById(hashId) || document.querySelector(location.hash)
-      if (targetElement) {
-        if (lenis && typeof lenis.scrollTo === 'function') {
-          lenis.scrollTo(targetElement, { immediate: true, force: true })
-        } else {
-          targetElement.scrollIntoView({ behavior: 'smooth' })
+    // If URL specifies a target hash or item, do NOT force scroll to top
+    const searchParams = new URLSearchParams(location.search)
+    const targetItemId = searchParams.get('item')
+    const hasTargetHashOrItem = Boolean(location.hash || targetItemId)
+
+    if (hasTargetHashOrItem) {
+      if (location.hash) {
+        const hashId = decodeURIComponent(location.hash.replace('#', ''))
+        const targetElement = document.getElementById(hashId) || document.querySelector(location.hash)
+        if (targetElement) {
+          const activeLenis = lenis || (typeof window !== 'undefined' ? window.lenis : null)
+          if (activeLenis && typeof activeLenis.scrollTo === 'function') {
+            activeLenis.scrollTo(targetElement, { offset: -100, duration: 1.0 })
+          } else {
+            targetElement.scrollIntoView({ behavior: 'smooth' })
+          }
         }
-        return
       }
+      return
     }
 
     // Step A: Immediate reset

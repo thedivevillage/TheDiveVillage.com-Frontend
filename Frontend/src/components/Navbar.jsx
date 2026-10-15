@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Logo from './Logo'
 const LogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
 import ThemeToggle from './ThemeToggle'
+import { isNightModeDisabledRoute } from '../hooks/useNightDive'
 import ViberQRModal from './ViberQRModal'
 import { useCart } from '../hooks/useCart'
 import { useWishlist } from '../hooks/useWishlist'
@@ -30,8 +31,19 @@ export default function Navbar() {
   const reduce = useReducedMotion()
 
   const location = useLocation()
+  const isNightModeDisabled = isNightModeDisabledRoute(location.pathname)
+
   const [isNightDive, setIsNightDive] = useState(() => {
     if (typeof document !== 'undefined') {
+      const currentDisabled = isNightModeDisabledRoute(
+        location?.pathname || (typeof window !== 'undefined' ? window.location.pathname : '')
+      )
+      if (currentDisabled) {
+        if (document.body.classList.contains('night-dive')) {
+          document.body.classList.remove('night-dive')
+        }
+        return false
+      }
       try {
         if (localStorage.getItem('tdv_night_dive') === 'true') {
           document.body.classList.add('night-dive')
@@ -44,6 +56,14 @@ export default function Navbar() {
   })
 
   useEffect(() => {
+    if (isNightModeDisabled) {
+      if (document.body.classList.contains('night-dive')) {
+        document.body.classList.remove('night-dive')
+      }
+      setIsNightDive(false)
+      return
+    }
+
     try {
       const stored = localStorage.getItem('tdv_night_dive')
       if (stored === 'true') {
@@ -56,12 +76,16 @@ export default function Navbar() {
     } catch (e) {}
 
     const observer = new MutationObserver(() => {
-      setIsNightDive(document.body.classList.contains('night-dive'))
+      if (isNightModeDisabled) {
+        setIsNightDive(false)
+      } else {
+        setIsNightDive(document.body.classList.contains('night-dive'))
+      }
     })
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
-    setIsNightDive(document.body.classList.contains('night-dive'))
+    setIsNightDive(isNightModeDisabled ? false : document.body.classList.contains('night-dive'))
     return () => observer.disconnect()
-  }, [])
+  }, [isNightModeDisabled, location.pathname])
 
   useEffect(() => {
     const updateToolbarBottom = () => {
@@ -85,15 +109,14 @@ export default function Navbar() {
   }, [])
 
   const toggleNightDive = () => {
+    if (isNightModeDisabled) return
     const isNight = document.body.classList.contains('night-dive')
     if (isNight) {
       document.body.classList.remove('night-dive')
-      document.documentElement.classList.remove('night-dive')
       setIsNightDive(false)
       try { localStorage.setItem('tdv_night_dive', 'false') } catch (e) {}
     } else {
       document.body.classList.add('night-dive')
-      document.documentElement.classList.add('night-dive')
       setIsNightDive(true)
       try { localStorage.setItem('tdv_night_dive', 'true') } catch (e) {}
     }
@@ -102,7 +125,7 @@ export default function Navbar() {
   const isHomePage = location.pathname === '/'
 
   // Night dive gets #001C39 without shadow; Home page keeps original translucent styling; all other pages get full opaque blue
-  const containerGlass = isNightDive
+  const containerGlass = (isNightDive && !isNightModeDisabled)
     ? 'border border-white/20 bg-[#001C39] text-white shadow-none'
     : isHomePage
       ? 'border border-white/25 bg-[#001e3d]/55 backdrop-blur-2xl text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.35)]'
@@ -121,7 +144,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-9 w-9 items-center justify-center text-white transition active:scale-95 cursor-pointer outline-none focus:outline-none focus-visible:outline-none"
+          className="flex h-9 w-9 items-center justify-center text-white transition active:scale-95 cursor-pointer"
           aria-label="Toggle menu"
           aria-expanded={open}
         >
@@ -129,7 +152,7 @@ export default function Navbar() {
         </button>
 
         {/* Center: Brand Logo Image Only (Mobile Only) */}
-        <Link to="/" className="flex items-center justify-center group outline-none focus:outline-none focus-visible:outline-none" aria-label="The Dive Village">
+        <Link to="/" className="flex items-center justify-center group focus:outline-none" aria-label="The Dive Village">
           <img
             src={LogoImg}
             alt="The Dive Village"
@@ -138,18 +161,22 @@ export default function Navbar() {
         </Link>
 
         {/* Right: Neomorphism Night Dive Toggle (Mobile Only) */}
-        <button
-          type="button"
-          onClick={toggleNightDive}
-          className="flex flex-col items-center justify-center cursor-pointer transition active:scale-95 px-1 py-0.5 shrink-0 rounded-xl outline-none focus:outline-none focus-visible:outline-none"
-          aria-label="Toggle Night Mode"
-          title={isNightDive ? 'Day Mode' : 'Night Mode'}
-        >
-          <ThemeToggle isNightDive={isNightDive} className="inline-block" />
-          <span className="text-[9px] font-extrabold tracking-tight mt-0.5 text-white/90 uppercase whitespace-nowrap leading-none select-none">
-            {isNightDive ? 'Day Mode' : 'Night Mode'}
-          </span>
-        </button>
+        {!isNightModeDisabled ? (
+          <button
+            type="button"
+            onClick={toggleNightDive}
+            className="flex flex-col items-center justify-center cursor-pointer transition active:scale-95 px-1 py-0.5 shrink-0 rounded-xl focus:outline-none"
+            aria-label="Toggle Night Mode"
+            title={isNightDive ? 'Day Mode' : 'Night Mode'}
+          >
+            <ThemeToggle isNightDive={isNightDive} className="inline-block" />
+            <span className="text-[9px] font-extrabold tracking-tight mt-0.5 text-white/90 uppercase whitespace-nowrap leading-none select-none">
+              {isNightDive ? 'Day Mode' : 'Night Mode'}
+            </span>
+          </button>
+        ) : (
+          <div className="w-9 h-9" aria-hidden="true" />
+        )}
       </div>
 
       {/* DESKTOP TOOLBAR (hidden sm:grid - 100% Preserved) */}
@@ -163,7 +190,7 @@ export default function Navbar() {
             onMouseEnter={() => prefetchRoute('/')}
             onTouchStart={() => prefetchRoute('/')}
             className={({ isActive }) =>
-              `relative whitespace-nowrap font-body text-[15px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 outline-none focus:outline-none focus-visible:outline-none ${isActive
+              `relative whitespace-nowrap font-body text-[15px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 focus:outline-none focus-visible:outline-none ${isActive
                 ? 'text-[#FFCD00] after:content-[""] after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-[2.5px] after:bg-[#FFCD00]'
                 : `${textColor} hover:text-[#FFCD00] after:content-[""] after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-[2.5px] after:bg-[#FFCD00] after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300`
               }`
@@ -176,7 +203,7 @@ export default function Navbar() {
             onMouseEnter={() => prefetchRoute('/book-us')}
             onTouchStart={() => prefetchRoute('/book-us')}
             className={({ isActive }) =>
-              `relative whitespace-nowrap font-body text-[15px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 outline-none focus:outline-none focus-visible:outline-none ${isActive
+              `relative whitespace-nowrap font-body text-[15px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 focus:outline-none focus-visible:outline-none ${isActive
                 ? 'text-[#FFCD00] after:content-[""] after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-[2.5px] after:bg-[#FFCD00]'
                 : `${textColor} hover:text-[#FFCD00] after:content-[""] after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-[2.5px] after:bg-[#FFCD00] after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300`
               }`
@@ -189,7 +216,7 @@ export default function Navbar() {
             onMouseEnter={() => prefetchRoute('/shop')}
             onTouchStart={() => prefetchRoute('/shop')}
             className={({ isActive }) =>
-              `hidden lg:block relative whitespace-nowrap font-body text-[14px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 outline-none focus:outline-none focus-visible:outline-none ${isActive
+              `hidden lg:block relative whitespace-nowrap font-body text-[14px] sm:text-[15px] font-bold tracking-wide transition-all duration-300 focus:outline-none focus-visible:outline-none ${isActive
                 ? 'text-[#FFCD00] after:content-[""] after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-[2.5px] after:bg-[#FFCD00]'
                 : `${textColor} hover:text-[#FFCD00] after:content-[""] after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-[2.5px] after:bg-[#FFCD00] after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300`
               }`
@@ -214,7 +241,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setIsCallModalOpen(true)}
-            className={`flex h-9 w-9 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-full sm:rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-0 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0 outline-none focus:outline-none focus-visible:outline-none`}
+            className={`flex h-9 w-9 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-full sm:rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-0 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] cursor-pointer shadow-sm active:scale-95 shrink-0`}
             aria-label="Call & Contact Options"
             title="Call"
           >
@@ -222,21 +249,23 @@ export default function Navbar() {
             <span className="hidden xl:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap">Get In Touch</span>
           </button>
 
-          <button
-            type="button"
-            onClick={toggleNightDive}
-            className={`hidden sm:flex h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-transparent shrink-0 cursor-pointer shadow-sm active:scale-95 outline-none focus:outline-none focus-visible:outline-none`}
-            aria-label="Toggle Night Dive mode"
-          >
-            <ThemeToggle isNightDive={isNightDive} className="hidden lg:inline-block" />
-            <span className="hidden sm:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap select-none">
-              {isNightDive ? 'Day Dive' : 'Night Dive'}
-            </span>
-          </button>
+          {!isNightModeDisabled && (
+            <button
+              type="button"
+              onClick={toggleNightDive}
+              className={`hidden sm:flex h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 cursor-pointer shadow-sm active:scale-95`}
+              aria-label="Toggle Night Dive mode"
+            >
+              <ThemeToggle isNightDive={isNightDive} className="hidden lg:inline-block" />
+              <span className="hidden sm:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap select-none">
+                {isNightDive ? 'Day Dive' : 'Night Dive'}
+              </span>
+            </button>
+          )}
 
           <Link
             to={isAuthenticated ? '/dashboard/profile' : '/login'}
-            className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full sm:rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-transparent shrink-0 shadow-sm active:scale-95 outline-none focus:outline-none focus-visible:outline-none`}
+            className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full sm:rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 shadow-sm active:scale-95`}
             aria-label={isAuthenticated ? 'Account' : 'Login'}
             title={user?.displayName || user?.email || 'Profile'}
           >
@@ -253,7 +282,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border ${borderColor} ${btnBg} backdrop-blur-md ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-transparent lg:hidden active:scale-95 cursor-pointer outline-none focus:outline-none focus-visible:outline-none`}
+            className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border ${borderColor} ${btnBg} backdrop-blur-md ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] lg:hidden active:scale-95 cursor-pointer`}
             aria-label="Toggle menu"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
@@ -278,7 +307,7 @@ export default function Navbar() {
                 <Link
                   to="/cart"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between bg-white/10 hover:bg-[#FFCD00] hover:text-[#001e3d] rounded-2xl px-3.5 py-2.5 text-xs font-bold transition active:scale-95 border border-white/15 cursor-pointer outline-none focus:outline-none focus-visible:outline-none"
+                  className="flex items-center justify-between bg-white/10 hover:bg-[#FFCD00] hover:text-[#001e3d] rounded-2xl px-3.5 py-2.5 text-xs font-bold transition active:scale-95 border border-white/15 cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     <CartIcon />
@@ -294,7 +323,7 @@ export default function Navbar() {
                 <Link
                   to="/wishlist"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between bg-white/10 hover:bg-[#FFCD00] hover:text-[#001e3d] rounded-2xl px-3.5 py-2.5 text-xs font-bold transition active:scale-95 border border-white/15 cursor-pointer outline-none focus:outline-none focus-visible:outline-none"
+                  className="flex items-center justify-between bg-white/10 hover:bg-[#FFCD00] hover:text-[#001e3d] rounded-2xl px-3.5 py-2.5 text-xs font-bold transition active:scale-95 border border-white/15 cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -320,7 +349,7 @@ export default function Navbar() {
                     onTouchStart={() => prefetchRoute(item.to)}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover outline-none focus:outline-none focus-visible:outline-none ${isActive
+                      `rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover ${isActive
                         ? 'bg-white/15 text-white'
                         : 'text-white hover:bg-white/10 hover:text-white'
                       }`
@@ -334,25 +363,27 @@ export default function Navbar() {
                     setOpen(false)
                     setIsCallModalOpen(true)
                   }}
-                  className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer outline-none focus:outline-none focus-visible:outline-none"
+                  className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left flex items-center gap-2 text-white hover:bg-white/10 cursor-pointer"
                 >
                   <PhoneIcon />
                   Call / Connect Options
                 </button>
-                <button
-                  onClick={() => {
-                    toggleNightDive()
-                    setOpen(false)
-                  }}
-                  className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left text-white hover:bg-white/10 cursor-pointer flex items-center gap-2 outline-none focus:outline-none focus-visible:outline-none"
-                >
-                  <ThemeToggle isNightDive={isNightDive} className="inline-block" />
-                  <span>{isNightDive ? 'Switch to Day Dive' : 'Switch to Night Dive'}</span>
-                </button>
+                {!isNightModeDisabled && (
+                  <button
+                    onClick={() => {
+                      toggleNightDive()
+                      setOpen(false)
+                    }}
+                    className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left text-white hover:bg-white/10 cursor-pointer flex items-center gap-2"
+                  >
+                    <ThemeToggle isNightDive={isNightDive} className="inline-block" />
+                    <span>{isNightDive ? 'Switch to Day Dive' : 'Switch to Night Dive'}</span>
+                  </button>
+                )}
                 <Link
                   to={isAuthenticated ? '/dashboard/profile' : '/login'}
                   onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left flex items-center gap-2.5 text-white hover:bg-white/10 outline-none focus:outline-none focus-visible:outline-none"
+                  className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left flex items-center gap-2.5 text-white hover:bg-white/10"
                 >
                   {user?.photoURL ? (
                     <img src={user.photoURL} alt="Profile" className="h-5 w-5 rounded-full object-cover shrink-0" />
@@ -460,8 +491,8 @@ function CallModal({ isOpen, onClose, onOpenViberQr }) {
     {
       id: 'email',
       title: 'Mail',
-      subtitle: 'sanjeev.bajaj@thedivevillage.com',
-      href: 'mailto:sanjeev.bajaj@thedivevillage.com',
+      subtitle: 'sanjeev.bajaj@thedivevillage.comm',
+      href: 'mailto:sanjeev.bajaj@thedivevillage.comm',
       icon: (
         <svg className="w-5 h-5 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -544,7 +575,7 @@ function CallModal({ isOpen, onClose, onOpenViberQr }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer"
+            className="absolute inset-0 cursor-pointer"
           />
 
           {/* Modal Box */}

@@ -69,7 +69,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-8",
     "type": "video",
-    "src": "/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4",
     "title": "Hawksbill Sea Turtle",
     "category": "marine",
     "filename": "Hawksbill Sea Turtle.mp4"
@@ -126,7 +126,7 @@ export const GALLERY_ITEMS = [
   {
     "id": "gallery-item-18",
     "type": "video",
-    "src": "/media/TDV-Media/Extras for Gallery/Whale_Shark.mp4",
+    "src": "/media/TDV-Media/Extras for Gallery/Whale_Shark_2.mp4",
     "title": "Whale Shark",
     "category": "marine",
     "filename": "Whale Shark (2).mp4"
@@ -287,7 +287,7 @@ export const GALLERY_ITEMS = [
     "id": "gallery-item-38",
     "type": "image",
     "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458103/TDV-Media/Extras%20for%20Gallery/Greenfish_Sea_Cucumber.webp",
-    "title": "Greenfish Sea Cucumber",
+    "title": "Black Knobby Sea Cucumber",
     "category": "marine",
     "filename": "Greenfish Sea Cucumber.webp"
   },

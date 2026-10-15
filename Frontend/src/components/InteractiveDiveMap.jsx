@@ -8,8 +8,8 @@ import pinIconUrl from '../assets/pin.png'
 // Memoization cache for generated marker SVG data URIs
 const svgCache = new Map()
 
-
-const createSitePinSvg = (isSelected = false, isDimmed = false) => {
+// Generate billboard pin for countries and dive locations from assets/pin.png (#FFD500 yellow)
+const createSitePinSvg = (_isSelected = false, _isDimmed = false) => {
   return pinIconUrl
 }
 

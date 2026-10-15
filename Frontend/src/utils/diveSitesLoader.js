@@ -1,5 +1,4 @@
 import Papa from 'papaparse'
-import { getCountryBounds } from './countryBounds'
 
 // In-memory cache for parsed dive site data
 let cachedData = null
@@ -389,13 +388,17 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         entry.sites.push(site)
       })
 
-      // Canonical mainland coordinates [longitude, latitude] for all 101 countries
+      // Canonical mainland coordinates for countries
       const COUNTRY_COORDS = {
+        'Albania': [20.1683, 41.1533],
         'Argentina': [-63.6167, -38.4161],
         'Aruba': [-69.9683, 12.5211],
         'Australia': [133.7751, -25.2744],
+        'Austria': [14.5501, 47.5162],
+        'Azerbaijan': [47.5769, 40.1431],
         'Bahamas': [-77.3963, 25.0343],
         'Barbados': [-59.5432, 13.1939],
+        'Belgium': [4.4699, 50.5039],
         'Belize': [-88.4976, 17.1899],
         'Bermuda': [-64.7505, 32.3078],
         'Brazil': [-51.9253, -14.2350],
@@ -414,6 +417,7 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         'Croatia': [15.2000, 45.1000],
         'Curaçao': [-68.9900, 12.1696],
         'Cyprus': [33.4299, 35.1264],
+        'Czech Republic': [15.4730, 49.8175],
         'Denmark': [9.5018, 56.2639],
         'Dominica': [-61.3710, 15.4150],
         'Dominican Republic': [-70.1627, 18.7357],
@@ -426,6 +430,7 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         'France': [2.2137, 46.2276],
         'French Polynesia': [-149.4068, -17.6797],
         'Germany': [10.4515, 51.1657],
+        'Gibraltar': [-5.3536, 36.1408],
         'Greece': [21.8243, 39.0742],
         'Grenada': [-61.6042, 12.1165],
         'Guam': [144.7937, 13.4443],
@@ -435,17 +440,21 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         'Indonesia': [113.9213, -0.7893],
         'Iran': [53.6880, 32.4279],
         'Ireland': [-8.2439, 53.4129],
+        'Israel': [34.8516, 31.0461],
         'Italy': [12.5674, 41.8719],
         'Jamaica': [-77.2975, 18.1096],
         'Japan': [138.2529, 36.2048],
         'Jordan': [36.2384, 30.5852],
         'Kenya': [37.9062, -0.0236],
         'Kuwait': [47.4818, 29.3117],
+        'Latvia': [24.6032, 56.8796],
+        'Libya': [13.1707, 32.9036],
         'Madagascar': [46.8691, -18.7669],
         'Malaysia': [101.9758, 4.2105],
         'Maldives': [73.2207, 3.2028],
         'Malta': [14.3754, 35.9375],
         'Mexico': [-102.5528, 23.6345],
+        'Monaco': [7.4246, 43.7384],
         'Montenegro': [19.3744, 42.7087],
         'Mozambique': [35.5296, -18.6657],
         'Netherlands': [5.2913, 52.1326],
@@ -458,8 +467,10 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         'Papua New Guinea': [143.9555, -6.3150],
         'Peru': [-75.0152, -9.1899],
         'Philippines': [121.7740, 12.8797],
+        'Poland': [19.1451, 51.9194],
         'Portugal': [-8.2245, 39.3999],
         'Puerto Rico': [-66.5901, 18.2208],
+        'Qatar': [51.1839, 25.3548],
         'Republic of Mauritius': [57.5522, -20.3484],
         'Republic Of Mauritius': [57.5522, -20.3484],
         'Romania': [24.9668, 45.9432],
@@ -479,6 +490,7 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         'Sri Lanka': [80.7718, 7.8731],
         'Sudan': [30.2176, 12.8628],
         'Sweden': [18.6435, 60.1282],
+        'Switzerland': [8.2275, 46.8182],
         'Taiwan': [120.9605, 23.6978],
         'Tanzania': [34.8888, -6.3690],
         'Thailand': [100.9925, 15.8700],
@@ -495,6 +507,7 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
         'United Kingdom': [-1.1743, 52.3555],
         'United States of America (USA)': [-98.5795, 39.8283],
         'United States Of America (USA)': [-98.5795, 39.8283],
+        'Vanuatu': [166.9592, -15.3767],
         'Venezuela': [-66.5897, 6.4238],
         'Vietnam': [108.2772, 14.0583],
         'Western Sahara': [-12.8858, 24.2155],
@@ -507,7 +520,6 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
           const lng = canonical ? canonical[0] : (entry.sumLng / entry.count)
           const lat = canonical ? canonical[1] : (entry.sumLat / entry.count)
 
-          const geoBounds = getCountryBounds(entry.country)
           let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity
           entry.sites.forEach((s) => {
             if (s.longitude < minLng) minLng = s.longitude
@@ -516,24 +528,12 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
             if (s.latitude > maxLat) maxLat = s.latitude
           })
 
-          let bounds = geoBounds
-          if (minLng !== Infinity) {
-            if (geoBounds) {
-              bounds = [
-                [Math.min(geoBounds[0][0], minLng - 0.12), Math.min(geoBounds[0][1], minLat - 0.12)],
-                [Math.max(geoBounds[1][0], maxLng + 0.12), Math.max(geoBounds[1][1], maxLat + 0.12)],
-              ]
-            } else {
-              bounds = [[minLng - 0.2, minLat - 0.2], [maxLng + 0.2, maxLat + 0.2]]
-            }
-          }
-
           return {
             country: entry.country,
             count: entry.count,
             latitude: lat,
             longitude: lng,
-            bounds,
+            bounds: minLng !== Infinity ? [[minLng, minLat], [maxLng, maxLat]] : null,
             sites: entry.sites,
           }
         })

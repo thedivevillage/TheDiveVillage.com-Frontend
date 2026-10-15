@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-const merch0 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/dive-village/reviews/scthqb8u6jscwk2laiyv.jpg'
-const merch1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/dive-village/reviews/lq36jjo99ualm5y6cnwg.jpg'
-const merch2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/dive-village/reviews/hyfyou1sr4xmjg87vqp0.jpg'
-const merch3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/dive-village/reviews/feaskib6hvao8x3ucetz.jpg'
-const merch4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/dive-village/reviews/aqniyjug5ropcb9xcorv.jpg'
+const merch0 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244020/dive-village/reviews/scthqb8u6jscwk2laiyv.jpg'
+const merch1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244022/dive-village/reviews/lq36jjo99ualm5y6cnwg.jpg'
+const merch2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244024/dive-village/reviews/hyfyou1sr4xmjg87vqp0.jpg'
+const merch3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244025/dive-village/reviews/feaskib6hvao8x3ucetz.jpg'
+const merch4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244030/dive-village/reviews/aqniyjug5ropcb9xcorv.jpg'
 const merch5 = '/media/TDV-Media/Reviews/merch_5_mp4.mp4';
 import LazyVideo from './LazyVideo'
 
@@ -74,47 +74,57 @@ export default function CustomerReviews({ className = '' }) {
       <AnimatePresence>
         {activeMedia && (
           <div
-            className="fixed left-0 right-0 bottom-0 top-[64px] lg:top-[68px] z-[9990] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md cursor-pointer overflow-hidden"
+            className="fixed inset-0 z-[9990] bg-black/85 backdrop-blur-md select-none overflow-hidden"
             style={{
-              top: 'var(--toolbar-bottom, 64px)',
               overscrollBehavior: 'contain',
               touchAction: 'none',
             }}
             onClick={() => setActiveMedia(null)}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-w-4xl max-h-[calc(100vh-var(--toolbar-bottom,64px)-24px)] rounded-3xl overflow-hidden bg-black flex items-center justify-center shadow-2xl border border-white/20 cursor-default"
+            {/* Modal Content Wrapper - Strictly positioned below toolbar */}
+            <div
+              className="absolute inset-x-0 bottom-0 top-[64px] lg:top-[68px] flex items-center justify-center p-3 sm:p-5 lg:p-6"
+              style={{
+                top: 'var(--toolbar-bottom, 68px)',
+              }}
+              onClick={() => setActiveMedia(null)}
             >
-              <button
-                type="button"
-                onClick={() => setActiveMedia(null)}
-                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/70 hover:bg-[#FFCD00] hover:text-[#001e3d] text-white flex items-center justify-center font-bold text-lg transition cursor-pointer"
-                aria-label="Close"
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative max-w-4xl max-h-[calc(100vh-var(--toolbar-bottom,68px)-48px)] rounded-3xl overflow-hidden bg-black flex items-center justify-center shadow-2xl border border-white/20 cursor-default"
               >
-                ✕
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveMedia(null)}
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/70 hover:bg-[#FFCD00] hover:text-[#001e3d] text-white flex items-center justify-center font-bold text-base transition cursor-pointer"
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
 
-              {activeMedia.type === 'video' ? (
-                <LazyVideo
-                  src={activeMedia.src}
-                  controls
-                  autoPlay
-                  loop
-                  playsInline
-                  className="max-h-[calc(100vh-var(--toolbar-bottom,64px)-48px)] max-w-full object-contain"
-                />
-              ) : (
-                <img
-                  src={activeMedia.src}
-                  alt={activeMedia.alt}
-                  className="max-h-[calc(100vh-var(--toolbar-bottom,64px)-48px)] max-w-full object-contain"
-                />
-              )}
-            </motion.div>
+                {activeMedia.type === 'video' ? (
+                  <LazyVideo
+                    src={activeMedia.src}
+                    controls
+                    autoPlay
+                    loop
+                    playsInline
+                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                    className="max-h-[calc(100vh-var(--toolbar-bottom,68px)-96px)] max-w-full object-contain"
+                  />
+                ) : (
+                  <img
+                    src={activeMedia.src}
+                    alt={activeMedia.alt}
+                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                    className="max-h-[calc(100vh-var(--toolbar-bottom,68px)-96px)] max-w-full object-contain"
+                  />
+                )}
+              </motion.div>
+            </div>
           </div>
         )}
       </AnimatePresence>

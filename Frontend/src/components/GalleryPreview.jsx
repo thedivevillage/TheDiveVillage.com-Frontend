@@ -13,14 +13,27 @@ export default function GalleryPreview() {
   const scrollLeft = useRef(0)
   const [isHovered, setIsHovered] = useState(false)
   const [itemsList] = useState(GALLERY_ITEMS)
+  const hasMoved = useRef(false)
+  const pointerDownPos = useRef({ x: 0, y: 0 })
+
+  const pointerDownTime = useRef(0)
+  const lastNavTime = useRef(0)
 
   const previewItems = itemsList.filter(item => item.type === 'image').slice(0, 10)
 
-  const goToGallery = (targetItem) => {
-    if (targetItem?.id) {
-      navigate(`/gallery?item=${targetItem.id}`)
-    } else {
-      navigate('/gallery')
+  const goToGallery = () => navigate('/gallery')
+
+  const goToGalleryItem = (item) => {
+    if (hasMoved.current) return
+    if (Date.now() - lastNavTime.current < 600) return
+    lastNavTime.current = Date.now()
+    navigate(`/gallery?item=${encodeURIComponent(item.id)}#${encodeURIComponent(item.id)}`)
+  }
+
+  const handleCardPointerUp = (e, item) => {
+    const elapsed = Date.now() - pointerDownTime.current
+    if (!hasMoved.current && elapsed < 450) {
+      goToGalleryItem(item)
     }
   }
 
@@ -104,35 +117,46 @@ export default function GalleryPreview() {
     }
   }, [])
 
-
-
   const handlePointerDown = (e) => {
-    if (e && e.stopPropagation) e.stopPropagation()
     isDragging.current = true
+    hasMoved.current = false
     const clientX = e.pageX !== undefined ? e.pageX : (e.clientX || 0)
-    startX.current = clientX - scrollContainerRef.current.offsetLeft
-    scrollLeft.current = scrollContainerRef.current.scrollLeft
+    const clientY = e.pageY !== undefined ? e.pageY : (e.clientY || 0)
+    pointerDownPos.current = { x: clientX, y: clientY }
+    pointerDownTime.current = Date.now()
+    if (scrollContainerRef.current) {
+      startX.current = clientX - scrollContainerRef.current.offsetLeft
+      scrollLeft.current = scrollContainerRef.current.scrollLeft
+    }
   }
 
-  const handlePointerLeave = (e) => {
-    if (e && e.stopPropagation) e.stopPropagation()
+  const handlePointerLeave = () => {
     isDragging.current = false
     setIsHovered(false)
   }
 
-  const handlePointerUp = (e) => {
-    if (e && e.stopPropagation) e.stopPropagation()
+  const handlePointerUp = () => {
     isDragging.current = false
   }
 
   const handlePointerMove = (e) => {
-    if (!isDragging.current) return
-    if (e && e.stopPropagation) e.stopPropagation()
-    e.preventDefault()
+    if (!isDragging.current || !scrollContainerRef.current) return
     const clientX = e.pageX !== undefined ? e.pageX : (e.clientX || 0)
-    const x = clientX - scrollContainerRef.current.offsetLeft
-    const walk = (x - startX.current) * 2
-    scrollContainerRef.current.scrollLeft = scrollLeft.current - walk
+    const clientY = e.pageY !== undefined ? e.pageY : (e.clientY || 0)
+    const dx = clientX - pointerDownPos.current.x
+    const dy = clientY - pointerDownPos.current.y
+    const dist = Math.hypot(dx, dy)
+
+    // Threshold for drag: 12 pixels. Lower values are considered taps!
+    if (dist > 12) {
+      hasMoved.current = true
+      if (e.cancelable) {
+        e.preventDefault()
+      }
+      const x = clientX - scrollContainerRef.current.offsetLeft
+      const walk = (x - startX.current) * 1.5
+      scrollContainerRef.current.scrollLeft = scrollLeft.current - walk
+    }
   }
 
   return (
@@ -165,22 +189,29 @@ export default function GalleryPreview() {
         <div 
           ref={scrollContainerRef}
           data-no-bg-drag="true"
-          onMouseDown={handlePointerDown}
-          onMouseLeave={handlePointerLeave}
-          onMouseUp={handlePointerUp}
-          onMouseMove={handlePointerMove}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
+          onPointerLeave={handlePointerLeave}
           className="flex gap-2.5 sm:gap-4 overflow-x-auto scrollbar-none no-scrollbar cursor-grab active:cursor-grabbing select-none py-4 px-3 sm:px-6"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {[...previewItems, ...previewItems, ...previewItems].map((item, i) => (
             <div
               key={`${item.id}-${i}`}
-              onClick={() => goToGallery(item)}
-              className="relative flex-shrink-0 w-[44vw] min-w-[155px] max-w-[210px] aspect-square sm:aspect-auto sm:w-[230px] sm:h-[310px] lg:w-[260px] lg:h-[350px] rounded-2xl overflow-hidden border border-white/20 shadow-none group cursor-pointer bg-transparent"
+              role="button"
+              tabIndex={0}
+              aria-label={`View ${item.title} in gallery`}
+              onClick={() => goToGalleryItem(item)}
+              onPointerUp={(e) => handleCardPointerUp(e, item)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  goToGalleryItem(item)
+                }
+              }}
+              className="relative flex-shrink-0 w-[44vw] min-w-[155px] max-w-[210px] aspect-square sm:aspect-auto sm:w-[230px] sm:h-[310px] lg:w-[260px] lg:h-[350px] rounded-2xl overflow-hidden border border-white/20 shadow-none group cursor-pointer bg-transparent transition-transform duration-200 active:scale-[0.97] select-none"
             >
               {item.type === 'video' ? (
                 <LazyVideo
@@ -189,14 +220,15 @@ export default function GalleryPreview() {
                   loop
                   playsInline
                   autoPlay
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
                 />
               ) : (
                 <img
                   src={item.src}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
                   loading="lazy"
+                  draggable={false}
                 />
               )}
               {/* Title without black gradient overlay */}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import api, { isApiConfigured } from '../../services/api'
+import api from '../../services/api'
 
 export default function CloudinaryUploadWidget({ onSuccess, label = 'Upload' }) {
   const [uploading, setUploading] = useState(false)
@@ -13,10 +13,6 @@ export default function CloudinaryUploadWidget({ onSuccess, label = 'Upload' }) 
     setErrorMsg(null)
 
     try {
-      if (!isApiConfigured) {
-        throw new Error('Backend upload API is not configured. Please configure VITE_API_BASE_URL.')
-      }
-
       const formData = new FormData()
       formData.append('files', file)
 

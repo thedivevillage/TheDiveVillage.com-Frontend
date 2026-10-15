@@ -1,7 +1,6 @@
 import { NavLink, Outlet } from 'react-router'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
-import useNightDive from '../hooks/useNightDive'
 
 const LINKS = [
   { to: '/dashboard', label: 'Overview', end: true },
@@ -13,10 +12,9 @@ const LINKS = [
 
 export default function DashboardLayout() {
   const { user } = useAuth()
-  const isNightDive = useNightDive()
 
   return (
-    <div className={`min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#F8FAFC] text-slate-900'} font-body pt-20 sm:pt-28 pb-12 sm:pb-16 antialiased`}>
+    <div className="min-h-screen bg-[#F8FAFC] font-body text-slate-900 pt-20 sm:pt-28 pb-12 sm:pb-16 antialiased">
       <Navbar />
       
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

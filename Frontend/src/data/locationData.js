@@ -672,6 +672,26 @@ export const LOCATION_DATA = {
         'Giza'
       ]
     }
+  },
+  Libya: {
+    code: 'LY',
+    callingCode: '+218',
+    states: {
+      'Tripoli District': [
+        'Tripoli',
+        'Bab al-Bahr (Borj Bolila)',
+        'Tajoura',
+        'Janzour'
+      ],
+      'Benghazi District': [
+        'Benghazi',
+        'Al-Khadra'
+      ],
+      'Misrata District': [
+        'Misrata',
+        'Zliten'
+      ]
+    }
   }
 }
 

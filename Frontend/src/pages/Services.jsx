@@ -6,10 +6,11 @@ import SafeImage from '../components/SafeImage'
 import LazyVideo from '../components/LazyVideo'
 import SEOHead from '../components/SEOHead'
 import MerchBannerCTA from '../components/MerchBannerCTA'
+import FloatingVideoPip from '../components/FloatingVideoPip'
 import { IMAGES, CAROUSEL_IMAGES } from '../utils/images'
-import useNightDive from '../hooks/useNightDive'
 
 import { CATEGORIES, SERVICES_DATA } from '../data/servicesData'
+import useNightDive from '../hooks/useNightDive'
 
 export default function Services() {
   const isNightDive = useNightDive()
@@ -17,6 +18,7 @@ export default function Services() {
   const location = useLocation()
   const navigate = useNavigate()
   const reduce = useReducedMotion()
+  const [pipVideo, setPipVideo] = useState(null)
 
   const getInitialCategory = () => {
     const param = searchParams.get('category') || searchParams.get('tab')
@@ -65,12 +67,12 @@ export default function Services() {
   })).filter(g => g.services.length > 0)
 
   return (
-    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden`} style={{ textShadow: 'none' }}>
+    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden" style={{ textShadow: 'none' }}>
       <SEOHead
         title="Scuba Diving & Ocean Services | Certified Courses, Snorkeling & Charters | The Dive Village"
         description="Explore professional scuba diving courses, certifications, guided snorkeling safaris, freediving, and bespoke dive charters at The Dive Village."
         keywords="scuba diving services, diving courses, snorkeling excursions, freediving lessons, dive charters, marine gear rental"
-        canonicalUrl="https://thedivevillage.com/services"
+        canonicalUrl="https://thedivevillage.comm/services"
       />
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
 
@@ -94,15 +96,15 @@ export default function Services() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat.key}
+              data-category-tab={cat.key}
+              data-active={activeTab === cat.key ? 'true' : 'false'}
               onClick={() => handleTabChange(cat.key)}
-              className={`w-full md:w-auto rounded-xl md:rounded-full px-1.5 sm:px-3 md:px-5 py-2 md:py-2.5 text-[11px] xs:text-xs sm:text-sm font-bold text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${activeTab === cat.key
-                  ? isNightDive
-                    ? 'bg-navy text-white shadow-md border-2 border-[#FFCD00]'
-                    : 'bg-navy text-white shadow-md'
-                  : 'bg-[#F0F2F5] text-navy/70 hover:bg-navy/10 hover:text-navy'
+              className={`group services-category-tab w-full md:w-auto rounded-xl md:rounded-full px-1.5 sm:px-3 md:px-5 py-2 md:py-2.5 text-[11px] xs:text-xs sm:text-sm font-bold text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${activeTab === cat.key
+                  ? `bg-navy text-white shadow-md border-2 ${isNightDive ? 'border-[#FFCD00]' : 'border-transparent'}`
+                  : `bg-white text-navy border ${isNightDive ? 'border-white/20 hover:!bg-navy hover:!text-white hover:border-white/40' : 'border-navy/15 hover:bg-navy/5'}`
                 }`}
             >
-              <span className="truncate">{cat.label}</span>
+              <span className={`truncate ${isNightDive ? 'group-hover:!text-white' : ''}`}>{cat.label}</span>
             </button>
           ))}
         </div>
@@ -129,7 +131,19 @@ export default function Services() {
                   onClick={() => navigate(`/services/${service.id}`)}
                   className="group rounded-2xl sm:rounded-[32px] bg-white border border-navy/5 shadow-sm hover:shadow-float transition duration-300 flex flex-col justify-between cursor-pointer overflow-hidden relative active:scale-[0.99]"
                 >
-                  <div className="relative aspect-[16/10] sm:aspect-[16/10] w-full overflow-hidden bg-[#00172b] shrink-0">
+                  <div 
+                    className="relative aspect-[16/10] sm:aspect-[16/10] w-full overflow-hidden bg-[#00172b] shrink-0"
+                    onClick={(e) => {
+                      const isCamping = service.id === 'addon-campers' || service.title?.toLowerCase().includes('camper') || service.title?.toLowerCase().includes('camp')
+                      if (isCamping && service.video) {
+                        e.stopPropagation()
+                        setPipVideo({
+                          video: service.video,
+                          poster: service.image,
+                        })
+                      }
+                    }}
+                  >
                     {service.video ? (
                       <LazyVideo
                         src={service.video}
@@ -149,7 +163,7 @@ export default function Services() {
                       />
                     )}
                     <div className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-5 sm:right-3 z-20">
-                      <h3 className="font-heading text-xs xs:text-sm sm:text-xl font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      <h3 className="font-heading text-xs xs:text-sm sm:text-xl font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
                         {service.title}
                       </h3>
                     </div>
@@ -201,7 +215,11 @@ export default function Services() {
                 desc: 'Instils respect for oceans and sustainability, aligning with modern educational goals.',
               },
             ].map((p) => (
-              <div key={p.num} className={`bg-white rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col justify-between hover:-translate-y-1 transition duration-300 ${isNightDive ? 'border border-white' : ''}`}>
+              <div
+                key={p.num}
+                className="power-point-card bg-white rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col justify-between hover:-translate-y-1 transition duration-300"
+                style={isNightDive ? { borderColor: '#ffffff', borderWidth: '2px', borderStyle: 'solid' } : undefined}
+              >
                 <div>
                   <div className="w-12 h-12 rounded-full bg-navy text-accent flex items-center justify-center mb-5 text-lg font-bold">
                     {p.num}
@@ -220,6 +238,15 @@ export default function Services() {
         <MerchBannerCTA className="mt-8" />
 
       </div>
+
+      {/* Floating Picture-in-Picture Player */}
+      {pipVideo && (
+        <FloatingVideoPip
+          videoSrc={pipVideo.video}
+          poster={pipVideo.poster}
+          onClose={() => setPipVideo(null)}
+        />
+      )}
     </div>
   )
 }

@@ -33,7 +33,7 @@ export default function Snorkeling() {
         title="Guided Snorkeling Tours & Coral Reef Safaris | The Dive Village"
         description="Experience guided snorkeling tours and coral reef safaris with marine experts. Perfect for families, beginners, and sea turtle lovers."
         keywords="guided snorkeling tours, coral reef safari, marine wildlife snorkeling, family snorkeling trips, snorkeling equipment"
-        canonicalUrl="https://thedivevillage.com/snorkeling"
+        canonicalUrl="https://thedivevillage.comm/snorkeling"
       />
       <CourseTemplate
         heroVideo={turtleSnorkelVideo}

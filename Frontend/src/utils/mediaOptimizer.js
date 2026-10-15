@@ -46,16 +46,11 @@ export function transformCloudinaryUrl(url, transformString) {
 export function getLqipUrl(url, { isVideo = false } = {}) {
   if (!url || typeof url !== 'string') return ''
 
-  if (url.startsWith('/media/')) {
-    const cleanKey = url.replace(/^\/media\//, '').replace(/\.(mp4|mov|webm)$/i, '')
-    return `https://res.cloudinary.com/q7b4kjd9/video/upload/so_2,w_40,q_20,f_auto,e_blur:200/${encodeURI(cleanKey)}.jpg`
-  }
-
   if (url.includes('res.cloudinary.com')) {
     const isVid = isVideo || url.includes('/video/upload/') || /\.(mp4|mov|webm)$/i.test(url)
     if (isVid) {
-      // 40px wide, q_20, blurred frame extracted at second 2
-      return transformCloudinaryUrl(url, 'so_2,w_40,q_20,f_auto,e_blur:200').replace(/\.(mp4|mov|webm)$/i, '.jpg')
+      // Cloudinary account does not have dynamic derived video-frame extraction enabled
+      return ''
     }
     // 40px wide, q_20, blurred image
     return transformCloudinaryUrl(url, 'w_40,q_20,f_auto,e_blur:200')
@@ -77,33 +72,32 @@ export function getOptimizedImageUrl(url, { width = 800, quality = 'auto' } = {}
   return url
 }
 
+
 /**
  * Generates an optimized WebP poster frame from a video or image URL.
  */
-export function getOptimizedVideoPoster(url, { width = 1200 } = {}) {
+export function getOptimizedVideoPoster(url, { width = 800 } = {}) {
   if (!url || typeof url !== 'string') return ''
-
-  if (url.startsWith('/media/')) {
-    const cleanKey = url.replace(/^\/media\//, '').replace(/\.(mp4|mov|webm)$/i, '')
-    return `https://res.cloudinary.com/q7b4kjd9/video/upload/so_2,w_${width},q_auto:best,f_auto/${encodeURI(cleanKey)}.webp`
+  if (url.includes('/video/upload/') || /\.(mp4|mov|webm)$/i.test(url)) {
+    // Cloudinary does not have dynamic video-frame extraction enabled on this plan
+    return ''
   }
-
   if (!url.includes('res.cloudinary.com')) {
     return url.replace(/\.(mp4|mov|webm)$/i, '.webp')
   }
 
-  return transformCloudinaryUrl(url, `so_2,w_${width},q_auto:best,f_auto`).replace(/\.(mp4|mov|webm)$/i, '.webp')
+  return transformCloudinaryUrl(url, `w_${width},q_auto,f_auto`)
 }
 
 /**
- * Generates an optimized video streaming URL with adaptive bitrate/codec and capped dimensions.
+ * Generates an optimized video streaming URL with adaptive bitrate and optimal codec (vc_auto),
+ * preserving original aspect ratio (prevents vertical/portrait videos from being stretched into landscape).
  */
-export function getOptimizedVideoUrl(url, { width = 720 } = {}) {
+export function getOptimizedVideoUrl(url) {
   if (!url || typeof url !== 'string') return ''
-  if (url.startsWith('/media/')) return url
   if (!url.includes('res.cloudinary.com') || !url.includes('/video/upload/')) return url
 
-  return transformCloudinaryUrl(url, `w_${width},q_auto,vc_auto`)
+  return transformCloudinaryUrl(url, 'q_auto,vc_auto')
 }
 
 /**

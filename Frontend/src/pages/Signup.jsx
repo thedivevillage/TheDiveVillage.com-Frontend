@@ -3,11 +3,9 @@ import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import LazyVideo from '../components/LazyVideo'
 import { IMAGES } from '../utils/images'
-import useNightDive from '../hooks/useNightDive'
 const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4'
 
 export default function Signup() {
-  const isNightDive = useNightDive()
   const navigate = useNavigate()
   const { signup, loginWithGoogle } = useAuth()
   const [name, setName] = useState('')
@@ -58,7 +56,7 @@ export default function Signup() {
   }
 
   return (
-    <div className={`min-h-screen flex ${isNightDive ? 'bg-[#001e3d] text-white' : 'bg-white text-navy'} font-body relative overflow-hidden`}>
+    <div className="min-h-screen flex bg-white text-navy font-body relative overflow-hidden">
       
       {/* Left side - Background Video (hidden on mobile) */}
       <div className="hidden lg:block lg:w-[60%] xl:w-[62%] shrink-0 relative bg-white overflow-hidden">

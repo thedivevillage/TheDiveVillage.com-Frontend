@@ -14,11 +14,11 @@ const img2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691503/TDV-M
 const img3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691529/TDV-Media/OceanWelcomesAll/3.png'
 const img4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691578/TDV-Media/OceanWelcomesAll/4.png'
 const travelVid = '/media/TDV-Media/AirportToAirport/travel.mp4'
-const travelPoster = 'https://res.cloudinary.com/q7b4kjd9/video/upload/f_auto,q_auto/v1791691360/TDV-Media/AirportToAirport/travel.webp'
+const travelPoster = '/media/TDV-Media/AirportToAirport/travel.webp'
 const stayImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691313/TDV-Media/AirportToAirport/Stay.webp'
 const foodImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691316/TDV-Media/AirportToAirport/food.webp'
 const itineraryVid = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
-const itineraryPoster = 'https://res.cloudinary.com/q7b4kjd9/video/upload/f_auto,q_auto/v1791691465/TDV-Media/AirportToAirport/gallery1.webp'
+const itineraryPoster = '/media/TDV-Media/AirportToAirport/gallery1.webp'
 const imgIntroductoryPrograms = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691278/TDV-Media/ServicesThumbnails/Introductory%20Programs.webp'
 const imgGuidedSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
 const imgCertifiedCourses = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp'
@@ -150,7 +150,7 @@ export default function Home() {
         title="The Dive Village | It's a Community"
         description="Experience world-class scuba diving, professional certifications, guided snorkeling tours, and freediving with The Dive Village. Explore ocean gear and sustainable apparel."
         keywords="scuba diving center, certification courses, guided snorkeling tours, freediving school, ocean apparel, dive gear shop, eco diving village"
-        canonicalUrl="https://thedivevillage.com/"
+        canonicalUrl="https://thedivevillage.comm/"
       />
 
       {/* 1. HERO */}
@@ -374,8 +374,8 @@ export default function Home() {
               },
               {
                 title: 'Comfortable Stays',
-                desc: 'Handpicked accommodations for luxury holidays and backpacking alike',
-                descMobile: 'Handpicked stays for luxury / budget friendly dive experiences.',
+                desc: 'Handpicked accommodations for luxury holidays / budget friendly dive experiences based on guest requirements.',
+                mobileDesc: 'Handpicked stays for luxury / budget friendly dive experiences.',
                 img: stayImg,
                 icon: (
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#00AEC7]" fill="currentColor" viewBox="0 0 24 24">
@@ -406,7 +406,7 @@ export default function Home() {
                 )
               },
             ].map((item, i) => (
-              <StaggerItem key={i} className="w-[72vw] min-w-[235px] max-w-[280px] sm:w-auto shrink-0 snap-center h-full">
+              <StaggerItem key={i} className="w-[76vw] min-w-[240px] max-w-[290px] sm:w-auto shrink-0 snap-center h-full">
                 <div
                   onClick={i === 3 ? () => {
                     const el = document.getElementById('customize-dive-section')
@@ -414,35 +414,39 @@ export default function Home() {
                       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }
                   } : undefined}
-                  className={`group relative h-full w-full rounded-2xl sm:rounded-[28px] lg:rounded-[32px] bg-[#00172b]/40 backdrop-blur-2xl border border-white/20 p-3.5 sm:p-5 lg:p-6 shadow-none transition-all duration-500 hover:bg-[#00172b]/60 flex flex-col justify-between ${
+                  className={`group relative h-full w-full rounded-2xl sm:rounded-[28px] lg:rounded-[32px] bg-[#00172b]/40 backdrop-blur-2xl border border-white/20 p-4 sm:p-5 lg:p-6 shadow-none transition-all duration-500 hover:bg-[#00172b]/60 flex flex-col justify-between ${
                     i === 3
                       ? 'cursor-pointer hover:-translate-y-3 hover:border-[#00AEC7] hover:shadow-none'
                       : 'cursor-default'
                   }`}
                 >
+                  {/* Mobile Top-Right: Click to select for Personal Itineraries */}
+                  {i === 3 && (
+                    <div className="sm:hidden absolute top-3.5 right-3.5 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFCD00]/20 border border-[#FFCD00]/50 backdrop-blur-md shadow-sm pointer-events-none">
+                      <span className="text-[10px] font-bold text-[#FFCD00] uppercase tracking-wider leading-none">
+                        click to select
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex flex-col flex-1">
-                    {/* Top Bar: Icon Box & Mobile Click to Select */}
-                    <div className="flex items-center justify-between mb-2 sm:mb-4">
-                      <div className="w-7 h-7 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-xl sm:rounded-2xl bg-[#00AEC7]/20 border border-[#00AEC7]/50 flex items-center justify-center shadow-sm group-hover:bg-[#00AEC7]/30 group-hover:border-[#00AEC7] transition duration-300">
+                    {/* Top Bar: Icon Box */}
+                    <div className="flex items-center mb-2 sm:mb-4">
+                      <div className="w-8 h-8 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-xl sm:rounded-2xl bg-[#00AEC7]/20 border border-[#00AEC7]/50 flex items-center justify-center shadow-sm group-hover:bg-[#00AEC7]/30 group-hover:border-[#00AEC7] transition duration-300">
                         {item.icon}
                       </div>
-                      {i === 3 && (
-                        <span className="sm:hidden text-[9px] uppercase font-extrabold text-[#FFCD00] tracking-wider px-2 py-0.5 rounded-full bg-[#00AEC7]/20 border border-[#00AEC7]/50 shadow-sm">
-                          Click to select
-                        </span>
-                      )}
                     </div>
 
                     {/* Main Heading Text */}
-                    <h3 className="font-heading text-xs xs:text-sm sm:text-xl lg:text-2xl font-bold text-white uppercase tracking-wide leading-tight mt-0.5 sm:mt-0 mb-1.5 sm:mb-2 text-left group-hover:text-[#FFCD00] transition-colors truncate sm:whitespace-normal">
+                    <h3 className="font-heading text-sm xs:text-base sm:text-xl lg:text-2xl font-bold text-white uppercase tracking-wide leading-tight mt-1 mb-2 text-left group-hover:text-[#FFCD00] transition-colors whitespace-normal">
                       {item.title}
                     </h3>
 
-                    {/* Description Text - Always visible on mobile & desktop */}
-                    <p className="text-white/85 text-[11px] sm:text-xs lg:text-sm font-medium leading-relaxed mb-2.5 sm:mb-5 text-left min-h-[32px] sm:min-h-[40px] line-clamp-2 sm:line-clamp-none">
-                      {item.descMobile ? (
+                    {/* Description Text */}
+                    <p className="text-white/90 text-xs sm:text-xs lg:text-sm font-medium leading-relaxed mb-3 sm:mb-4 text-left min-h-[54px] sm:min-h-[68px] lg:min-h-[76px] flex-none">
+                      {item.mobileDesc ? (
                         <>
-                          <span className="sm:hidden">{item.descMobile}</span>
+                          <span className="sm:hidden">{item.mobileDesc}</span>
                           <span className="hidden sm:inline">{item.desc}</span>
                         </>
                       ) : (
@@ -450,8 +454,8 @@ export default function Home() {
                       )}
                     </p>
 
-                    {/* Media Frame (Video or Image) - Uniform height and aspect ratio across all panels */}
-                    <div className="relative w-full aspect-[16/10] sm:aspect-[16/11] rounded-xl sm:rounded-2xl overflow-hidden bg-black/40 mb-1.5 sm:mb-5 border border-white/20 shadow-none shrink-0">
+                    {/* Media Frame (Video or Image) - Uniform aspect ratio and height across all 4 panels */}
+                    <div className="relative w-full aspect-[16/10] sm:aspect-[16/11] rounded-xl sm:rounded-2xl overflow-hidden bg-black/40 mb-2 sm:mb-4 border border-white/20 shadow-none shrink-0">
                       {item.video ? (
                         <LazyVideo
                           src={item.video}
@@ -475,12 +479,16 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Footer: Click to select (Desktop Only - Last panel only) */}
-                  {i === 3 && (
-                    <div className="hidden sm:flex items-center justify-center pt-3 border-t border-white/20 text-xs font-bold">
+                  {/* Footer: Click to select (Desktop Only - identical footer height structure across panels to keep panel size unchanged and media heights identical) */}
+                  {i === 3 ? (
+                    <div className="hidden sm:flex items-center justify-center pt-3 border-t border-white/20 text-xs font-bold shrink-0">
                       <span className="text-white/90 group-hover:text-[#FFCD00] transition-colors">
                         Click to select
                       </span>
+                    </div>
+                  ) : (
+                    <div className="hidden sm:flex items-center justify-center pt-3 border-t border-transparent text-xs font-bold shrink-0 invisible pointer-events-none select-none" aria-hidden="true">
+                      <span>Click to select</span>
                     </div>
                   )}
 
