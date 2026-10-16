@@ -1,28 +1,44 @@
-// Curated Gallery & High-Res Diving Photos from assets/Gallery
-const p1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458188/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp';
-const p2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458048/TDV-Media/Extras%20for%20Gallery/Blue_Lincka.webp';
-const p3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458178/TDV-Media/Extras%20for%20Gallery/Open_Water_Scuba_Diving.webp';
-const p4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458189/TDV-Media/Extras%20for%20Gallery/Scubadiving_2.webp';
-const p6 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp';
-const p7 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458192/TDV-Media/Extras%20for%20Gallery/Sea_fan.webp';
-const p8 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458193/TDV-Media/Extras%20for%20Gallery/Shoal.webp';
-const p9 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458204/TDV-Media/Extras%20for%20Gallery/Sunset.jpg';
-const p10 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791457833/TDV-Media/Extras%20for%20Gallery/Banded_Coral_Shrimp.webp';
-const p11 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458209/TDV-Media/Extras%20for%20Gallery/Varicose_Wart_Slug.webp';
-const p12 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458221/TDV-Media/Extras%20for%20Gallery/Yellowback_fusiliers.webp';
+import { getOptimizedImageUrl } from './mediaOptimizer'
 
-export const PANEL_IMAGES = [
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691582/TDV-Media/Panels/1Threadfin%20Butterflyfish.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691592/TDV-Media/Panels/2Lionfish.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691597/TDV-Media/Panels/3Crown%20Jellyfish.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691607/TDV-Media/Panels/4Blue%20and%20Gold%20Fusilier.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691615/TDV-Media/Panels/5Bubble%20Coral.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691628/TDV-Media/Panels/6Crown%20of%20thorns%20Starfish.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691636/TDV-Media/Panels/7Toadstool%20Leather%20Coral.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691647/TDV-Media/Panels/8Feather%20Star%20%282%29.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691652/TDV-Media/Panels/9Giant%20Clam.webp",
-  "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691660/TDV-Media/Panels/10Greenfish%20Sea%20Cucumber.webp"
+// Curated Gallery & High-Res Diving Photos from Cloudinary TDV-Media CDN
+const rawP1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458188/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp'
+const rawP2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458048/TDV-Media/Extras%20for%20Gallery/Blue_Lincka.webp'
+const rawP3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458178/TDV-Media/Extras%20for%20Gallery/Open_Water_Scuba_Diving.webp'
+const rawP4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458189/TDV-Media/Extras%20for%20Gallery/Scubadiving_2.webp'
+const rawP6 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp'
+const rawP7 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458192/TDV-Media/Extras%20for%20Gallery/Sea_fan.webp'
+const rawP8 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458193/TDV-Media/Extras%20for%20Gallery/Shoal.webp'
+const rawP9 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458204/TDV-Media/Extras%20for%20Gallery/Sunset.jpg'
+const rawP10 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791457833/TDV-Media/Extras%20for%20Gallery/Banded_Coral_Shrimp.webp'
+const rawP11 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458209/TDV-Media/Extras%20for%20Gallery/Varicose_Wart_Slug.webp'
+const rawP12 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458221/TDV-Media/Extras%20for%20Gallery/Yellowback_fusiliers.webp'
+
+const p1 = getOptimizedImageUrl(rawP1, { width: 1200 })
+const p2 = getOptimizedImageUrl(rawP2, { width: 1200 })
+const p3 = getOptimizedImageUrl(rawP3, { width: 1200 })
+const p4 = getOptimizedImageUrl(rawP4, { width: 1200 })
+const p6 = getOptimizedImageUrl(rawP6, { width: 1200 })
+const p7 = getOptimizedImageUrl(rawP7, { width: 1200 })
+const p8 = getOptimizedImageUrl(rawP8, { width: 1200 })
+const p9 = getOptimizedImageUrl(rawP9, { width: 1200 })
+const p10 = getOptimizedImageUrl(rawP10, { width: 1200 })
+const p11 = getOptimizedImageUrl(rawP11, { width: 1200 })
+const p12 = getOptimizedImageUrl(rawP12, { width: 1200 })
+
+export const RAW_PANEL_IMAGES = [
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691582/TDV-Media/Panels/1Threadfin%20Butterflyfish.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691592/TDV-Media/Panels/2Lionfish.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691597/TDV-Media/Panels/3Crown%20Jellyfish.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691607/TDV-Media/Panels/4Blue%20and%20Gold%20Fusilier.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691615/TDV-Media/Panels/5Bubble%20Coral.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691628/TDV-Media/Panels/6Crown%20of%20thorns%20Starfish.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691636/TDV-Media/Panels/7Toadstool%20Leather%20Coral.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691647/TDV-Media/Panels/8Feather%20Star%20%282%29.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691652/TDV-Media/Panels/9Giant%20Clam.webp',
+  'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691660/TDV-Media/Panels/10Greenfish%20Sea%20Cucumber.webp',
 ]
+
+export const PANEL_IMAGES = RAW_PANEL_IMAGES.map((url) => getOptimizedImageUrl(url, { width: 960 }))
 export const CAROUSEL_IMAGES = PANEL_IMAGES.slice(0, 6)
 
 /** Verified high-resolution diving photography */

@@ -30,7 +30,6 @@ export default function LazyVideo({
   const videoRef = useRef(null)
   const containerRef = useRef(null)
   const posterImgRef = useRef(null)
-  const [isInView, setIsInView] = useState(false)
   const isVisible = usePageVisibility()
   const wasPlayingBeforeHideRef = useRef(false)
 
@@ -42,10 +41,26 @@ export default function LazyVideo({
     return getOptimizedVideoPoster(src, { width: 800 })
   }, [poster, src])
 
-  // Check if poster was already loaded/cached in this session
-  const alreadyCached = useMemo(() => isMediaLoaded(resolvedPoster), [resolvedPoster])
-  const [posterLoaded, setPosterLoaded] = useState(alreadyCached)
+  // Optimized video stream URL
+  const optimizedVideoSrc = useMemo(() => {
+    return getOptimizedVideoUrl(src)
+  }, [src])
+
+  // Check if video or poster was already loaded/cached in this session
+  const isVideoCached = useMemo(() => {
+    return isMediaLoaded(src) || (optimizedVideoSrc && isMediaLoaded(optimizedVideoSrc))
+  }, [src, optimizedVideoSrc])
+
+  const isPosterCached = useMemo(() => {
+    return resolvedPoster ? isMediaLoaded(resolvedPoster) : false
+  }, [resolvedPoster])
+
+  const alreadyCached = isVideoCached || isPosterCached
+  const [posterLoaded, setPosterLoaded] = useState(isPosterCached)
+  const [hasFrame, setHasFrame] = useState(isVideoCached)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [hasEnteredView, setHasEnteredView] = useState(isVideoCached)
+  const [isInView, setIsInView] = useState(false)
 
   // Ultra-lightweight ~400-byte Low Quality Image Placeholder
   const lqipPoster = useMemo(() => {
@@ -53,25 +68,24 @@ export default function LazyVideo({
     return getLqipUrl(poster || src, { isVideo: true })
   }, [poster, src, alreadyCached])
 
-  // Optimized video stream URL
-  const optimizedVideoSrc = useMemo(() => {
-    return getOptimizedVideoUrl(src)
-  }, [src])
 
   // Reset states when src changes
   useEffect(() => {
-    const isCached = isMediaLoaded(resolvedPoster)
-    if (isCached) {
+    const cached = isMediaLoaded(src) || (optimizedVideoSrc && isMediaLoaded(optimizedVideoSrc))
+    if (cached) {
+      setHasFrame(true)
+      setHasEnteredView(true)
+    }
+    if (resolvedPoster && isMediaLoaded(resolvedPoster)) {
       setPosterLoaded(true)
     }
-    setIsVideoPlaying(false)
-  }, [src, poster, resolvedPoster])
+  }, [src, optimizedVideoSrc, resolvedPoster])
 
   // Check if poster is in browser cache on mount
   useEffect(() => {
     if (posterImgRef.current && posterImgRef.current.complete && posterImgRef.current.naturalWidth > 0 && !posterLoaded) {
       setPosterLoaded(true)
-      markMediaLoaded(resolvedPoster)
+      if (resolvedPoster) markMediaLoaded(resolvedPoster)
     }
   }, [resolvedPoster, posterLoaded])
 
@@ -84,6 +98,7 @@ export default function LazyVideo({
     const el = containerRef.current
     if (!el || typeof IntersectionObserver === 'undefined') {
       setIsInView(true)
+      setHasEnteredView(true)
       return
     }
 
@@ -92,18 +107,20 @@ export default function LazyVideo({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsInView(true)
+            setHasEnteredView(true)
             if (videoRef.current && autoPlayRef.current && isVisible) {
               videoRef.current.play().catch(() => {})
             }
           } else {
             setIsInView(false)
+            // DO NOT UNMOUNT! Only pause to save resources while preserving rendered frame & buffer in DOM
             if (videoRef.current) {
               videoRef.current.pause()
             }
           }
         })
       },
-      { rootMargin: '150px 50px', threshold: 0.05 }
+      { rootMargin: '250px 100px', threshold: 0.05 }
     )
 
     observer.observe(el)
@@ -126,13 +143,16 @@ export default function LazyVideo({
         if (p !== undefined) {
           p.then(() => {
             setIsVideoPlaying(true)
+            setHasFrame(true)
+            markMediaLoaded(src)
+            if (optimizedVideoSrc) markMediaLoaded(optimizedVideoSrc)
           }).catch(() => {})
         }
       }
 
       attemptPlay()
     }
-  }, [isInView, autoPlay, src, isVisible])
+  }, [isInView, autoPlay, src, optimizedVideoSrc, isVisible])
 
   // Pause video when tab becomes hidden; resume when visible if in view
   useEffect(() => {
@@ -180,9 +200,17 @@ export default function LazyVideo({
     }
   }
 
+  const handleFrameSuccess = (el) => {
+    setHasFrame(true)
+    setIsVideoPlaying(true)
+    markMediaLoaded(src)
+    if (optimizedVideoSrc) markMediaLoaded(optimizedVideoSrc)
+    applyPlaybackRate(el)
+  }
+
   const handlePosterSuccess = () => {
     setPosterLoaded(true)
-    markMediaLoaded(resolvedPoster)
+    if (resolvedPoster) markMediaLoaded(resolvedPoster)
   }
 
   const fitClass = className.includes('object-contain') ? 'object-contain' : 'object-cover'
@@ -220,14 +248,14 @@ export default function LazyVideo({
           decoding="async"
           onLoad={handlePosterSuccess}
           className={`absolute inset-0 w-full h-full ${fitClass} z-[1] pointer-events-none ${
-            posterLoaded && !isVideoPlaying ? 'opacity-100' : 'opacity-0'
+            posterLoaded && !hasFrame && !isVideoPlaying ? 'opacity-100' : 'opacity-0'
           } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'}`}
           style={zoomStyle}
         />
       )}
 
-      {/* 3. HTML5 Video Element (Fades in ONLY when actual playback begins) */}
-      {isInView && src && (
+      {/* 3. HTML5 Video Element: Once mounted/cached, stays mounted forever (never destroyed on scroll) */}
+      {(isInView || hasEnteredView || isVideoCached) && src && (
         <video
           ref={(el) => {
             videoRef.current = el
@@ -250,7 +278,7 @@ export default function LazyVideo({
           }}
           src={optimizedVideoSrc || src}
           poster={resolvedPoster || undefined}
-          autoPlay={autoPlay && isVisible}
+          autoPlay={autoPlay && isVisible && isInView}
           loop={loop}
           muted={muted}
           playsInline={playsInline}
@@ -259,41 +287,40 @@ export default function LazyVideo({
           controls={controls}
           controlsList={controlsList}
           disablePictureInPicture={disablePictureInPicture}
-          preload={preload}
+          preload={hasEnteredView || isVideoCached ? 'auto' : preload}
           onPlaying={(e) => {
-            applyPlaybackRate(e)
-            setIsVideoPlaying(true)
+            handleFrameSuccess(e.currentTarget)
             props.onPlaying?.(e)
           }}
           onPlay={(e) => {
-            applyPlaybackRate(e)
-            setIsVideoPlaying(true)
+            handleFrameSuccess(e.currentTarget)
             props.onPlay?.(e)
           }}
           onLoadedData={(e) => {
-            applyPlaybackRate(e)
-            setIsVideoPlaying(true)
+            handleFrameSuccess(e.currentTarget)
             props.onLoadedData?.(e)
           }}
           onLoadedMetadata={(e) => {
-            applyPlaybackRate(e)
+            handleFrameSuccess(e.currentTarget)
             props.onLoadedMetadata?.(e)
           }}
+          onCanPlay={(e) => {
+            handleFrameSuccess(e.currentTarget)
+            props.onCanPlay?.(e)
+          }}
           onTimeUpdate={(e) => {
-            applyPlaybackRate(e)
             if (e.currentTarget.currentTime > 0.05) {
-              setIsVideoPlaying(true)
+              handleFrameSuccess(e.currentTarget)
             }
             props.onTimeUpdate?.(e)
           }}
           onPause={(e) => {
-            if (videoRef.current && videoRef.current.currentTime === 0) {
-              setIsVideoPlaying(false)
-            }
             props.onPause?.(e)
           }}
-          className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-300 ease-out z-[2] ${
-            isVideoPlaying ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 w-full h-full ${fitClass} ${
+            alreadyCached ? '' : 'transition-opacity duration-300 ease-out'
+          } z-[2] ${
+            hasFrame || isVideoPlaying || isVideoCached || !resolvedPoster ? 'opacity-100' : 'opacity-0'
           } ${videoClassName}`}
           style={{ objectFit: fitClass === 'object-contain' ? 'contain' : 'cover', ...zoomStyle, ...(props.style || {}) }}
           {...props}

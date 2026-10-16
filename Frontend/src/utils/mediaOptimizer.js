@@ -1,8 +1,10 @@
 /**
- * Media Optimizer Utility for The Dive Village
- * Implements Low-Quality Image Placeholder (LQIP) and progressive asset loading
- * via Cloudinary dynamic on-the-fly transformations.
+ * Media Optimizer Utility for The Dive Village (.com)
+ * Standardized across Cloudinary (Images/GLB) and Cloudflare R2 (Videos/HLS).
+ * Implements Low-Quality Image Placeholders (LQIP), responsive srcset, and perceptual quality tuning.
  */
+
+import { MEDIA_CONFIG } from '../config/mediaConfig'
 
 /**
  * Normalizes and inserts Cloudinary transformation parameters cleanly
@@ -52,8 +54,8 @@ export function getLqipUrl(url, { isVideo = false } = {}) {
       // Cloudinary account does not have dynamic derived video-frame extraction enabled
       return ''
     }
-    // 40px wide, q_20, blurred image
-    return transformCloudinaryUrl(url, 'w_40,q_20,f_auto,e_blur:200')
+    // 40px wide, q_auto:low, blurred image
+    return transformCloudinaryUrl(url, 'w_40,q_auto:low,f_auto,e_blur:200,c_limit')
   }
 
   return url
@@ -62,16 +64,37 @@ export function getLqipUrl(url, { isVideo = false } = {}) {
 /**
  * Generates an optimized image URL with proper responsive width, format, and compression.
  */
-export function getOptimizedImageUrl(url, { width = 800, quality = 'auto' } = {}) {
+export function getOptimizedImageUrl(url, { width = 800, quality = 'auto:good' } = {}) {
   if (!url || typeof url !== 'string') return ''
   if (!url.includes('res.cloudinary.com')) return url
 
   if (url.includes('/image/upload/')) {
-    return transformCloudinaryUrl(url, `w_${width},q_${quality},f_auto`)
+    return transformCloudinaryUrl(url, `w_${width},q_${quality},f_auto,c_limit`)
   }
   return url
 }
 
+
+/**
+ * Generates an image URL tailored for a specific preset slot (e.g. 'thumb_sm', 'card', 'hero').
+ */
+export function getPresetImageUrl(url, presetKey = 'card') {
+  const preset = MEDIA_CONFIG.presets[presetKey] || MEDIA_CONFIG.presets.card
+  return getOptimizedImageUrl(url, preset)
+}
+
+/**
+ * Generates a responsive srcset string for an array of target viewport widths.
+ */
+export function getResponsiveSrcSet(url, widths = [320, 640, 960, 1280, 1600]) {
+  if (!url || typeof url !== 'string' || !url.includes('res.cloudinary.com')) {
+    return ''
+  }
+
+  return widths
+    .map((w) => `${getOptimizedImageUrl(url, { width: w })} ${w}w`)
+    .join(', ')
+}
 
 /**
  * Generates an optimized WebP poster frame from a video or image URL.
@@ -86,7 +109,7 @@ export function getOptimizedVideoPoster(url, { width = 800 } = {}) {
     return url.replace(/\.(mp4|mov|webm)$/i, '.webp')
   }
 
-  return transformCloudinaryUrl(url, `w_${width},q_auto,f_auto`)
+  return transformCloudinaryUrl(url, `w_${width},q_auto:good,f_auto,c_limit`)
 }
 
 /**
@@ -116,4 +139,3 @@ export function isMediaLoaded(url) {
   if (!url || typeof url !== 'string') return false
   return LOADED_MEDIA_CACHE.has(url)
 }
-

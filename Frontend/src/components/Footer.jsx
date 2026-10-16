@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import useNightDive from '../hooks/useNightDive'
-const footerLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691227/TDV-Media/UI/footer%20logo.png'
+import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
+const rawFooterLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691227/TDV-Media/UI/footer%20logo.png'
+const footerLogoImg = getOptimizedImageUrl(rawFooterLogoImg, { width: 300 })
 import ViberQRModal from './ViberQRModal'
 
 const QUICK = [

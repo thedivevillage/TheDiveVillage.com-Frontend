@@ -12,11 +12,15 @@ import { useLenis } from '../utils/lenisReact'
 import useNightDive from '../hooks/useNightDive'
 
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
-const bannerImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791686007/TDV-Media/Merch/banner.jpg';
-const pop1Local = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458274/TDV-Media/Products/pop1.webp';
-const pop2Local = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458275/TDV-Media/Products/pop2.webp';
-const pop1 = pop1Local
-const pop2 = pop2Local
+import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
+
+const rawBannerImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791686007/TDV-Media/Merch/banner.jpg'
+const bannerImg = getOptimizedImageUrl(rawBannerImg, { width: 1400, quality: 'auto:good' })
+
+const rawPop1Local = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458274/TDV-Media/Products/pop1.webp'
+const rawPop2Local = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458275/TDV-Media/Products/pop2.webp'
+const pop1 = getOptimizedImageUrl(rawPop1Local, { width: 320, quality: 'auto:good' })
+const pop2 = getOptimizedImageUrl(rawPop2Local, { width: 320, quality: 'auto:good' })
 
 const CATEGORIES = [
   { key: 'all', label: 'All Merchandise' },

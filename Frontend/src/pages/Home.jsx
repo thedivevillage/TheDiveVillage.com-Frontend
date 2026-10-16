@@ -8,22 +8,24 @@ import SectionReveal, { StaggerGrid, StaggerItem } from '../components/SectionRe
 import SEOHead from '../components/SEOHead'
 import { IMAGES, CAROUSEL_IMAGES, PANEL_IMAGES } from '../utils/images'
 import { useReviews } from '../contexts/ReviewsContext'
-// Cloudinary Media URLs
-const img1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691491/TDV-Media/OceanWelcomesAll/1.png'
-const img2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691503/TDV-Media/OceanWelcomesAll/2.png'
-const img3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691529/TDV-Media/OceanWelcomesAll/3.png'
-const img4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691578/TDV-Media/OceanWelcomesAll/4.png'
+import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
+
+// Cloudinary Media URLs with automatic responsive optimization
+const img1 = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691491/TDV-Media/OceanWelcomesAll/1.png', { width: 500 })
+const img2 = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691503/TDV-Media/OceanWelcomesAll/2.png', { width: 500 })
+const img3 = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691529/TDV-Media/OceanWelcomesAll/3.png', { width: 500 })
+const img4 = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691578/TDV-Media/OceanWelcomesAll/4.png', { width: 500 })
 const travelVid = '/media/TDV-Media/AirportToAirport/travel.mp4'
 const travelPoster = '/media/TDV-Media/AirportToAirport/travel.webp'
-const stayImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691313/TDV-Media/AirportToAirport/Stay.webp'
-const foodImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691316/TDV-Media/AirportToAirport/food.webp'
+const stayImg = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691313/TDV-Media/AirportToAirport/Stay.webp', { width: 600 })
+const foodImg = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691316/TDV-Media/AirportToAirport/food.webp', { width: 600 })
 const itineraryVid = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
 const itineraryPoster = '/media/TDV-Media/AirportToAirport/gallery1.webp'
-const imgIntroductoryPrograms = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691278/TDV-Media/ServicesThumbnails/Introductory%20Programs.webp'
-const imgGuidedSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
-const imgCertifiedCourses = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp'
-const imgFreeDiving = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691291/TDV-Media/ServicesThumbnails/Free%20Diving.webp'
-const imgFlexibleFunDives = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691298/TDV-Media/ServicesThumbnails/Flexible%20Fun%20Dives.webp'
+const imgIntroductoryPrograms = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691278/TDV-Media/ServicesThumbnails/Introductory%20Programs.webp', { width: 600 })
+const imgGuidedSnorkeling = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp', { width: 600 })
+const imgCertifiedCourses = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp', { width: 600 })
+const imgFreeDiving = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691291/TDV-Media/ServicesThumbnails/Free%20Diving.webp', { width: 600 })
+const imgFlexibleFunDives = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691298/TDV-Media/ServicesThumbnails/Flexible%20Fun%20Dives.webp', { width: 600 })
 
 import ProgramsPreview from '../components/ProgramsPreview'
 import GalleryPreview from '../components/GalleryPreview'

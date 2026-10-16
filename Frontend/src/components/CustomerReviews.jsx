@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import OptimizedImage from './OptimizedImage'
 const merch0 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244020/dive-village/reviews/scthqb8u6jscwk2laiyv.jpg'
 const merch1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244022/dive-village/reviews/lq36jjo99ualm5y6cnwg.jpg'
 const merch2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244024/dive-village/reviews/hyfyou1sr4xmjg87vqp0.jpg'
@@ -52,10 +53,12 @@ export default function CustomerReviews({ className = '' }) {
                 />
               </div>
             ) : (
-              <img
+              <OptimizedImage
                 src={item.src}
+                preset="card"
                 alt={item.alt}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full"
+                imgClassName="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             )}
 
@@ -116,11 +119,12 @@ export default function CustomerReviews({ className = '' }) {
                     className="max-h-[calc(100vh-var(--toolbar-bottom,68px)-96px)] max-w-full object-contain"
                   />
                 ) : (
-                  <img
+                  <OptimizedImage
                     src={activeMedia.src}
+                    preset="gallery"
                     alt={activeMedia.alt}
-                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                    className="max-h-[calc(100vh-var(--toolbar-bottom,68px)-96px)] max-w-full object-contain"
+                    className="max-h-[calc(100vh-var(--toolbar-bottom,68px)-96px)] max-w-full"
+                    imgClassName="max-h-[calc(100vh-var(--toolbar-bottom,68px)-96px)] max-w-full object-contain"
                   />
                 )}
               </motion.div>

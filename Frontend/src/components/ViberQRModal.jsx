@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-const tdvViberQr = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691228/TDV-Media/UI/tdv_viber_qr.webp'
+import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
+
+const rawTdvViberQr = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691228/TDV-Media/UI/tdv_viber_qr.webp'
+const tdvViberQr = getOptimizedImageUrl(rawTdvViberQr, { width: 320 })
 
 export default function ViberQRModal({ isOpen, onClose }) {
   useEffect(() => {

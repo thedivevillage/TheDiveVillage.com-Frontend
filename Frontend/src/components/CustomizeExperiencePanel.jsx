@@ -3,27 +3,38 @@ import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PANEL_IMAGES } from '../utils/images'
 import FloatingVideoPip from './FloatingVideoPip'
+import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
 // Activity Media (High-Performance Cloudinary Video & Poster URLs)
 const vidSafari = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
-const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
+const imgSafari = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp', { width: 320 })
 
 const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
-const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
+const imgTrekking = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp', { width: 320 })
 
 const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
-const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
+const imgSightseeing = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp', { width: 320 })
 
 const vidCampers = '/media/TDV-Media/AddOns/Campers.mp4'
-const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
+const imgCampers = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp', { width: 320 })
 
 const vidLiveaboard = '/media/TDV-Media/AddOns/liveaboard.mp4'
-const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
+const imgLiveaboard = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp', { width: 320 })
 
 const vidCanoneering = '/media/TDV-Media/Services/Other/Canoneering.mp4'
 const vidSurfing = '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4'
 const vidSnorkeling = '/media/TDV-Media/Services/Discover_Snorkelling.mp4'
-const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
+const imgSnorkeling = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp', { width: 320 })
+
+// Low-Resolution 360p Preview Renditions (Instant hover playback, <800KB vs 86MB)
+const prevCanoneering = '/media/TDV-Media/AddOns/previews/canyoneering_preview.mp4'
+const prevSafari = '/media/TDV-Media/AddOns/previews/safari_preview.mp4'
+const prevTrekking = '/media/TDV-Media/AddOns/previews/trekking_preview.mp4'
+const prevSurfing = '/media/TDV-Media/AddOns/previews/surfing_preview.mp4'
+const prevSightseeing = '/media/TDV-Media/AddOns/previews/sightseeing_preview.mp4'
+const prevSnorkeling = '/media/TDV-Media/AddOns/previews/snorkeling_preview.mp4'
+const prevCampers = '/media/TDV-Media/AddOns/previews/campers_preview.mp4'
+const prevLiveaboard = '/media/TDV-Media/AddOns/previews/liveaboard_preview.mp4'
 
 function HoverVideoPreview({ videoSrc, poster, displayName }) {
   const videoRef = useRef(null)
@@ -41,6 +52,13 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
     const p = v.play()
     if (p !== undefined) {
       p.then(() => setIsLoaded(true)).catch(() => {})
+    }
+    return () => {
+      try {
+        v.pause()
+        v.removeAttribute('src')
+        v.load()
+      } catch (e) {}
     }
   }, [videoSrc])
 
@@ -91,48 +109,56 @@ const CUSTOM_ACTIVITIES = [
     id: 'canyoneering',
     name: 'Canyoneering',
     video: vidCanoneering,
+    previewVideo: prevCanoneering,
     poster: imgTrekking,
   },
   {
     id: 'safari',
     name: 'Safari',
     video: vidSafari,
+    previewVideo: prevSafari,
     poster: imgSafari,
   },
   {
     id: 'trekking',
     name: 'Trekking',
     video: vidTrekking,
+    previewVideo: prevTrekking,
     poster: imgTrekking,
   },
   {
     id: 'surfing',
     name: 'Surfing',
     video: vidSurfing,
+    previewVideo: prevSurfing,
     poster: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp',
   },
   {
     id: 'sightseeing',
     name: 'Local Sightseeing',
     video: vidSightseeing,
+    previewVideo: prevSightseeing,
     poster: imgSightseeing,
   },
   {
     id: 'snorkeling',
     name: 'Snorkeling',
     video: vidSnorkeling,
+    previewVideo: prevSnorkeling,
     poster: imgSnorkeling,
   },
   {
     id: 'camping_camper',
     name: 'Camping / Camper',
     video: vidCampers,
+    previewVideo: prevCampers,
     poster: imgCampers,
   },
   {
     id: 'liveaboard',
     name: 'Liveaboard',
     video: vidLiveaboard,
+    previewVideo: prevLiveaboard,
     poster: imgLiveaboard,
   },
 ]
@@ -314,7 +340,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                               className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-32 h-32 rounded-2xl overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.7)] border-2 border-[#FFCD00] bg-[#001428] z-50 pointer-events-none flex flex-col justify-between"
                             >
                               <HoverVideoPreview
-                                videoSrc={activity.video}
+                                videoSrc={activity.previewVideo || activity.video}
                                 poster={activity.poster}
                                 displayName={displayName}
                               />
@@ -367,7 +393,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                           className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.7)] border-2 border-[#FFCD00] bg-[#001428] z-50 pointer-events-none flex flex-col justify-between"
                         >
                           <HoverVideoPreview
-                            videoSrc={activity.video}
+                            videoSrc={activity.previewVideo || activity.video}
                             poster={activity.poster}
                             displayName={activity.name}
                           />
