@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 
 export default function Profile() {
   const navigate = useNavigate()
   const { user, role, logout } = useAuth()
+  const [imgError, setImgError] = useState(false)
 
   const handleLogout = async () => {
     await logout()
@@ -34,10 +36,12 @@ export default function Profile() {
       {/* 1. Profile Header (Clean, unobstructed layout without overlapping cover) */}
       <div className="p-6 sm:p-8 rounded-2xl bg-white border border-gray-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-6">
-          {user.photoURL ? (
+          {user.photoURL && !imgError ? (
             <img
+              referrerPolicy="no-referrer"
               src={user.photoURL}
               alt={user.displayName || 'Profile'}
+              onError={() => setImgError(true)}
               className="h-20 w-20 sm:h-24 sm:w-24 rounded-full border-2 border-gray-100 shadow-sm object-cover bg-white shrink-0"
             />
           ) : (

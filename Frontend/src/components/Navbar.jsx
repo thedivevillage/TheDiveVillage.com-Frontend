@@ -27,6 +27,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [isCallModalOpen, setIsCallModalOpen] = useState(false)
   const [isViberQrOpen, setIsViberQrOpen] = useState(false)
+  const [avatarError, setAvatarError] = useState(false)
   const { itemCount } = useCart()
   const { count: wishlistCount } = useWishlist()
   const { isAuthenticated, user } = useAuth()
@@ -271,10 +272,12 @@ export default function Navbar() {
             aria-label={isAuthenticated ? 'Account' : 'Login'}
             title={user?.displayName || user?.email || 'Profile'}
           >
-            {user?.photoURL ? (
+            {user?.photoURL && !avatarError ? (
               <img
+                referrerPolicy="no-referrer"
                 src={user.photoURL}
                 alt={user.displayName || 'Profile'}
+                onError={() => setAvatarError(true)}
                 className="h-5 w-5 rounded-full object-cover shrink-0"
               />
             ) : (
@@ -387,8 +390,14 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left flex items-center gap-2.5 text-white hover:bg-white/10"
                 >
-                  {user?.photoURL ? (
-                    <img src={user.photoURL} alt="Profile" className="h-5 w-5 rounded-full object-cover shrink-0" />
+                  {user?.photoURL && !avatarError ? (
+                    <img
+                      referrerPolicy="no-referrer"
+                      src={user.photoURL}
+                      alt="Profile"
+                      onError={() => setAvatarError(true)}
+                      className="h-5 w-5 rounded-full object-cover shrink-0"
+                    />
                   ) : (
                     <UserIcon />
                   )}
