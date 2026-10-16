@@ -3,7 +3,24 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './styles/globals.css'
 import './utils/audioManager'
+import './utils/mediaCache'
 import { initIdlePrefetching } from './utils/routePrefetcher'
+import { registerSW } from 'virtual:pwa-register'
+
+// Register Service Worker immediately for permanent media caching
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  registerSW({
+    immediate: true,
+    onRegistered(registration) {
+      if (registration) {
+        console.log('[TDV-PWA] Persistent Media Service Worker active')
+      }
+    },
+    onRegisterError(err) {
+      console.warn('[TDV-PWA] Service Worker registration failed:', err)
+    }
+  })
+}
 
 // Filter non-actionable notices from external libraries and empty-src fallbacks
 if (typeof console !== 'undefined') {

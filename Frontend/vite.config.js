@@ -82,6 +82,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
         name: 'The Dive Village',
@@ -120,26 +125,81 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        globIgnores: ['**/assets/*.{mp4,MP4,webm,mov,MOV,mp3,wav,ogg,glb,GLB}'],
-        navigateFallbackDenylist: [/^\/assets\/.*\.(mp4|webm|mov|mp3|ogg|glb)$/i],
         runtimeCaching: [
           {
-            urlPattern: /\.(?:mp4|webm|mov|mp3|ogg|glb)$/i,
-            handler: 'NetworkOnly',
-          },
-          {
+            // 1. Cloudinary Media Assets (Images, Posters, Videos)
             urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'cloudinary-media-q7b4kjd9',
+              cacheName: 'tdv-media-cloudinary',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Days
+                maxEntries: 1000,
+                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
                 statuses: [0, 200, 206]
+              }
+            }
+          },
+          {
+            // 2. Cloudflare R2 Media & Streaming (HLS, MP4, WebM, Posters)
+            urlPattern: /^https:\/\/.*\.r2\.(?:cloudflarestorage\.com|dev)\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tdv-media-r2',
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
+              },
+              cacheableResponse: {
+                statuses: [0, 200, 206]
+              }
+            }
+          },
+          {
+            // 3. Local Media route (/media/** - videos, audio, 3D assets)
+            urlPattern: /^\/media\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tdv-media-local',
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
+              },
+              cacheableResponse: {
+                statuses: [0, 200, 206]
+              }
+            }
+          },
+          {
+            // 4. All static media extensions (mp4, webm, mov, mp3, ogg, wav, glb, gltf, png, jpg, webp, svg)
+            urlPattern: /\.(?:mp4|webm|mov|mp3|ogg|wav|glb|gltf|png|jpe?g|webp|avif|svg)(?:\?.*)?$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tdv-media-assets',
+              expiration: {
+                maxEntries: 1000,
+                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
+              },
+              cacheableResponse: {
+                statuses: [0, 200, 206]
+              }
+            }
+          },
+          {
+            // 5. Google Fonts & CDNs
+            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tdv-google-fonts',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 365 * 24 * 60 * 60
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           }

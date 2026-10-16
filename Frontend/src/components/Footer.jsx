@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import useNightDive from '../hooks/useNightDive'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
+import { clearAllMediaCache } from '../utils/mediaCache'
 const rawFooterLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691227/TDV-Media/UI/footer%20logo.png'
 const footerLogoImg = getOptimizedImageUrl(rawFooterLogoImg, { width: 300 })
 import ViberQRModal from './ViberQRModal'
@@ -91,7 +92,20 @@ const SOCIALS = [
 
 export default function Footer() {
   const [isViberQrOpen, setIsViberQrOpen] = useState(false)
+  const [clearingCache, setClearingCache] = useState(false)
   const isNightDive = useNightDive()
+
+  const handleClearCache = async () => {
+    if (clearingCache) return
+    setClearingCache(true)
+    try {
+      await clearAllMediaCache()
+      alert('The Dive Village: Media cache has been completely cleared. Reloading page...')
+      window.location.reload()
+    } finally {
+      setClearingCache(false)
+    }
+  }
 
   const handleSocialClick = (s, e) => {
     if (s.isViber) {
@@ -365,8 +379,17 @@ export default function Footer() {
 
           {/* Bottom Copyright Bar */}
           <div className="border-t border-white/10">
-            <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-6 sm:px-6 lg:px-8 text-xs text-white/60 text-center">
+            <div className="mx-auto flex flex-col sm:flex-row max-w-7xl items-center justify-between gap-3 px-4 py-6 sm:px-6 lg:px-8 text-xs text-white/60 text-center">
               <p>© {new Date().getFullYear()} TheDiveVillage. A Brand of CAF Sourcing.</p>
+              <button
+                type="button"
+                onClick={handleClearCache}
+                disabled={clearingCache}
+                className="hover:text-white underline underline-offset-2 transition-colors cursor-pointer text-[11px] text-white/50 hover:text-white"
+                title="Wipe all permanently stored media caches to force fresh download from origin"
+              >
+                {clearingCache ? 'Clearing Media Cache...' : 'Clear Media Cache'}
+              </button>
             </div>
           </div>
         </div>

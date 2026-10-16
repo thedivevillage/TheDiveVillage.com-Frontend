@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
+import { precacheMediaAsset } from '../utils/mediaCache'
+import { markMediaLoaded } from '../utils/mediaOptimizer'
 
 export default function Product3DViewer({ src, alt = '3D Product Model', productId, poster }) {
   const [scriptLoaded, setScriptLoaded] = useState(false)
   const [autoRotate, setAutoRotate] = useState(true)
   const modelRef = useRef(null)
   const containerRef = useRef(null)
+
+  useEffect(() => {
+    if (src) {
+      precacheMediaAsset(src)
+      markMediaLoaded(src)
+    }
+  }, [src])
 
   const isBag = Boolean(
     (src && (src.toLowerCase().includes('bag') || src.toLowerCase().includes('backpack'))) ||

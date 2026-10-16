@@ -223,7 +223,9 @@ class AudioManager {
             this.showMediaNotification()
             this.notify()
           }).catch((err) => {
-            console.warn('[AudioManager] Resumption blocked by browser policy:', err)
+            if (err?.name !== 'NotAllowedError') {
+              console.warn('[AudioManager] Resumption blocked by browser policy:', err)
+            }
             // Re-arm gesture listeners so next tap/scroll/cursor instantly restores
             this.attachResumeOnGesture()
           })
