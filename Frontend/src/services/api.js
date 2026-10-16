@@ -2,15 +2,22 @@ import axios from 'axios'
 
 const rawApiUrl = (import.meta.env.VITE_API_BASE_URL || '').trim()
 
-const isLocalhostHost =
+const isLocalNetworkHost =
   typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.startsWith('10.') ||
+    window.location.hostname.startsWith('172.') ||
+    window.location.hostname.endsWith('.local')
+  )
 
 // In production on the live domain, default cleanly to https://api.thedivevillage.com
 export const apiBaseUrl =
   rawApiUrl ||
-  (import.meta.env.DEV && isLocalhostHost
-    ? 'http://localhost:5000'
+  (import.meta.env.DEV && isLocalNetworkHost
+    ? `http://${window.location.hostname}:5000`
     : 'https://api.thedivevillage.com')
 
 export const isApiConfigured = true
