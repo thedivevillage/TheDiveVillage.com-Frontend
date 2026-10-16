@@ -6,6 +6,7 @@ import './utils/audioManager'
 import './utils/mediaCache'
 import { initIdlePrefetching } from './utils/routePrefetcher'
 import { registerSW } from 'virtual:pwa-register'
+import { registerFirebaseMessagingSW, isFirebaseConfigured } from './services/firebase'
 
 // Register Service Worker immediately for permanent media caching
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -20,6 +21,13 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       console.warn('[TDV-PWA] Service Worker registration failed:', err)
     }
   })
+
+  // Register Firebase Messaging Service Worker in background without UI disruption
+  if (isFirebaseConfigured) {
+    registerFirebaseMessagingSW().catch((err) => {
+      console.warn('[TDV-FCM] Firebase Messaging Service Worker registration failed:', err)
+    })
+  }
 }
 
 // Filter non-actionable notices from external libraries and empty-src fallbacks

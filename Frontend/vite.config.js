@@ -71,6 +71,63 @@ function missingAssetFallbackPlugin() {
   }
 }
 
+function firebaseMessagingPlugin() {
+  return {
+    name: 'firebase-messaging-sw-builder',
+    generateBundle() {
+      const apiKey = process.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVj-lZlrZP7ccmP0YdfkBhddei2pj6UMU'
+      const authDomain = process.env.VITE_FIREBASE_AUTH_DOMAIN || 'the-dive-village-ffed3.firebaseapp.com'
+      const projectId = process.env.VITE_FIREBASE_PROJECT_ID || 'the-dive-village-ffed3'
+      const storageBucket = process.env.VITE_FIREBASE_STORAGE_BUCKET || 'the-dive-village-ffed3.firebasestorage.app'
+      const messagingSenderId = process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '298649884006'
+      const appId = process.env.VITE_FIREBASE_APP_ID || '1:298649884006:web:b2f393b8b8fdebdf19a4a7'
+
+      const swContent = `/* eslint-disable no-undef */
+// Firebase Cloud Messaging Service Worker for thedivevillage.com
+importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js');
+
+const params = new URL(self.location).searchParams;
+const firebaseConfig = {
+  apiKey: params.get('apiKey') || ${JSON.stringify(apiKey)},
+  authDomain: params.get('authDomain') || ${JSON.stringify(authDomain)},
+  projectId: params.get('projectId') || ${JSON.stringify(projectId)},
+  storageBucket: params.get('storageBucket') || ${JSON.stringify(storageBucket)},
+  messagingSenderId: params.get('messagingSenderId') || ${JSON.stringify(messagingSenderId)},
+  appId: params.get('appId') || ${JSON.stringify(appId)},
+};
+
+if (firebaseConfig.apiKey && firebaseConfig.apiKey !== 'placeholder' && firebaseConfig.projectId) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    messaging.onBackgroundMessage((payload) => {
+      console.log('[firebase-messaging-sw] Received background message:', payload);
+      const notificationTitle = payload.notification?.title || payload.data?.title || 'The Dive Village';
+      const notificationOptions = {
+        body: payload.notification?.body || payload.data?.body || '',
+        icon: payload.notification?.icon || payload.data?.icon || '/pwa-192x192.png',
+        badge: '/pwa-192x192.png',
+        data: payload.data || {},
+      };
+
+      self.registration.showNotification(notificationTitle, notificationOptions);
+    });
+  } catch (err) {
+    console.warn('[firebase-messaging-sw] Initialization error:', err);
+  }
+}
+`
+      this.emitFile({
+        type: 'asset',
+        fileName: 'firebase-messaging-sw.js',
+        source: swContent,
+      })
+    },
+  }
+}
+
 import { VitePWA } from 'vite-plugin-pwa'
 import { r2DevMediaPlugin } from './scripts/r2DevMiddleware.js'
 
@@ -79,6 +136,7 @@ export default defineConfig({
   plugins: [
     missingAssetFallbackPlugin(), 
     r2DevMediaPlugin(),
+    firebaseMessagingPlugin(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -127,6 +185,8 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globIgnores: ['**/firebase-messaging-sw.js'],
+        navigateFallbackDenylist: [/^\/firebase-messaging-sw\.js$/],
         runtimeCaching: [
           {
             // 1. Cloudinary Media Assets (Images, Posters, Videos)
