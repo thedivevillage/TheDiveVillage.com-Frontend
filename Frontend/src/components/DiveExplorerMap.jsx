@@ -314,15 +314,15 @@ export default function DiveExplorerMap({
   onSelectSiteRef.current = onSelectSite
   onBookSiteRef.current = onBookSite
 
-  // Unified helper: camera zoom to country with guaranteed minZoom & bounds handling
-  const zoomToCountry = useCallback((countryName, clickedLngLat = null) => {
+  // Unified helper: camera zoom to country so ALL dive sites of that country are seen
+  const zoomToCountry = useCallback((countryName) => {
     const map = mapRef.current
     if (!map || !countryName) return
 
     // If map style is still loading, wait for load event
     if (!map.loaded()) {
       map.once('load', () => {
-        zoomToCountry(countryName, clickedLngLat)
+        zoomToCountry(countryName)
       })
       return
     }
@@ -333,13 +333,6 @@ export default function DiveExplorerMap({
     )
 
     if (!countryData) {
-      if (clickedLngLat) {
-        map.flyTo({
-          center: [clickedLngLat.lng ?? clickedLngLat[0], clickedLngLat.lat ?? clickedLngLat[1]],
-          zoom: 6.5,
-          duration: 1200,
-        })
-      }
       return
     }
 
@@ -349,66 +342,75 @@ export default function DiveExplorerMap({
       const dLng = Math.abs(ne[0] - sw[0])
       const dLat = Math.abs(ne[1] - sw[1])
 
+      // True geographic center of all dive sites in this country
+      const centerLng = (sw[0] + ne[0]) / 2
+      const centerLat = (sw[1] + ne[1]) / 2
+
       const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640
       const dynamicPadding = isSmallScreen
-        ? { top: 75, bottom: 50, left: 45, right: 45 }
-        : { top: 90, bottom: 70, left: 80, right: 80 }
+        ? { top: 85, bottom: 65, left: 55, right: 55 }
+        : { top: 110, bottom: 90, left: 95, right: 95 }
 
-      // Single-site or tight bounding box (e.g. Libya, Iran, Russia, Romania, Senegal)
+      // 1. Single-site or ultra-compact point (e.g. Jordan, Monaco, Gibraltar)
       if (dLng < 0.05 && dLat < 0.05) {
         map.flyTo({
           center: [sw[0], sw[1]],
-          zoom: 5.2,
-          duration: 1200,
+          zoom: 4.8,
+          duration: 1100,
         })
         return
       }
 
-      // Very wide territory spanning oceans (e.g. USA with Hawaii, huge archipelago)
-      if (dLng > 65) {
-        if (clickedLngLat) {
-          map.flyTo({
-            center: [clickedLngLat.lng ?? clickedLngLat[0], clickedLngLat.lat ?? clickedLngLat[1]],
-            zoom: 4.2,
-            duration: 1200,
-          })
-        } else {
-          map.flyTo({
-            center: [countryData.longitude, countryData.latitude],
-            zoom: 3.2,
-            duration: 1200,
-          })
-        }
+      // 2. Small island nations (e.g. Malta, Cayman Islands, US Virgin Islands, Curaçao)
+      if (dLng < 0.6 && dLat < 0.6) {
+        map.flyTo({
+          center: [centerLng, centerLat],
+          zoom: 5.0,
+          duration: 1100,
+        })
         return
       }
 
-      // Normal multi-site country: camera framing capped at zoom 5.2 so all dive sites fit on screen
+      // 3. Normal, medium, and wide countries:
+      // Use map.cameraForBounds with padding to compute bounds framing,
+      // then reduce zoom by 0.60 so all dive sites and pins fit with generous outer breathing room.
+      let targetZoom = 4.4
+      let targetCenter = [centerLng, centerLat]
+
       try {
         const camera = map.cameraForBounds(countryData.bounds, {
           padding: dynamicPadding,
-          maxZoom: 5.2,
         })
-        if (camera && camera.center) {
-          // Generous margin ensures dive sites on outer coasts or islands are never cut off
-          const clampedZoom = Math.max(2.2, Math.min(5.2, (camera.zoom || 4.8) - 0.15))
-          const centerCoord = [
-            camera.center.lng ?? (Array.isArray(camera.center) ? camera.center[0] : countryData.longitude),
-            camera.center.lat ?? (Array.isArray(camera.center) ? camera.center[1] : countryData.latitude),
-          ]
-          map.flyTo({
-            center: centerCoord,
-            zoom: clampedZoom,
-            duration: 1200,
-          })
-          return
+        if (camera && typeof camera.zoom === 'number') {
+          // Max zoom for multi-site countries capped at 4.5 so we never over-zoom into small bays.
+          // Min zoom 2.2 allows massive countries (USA, Australia, Indonesia) to frame fully.
+          const maxAllowedZoom = dLng < 1.5 && dLat < 1.5 ? 4.8 : 4.5
+          targetZoom = Math.max(2.2, Math.min(maxAllowedZoom, camera.zoom - 0.60))
+
+          if (camera.center) {
+            targetCenter = [
+              camera.center.lng ?? (Array.isArray(camera.center) ? camera.center[0] : centerLng),
+              camera.center.lat ?? (Array.isArray(camera.center) ? camera.center[1] : centerLat),
+            ]
+          }
+        } else {
+          // Fallback if cameraForBounds unavailable
+          if (dLng > 60 || dLat > 25) targetZoom = 2.8
+          else if (dLng > 25 || dLat > 15) targetZoom = 3.5
+          else if (dLng > 10 || dLat > 8) targetZoom = 4.0
+          else targetZoom = 4.4
         }
       } catch (err) {
         console.warn('[DiveExplorer] cameraForBounds notice:', err)
+        if (dLng > 60 || dLat > 25) targetZoom = 2.8
+        else if (dLng > 25 || dLat > 15) targetZoom = 3.5
+        else if (dLng > 10 || dLat > 8) targetZoom = 4.0
+        else targetZoom = 4.4
       }
 
-      map.fitBounds(countryData.bounds, {
-        padding: dynamicPadding,
-        maxZoom: 5.2,
+      map.flyTo({
+        center: targetCenter,
+        zoom: targetZoom,
         duration: 1200,
       })
       return
@@ -417,13 +419,13 @@ export default function DiveExplorerMap({
     // Fallback if no bounds: center on centroid with comfortable framing
     map.flyTo({
       center: [countryData.longitude, countryData.latitude],
-      zoom: 4.5,
+      zoom: 4.2,
       duration: 1200,
     })
   }, [])
 
   // Two-tier navigation trigger (World View -> Specific Country)
-  const navigateToCountry = useCallback((rawCountryName, clickedLngLat = null) => {
+  const navigateToCountry = useCallback((rawCountryName) => {
     if (!rawCountryName) return
     const canonical = findMatchingCountry(rawCountryName, countriesListRef.current) || rawCountryName
 
@@ -431,9 +433,10 @@ export default function DiveExplorerMap({
     selectedCountryRef.current = canonical
     setActiveSite(null)
     setTooltipInfo(null)
+    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
     if (onSelectCountryRef.current) onSelectCountryRef.current(canonical)
 
-    zoomToCountry(canonical, clickedLngLat)
+    zoomToCountry(canonical)
   }, [zoomToCountry])
 
   const navigateToCountryRef = useRef(navigateToCountry)
@@ -858,21 +861,24 @@ export default function DiveExplorerMap({
               'interpolate',
               ['linear'],
               ['zoom'],
-              4.0, 0.65,
-              7.5, 0.90,
+              2.0, 0.55,
+              4.0, 0.70,
+              7.5, 0.95,
               10.5, 1.20,
               13.5, 1.50,
             ],
             'icon-anchor': 'bottom',
             'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
             'text-field': ['get', 'siteName'],
             'text-font': ['Noto Sans Bold'],
             'text-size': [
               'interpolate',
               ['linear'],
               ['zoom'],
-              4.0, 8.0,
-              8.0, 9.5,
+              2.0, 7.0,
+              4.0, 8.5,
+              8.0, 10.0,
               12.0, 11.5,
             ],
             'text-offset': [0, 0.35],
@@ -895,7 +901,7 @@ export default function DiveExplorerMap({
           if (e.originalEvent) e.originalEvent._countryHandled = true
           const p = e.features[0].properties
           if (navigateToCountryRef.current && p?.country) {
-            navigateToCountryRef.current(p.country, e.lngLat)
+            navigateToCountryRef.current(p.country)
           }
         })
 
@@ -907,7 +913,7 @@ export default function DiveExplorerMap({
           const candidate = p.name_long || p.name || p.admin || p.sovereignt || p.formal_en
           const matched = findMatchingCountry(candidate, countriesListRef.current)
           if (matched && navigateToCountryRef.current) {
-            navigateToCountryRef.current(matched, e.lngLat)
+            navigateToCountryRef.current(matched)
           }
         })
 
@@ -929,7 +935,7 @@ export default function DiveExplorerMap({
           const pinFeatures = map.queryRenderedFeatures(bbox, { layers: ['country-pin'] })
           if (pinFeatures.length > 0 && pinFeatures[0].properties?.country) {
             if (navigateToCountryRef.current) {
-              navigateToCountryRef.current(pinFeatures[0].properties.country, e.lngLat)
+              navigateToCountryRef.current(pinFeatures[0].properties.country)
             }
             return
           }
@@ -941,7 +947,7 @@ export default function DiveExplorerMap({
             const candidate = p.name_long || p.name || p.admin || p.sovereignt || p.formal_en
             const matched = findMatchingCountry(candidate, countriesListRef.current)
             if (matched && navigateToCountryRef.current) {
-              navigateToCountryRef.current(matched, e.lngLat)
+              navigateToCountryRef.current(matched)
               return
             }
           }
@@ -957,7 +963,7 @@ export default function DiveExplorerMap({
               const candidate = p['name:en'] || p.name_en || p.name || p['name:latin']
               const matched = findMatchingCountry(candidate, countriesListRef.current)
               if (matched && navigateToCountryRef.current) {
-                navigateToCountryRef.current(matched, e.lngLat)
+                navigateToCountryRef.current(matched)
                 return
               }
             }
@@ -976,7 +982,7 @@ export default function DiveExplorerMap({
           }
 
           if (minScreenDist <= 65 && closestCountry && navigateToCountryRef.current) {
-            navigateToCountryRef.current(closestCountry, e.lngLat)
+            navigateToCountryRef.current(closestCountry)
           }
         })
 
@@ -1373,6 +1379,7 @@ export default function DiveExplorerMap({
     setSearchQuery('')
     searchQueryRef.current = ''
     setActiveSite(null)
+    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
     if (onSelectCountryRef.current) onSelectCountryRef.current('')
     if (mapRef.current) {
       mapRef.current.flyTo({

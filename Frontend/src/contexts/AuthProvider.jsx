@@ -4,13 +4,28 @@ import { firebaseAuth } from '../services/firebase'
 import { AuthContext } from './AuthContext'
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [role, setRole] = useState('guest')
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('tdv_auth_user') : null
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
+  const [role, setRole] = useState(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('tdv_auth_user') : null
+      return saved ? JSON.parse(saved)?.role || 'customer' : 'guest'
+    } catch {
+      return 'guest'
+    }
+  })
   const [loading, setLoading] = useState(true)
 
   const syncWithBackend = useCallback(async (firebaseUser) => {
     if (!firebaseUser) {
       localStorage.removeItem('tdv_id_token')
+      localStorage.removeItem('tdv_auth_user')
       setUser(null)
       setRole('guest')
       return null
@@ -29,7 +44,15 @@ export function AuthProvider({ children }) {
       creationTime: firebaseUser.metadata?.creationTime || null,
       lastSignInTime: firebaseUser.metadata?.lastSignInTime || null,
       providerId: firebaseUser.providerData?.[0]?.providerId || 'google.com',
+      role: isAdminEmail ? 'admin' : 'customer',
     }
+
+    // Immediately set authenticated user state so UI/protected routes don't bounce to /login
+    setUser((prev) => ({ ...googleMetadata, ...(prev?.uid === googleMetadata.uid ? prev : {}) }))
+    setRole(googleMetadata.role)
+    try {
+      localStorage.setItem('tdv_auth_user', JSON.stringify(googleMetadata))
+    } catch {}
 
     try {
       const { data } = await authService.sync()
@@ -48,6 +71,9 @@ export function AuthProvider({ children }) {
       }
       setUser(enrichedUser)
       setRole(userRole)
+      try {
+        localStorage.setItem('tdv_auth_user', JSON.stringify(enrichedUser))
+      } catch {}
       return enrichedUser
     } catch {
       const fallbackRole = isAdminEmail ? 'admin' : 'customer'
@@ -57,6 +83,9 @@ export function AuthProvider({ children }) {
       }
       setUser(fallbackUser)
       setRole(fallbackRole)
+      try {
+        localStorage.setItem('tdv_auth_user', JSON.stringify(fallbackUser))
+      } catch {}
       return fallbackUser
     }
   }, [])
@@ -64,10 +93,21 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let unsub = () => {}
     try {
+      // Process any pending redirect auth result from Google (e.g. mobile redirect)
+      firebaseAuth.getRedirectResult?.().then((redirectCred) => {
+        if (redirectCred?.user) {
+          syncWithBackend(redirectCred.user)
+        }
+      }).catch((e) => {
+        console.warn('[Auth] Redirect result check:', e?.message)
+      })
+
       unsub = firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
-        setLoading(true)
-        await syncWithBackend(firebaseUser)
-        setLoading(false)
+        try {
+          await syncWithBackend(firebaseUser)
+        } finally {
+          setLoading(false)
+        }
       })
     } catch {
       setLoading(false)
@@ -96,7 +136,10 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = useCallback(async () => {
     const cred = await firebaseAuth.signInGoogle()
-    return syncWithBackend(cred.user)
+    if (cred?.user) {
+      return syncWithBackend(cred.user)
+    }
+    return null
   }, [syncWithBackend])
 
   const logout = useCallback(async () => {
@@ -109,6 +152,7 @@ export function AuthProvider({ children }) {
     setUser(null)
     setRole('guest')
     localStorage.removeItem('tdv_id_token')
+    localStorage.removeItem('tdv_auth_user')
   }, [])
 
   const value = useMemo(

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import LazyVideo from '../components/LazyVideo'
@@ -7,12 +7,19 @@ const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4'
 
 export default function Signup() {
   const navigate = useNavigate()
-  const { signup, loginWithGoogle } = useAuth()
+  const { user, isAuthenticated, loading: authLoading, signup, loginWithGoogle } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Auto-redirect if already signed in
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user) {
+      navigate('/dashboard/profile', { replace: true })
+    }
+  }, [authLoading, isAuthenticated, user, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -20,7 +27,7 @@ export default function Signup() {
     setLoading(true)
     try {
       await signup(email, password, { displayName: name })
-      navigate('/dashboard/profile')
+      navigate('/dashboard/profile', { replace: true })
     } catch (err) {
       let friendlyMsg = 'Failed to create account. Please check your information.'
       const code = err?.code || ''
@@ -46,10 +53,12 @@ export default function Signup() {
     setError('')
     setLoading(true)
     try {
-      await loginWithGoogle()
-      navigate('/dashboard/profile')
+      const u = await loginWithGoogle()
+      if (u) {
+        navigate('/dashboard/profile', { replace: true })
+      }
     } catch (err) {
-      setError(err.message || 'Google sign-up failed.')
+      setError(err?.message || 'Google sign-up failed.')
     } finally {
       setLoading(false)
     }

@@ -17,6 +17,8 @@ export function isNightModeAllowedRoute(pathname) {
     cleanPath === '/scuba-diving' ||
     cleanPath === '/snorkeling' ||
     cleanPath === '/freediving' ||
+    cleanPath === '/gallery' ||
+    cleanPath.startsWith('/gallery/') ||
     cleanPath === '/book-us' ||
     cleanPath === '/dive-explorer' ||
     cleanPath === '/shop' ||

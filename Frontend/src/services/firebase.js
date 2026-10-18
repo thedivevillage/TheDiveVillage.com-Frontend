@@ -66,6 +66,11 @@ const handleAuthError = (err) => {
   throw err
 }
 
+// Pre-warm Auth module eagerly in browser so popup triggers without async delay
+if (typeof window !== 'undefined' && isFirebaseConfigured) {
+  getAuthModule().catch(() => {})
+}
+
 export const firebaseAuth = {
   onAuthStateChanged: (cb) => {
     if (!isFirebaseConfigured) {
@@ -81,6 +86,15 @@ export const firebaseAuth = {
       unsub = authMod.onAuthStateChanged(a, cb)
     }).catch(() => cb(null))
     return () => unsub()
+  },
+  getRedirectResult: async () => {
+    if (!isFirebaseConfigured) return null
+    try {
+      const { auth: a, authMod } = await getAuthModule()
+      return await authMod.getRedirectResult(a)
+    } catch (err) {
+      return null
+    }
   },
   signInEmail: async (email, password) => {
     try {
@@ -102,7 +116,27 @@ export const firebaseAuth = {
     try {
       const { auth: a, authMod } = await getAuthModule()
       const provider = new authMod.GoogleAuthProvider()
-      return await authMod.signInWithPopup(a, provider)
+      provider.setCustomParameters({ prompt: 'select_account' })
+
+      const isMobileDevice =
+        typeof window !== 'undefined' &&
+        (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+          window.innerWidth < 768)
+
+      try {
+        return await authMod.signInWithPopup(a, provider)
+      } catch (popupErr) {
+        const isPopupBlocked =
+          popupErr?.code === 'auth/popup-blocked' ||
+          popupErr?.code === 'auth/popup-closed-by-user' ||
+          popupErr?.code === 'auth/cancelled-popup-request'
+
+        if (isMobileDevice || isPopupBlocked) {
+          console.warn('[Firebase Auth] Popup blocked or on mobile; falling back to redirect...')
+          return await authMod.signInWithRedirect(a, provider)
+        }
+        throw popupErr
+      }
     } catch (err) {
       handleAuthError(err)
     }

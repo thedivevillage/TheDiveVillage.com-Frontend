@@ -81,7 +81,7 @@ export default function ServiceDetail() {
       />
       
       {/* 1. HERO BANNER WITH EXPANDED LENGTH & SMOOTH FADE OUT */}
-      <section className="relative w-full h-[72vh] min-h-[520px] sm:h-[76vh] sm:min-h-[580px] lg:h-[82vh] lg:min-h-[660px] overflow-hidden flex flex-col justify-end pt-28 sm:pt-36 pb-16 sm:pb-24">
+      <section className="relative w-full h-[72vh] min-h-[520px] sm:h-[76vh] sm:min-h-[580px] lg:h-[82vh] lg:min-h-[660px] overflow-hidden flex flex-col justify-center pt-24 sm:pt-32 pb-14 sm:pb-20">
         <div className="absolute inset-0 z-0 overflow-hidden">
           {activeHeroVideo ? (
             <LazyVideo

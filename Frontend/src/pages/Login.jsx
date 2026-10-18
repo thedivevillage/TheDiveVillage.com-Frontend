@@ -1,18 +1,32 @@
 import LazyVideo from '../components/LazyVideo'
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import { firebaseAuth } from '../services/firebase'
 const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { login, loginWithGoogle } = useAuth()
+  const location = useLocation()
+  const { user, isAuthenticated, loading: authLoading, login, loginWithGoogle } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [infoMsg, setInfoMsg] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const from = location.state?.from?.pathname
+  const getDestination = (userRole) => {
+    if (from && from !== '/login' && from !== '/signup') return from
+    return userRole === 'admin' ? '/admin' : '/dashboard/profile'
+  }
+
+  // Automatically take user to profile (or intended route) if already logged in or upon Google sign-in completion
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user) {
+      navigate(getDestination(user.role), { replace: true })
+    }
+  }, [authLoading, isAuthenticated, user, navigate])
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
@@ -35,11 +49,7 @@ export default function Login() {
     setLoading(true)
     try {
       const u = await login(email, password)
-      if (u?.role === 'admin') {
-        navigate('/admin')
-      } else {
-        navigate('/dashboard/profile')
-      }
+      navigate(getDestination(u?.role), { replace: true })
     } catch (err) {
       let friendlyMsg = 'Failed to sign in. Please check your credentials.'
       const code = err?.code || ''
@@ -67,10 +77,12 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      await loginWithGoogle()
-      navigate('/dashboard/profile')
+      const u = await loginWithGoogle()
+      if (u) {
+        navigate(getDestination(u?.role), { replace: true })
+      }
     } catch (err) {
-      setError(err.message || 'Google sign-in failed.')
+      setError(err?.message || 'Google sign-in failed.')
     } finally {
       setLoading(false)
     }
