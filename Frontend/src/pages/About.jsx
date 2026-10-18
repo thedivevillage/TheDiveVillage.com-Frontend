@@ -195,7 +195,7 @@ export default function About() {
               </h3>
 
               <blockquote className="text-white/95 text-sm sm:text-xl leading-relaxed font-body border-l-3 sm:border-l-4 border-[#FFCD00] pl-3.5 sm:pl-4">
-                “To unite the world's ocean lovers into a global community—driven by passion, connected by purpose, and committed to protection.”
+                To unite the world's ocean lovers into a global community—driven by passion, connected by purpose, and committed to protection.
               </blockquote>
             </div>
           </motion.div>
@@ -222,7 +222,7 @@ export default function About() {
               </h3>
 
               <blockquote className="text-white/95 text-sm sm:text-lg leading-relaxed font-body border-l-3 sm:border-l-4 border-[#FFCD00] pl-3.5 sm:pl-4">
-                “At The Dive Village, our mission is to inspire adventure and foster respect for the ocean by providing safe, sustainable, and unforgettable scuba diving experiences. We are committed to building a platform and educating Divers of all levels, protecting marine ecosystems, and building a community that shares a passion for exploring the ocean world.”
+                At The Dive Village, our mission is to inspire adventure and foster respect for the ocean by providing safe, sustainable, and unforgettable scuba diving experiences. We are committed to building a platform and educating Divers of all levels, protecting marine ecosystems, and building a community that shares a passion for exploring the ocean world.
               </blockquote>
             </div>
           </motion.div>
@@ -245,10 +245,10 @@ export default function About() {
                 The Dive Village began with one man and one belief. For Sanjeev, the ocean was more than a passion—it was a sanctuary. A place of healing, discovery, and profound transformation. And he knew, deep down, that this magic was not meant to be kept to himself.
               </p>
               <p className="text-white/90 leading-relaxed text-base sm:text-lg font-body font-medium mb-6">
-                So he built a door to “The Dive Village” , a community for divers. A home beneath the waves, built by ocean lovers, for ocean lovers. A place where anyone, from all walks of life, could feel the rhythm of the currents and in doing so rediscover themselves.
+                He opened the door to “The Dive Village”, a community for divers. A home beneath the waves, built by ocean lovers, for ocean lovers. A place where anyone, from all walks of life, could feel the rhythm of the currents and in doing so rediscover themselves.
               </p>
               <p className="text-white/95 leading-relaxed text-base sm:text-lg font-body font-bold border-l-4 border-[#FFCD00] pl-6 mb-8 bg-white/10 backdrop-blur-md py-4 pr-4 rounded-r-2xl border-t border-b border-white/15">
-                “Today, Sanjeev's vision lives on in every dive, every story, and every stranger who arrives—and leaves as family member of this community. This is The Dive Village. Your Diving Community.”
+                “Today, Sanjeev's vision lives on in every dive, every story, and every stranger who arrives—and leaves as a member of this community. This is The Dive Village. Your Diving Community.”
               </p>
               <div className="pt-4 border-t border-white/15">
                 <h4 className="font-heading font-bold text-white text-base">Sanjeev Bajaj</h4>

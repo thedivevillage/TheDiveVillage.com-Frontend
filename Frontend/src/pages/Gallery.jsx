@@ -6,7 +6,7 @@ import Button from '../components/Button'
 import SafeImage from '../components/SafeImage'
 import LazyVideo from '../components/LazyVideo'
 import SEOHead from '../components/SEOHead'
-import { GALLERY_ITEMS, GALLERY_CATEGORIES } from '../utils/galleryData'
+import { GALLERY_ITEMS } from '../utils/galleryData'
 import { triggerHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { useLenis } from '../utils/lenisReact'
@@ -22,8 +22,7 @@ const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
 }))
 
 export default function Gallery() {
-  const [itemsList, setItemsList] = useState(SANITIZED_GALLERY_ITEMS)
-  const [activeTab, setActiveTab] = useState('all')
+  const [itemsList] = useState(SANITIZED_GALLERY_ITEMS)
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(null)
   const [highlightedItemId, setHighlightedItemId] = useState(null)
   const location = useLocation()
@@ -34,22 +33,7 @@ export default function Gallery() {
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
 
-  const handleTabChange = (key) => {
-    setActiveTab(key)
-    const activeLenis = lenis || (typeof window !== 'undefined' ? window.lenis : null)
-    if (activeLenis && typeof activeLenis.scrollTo === 'function') {
-      activeLenis.scrollTo(0, { duration: 0.6 })
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  const filteredItems = useMemo(() => {
-    if (activeTab === 'all') return itemsList
-    if (activeTab === 'videos') return itemsList.filter((i) => i.type === 'video')
-    if (activeTab === 'photos') return itemsList.filter((i) => i.type === 'image')
-    return itemsList.filter((i) => i.category === activeTab)
-  }, [itemsList, activeTab])
+  const filteredItems = itemsList
   const targetItemId = searchParams.get('item') || (location.hash ? location.hash.replace('#', '') : null)
 
   // Scroll handling: If arriving for a specific item, smoothly scroll to that image. Otherwise scroll to top.
@@ -238,6 +222,109 @@ export default function Gallery() {
     }
   }, [selectedMediaIndex])
 
+  // AI DOM: Dynamic window measurement & responsive display window optimization
+  const [windowSize, setWindowSize] = useState(() => {
+    if (typeof window === 'undefined') return { width: 1200, height: 800 }
+    return { width: window.innerWidth, height: window.innerHeight }
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize, { passive: true })
+    window.addEventListener('orientationchange', handleResize, { passive: true })
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('orientationchange', handleResize)
+    }
+  }, [])
+
+  // Video aspect ratio detection from real-time DOM video metadata
+  const [videoNaturalRatio, setVideoNaturalRatio] = useState(null)
+
+  // Reset natural ratio when selected media changes
+  useEffect(() => {
+    setVideoNaturalRatio(null)
+  }, [selectedMediaIndex])
+
+  // Vertical media detection:
+  // Baked vertical videos (zoom 2.85 in 16:9 canvas like Giant Barrel Sponge, Hawksbill Sea Turtle 2, Whale Shark, etc.)
+  const isBakedVertical = Boolean(
+    currentItem?.zoom === 2.85 ||
+    ['Giant Barrel Sponge', 'Hawksbill Sea Turtle', 'Whale Shark', 'Whitetip Reef Shark'].some(
+      (t) => currentItem?.title?.trim() === t
+    )
+  )
+
+  const isKnownVerticalVideo = Boolean(
+    currentItem && [
+      'A Seafan',
+      'Beach View',
+      'Big Eye Trevally',
+      'Clownfish and Sea Anemone',
+      'Hawksbill Sea Turtle',
+      'Magnificent Sea Anemone',
+      'Manta Ray',
+      'Marbled Stingray',
+      'Silver Barracudas',
+      'A Moray Eel in a Giant Barrel Sponge',
+      'Free Diving',
+    ].some((t) => currentItem.title?.includes(t))
+  )
+
+  const isVerticalVideo = Boolean(
+    currentItem?.type === 'video' && (
+      isBakedVertical ||
+      isKnownVerticalVideo ||
+      (videoNaturalRatio !== null && videoNaturalRatio < 0.95)
+    )
+  )
+
+  // AI DOM: Calculate optimal height & layout bounds based on display window size
+  const modalOptimization = useMemo(() => {
+    const { width, height } = windowSize
+    const isMobile = width < 640
+    const isTablet = width >= 640 && width < 1024
+    const isShort = height < 640
+    const isVeryShort = height < 520
+
+    // Available height in display window (leaving safe margins)
+    const marginY = isMobile ? 16 : isShort ? 24 : 40
+    const maxAllowedHeight = Math.max(320, height - marginY)
+
+    // Calculate optimal modal card height based on window size:
+    // On mobile: maximize vertical space (up to 95vh) so vertical videos get maximum display window height
+    // On desktop: optimize height gracefully (up to 880px for vertical videos, 820px for landscape)
+    const optimalHeight = isMobile
+      ? Math.min(maxAllowedHeight, Math.round(height * 0.95))
+      : isVerticalVideo
+        ? Math.min(maxAllowedHeight, 880, Math.round(height * 0.92))
+        : Math.min(maxAllowedHeight, 820, Math.round(height * 0.88))
+
+    // Calculate optimal modal card width:
+    // For vertical videos on desktop: keep card focused and elegant (~560px - 640px)
+    // For landscape media: wider card (up to 1040px)
+    const optimalMaxWidth = isMobile
+      ? '100%'
+      : isVerticalVideo
+        ? (isTablet ? '520px' : '620px')
+        : (isTablet ? '840px' : '1040px')
+
+    return {
+      isMobile,
+      isTablet,
+      isShort,
+      isVeryShort,
+      optimalHeight,
+      optimalMaxWidth,
+    }
+  }, [windowSize, isVerticalVideo])
+
   const handleShareVisual = async (item = currentItem) => {
     if (!item) return
     triggerHaptic(15)
@@ -262,7 +349,7 @@ export default function Gallery() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div>
             <span className="inline-block bg-black/5 rounded-full px-3.5 py-1 text-[11px] sm:text-xs font-bold text-navy/60 uppercase tracking-widest mb-3 sm:mb-4">
-              Visual Chronicles
+              Underwater Moments
             </span>
             <h1 className="font-heading text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-navy leading-none">
               Gallery
@@ -271,25 +358,6 @@ export default function Gallery() {
           <p className="max-w-md text-sm sm:text-base lg:text-lg font-medium text-navy/70 leading-relaxed lg:pb-4">
             Moments frozen in time beneath the waves. Explore our underwater expeditions, marine encounters, species identification, and village life.
           </p>
-        </div>
-
-        {/* 2. CATEGORY FILTER TABS */}
-        <div className="grid grid-cols-3 md:flex md:flex-wrap gap-2 md:gap-3 mb-10 sm:mb-16 border-b border-navy/10 pb-5 sm:pb-6">
-          {GALLERY_CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              data-category-tab={cat.key}
-              data-active={activeTab === cat.key ? 'true' : 'false'}
-              onClick={() => handleTabChange(cat.key)}
-              className={`group gallery-category-tab w-full md:w-auto rounded-xl md:rounded-full px-2 sm:px-3 md:px-5 py-2 md:py-2.5 text-[11px] xs:text-xs sm:text-sm font-bold text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${
-                activeTab === cat.key
-                  ? 'bg-navy text-white shadow-md border-2 border-transparent'
-                  : 'bg-white text-navy border border-navy/15 hover:bg-navy/5'
-              }`}
-            >
-              <span className="truncate">{cat.label}</span>
-            </button>
-          ))}
         </div>
 
         {/* GALLERY MASONRY / GRID: 2 Cards per row on mobile, 3 on desktop */}
@@ -379,7 +447,7 @@ export default function Gallery() {
               <div 
                 data-lenis-prevent="true"
                 data-gallery-modal="true"
-                className="fixed inset-0 z-[9990] bg-black/75 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-6 lg:p-8 select-none overflow-hidden"
+                className="fixed inset-0 z-[9990] bg-black/80 backdrop-blur-[3px] flex items-center justify-center p-2 sm:p-4 md:p-6 select-none overflow-hidden"
                 style={{
                   overscrollBehavior: 'contain',
                   touchAction: 'none',
@@ -388,18 +456,21 @@ export default function Gallery() {
                 onTouchStart={handleLightboxTouchStart}
                 onTouchEnd={handleLightboxTouchEnd}
               >
-                {/* White Modal Card */}
+                {/* Optimized Preview Modal Card */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
                   data-gallery-modal="true"
                   style={{
                     backgroundColor: '#ffffff',
                     color: '#171717',
+                    height: `${modalOptimization.optimalHeight}px`,
+                    maxWidth: modalOptimization.optimalMaxWidth,
+                    width: '100%',
                   }}
-                  className="gallery-preview-modal relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl h-[88vh] max-h-[820px] flex flex-col items-center justify-between p-3 sm:p-5 select-none overflow-hidden border border-neutral-100"
+                  className="gallery-preview-modal relative bg-white rounded-xl sm:rounded-2xl shadow-2xl flex flex-col items-center justify-between p-2 sm:p-4 select-none overflow-hidden border border-neutral-100 transition-[max-width,height] duration-300 ease-out"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Close Button: Dark circular button with white cross in top right */}
@@ -409,7 +480,7 @@ export default function Gallery() {
                     data-cursor-static="true"
                     type="button"
                     onClick={() => setSelectedMediaIndex(null)}
-                    className="gallery-close-btn absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-[#5f6368] hover:bg-[#3c4043] text-white flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
+                    className="gallery-close-btn absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-30 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-[#5f6368] hover:bg-[#3c4043] text-white flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                     aria-label="Close Lightbox"
                     title="Close"
                   >
@@ -419,18 +490,18 @@ export default function Gallery() {
                     </svg>
                   </button>
 
-                  {/* Main Media Showcase Area */}
-                  <div className="relative flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden px-4 sm:px-14 py-1">
+                  {/* Main Media Showcase Area - Dynamic Height Fit */}
+                  <div className="relative flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden px-1 sm:px-12 py-1">
                     {/* Previous Media Arrow: White Circle with Drop Shadow */}
                     {filteredItems.length > 1 && (
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); prevMedia() }}
-                        className="gallery-nav-arrow absolute left-1 sm:left-4 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white text-neutral-700 hover:text-black hover:bg-neutral-50 shadow-[0_4px_16px_rgba(0,0,0,0.14)] border border-neutral-100 transition hover:scale-105 active:scale-95 cursor-pointer"
+                        className="gallery-nav-arrow absolute left-1 sm:left-3 z-20 flex h-8.5 w-8.5 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/95 text-neutral-800 hover:text-black hover:bg-white shadow-[0_4px_16px_rgba(0,0,0,0.18)] border border-neutral-100 transition hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-sm"
                         aria-label="Previous visual"
                         title="Previous"
                       >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M15 19l-7-7 7-7" />
                         </svg>
                       </button>
@@ -441,11 +512,11 @@ export default function Gallery() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); nextMedia() }}
-                        className="gallery-nav-arrow absolute right-1 sm:right-4 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white text-neutral-700 hover:text-black hover:bg-neutral-50 shadow-[0_4px_16px_rgba(0,0,0,0.14)] border border-neutral-100 transition hover:scale-105 active:scale-95 cursor-pointer"
+                        className="gallery-nav-arrow absolute right-1 sm:right-3 z-20 flex h-8.5 w-8.5 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/95 text-neutral-800 hover:text-black hover:bg-white shadow-[0_4px_16px_rgba(0,0,0,0.18)] border border-neutral-100 transition hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-sm"
                         aria-label="Next visual"
                         title="Next"
                       >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
@@ -454,25 +525,70 @@ export default function Gallery() {
                     {/* Media Item (Video or Image) */}
                     {currentItem.type === 'video' ? (
                       <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative">
-                        <LazyVideo
-                          key={currentItem.src}
-                          src={currentItem.src}
-                          priority={true}
-                          lowResSrc={currentItem.lowResSrc || currentItem.previewVideo || currentItem.preview}
-                          poster={currentItem.poster || currentItem.thumbnail || currentItem.image}
-                          controls
-                          controlsList="nodownload noplaybackrate noremoteplayback"
-                          disablePictureInPicture={true}
-                          autoPlay
-                          loop
-                          playsInline
-                          muted={true}
-                          defaultMuted={true}
-                          playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-                          style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                          className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video"
-                          videoClassName="gallery-preview-video-element"
-                        />
+                        {isVerticalVideo ? (
+                          <div 
+                            className="h-full max-h-full max-w-full flex items-center justify-center relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl bg-black"
+                            style={{
+                              aspectRatio: isBakedVertical ? '9 / 16' : (videoNaturalRatio ? `${videoNaturalRatio}` : '9 / 16'),
+                              maxHeight: '100%',
+                            }}
+                          >
+                            <LazyVideo
+                              key={currentItem.src}
+                              src={currentItem.src}
+                              priority={true}
+                              lowResSrc={currentItem.lowResSrc || currentItem.previewVideo || currentItem.preview}
+                              poster={currentItem.poster || currentItem.thumbnail || currentItem.image}
+                              controls
+                              controlsList="nodownload noplaybackrate noremoteplayback"
+                              disablePictureInPicture={true}
+                              autoPlay
+                              loop
+                              playsInline
+                              muted={true}
+                              defaultMuted={true}
+                              playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
+                              onLoadedMetadata={(e) => {
+                                const vid = e.target
+                                if (vid && vid.videoWidth && vid.videoHeight) {
+                                  setVideoNaturalRatio(vid.videoWidth / vid.videoHeight)
+                                }
+                              }}
+                              className={`w-full h-full max-w-full max-h-full bg-black flex items-center justify-center gallery-preview-video ${
+                                isBakedVertical ? 'object-cover' : 'object-contain'
+                              }`}
+                              videoClassName="gallery-preview-video-element"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative">
+                            <LazyVideo
+                              key={currentItem.src}
+                              src={currentItem.src}
+                              priority={true}
+                              lowResSrc={currentItem.lowResSrc || currentItem.previewVideo || currentItem.preview}
+                              poster={currentItem.poster || currentItem.thumbnail || currentItem.image}
+                              controls
+                              controlsList="nodownload noplaybackrate noremoteplayback"
+                              disablePictureInPicture={true}
+                              autoPlay
+                              loop
+                              playsInline
+                              muted={true}
+                              defaultMuted={true}
+                              playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
+                              onLoadedMetadata={(e) => {
+                                const vid = e.target
+                                if (vid && vid.videoWidth && vid.videoHeight) {
+                                  setVideoNaturalRatio(vid.videoWidth / vid.videoHeight)
+                                }
+                              }}
+                              style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                              className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video bg-black/5 rounded-lg"
+                              videoClassName="gallery-preview-video-element"
+                            />
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <img
@@ -481,27 +597,17 @@ export default function Gallery() {
                         alt={currentItem.title || 'Gallery visual'}
                         decoding="async"
                         style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                        className="max-w-full max-h-full object-contain select-none m-auto block pointer-events-auto rounded-sm"
+                        className="max-w-full max-h-full object-contain select-none m-auto block pointer-events-auto rounded-lg shadow-sm"
                         draggable={false}
                       />
                     )}
                   </div>
 
-                  {/* Title & Index (Minimal & Clean) */}
-                  <div className="flex items-center justify-between w-full px-2 sm:px-4 pt-1.5 pb-1 shrink-0">
-                    <span className="gallery-title-text text-xs sm:text-sm font-semibold tracking-wide truncate max-w-[75%] text-neutral-800">
-                      {currentItem.title}
-                    </span>
-                    <span className="gallery-counter-text text-[11px] sm:text-xs text-neutral-400 font-mono shrink-0">
-                      {selectedMediaIndex + 1} / {filteredItems.length}
-                    </span>
-                  </div>
-
-                  {/* Bottom Thumbnail Strip */}
+                  {/* Bottom Thumbnail Strip - Just thumbnails below like shop preview box */}
                   {filteredItems.length > 1 && (
                     <div 
                       ref={thumbContainerRef}
-                      className="flex items-center justify-start sm:justify-center gap-2 sm:gap-2.5 overflow-x-auto w-full max-w-full px-2 pt-1 pb-1 shrink-0 select-none"
+                      className="w-full pt-2 mt-1 border-t border-gray-150 flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2.5 overflow-x-auto scrollbar-none px-1 sm:px-2 py-1 shrink-0 select-none"
                       style={{
                         scrollbarWidth: 'none',
                         msOverflowStyle: 'none',
@@ -519,7 +625,11 @@ export default function Gallery() {
                               triggerHaptic(8)
                               setSelectedMediaIndex(idx)
                             }}
-                            className={`relative shrink-0 w-12 h-16 sm:w-14 sm:h-20 rounded-md overflow-hidden transition-all cursor-pointer ${
+                            className={`relative shrink-0 rounded-md overflow-hidden transition-all cursor-pointer ${
+                              modalOptimization.isShort
+                                ? 'w-10 h-13 sm:w-11 sm:h-15'
+                                : 'w-11 h-15 sm:w-14 sm:h-19'
+                            } ${
                               isActive
                                 ? 'gallery-thumb-active border-2 border-black ring-1 ring-black/10 scale-105 opacity-100 shadow-sm'
                                 : 'gallery-thumb-inactive border border-neutral-200 opacity-60 hover:opacity-100 hover:border-neutral-400 bg-neutral-100'

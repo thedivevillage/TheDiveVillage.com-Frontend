@@ -1044,9 +1044,9 @@ export const SERVICES_DATA = [
   {
     id: 'addon-1',
     category: 'addons',
-    title: 'Canoneering',
-    short_desc: 'An adventurous canoneering experience.',
-    long_desc: 'Explore the rugged terrains, rappel down waterfalls, and navigate through natural canyons in this thrilling canoneering adventure.',
+    title: 'Canyoneering',
+    short_desc: 'An adventurous canyoneering experience.',
+    long_desc: 'Explore the rugged terrains, rappel down waterfalls, and navigate through natural canyons in this thrilling canyoneering adventure.',
     video: vidCanoneering,
     previewVideo: '/media/TDV-Media/AddOns/previews/canyoneering_preview.mp4',
     image: '/media/thumbnails/addon-1_thumb.webp',

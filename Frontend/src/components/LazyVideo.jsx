@@ -207,7 +207,7 @@ const LazyVideo = forwardRef(function LazyVideo({
     }
   }, [muted, defaultMuted, playbackRate])
 
-  const fitClass = className.includes('object-contain') ? 'object-contain' : 'object-cover'
+  const fitClass = className.includes('object-cover') ? 'object-cover' : (className.includes('object-contain') ? 'object-contain' : 'object-cover')
   const zoomStyle = zoom && zoom !== 1 ? { transform: `scale(${zoom})`, transformOrigin: zoomOrigin || 'center center' } : {}
 
   const handleMasterCanPlay = (e) => {
@@ -228,7 +228,7 @@ const LazyVideo = forwardRef(function LazyVideo({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden bg-[#00172b] ${className}`}
+      className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-[#00172b]'} ${className}`}
       style={{ contain: 'layout paint' }}
     >
       {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and moves) */}

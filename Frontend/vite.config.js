@@ -142,8 +142,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       devOptions: {
-        enabled: true,
-        type: 'module',
+        enabled: false,
       },
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
@@ -199,8 +198,9 @@ export default defineConfig({
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200, 206]
-              }
+                statuses: [0, 200]
+              },
+              rangeRequests: true
             }
           },
           {
@@ -214,8 +214,9 @@ export default defineConfig({
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200, 206]
-              }
+                statuses: [0, 200]
+              },
+              rangeRequests: true
             }
           },
           {
@@ -229,8 +230,9 @@ export default defineConfig({
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200, 206]
-              }
+                statuses: [0, 200]
+              },
+              rangeRequests: true
             }
           },
           {
@@ -244,8 +246,9 @@ export default defineConfig({
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200, 206]
-              }
+                statuses: [0, 200]
+              },
+              rangeRequests: true
             }
           },
           {

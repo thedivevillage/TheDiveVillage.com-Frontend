@@ -8,19 +8,27 @@ import { initIdlePrefetching } from './utils/routePrefetcher'
 import { registerSW } from 'virtual:pwa-register'
 import { registerFirebaseMessagingSW, isFirebaseConfigured } from './services/firebase'
 
-// Register Service Worker immediately for permanent media caching
+// In development mode, automatically unregister any lingering service workers to avoid video streaming lag
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  registerSW({
-    immediate: true,
-    onRegistered(registration) {
-      if (registration) {
-        console.log('[TDV-PWA] Persistent Media Service Worker active')
+  if (import.meta.env.DEV) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister()
       }
-    },
-    onRegisterError(err) {
-      console.warn('[TDV-PWA] Service Worker registration failed:', err)
-    }
-  })
+    })
+  } else {
+    registerSW({
+      immediate: true,
+      onRegistered(registration) {
+        if (registration) {
+          console.log('[TDV-PWA] Persistent Media Service Worker active')
+        }
+      },
+      onRegisterError(err) {
+        console.warn('[TDV-PWA] Service Worker registration failed:', err)
+      }
+    })
+  }
 
   // Register Firebase Messaging Service Worker in background without UI disruption
   if (isFirebaseConfigured) {

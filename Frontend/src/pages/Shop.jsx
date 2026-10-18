@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useDeferredValue } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SHOP_PRODUCTS, GROUP_PHOTOS } from '../utils/products'
@@ -632,6 +633,8 @@ export default function Shop() {
 function GroupGallerySection() {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null)
   const lenis = useLenis()
+  const activeThumbRef = useRef(null)
+  const thumbContainerRef = useRef(null)
 
   const selectedPhoto = selectedPhotoIndex !== null ? GROUP_PHOTOS[selectedPhotoIndex] : null
 
@@ -664,6 +667,17 @@ function GroupGallerySection() {
       }
     }
   }
+
+  // Smoothly scroll active thumbnail into view when selected media changes
+  useEffect(() => {
+    if (activeThumbRef.current) {
+      activeThumbRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      })
+    }
+  }, [selectedPhotoIndex])
 
   // Lock background scroll and handle arrow keys when photo preview is open
   useEffect(() => {
@@ -731,120 +745,144 @@ function GroupGallerySection() {
         ))}
       </div>
 
-      {/* Lightbox Modal - Full uncropped photo & Arrow Navigation */}
-      <AnimatePresence>
-        {selectedPhoto && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            data-lenis-prevent="true"
-            style={{
-              overscrollBehavior: 'contain',
-              touchAction: 'none',
-            }}
-            onClick={() => setSelectedPhotoIndex(null)}
-            className="fixed inset-0 z-[9990] bg-black/90 backdrop-blur-md select-none overflow-hidden"
-          >
-            {/* Modal Content Wrapper - Strictly positioned below toolbar */}
-            <div
-              className="absolute inset-x-0 bottom-0 top-[64px] lg:top-[68px] flex items-center justify-center p-3 sm:p-5 lg:p-7"
-              style={{
-                top: 'var(--toolbar-bottom, 68px)',
-              }}
+      {/* Lightbox Modal - Shop Preview Box Style with Thumbnails Below (No Number, No Names) */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {selectedPhoto && (
+            <motion.div
+              key="community-lightbox-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setSelectedPhotoIndex(null)}
+              data-lenis-prevent="true"
+              style={{
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                overscrollBehavior: 'contain',
+                touchAction: 'none',
+              }}
+              className="fixed inset-0 z-[100000] bg-black/60 sm:bg-black/65 flex items-center justify-center p-2 sm:p-4 select-none overflow-hidden"
             >
-              {/* Previous Photo Arrow */}
-              {GROUP_PHOTOS.length > 1 && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    prevPhoto()
-                  }}
-                  className="absolute left-2 sm:left-4 lg:left-8 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-navy/85 hover:bg-[#FFCD00] text-white hover:text-[#001e3d] flex items-center justify-center transition shadow-2xl active:scale-90 cursor-pointer font-bold border border-white/20 backdrop-blur-md"
-                  aria-label="Previous photo (Left Arrow)"
-                  title="Previous photo (Left Arrow)"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Next Photo Arrow */}
-              {GROUP_PHOTOS.length > 1 && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    nextPhoto()
-                  }}
-                  className="absolute right-2 sm:right-4 lg:right-8 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-navy/85 hover:bg-[#FFCD00] text-white hover:text-[#001e3d] flex items-center justify-center transition shadow-2xl active:scale-90 cursor-pointer font-bold border border-white/20 backdrop-blur-md"
-                  aria-label="Next photo (Right Arrow)"
-                  title="Next photo (Right Arrow)"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              )}
-
+              {/* Modal Dialog Card Container: matches shop preview box */}
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ type: 'spring', damping: 26, stiffness: 320 }}
                 onClick={(e) => e.stopPropagation()}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
-                style={{
-                  maxHeight: 'calc(100vh - var(--toolbar-bottom, 68px) - 36px)',
-                  maxWidth: 'calc(100vw - 32px)',
-                }}
-                className="relative rounded-2xl sm:rounded-3xl bg-navy/95 border border-white/15 shadow-2xl flex flex-col items-center justify-center p-2.5 sm:p-4 cursor-default select-none"
+                data-community-modal-dialog="true"
+                style={{ backgroundColor: '#ffffff', color: '#111827' }}
+                className="relative bg-white rounded-lg sm:rounded-xl shadow-2xl w-[96vw] max-w-[1260px] h-[95vh] max-h-[96vh] flex flex-col items-center justify-between p-2 sm:p-3 sm:pb-3.5 overflow-hidden"
               >
+                {/* Circular Close Button 'X' in top-right corner of modal */}
                 <button
                   type="button"
-                  onClick={() => setSelectedPhotoIndex(null)}
-                  className="absolute top-3 right-3 sm:top-4 sm:right-4 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/60 text-white hover:bg-accent hover:text-navy flex items-center justify-center transition cursor-pointer font-bold shadow-lg border border-white/10 backdrop-blur-md"
-                  aria-label="Close photo"
+                  onClick={() => {
+                    triggerHaptic(8)
+                    setSelectedPhotoIndex(null)
+                  }}
+                  aria-label="Close dialog"
+                  className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-600/85 hover:bg-gray-800 text-white flex items-center justify-center transition shadow-md active:scale-90 cursor-pointer font-bold text-sm"
                 >
                   ✕
                 </button>
-                <img
-                  key={selectedPhoto.src}
-                  src={selectedPhoto.src}
-                  alt={selectedPhoto.title || "Community Photo"}
-                  style={{
-                    objectFit: 'contain',
-                    maxHeight: 'calc(100vh - var(--toolbar-bottom, 68px) - 72px)',
-                    maxWidth: 'min(calc(100vw - 64px), 1100px)',
-                    width: 'auto',
-                    height: 'auto',
-                  }}
-                  className="rounded-xl sm:rounded-2xl shadow-inner select-none block"
-                  draggable={false}
-                />
 
-                {/* Bottom Image Counter & Title Badge */}
+                {/* Main Center Image Display Area */}
+                <div className="relative w-full flex-1 min-h-0 flex items-center justify-center overflow-hidden my-1">
+                  {/* Left Navigation Chevron Button */}
+                  {GROUP_PHOTOS.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        prevPhoto()
+                      }}
+                      aria-label="Previous photo"
+                      className="absolute left-2 sm:left-4 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-xl text-gray-800 flex items-center justify-center hover:bg-gray-100 active:scale-90 cursor-pointer transition border border-gray-150"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* Right Navigation Chevron Button */}
+                  {GROUP_PHOTOS.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        nextPhoto()
+                      }}
+                      aria-label="Next photo"
+                      className="absolute right-2 sm:right-4 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-xl text-gray-800 flex items-center justify-center hover:bg-gray-100 active:scale-90 cursor-pointer transition border border-gray-150"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* The Full Uncropped Image */}
+                  <div className="relative h-full flex items-center justify-center">
+                    <img
+                      key={selectedPhoto.src}
+                      src={selectedPhoto.src}
+                      alt="Community Photo"
+                      className="h-full max-h-[77vh] sm:max-h-[81vh] w-auto max-w-full object-contain rounded-xs select-none shadow-xs"
+                      draggable={false}
+                    />
+                  </div>
+                </div>
+
+                {/* Bottom Thumbnail Strip - matching shop preview box (No numbers, No names, just thumbnails) */}
                 {GROUP_PHOTOS.length > 1 && (
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold shadow-md border border-white/15 pointer-events-none flex items-center gap-2">
-                    <span className="text-[#FFCD00]">
-                      {selectedPhotoIndex + 1} / {GROUP_PHOTOS.length}
-                    </span>
-                    {selectedPhoto.title && (
-                      <>
-                        <span className="w-1 h-1 rounded-full bg-white/40" />
-                        <span className="text-white/90">{selectedPhoto.title}</span>
-                      </>
-                    )}
+                  <div 
+                    ref={thumbContainerRef}
+                    className="w-full pt-2 mt-1 border-t border-gray-150 flex items-center justify-center gap-1.5 sm:gap-2.5 overflow-x-auto scrollbar-none py-1 shrink-0 select-none"
+                    style={{
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none',
+                    }}
+                  >
+                    {GROUP_PHOTOS.map((photo, idx) => {
+                      const isSelected = selectedPhotoIndex === idx
+                      return (
+                        <button
+                          key={photo.id || idx}
+                          ref={isSelected ? activeThumbRef : null}
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic(6)
+                            setSelectedPhotoIndex(idx)
+                          }}
+                          className={`relative w-14 h-11 sm:w-16 sm:h-12 rounded-xs overflow-hidden border-2 transition cursor-pointer shrink-0 bg-white ${
+                            isSelected
+                              ? 'border-gray-900 ring-1 ring-gray-900 shadow-xs scale-105'
+                              : 'border-gray-200 opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          <img
+                            src={photo.src}
+                            alt=""
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </button>
+                      )
+                    })}
                   </div>
                 )}
               </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   )
 }
