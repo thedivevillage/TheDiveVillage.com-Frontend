@@ -6,7 +6,23 @@ export function isNightModeAllowedRoute(pathname) {
     pathname = window.location.pathname
   }
   const cleanPath = (pathname || '/').split('?')[0].split('#')[0].trim().toLowerCase().replace(/\/+$/, '') || '/'
-  return cleanPath === '/' || cleanPath === '/about'
+  return (
+    cleanPath === '/' ||
+    cleanPath === '/about' ||
+    cleanPath === '/services' ||
+    cleanPath === '/our-services' ||
+    cleanPath.startsWith('/services/') ||
+    cleanPath === '/courses' ||
+    cleanPath.startsWith('/courses/') ||
+    cleanPath === '/scuba-diving' ||
+    cleanPath === '/snorkeling' ||
+    cleanPath === '/freediving' ||
+    cleanPath === '/book-us' ||
+    cleanPath === '/dive-explorer' ||
+    cleanPath === '/shop' ||
+    cleanPath.startsWith('/shop/') ||
+    cleanPath === '/contact'
+  )
 }
 
 export function isNightModeDisabledRoute(pathname) {

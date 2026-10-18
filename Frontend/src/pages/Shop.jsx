@@ -166,7 +166,7 @@ export default function Shop() {
   }, [productsList, selectedCategory, deferredSearchQuery, sortBy, priceFilter, isMobile])
 
   return (
-    <div className={`min-h-screen font-body pt-20 md:pt-32 pb-24 overflow-x-hidden transition-colors duration-500 ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'}`}>
+    <div className={`min-h-screen font-body pt-20 md:pt-32 pb-24 overflow-x-hidden transition-colors duration-500 ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`}>
       <SEOHead
         title="Dive Shop & Sustainable Marine Apparel | The Dive Village"
         description="Shop high-performance ocean gear, eco-friendly dive apparel, dive suits, and diving accessories. Designed for comfort, durability, and marine conservation."
@@ -224,7 +224,7 @@ export default function Shop() {
       </section>
 
       {/* 2. MOBILE STORE CONTROLS (md:hidden - Matches Reference UI) */}
-      <section className="md:hidden px-3.5 mb-3">
+      <section data-shop-controls="true" data-day-panel="true" className="md:hidden px-3.5 mb-3">
         {/* Search Bar */}
         <div className="relative w-full">
           <input
@@ -310,6 +310,7 @@ export default function Shop() {
             return (
               <button
                 key={cat.key}
+                data-day-panel="true"
                 data-selected={isSelected ? 'true' : 'false'}
                 onClick={() => {
                   triggerHaptic(8)
@@ -317,12 +318,8 @@ export default function Shop() {
                 }}
                 className={`rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? isNightDive
-                      ? 'bg-[#FFCD00] text-slate-900 shadow-sm border-2 border-white ring-1 ring-white/50 font-extrabold'
-                      : 'bg-[#FFCD00] text-slate-900 shadow-sm border-2 border-transparent'
-                    : isNightDive
-                      ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
-                      : 'bg-white text-slate-700 border border-slate-300/80 hover:bg-slate-50'
+                    ? 'bg-[#FFCD00] text-slate-900 shadow-sm border-2 border-transparent'
+                    : 'bg-white text-slate-700 border border-slate-300/80 hover:bg-slate-50'
                 }`}
               >
                 {cat.label}
@@ -333,11 +330,12 @@ export default function Shop() {
 
         {/* Product Count & Filter Button */}
         <div className="flex items-center justify-between mt-3.5 mb-1 px-0.5">
-          <span className="text-sm font-semibold text-slate-600">
+          <span className={`text-sm font-semibold transition-colors ${isNightDive ? 'text-white/80' : 'text-slate-600'}`}>
             Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
           </span>
           <button
             type="button"
+            data-day-panel="true"
             onClick={() => setIsFilterDrawerOpen(true)}
             className="rounded-xl border border-slate-300/80 bg-white px-3.5 py-1.5 flex items-center gap-1.5 text-xs font-bold text-slate-800 shadow-sm active:scale-95 transition cursor-pointer"
           >
@@ -428,6 +426,7 @@ export default function Shop() {
             return (
               <button
                 key={cat.key}
+                data-day-panel="true"
                 data-selected={isSelected ? 'true' : 'false'}
                 onClick={() => {
                   triggerHaptic(8)
@@ -435,12 +434,8 @@ export default function Shop() {
                 }}
                 className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? isNightDive
-                      ? 'bg-accent text-[#001e3d] shadow-md font-extrabold border-2 border-white ring-1 ring-white/50'
-                      : 'bg-accent text-[#001e3d] shadow-md font-extrabold border-2 border-transparent'
-                    : isNightDive
-                      ? 'bg-white/10 text-white border border-white/20 hover:bg-[#00223D] hover:border-white/40'
-                      : 'bg-white text-navy/70 border border-navy/10 hover:bg-[#003865] hover:text-white hover:border-[#003865]'
+                    ? 'bg-accent text-[#001e3d] shadow-md font-extrabold border-2 border-transparent'
+                    : 'bg-white text-navy/70 border border-navy/10 hover:bg-[#003865] hover:text-white hover:border-[#003865]'
                 }`}
               >
                 {cat.label}
@@ -452,7 +447,7 @@ export default function Shop() {
 
       {/* 3. PRODUCT LISTINGS */}
       <section className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-2 md:py-8">
-        <div className="hidden md:flex mb-6 justify-between items-center text-xs font-bold text-navy/60">
+        <div className={`hidden md:flex mb-6 justify-between items-center text-xs font-bold transition-colors ${isNightDive ? 'text-white/80' : 'text-navy/60'}`}>
           <span>Showing {filteredProducts.length} product{filteredProducts.length !== 1 && 's'}</span>
           {selectedCategory !== 'all' && (
             <button onClick={() => { setSelectedCategory('all'); setSearchQuery('') }} className="text-accent hover:underline">Clear filters</button>
@@ -551,9 +546,7 @@ export default function Shop() {
                         }}
                         className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
                           isSelected
-                            ? isNightDive
-                              ? 'bg-[#FFCD00] text-black shadow-sm border-2 border-white ring-1 ring-white/50'
-                              : 'bg-[#FFCD00] text-black shadow-sm border border-transparent'
+                            ? 'bg-[#FFCD00] text-black shadow-sm border border-transparent'
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
@@ -586,9 +579,7 @@ export default function Shop() {
                         }}
                         className={`rounded-xl px-3 py-2 text-xs font-semibold text-left border transition cursor-pointer ${
                           isSelected
-                            ? isNightDive
-                              ? 'border-2 border-white bg-[#FFCD00]/25 text-slate-900 font-bold ring-1 ring-white/50'
-                              : 'border-[#FFCD00] bg-[#FFCD00]/20 text-slate-900 font-bold'
+                            ? 'border-[#FFCD00] bg-[#FFCD00]/20 text-slate-900 font-bold'
                             : 'border-slate-200 bg-white text-slate-700'
                         }`}
                       >
@@ -631,6 +622,7 @@ export default function Shop() {
 }
 
 function GroupGallerySection() {
+  const isNightDive = useNightDive()
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null)
   const lenis = useLenis()
   const activeThumbRef = useRef(null)
@@ -716,10 +708,14 @@ function GroupGallerySection() {
         <span className="text-xs font-extrabold uppercase tracking-widest text-accent block mb-2">
           Community & Group Moments
         </span>
-        <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-navy tracking-tight mb-4">
+        <h2 className={`font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 transition-colors ${
+          isNightDive ? 'text-white' : 'text-navy'
+        }`}>
           The Dive Village Community
         </h2>
-        <p className="text-navy/70 text-sm sm:text-base leading-relaxed">
+        <p className={`text-sm sm:text-base leading-relaxed transition-colors ${
+          isNightDive ? 'text-white/80' : 'text-navy/70'
+        }`}>
           Behind every dive suit, expedition bag, and rash guard is a vibrant community of divers, ocean lovers, and adventurers exploring the deep blue together.
         </p>
       </div>
@@ -729,6 +725,7 @@ function GroupGallerySection() {
         {GROUP_PHOTOS.map((photo, idx) => (
           <div
             key={photo.id || idx}
+            data-day-panel="true"
             onClick={() => {
               triggerHaptic(8)
               setSelectedPhotoIndex(idx)

@@ -90,7 +90,7 @@ export default function Services() {
   })).filter(g => g.services.length > 0)
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-clip" style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-clip transition-colors duration-500 ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`} style={{ textShadow: 'none' }}>
       <SEOHead
         title="Scuba Diving & Ocean Services | Certified Courses, Snorkeling & Charters | The Dive Village"
         description="Explore professional scuba diving courses, certifications, guided snorkeling safaris, freediving, and bespoke dive charters at The Dive Village."
@@ -102,32 +102,39 @@ export default function Services() {
         {/* 1. HEADER */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div>
-            <span className="inline-block bg-black/5 rounded-full px-3.5 py-1 text-[11px] sm:text-xs font-bold text-navy/60 uppercase tracking-widest mb-3 sm:mb-4">
+            <span className={`inline-block rounded-full px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-3 sm:mb-4 transition-colors ${
+              isNightDive ? 'bg-white/10 text-white/90' : 'bg-black/5 text-navy/60'
+            }`}>
               What We Offer
             </span>
-            <h1 className="font-heading text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-navy leading-none">
+            <h1 className={`font-heading text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-none transition-colors ${
+              isNightDive ? 'text-white' : 'text-navy'
+            }`}>
               {activeTab === 'courses' ? 'Our Courses' : 'Our Services'}
             </h1>
           </div>
-          <p className="max-w-md text-sm sm:text-base lg:text-lg font-medium text-navy/70 leading-relaxed lg:pb-4">
+          <p className={`max-w-md text-sm sm:text-base lg:text-lg font-medium leading-relaxed lg:pb-4 transition-colors ${
+            isNightDive ? 'text-white/80' : 'text-navy/70'
+          }`}>
             From beginner certifications and reef safaris to full island logistics and gear rentals — everything you need for the ultimate ocean adventure.
           </p>
         </div>
 
-        {/* 2. CATEGORY FILTER TABS: 3 Categories in one line on mobile, flex wrap on desktop */}
+        {/* 2. CATEGORY FILTER TABS: Preserved in crisp day mode styling */}
         <div className="grid grid-cols-3 md:flex md:flex-wrap gap-2 md:gap-3 mb-10 sm:mb-16 border-b border-navy/10 pb-5 sm:pb-6">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.key}
+              data-day-panel="true"
               data-category-tab={cat.key}
               data-active={activeTab === cat.key ? 'true' : 'false'}
               onClick={() => handleTabChange(cat.key)}
               className={`group services-category-tab w-full md:w-auto rounded-xl md:rounded-full px-1.5 sm:px-3 md:px-5 py-2 md:py-2.5 text-[11px] xs:text-xs sm:text-sm font-bold text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${activeTab === cat.key
-                  ? `bg-navy text-white shadow-md border-2 ${isNightDive ? 'border-[#FFCD00]' : 'border-transparent'}`
-                  : `bg-white text-navy border ${isNightDive ? 'border-white/20 hover:!bg-navy hover:!text-white hover:border-white/40' : 'border-navy/15 hover:bg-navy/5'}`
+                  ? 'bg-navy text-white shadow-md border-2 border-transparent'
+                  : 'bg-white text-navy border border-navy/15 hover:bg-navy/5'
                 }`}
             >
-              <span className={`truncate ${isNightDive ? 'group-hover:!text-white' : ''}`}>{cat.label}</span>
+              <span className="truncate">{cat.label}</span>
             </button>
           ))}
         </div>
@@ -136,10 +143,14 @@ export default function Services() {
         {grouped.map((group, groupIndex) => (
           <div key={group.category.key} id={`category-${group.category.key}`} className="mb-14 sm:mb-24 scroll-mt-28">
             <div className="mb-6 sm:mb-10">
-              <span className="inline-block bg-black/5 rounded-full px-3 py-1 text-[10px] sm:text-xs font-bold text-navy/60 uppercase tracking-widest mb-2 sm:mb-3">
+              <span className={`inline-block rounded-full px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-2 sm:mb-3 transition-colors ${
+                isNightDive ? 'bg-white/10 text-white/90' : 'bg-black/5 text-navy/60'
+              }`}>
                 Category
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-navy leading-none">
+              <h2 className={`font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-none transition-colors ${
+                isNightDive ? 'text-white' : 'text-navy'
+              }`}>
                 {group.category.label}
               </h2>
             </div>
@@ -149,6 +160,8 @@ export default function Services() {
                 return (
                   <div
                     key={service.id}
+                    data-day-panel="true"
+                    data-service-card="true"
                     onClick={() => navigate(`/services/${service.id}`)}
                     className="group rounded-2xl sm:rounded-[32px] bg-white border border-navy/5 shadow-sm hover:shadow-float transition-[box-shadow,transform] duration-300 flex flex-col justify-between cursor-pointer overflow-hidden relative active:scale-[0.99] transform-gpu hover:will-change-transform"
                     style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 420px', contain: 'layout paint' }}
@@ -212,7 +225,7 @@ export default function Services() {
         ))}
 
         {/* 4. THE POWER OF DIVING */}
-        <div className="rounded-[40px] bg-[#F0F2F5] p-8 sm:p-14 mb-24">
+        <div data-day-panel="true" data-power-diving="true" className="rounded-[40px] bg-[#F0F2F5] p-8 sm:p-14 mb-24">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-navy/60 font-bold tracking-widest uppercase text-xs mb-3 block">Transformative Growth</span>
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-navy">The Power of Diving</h2>
@@ -243,8 +256,8 @@ export default function Services() {
             ].map((p) => (
               <div
                 key={p.num}
+                data-day-panel="true"
                 className="power-point-card bg-white rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col justify-between hover:-translate-y-1 transition duration-300"
-                style={isNightDive ? { borderColor: '#ffffff', borderWidth: '2px', borderStyle: 'solid' } : undefined}
               >
                 <div>
                   <div className="w-12 h-12 rounded-full bg-navy text-accent flex items-center justify-center mb-5 text-lg font-bold">

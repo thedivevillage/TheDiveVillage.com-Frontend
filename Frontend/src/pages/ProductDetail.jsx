@@ -485,7 +485,8 @@ export default function ProductDetail() {
               <div className="relative w-full">
                 {/* Swipeable Track */}
                 <div
-                  className="relative w-full aspect-[3/4] max-h-[560px] bg-[#F7F8F9] rounded-lg overflow-hidden border border-gray-150 touch-pan-y"
+                  style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                  className="relative w-full aspect-[3/4] max-h-[560px] bg-white rounded-lg overflow-hidden border border-gray-200 touch-pan-y"
                   onTouchStart={handleMobileTouchStart}
                   onTouchEnd={handleMobileTouchEnd}
                 >
@@ -1019,13 +1020,15 @@ export default function ProductDetail() {
                     <div
                       key={idx}
                       onClick={() => handleOpenModal(imgSrc, idx)}
-                      className="group relative aspect-[3/4] bg-[#F7F8F9] rounded-xs border border-gray-150 overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 flex items-center justify-center p-2 sm:p-4"
+                      style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                      className="group relative aspect-[3/4] bg-white rounded-xs border border-gray-200 overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 flex items-center justify-center p-2 sm:p-4"
                     >
                       {/* Product Image */}
                       <img
                         src={imgSrc}
                         alt={`${product.title} - ${label}`}
-                        className="w-full h-full object-contain transition-transform duration-500"
+                        style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                        className="w-full h-full object-contain transition-transform duration-500 bg-white"
                         loading={idx < 4 ? 'eager' : 'lazy'}
                       />
 
@@ -1577,11 +1580,12 @@ export default function ProductDetail() {
                 to={`/shop/${relProduct.id}`}
                 className="group flex flex-col bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition duration-200 p-2"
               >
-                <div className="aspect-[3/4] w-full bg-[#F7F8F9] rounded-xs overflow-hidden mb-2 relative flex items-center justify-center p-2">
+                <div style={{ backgroundColor: '#ffffff', background: '#ffffff' }} className="aspect-[3/4] w-full bg-white rounded-xs border border-gray-150 overflow-hidden mb-2 relative flex items-center justify-center p-2">
                   <img
                     src={relProduct.image}
                     alt={relProduct.title}
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 bg-white"
                   />
                 </div>
                 <span className="text-[9px] font-bold uppercase tracking-wider text-[#006666]">

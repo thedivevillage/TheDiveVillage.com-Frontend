@@ -1598,8 +1598,8 @@ export default function BookUs() {
       <div
         data-booking-page="true"
         data-booking-confirmation="true"
-        className="flex min-h-[85vh] flex-col items-center justify-center px-4 py-16 text-center bg-[#FAFAFA]"
-        style={{ backgroundColor: '#FAFAFA' }}
+        className={`flex min-h-[85vh] flex-col items-center justify-center px-4 py-16 text-center transition-colors duration-500 ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`}
+        style={{ backgroundColor: isNightDive ? '#003865' : '#FAFAFA' }}
       >
         <motion.div
           data-booking-page="true"
