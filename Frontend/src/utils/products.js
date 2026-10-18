@@ -137,7 +137,7 @@ export const SHOP_PRODUCTS = [
       '4-Way Stretch: Flexible fabric allows easy movement without restricting your mobility.',
       'Lightweight & Breathable: Lightweight fabric allows airflow and keeps you comfortable during extended wear.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -164,7 +164,7 @@ export const SHOP_PRODUCTS = [
       'Thigh-Smoothing Compression Panels: Designed to provide extra coverage and support.',
       'Full-Length Coverage: Offers extended protection and thermal comfort during water activities.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -190,7 +190,7 @@ export const SHOP_PRODUCTS = [
       'Built-In Chest Support: Integrated support cups provide added coverage and a secure, comfortable fit.',
       'All-Round Compression Fit: Engineered for maximum torso stability in active ocean conditions.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -216,7 +216,7 @@ export const SHOP_PRODUCTS = [
       'Hip-Friendly Waistband: Smooth waist construction helps reduce irritation during extended wear.',
       'Lightweight & Quick-Dry: Premium fast-drying fabric for seamless in-and-out of water transitions.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -242,7 +242,7 @@ export const SHOP_PRODUCTS = [
       'Quick-Dry Fabric: Dries fast after ocean immersion.',
       '4-Way Ultra Stretch: Maximum mobility underwater and on land.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -268,7 +268,7 @@ export const SHOP_PRODUCTS = [
       'Thermal Regulation: Breathable technical fabric balances core temperature.',
       'Durable flatlock stitching for maximum seam endurance.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -285,7 +285,7 @@ export const SHOP_PRODUCTS = [
     oldPrice: 8999,
     image: imgSkinSuitFront,
     images: [imgSkinSuitFront, imgSkinSuitBack, imgSkinSuitYellow1, imgSkinSuitYellow2, imgSkinSuitYellow3, imgSkinSuitGreyFront, imgSkinSuitGreyBack, imgSkinSuitGrey1, imgSkinSuitGrey2],
-    imageLabels: ['Front', 'Back', 'Yellow View 1', 'Yellow View 2', 'Yellow View 3', 'Grey Front', 'Grey Back', 'Grey View 1', 'Grey View 2'],
+    imageLabels: ['Front (Yellow)', 'Back (Yellow)', 'Yellow View 1', 'Yellow View 2', 'Yellow View 3', 'Grey Front', 'Grey Back', 'Grey View 1', 'Grey View 2'],
     glb: glbFullBodySkinYellow,
     glbByColor: {
       'Black / Yellow': glbFullBodySkinYellow,
@@ -298,10 +298,26 @@ export const SHOP_PRODUCTS = [
       'Front Zip Closure: Heavy-duty front zipper for easy entry.',
       'Stirrup Foot Straps: Keeps ankles covered and prevents suit ride-up.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
-      { name: 'Black / Yellow', hex: '#111111', hex2: '#EAB308' },
-      { name: 'Black / Light Grey', hex: '#111111', hex2: '#D1D5DB' }
+      { 
+        name: 'Black / Yellow', 
+        label: 'Yellow', 
+        hex: '#111111', 
+        hex2: '#EAB308', 
+        image: imgSkinSuitFront,
+        images: [imgSkinSuitFront, imgSkinSuitBack, imgSkinSuitYellow1, imgSkinSuitYellow2, imgSkinSuitYellow3],
+        imageLabels: ['Front', 'Back', 'Yellow View 1', 'Yellow View 2', 'Yellow View 3']
+      },
+      { 
+        name: 'Black / Light Grey', 
+        label: 'Grey', 
+        hex: '#111111', 
+        hex2: '#D1D5DB', 
+        image: imgSkinSuitGreyFront,
+        images: [imgSkinSuitGreyFront, imgSkinSuitGreyBack, imgSkinSuitGrey1, imgSkinSuitGrey2],
+        imageLabels: ['Front', 'Back', 'Grey View 1', 'Grey View 2']
+      }
     ],
     stock: 12,
     stockStatus: 'Low Stock',
@@ -324,7 +340,7 @@ export const SHOP_PRODUCTS = [
       '3mm Super-Stretch Neoprene: Optimum thermal insulation and flexibility.',
       'Anatomical Cut: Reduces water flushing and enhances mobility.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],
@@ -349,7 +365,7 @@ export const SHOP_PRODUCTS = [
       '2mm Flex Neoprene: Easy movement for upper arms and thighs.',
       'Corrosion-resistant heavy duty zip.'
     ],
-    sizes: ['(S-M)', '(L-XXL)'],
+    sizes: ['XS - M', 'L -XXL'],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],

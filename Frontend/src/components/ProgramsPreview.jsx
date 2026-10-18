@@ -24,6 +24,7 @@ const PROGRAMS = [
     desc: 'Perfect for first-timers. Experience scuba safely in shallow water with professional 1-on-1 supervision.',
     img: CAROUSEL_IMAGES[0],
     video: tryDiveVid,
+    previewVideo: '/media/TDV-Media/Services/previews/prog_try_dive_preview.mp4',
     link: '/services',
     btnText: 'Explore Services',
   },
@@ -87,6 +88,9 @@ function Card({ program }) {
         {program.video ? (
           <LazyVideo
             src={program.video}
+            lowResSrc={program.previewVideo}
+            priority={true}
+            preload="auto"
             autoPlay
             loop
             muted

@@ -159,7 +159,7 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     background-color: #001e3d !important;
     -webkit-tap-highlight-color: transparent !important;
     -webkit-text-size-adjust: 100%;
@@ -167,6 +167,34 @@
     overflow-y: scroll;
     scrollbar-gutter: stable;
     transition: font-size 0.2s ease-out;
+  }
+
+  /* --- OFFICIAL LENIS SMOOTH SCROLL INTEGRATION --- */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-smooth iframe {
+    pointer-events: none;
+  }
+
+  /* Hover-jank suppression: disable hover style recalculations during active scrolling */
+  body.is-scrolling,
+  body.is-scrolling * {
+    pointer-events: none !important;
   }
 
   *,
@@ -730,17 +758,17 @@ body.night-dive #root,
 }
 
 /* Night Dive mode background is #003865 */
-.night-dive [class*="bg-[#FAFAFA]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#F8FAFC]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#f0f9ff]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#0b1726]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-[#030a12]"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea) {
+.night-dive [class*="bg-[#FAFAFA]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#F8FAFC]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#f0f9ff]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#0b1726]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-[#030a12]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not(input):not(select):not(textarea) {
   background-color: #003865 !important;
   color: #ffffff !important;
 }
 
 /* Primary surface cards, panels & modals in Night Dive Mode */
-.night-dive [class*="bg-white"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not([data-product-media]):not([data-product-media] *):not([data-product-showcase]):not([data-product-showcase] *):not(.product-media-panel):not(.product-media-panel *):not(.product-3d-wrapper):not(.product-3d-wrapper *):not([data-floating-image-card]):not([data-floating-image-card] *):not(model-viewer):not(model-viewer *):not(.hero-btn):not(input):not(select):not(textarea):not(button):not(button *):not(a.btn):not(a[class*="rounded"]):not(a[role="button"]),
+.night-dive [class*="bg-white"]:not([data-gallery-modal]):not([data-gallery-modal] *):not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card]):not([data-product-card] *):not([data-product-media]):not([data-product-media] *):not([data-product-showcase]):not([data-product-showcase] *):not(.product-media-panel):not(.product-media-panel *):not(.product-3d-wrapper):not(.product-3d-wrapper *):not([data-floating-image-card]):not([data-floating-image-card] *):not(model-viewer):not(model-viewer *):not(.hero-btn):not(input):not(select):not(textarea):not(button):not(button *):not(a.btn):not(a[class*="rounded"]):not(a[role="button"]),
 .night-dive aside nav {
   background-color: #001e3d !important;
   color: #ffffff !important;
@@ -748,54 +776,54 @@ body.night-dive #root,
 }
 
 /* Sub-cards, metrics, widgets, empty states & table rows */
-.night-dive [class*="bg-slate-50"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-slate-100"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-gray-50"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
-.night-dive [class*="bg-gray-100"]:not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea) {
+.night-dive [class*="bg-slate-50"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-slate-100"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-gray-50"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea),
+.night-dive [class*="bg-gray-100"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not(input):not(select):not(textarea) {
   background-color: #002747 !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Remove box or panel shadows in Night Dive */
-.night-dive .shadow-card:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-lift:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-float:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-xs:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-sm:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-md:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-lg:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-xl:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-2xl:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow-2xs:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .shadow:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="shadow"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="drop-shadow"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive .card:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="card"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="panel"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="box"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive dialog:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [role="dialog"]:not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-card:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-lift:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-float:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-xs:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-sm:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-md:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-lg:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-xl:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-2xl:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow-2xs:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .shadow:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="shadow"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="drop-shadow"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive .card:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="card"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="panel"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="box"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive dialog:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [role="dialog"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
 .night-dive aside,
 .night-dive section>div[class*="rounded"] {
   box-shadow: none !important;
 }
 
 /* Headings and high-contrast text elements (excluded inside product cards, white backgrounds, and booking page) */
-.night-dive h1:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
-.night-dive h2:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
-.night-dive h3:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-title),
-.night-dive h4:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
-.night-dive h5:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
-.night-dive h6:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
-.night-dive [class*="text-slate-900"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
-.night-dive [class*="text-slate-800"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
-.night-dive [class*="text-slate-700"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
-.night-dive [class*="text-gray-900"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
-.night-dive [class*="text-gray-800"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
-.night-dive [class*="text-navy"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-title):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
-.night-dive [class*="text-[#003865]"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *) {
+.night-dive h1:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h2:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h3:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-title),
+.night-dive h4:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h5:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive h6:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *),
+.night-dive [class*="text-slate-900"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-slate-800"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-slate-700"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-900"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-gray-800"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-navy"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(.product-card-title):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *),
+.night-dive [class*="text-[#003865]"]:not([data-product-subpage] *):not([data-product-subpage]):not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-white-bg] *):not([style*="#ffffff"] *):not(button[class*="bg-white"]):not(button[class*="bg-white"] *):not(button[class*="F0F2F5"]):not(button[class*="F0F2F5"] *):not(a[class*="bg-white"]):not(a[class*="bg-white"] *) {
   color: #ffffff !important;
 }
 
@@ -813,6 +841,68 @@ body.night-dive #root,
 .night-dive [class*="text-[#00AEC7]"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-product-card]):not([data-white-bg] *):not([style*="#ffffff"] *),
 .night-dive [class*="text-accent"]:not([data-booking-page] *):not([data-booking-page]):not([data-product-card] *):not([data-product-card]):not([data-white-bg] *):not([style*="#ffffff"] *) {
   color: #FFCD00 !important;
+}
+
+/* Gallery Lightbox Modal - Always Clean White (Souled Store / Modern E-Commerce Style) */
+.night-dive [data-gallery-modal] .gallery-preview-modal,
+[data-gallery-modal] .gallery-preview-modal {
+  background-color: #ffffff !important;
+  color: #171717 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  border-color: #f3f4f6 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-nav-arrow,
+[data-gallery-modal] .gallery-nav-arrow {
+  background-color: #ffffff !important;
+  color: #374151 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14) !important;
+  border-color: #f3f4f6 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-nav-arrow:hover,
+[data-gallery-modal] .gallery-nav-arrow:hover {
+  background-color: #f9fafb !important;
+  color: #000000 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-close-btn,
+[data-gallery-modal] .gallery-close-btn {
+  background-color: #5f6368 !important;
+  color: #ffffff !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-close-btn:hover,
+[data-gallery-modal] .gallery-close-btn:hover {
+  background-color: #3c4043 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-thumb-active,
+[data-gallery-modal] .gallery-thumb-active {
+  border-color: #000000 !important;
+  opacity: 1 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-thumb-inactive,
+[data-gallery-modal] .gallery-thumb-inactive {
+  border-color: #e5e7eb !important;
+  opacity: 0.65 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-thumb-inactive:hover,
+[data-gallery-modal] .gallery-thumb-inactive:hover {
+  border-color: #9ca3af !important;
+  opacity: 1 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-title-text,
+[data-gallery-modal] .gallery-title-text {
+  color: #171717 !important;
+}
+
+.night-dive [data-gallery-modal] .gallery-counter-text,
+[data-gallery-modal] .gallery-counter-text {
+  color: #9ca3af !important;
 }
 
 /* Borders */
@@ -2309,84 +2399,84 @@ body.night-dive [class*="text-[#001e3d]"]:not([data-booking-page]):not([data-boo
 body.night-dive [class*="text-[#001428]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
 body.night-dive [class*="text-[#003865]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
 body.night-dive [class*="text-[#00223D]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-navy"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-slate-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-gray-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-zinc-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-neutral-"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-black"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#001e3d]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#001428]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#003865]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive [class*="text-[#00223D]"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *) {
+.night-dive [class*="text-navy"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-slate-"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-gray-"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-zinc-"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-neutral-"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-black"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#001e3d]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#001428]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#003865]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive [class*="text-[#00223D]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *) {
   color: #ffffff !important;
 }
 
 /* B. All typography on dark containers become crisp white */
-body.night-dive h1:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h2:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h3:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h4:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h5:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive h6:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive p:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive label:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive li:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive dt:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive dd:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive th:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive td:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-body.night-dive span:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
-body.night-dive a:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
-body.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
-.night-dive h1:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h2:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h3:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h4:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h5:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive h6:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive p:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive label:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive li:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive dt:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive dd:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive th:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive td:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
-.night-dive span:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
-.night-dive a:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
-.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover) {
+body.night-dive h1:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h2:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h3:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h4:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h5:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive h6:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive p:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive label:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive li:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive dt:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive dd:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive th:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive td:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+body.night-dive span:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
+body.night-dive a:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+body.night-dive button:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+.night-dive h1:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h2:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h3:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h4:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h5:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive h6:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive p:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive label:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive li:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive dt:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive dd:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive th:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive td:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *),
+.night-dive span:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not([class*="bg-accent"]):not(.bg-accent):not([class*="bg-emerald"]):not([class*="bg-red"]):not(.switch__icon *),
+.night-dive a:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover),
+.night-dive button:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *):not([data-bg-white] *):not(.booking-confirmation-ticket *):not(.sizing-table-header *):not([class*="text-accent"]):not(.text-accent):not([class*="text-[#FF"]):not([class*="text-emerald"]):not([class*="text-green"]):not([class*="text-red"]):not([class*="text-cyan"]):not([class*="text-sky"]):not(.btn-primary:hover):not(.hero-btn:hover):not(#main-toolbar button:hover):not(#main-toolbar a:hover) {
   color: #ffffff !important;
 }
 
 /* C. Secondary / Muted subtext on dark background */
-body.night-dive [class*="text-navy/70"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-navy/80"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-navy/60"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-navy/50"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-slate-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-slate-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-slate-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-gray-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-gray-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-body.night-dive [class*="text-gray-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-navy/70"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-navy/80"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-navy/60"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-navy/50"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-slate-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-slate-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-slate-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-gray-600"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-gray-500"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
-.night-dive [class*="text-gray-400"]:not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *) {
+body.night-dive [class*="text-navy/70"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-navy/80"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-navy/60"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-navy/50"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-slate-600"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-slate-500"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-slate-400"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-gray-600"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-gray-500"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+body.night-dive [class*="text-gray-400"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/70"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/80"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/60"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-navy/50"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-slate-600"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-slate-500"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-slate-400"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-gray-600"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-gray-500"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *),
+.night-dive [class*="text-gray-400"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not([data-product-card] *) {
   color: rgba(255, 255, 255, 0.82) !important;
 }
 
 /* D. Icon circles and sub-widgets on dark cards */
-.night-dive [class*="bg-navy/5"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="bg-navy/10"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="bg-navy/[0.04]"]:not([data-booking-page]):not([data-booking-page] *),
-.night-dive [class*="bg-[#F0F2F5]"]:not([data-booking-page]):not([data-booking-page] *):not(form *):not(input):not(select):not(textarea):not(.PhoneInput):not(.PhoneInput *) {
+.night-dive [class*="bg-navy/5"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="bg-navy/10"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="bg-navy/[0.04]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *),
+.night-dive [class*="bg-[#F0F2F5]"]:not([data-product-subpage]):not([data-product-subpage] *):not([data-booking-page]):not([data-booking-page] *):not(form *):not(input):not(select):not(textarea):not(.PhoneInput):not(.PhoneInput *) {
   background-color: rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
@@ -2611,3 +2701,269 @@ body.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* ==========================================================================
+   PRODUCT SUBPAGE E-COMMERCE STYLES (THE SOULED STORE FORMAT)
+   ========================================================================== */
+.size-strike {
+  position: relative;
+  overflow: hidden;
+}
+
+.size-strike::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top right, transparent calc(50% - 1px), #9ca3af calc(50% - 1px), #9ca3af calc(50% + 1px), transparent calc(50% + 1px));
+  pointer-events: none;
+}
+
+/* Bulletproof isolation for product subpages to match The Souled Store layout exactly */
+[data-product-subpage],
+body [data-product-subpage],
+main [data-product-subpage],
+.night-dive [data-product-subpage],
+.night-dive main [data-product-subpage] {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+[data-product-subpage] h1,
+main [data-product-subpage] h1,
+.night-dive [data-product-subpage] h1,
+.night-dive main [data-product-subpage] h1 {
+  color: #111827 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Google Sans Flex", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+[data-product-subpage] h2,
+main [data-product-subpage] h2,
+.night-dive [data-product-subpage] h2,
+.night-dive main [data-product-subpage] h2 {
+  color: #111827 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Google Sans Flex", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+[data-product-subpage] h3,
+main [data-product-subpage] h3,
+.night-dive [data-product-subpage] h3,
+.night-dive main [data-product-subpage] h3 {
+  color: #111827 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Google Sans Flex", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+[data-product-subpage] h4,
+main [data-product-subpage] h4,
+.night-dive [data-product-subpage] h4,
+.night-dive main [data-product-subpage] h4 {
+  color: #111827 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Google Sans Flex", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+}
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+[data-product-subpage] p,
+main [data-product-subpage] p,
+.night-dive [data-product-subpage] p,
+.night-dive main [data-product-subpage] p {
+  color: #4b5563 !important;
+}
+
+[data-product-subpage] nav,
+[data-product-subpage] nav a,
+[data-product-subpage] nav span {
+  color: #6b7280 !important;
+}
+
+[data-product-subpage] nav a:hover {
+  color: #111827 !important;
+}
+
+[data-product-subpage] span:not(.btn-view-3d):not(.btn-view-3d *):not([class*="text-[#e11b22]"]):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="bg-emerald"]):not([class*="text-[#006666]"]),
+main [data-product-subpage] span:not(.btn-view-3d):not(.btn-view-3d *):not([class*="text-[#e11b22]"]):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="bg-emerald"]):not([class*="text-[#006666]"]),
+.night-dive [data-product-subpage] span:not(.btn-view-3d):not(.btn-view-3d *):not([class*="text-[#e11b22]"]):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="bg-emerald"]):not([class*="text-[#006666]"]),
+.night-dive main [data-product-subpage] span:not(.btn-view-3d):not(.btn-view-3d *):not([class*="text-[#e11b22]"]):not([class*="text-emerald"]):not([class*="text-red"]):not([class*="bg-emerald"]):not([class*="text-[#006666]"]) {
+  color: #1f2937 !important;
+}
+
+[data-product-subpage] span[class*="text-[#e11b22]"],
+.night-dive [data-product-subpage] span[class*="text-[#e11b22]"] {
+  color: #e11b22 !important;
+}
+
+[data-product-subpage] .product-price,
+.night-dive [data-product-subpage] .product-price {
+  color: #111827 !important;
+}
+
+[data-product-subpage] .size-btn,
+.night-dive [data-product-subpage] .size-btn {
+  color: #1f2937 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+[data-product-subpage] .size-btn-selected,
+.night-dive [data-product-subpage] .size-btn-selected {
+  color: #111827 !important;
+  border-color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+[data-product-subpage] .size-btn-disabled,
+.night-dive [data-product-subpage] .size-btn-disabled {
+  color: #9ca3af !important;
+  background-color: #f9fafb !important;
+  border-color: #e5e7eb !important;
+}
+
+[data-product-subpage] .size-chart-link,
+.night-dive [data-product-subpage] .size-chart-link {
+  color: #006666 !important;
+}
+
+[data-product-subpage] .pincode-input,
+.night-dive [data-product-subpage] .pincode-input,
+body [data-product-subpage] input,
+.night-dive [data-product-subpage] input {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+[data-product-subpage] .pincode-check-btn,
+.night-dive [data-product-subpage] .pincode-check-btn {
+  color: #006666 !important;
+  background-color: transparent !important;
+}
+
+[data-product-subpage] .wishlist-btn,
+.night-dive [data-product-subpage] .wishlist-btn {
+  color: #1f2937 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+body [data-product-subpage] .bg-white,
+.night-dive [data-product-subpage] .bg-white,
+[data-product-subpage] [class*="bg-white"],
+.night-dive [data-product-subpage] [class*="bg-white"] {
+  background-color: #ffffff !important;
+}
+
+body [data-product-subpage] .bg-\[\#F7F8F9\],
+.night-dive [data-product-subpage] .bg-\[\#F7F8F9\],
+[data-product-subpage] .bg-\[\#F7F8F9\] {
+  background-color: #f7f8f9 !important;
+}
+
+body [data-product-subpage] select,
+.night-dive [data-product-subpage] select,
+[data-product-subpage] select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+body [data-product-subpage] select option,
+.night-dive [data-product-subpage] select option,
+[data-product-subpage] select option {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+body [data-product-subpage] .btn-add-to-cart-yellow,
+.night-dive [data-product-subpage] .btn-add-to-cart-yellow,
+[data-product-subpage] .btn-add-to-cart-yellow {
+  background-color: #FFCD00 !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+body [data-product-subpage] .btn-add-to-cart-yellow:hover,
+.night-dive [data-product-subpage] .btn-add-to-cart-yellow:hover,
+[data-product-subpage] .btn-add-to-cart-yellow:hover {
+  background-color: #FFD700 !important;
+  color: #000000 !important;
+}
+
+body [data-product-subpage] .btn-add-to-cart-yellow *,
+.night-dive [data-product-subpage] .btn-add-to-cart-yellow *,
+[data-product-subpage] .btn-add-to-cart-yellow * {
+  color: #000000 !important;
+}
+
+/* View in 3D Button - Big and Yellow */
+body [data-product-subpage] .btn-view-3d-yellow,
+.night-dive [data-product-subpage] .btn-view-3d-yellow,
+[data-product-subpage] .btn-view-3d-yellow {
+  background-color: #FFCD00 !important;
+  color: #030a12 !important;
+  border-color: #e6b800 !important;
+}
+
+body [data-product-subpage] .btn-view-3d-yellow:hover,
+.night-dive [data-product-subpage] .btn-view-3d-yellow:hover,
+[data-product-subpage] .btn-view-3d-yellow:hover {
+  background-color: #ffb700 !important;
+  border-color: #cca300 !important;
+}
+
+body [data-product-subpage] .btn-view-3d-yellow span,
+.night-dive [data-product-subpage] .btn-view-3d-yellow span,
+[data-product-subpage] .btn-view-3d-yellow span {
+  color: #030a12 !important;
+}
+
+body [data-product-subpage] .btn-view-3d-yellow svg,
+.night-dive [data-product-subpage] .btn-view-3d-yellow svg,
+[data-product-subpage] .btn-view-3d-yellow svg {
+  stroke: #030a12 !important;
+}
+
+body [data-product-subpage] .btn-view-3d-active,
+.night-dive [data-product-subpage] .btn-view-3d-active,
+[data-product-subpage] .btn-view-3d-active {
+  background-color: #111827 !important;
+  color: #FFCD00 !important;
+  border-color: #FFCD00 !important;
+}
+
+body [data-product-subpage] .btn-view-3d-active span,
+.night-dive [data-product-subpage] .btn-view-3d-active span,
+[data-product-subpage] .btn-view-3d-active span {
+  color: #FFCD00 !important;
+}
+
+body [data-product-subpage] .btn-view-3d-active svg,
+.night-dive [data-product-subpage] .btn-view-3d-active svg,
+[data-product-subpage] .btn-view-3d-active svg {
+  stroke: #FFCD00 !important;
+}
+
+/* Lightbox Modal window and background blur */
+[data-product-modal-backdrop] {
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+}
+
+[data-product-modal-dialog],
+.night-dive [data-product-modal-dialog],
+main [data-product-modal-dialog],
+.night-dive main [data-product-modal-dialog] {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+
+
+

@@ -220,6 +220,7 @@ export default function GalleryPreview() {
                   loop
                   playsInline
                   autoPlay
+                  zoom={item.zoom || 1}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
                 />
               ) : (
@@ -227,7 +228,6 @@ export default function GalleryPreview() {
                   src={item.src}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
-                  loading="lazy"
                   draggable={false}
                 />
               )}

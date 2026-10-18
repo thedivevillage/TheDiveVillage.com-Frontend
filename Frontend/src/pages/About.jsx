@@ -15,10 +15,10 @@ const founderVideo = '/media/TDV-Media/About/Founder.mp4'
 import useNightDive from '../hooks/useNightDive'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
-const certifiedCoursesImg = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp', { width: 640 })
-const introProgImg = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691278/TDV-Media/ServicesThumbnails/Introductory%20Programs.webp', { width: 640 })
-const freeDivingImg = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691291/TDV-Media/ServicesThumbnails/Free%20Diving.webp', { width: 640 })
-const flexibleFunDivesImg = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691298/TDV-Media/ServicesThumbnails/Flexible%20Fun%20Dives.webp', { width: 640 })
+const certifiedCoursesImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691284/TDV-Media/ServicesThumbnails/Certified%20Courses.webp'
+const introProgImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691278/TDV-Media/ServicesThumbnails/Introductory%20Programs.webp'
+const freeDivingImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691291/TDV-Media/ServicesThumbnails/Free%20Diving.webp'
+const flexibleFunDivesImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691298/TDV-Media/ServicesThumbnails/Flexible%20Fun%20Dives.webp'
 
 const SAFETY_PROMISES = [
   {

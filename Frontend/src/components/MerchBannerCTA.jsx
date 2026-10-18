@@ -4,13 +4,13 @@ import useNightDive from '../hooks/useNightDive'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
 const rawBannerImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791686007/TDV-Media/Merch/banner.jpg'
-const bannerImg = getOptimizedImageUrl(rawBannerImg, { width: 1400, quality: 'auto:good' })
+const bannerImg = rawBannerImg
 
 const rawPop1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458274/TDV-Media/Products/pop1.webp'
-const pop1 = getOptimizedImageUrl(rawPop1, { width: 320, quality: 'auto:good' })
+const pop1 = rawPop1
 
 const rawPop2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458275/TDV-Media/Products/pop2.webp'
-const pop2 = getOptimizedImageUrl(rawPop2, { width: 320, quality: 'auto:good' })
+const pop2 = rawPop2
 
 export default function MerchBannerCTA({ className = '' }) {
   const isNightDive = useNightDive()

@@ -12,10 +12,15 @@ import Preloader from './components/Preloader'
 import ScrollToTop from './components/ScrollToTop'
 import SmoothScroll from './components/SmoothScroll'
 
+import { initIdlePrefetching } from './utils/routePrefetcher'
 import ErrorBoundary from './components/ErrorBoundary'
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    initIdlePrefetching()
+  }, [])
 
   return (
     <ErrorBoundary>

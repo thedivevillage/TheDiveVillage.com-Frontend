@@ -108,6 +108,8 @@ export default function ServiceDetail() {
               muted
               playsInline
               preload="auto"
+              zoom={service?.zoom || ((service?.id === 'course-4' || service?.id === 'combo-fundives' || service?.title?.toLowerCase().includes('adventure diver') || service?.title?.toLowerCase().includes('fun dive')) ? 3.16 : 1)}
+              zoomOrigin={service?.zoomOrigin || (service?.id === 'combo-fundives' || service?.title?.toLowerCase().includes('fun dive') ? 'center 75%' : 'center center')}
               onPlay={(e) => { e.currentTarget.playbackRate = 0.75 }}
               className="w-full h-full object-cover object-center transition-all duration-700"
             />
@@ -295,6 +297,8 @@ export default function ServiceDetail() {
                             loop={true}
                             muted={true}
                             playsInline={true}
+                            zoom={pkg.zoom || ((pkg.id === 'course-4' || pkg.id === 'combo-fundives' || pkg.title?.toLowerCase().includes('adventure diver') || pkg.title?.toLowerCase().includes('fun dive')) ? 2.95 : 1)}
+                            zoomOrigin={pkg.zoomOrigin || (pkg.id === 'combo-fundives' || pkg.title?.toLowerCase().includes('fun dive') ? 'center 75%' : 'center center')}
                             className="absolute inset-0 w-full h-full object-cover object-center"
                           />
                         ) : (

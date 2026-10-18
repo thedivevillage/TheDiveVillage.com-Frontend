@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 const rawLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
-const LogoImg = getOptimizedImageUrl(rawLogoImg, { width: 160 })
+const LogoImg = rawLogoImg
 
 export default function Logo({ className = '', compact = false, light = false }) {
   return (
@@ -15,7 +15,6 @@ export default function Logo({ className = '', compact = false, light = false })
         alt="The Dive Village" 
         width="36"
         height="36"
-        loading="eager"
         decoding="async"
         className={`h-9 w-auto object-contain transition duration-hover group-hover:scale-105 ${light ? 'invert brightness-0' : ''}`} 
       />

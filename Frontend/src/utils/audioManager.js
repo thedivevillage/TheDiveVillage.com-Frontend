@@ -223,10 +223,16 @@ class AudioManager {
             this.showMediaNotification()
             this.notify()
           }).catch((err) => {
-            if (err?.name !== 'NotAllowedError') {
-              console.warn('[AudioManager] Resumption blocked by browser policy:', err)
+            if (err?.name === 'AbortError') {
+              // Normal interruption when play() is superseded by a pause()
+              return
             }
-            // Re-arm gesture listeners so next tap/scroll/cursor instantly restores
+            if (err?.name === 'NotAllowedError') {
+              // Re-arm gesture listeners so next tap/scroll/cursor instantly restores
+              this.attachResumeOnGesture()
+              return
+            }
+            console.warn('[AudioManager] Resumption blocked:', err)
             this.attachResumeOnGesture()
           })
         } else {
@@ -376,6 +382,7 @@ class AudioManager {
           this.showMediaNotification()
           this.notify()
         }).catch((e) => {
+          if (e?.name === 'AbortError') return
           console.warn('[AudioManager] Unmute play blocked:', e)
         })
       } else {

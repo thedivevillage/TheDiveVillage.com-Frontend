@@ -157,8 +157,8 @@ export default function Preloader({ onComplete }) {
   }, [])
 
   useEffect(() => {
-    const maxSafetyTimeout = 1800 // Hard safety cap guaranteeing preloader finishes within 2.0s
-    const baseTargetDuration = 1400 // Smooth progress duration (~1.4s)
+    const maxSafetyTimeout = 3000 // Hard safety cap guaranteeing preloader finishes within 3 seconds
+    const baseTargetDuration = 2200 // Smooth progress duration (~2.2s)
     let animationFrameId
     let completed = false
     let firstFrameTime = null
@@ -173,21 +173,22 @@ export default function Preloader({ onComplete }) {
       }
 
       const elapsed = currentTime - firstFrameTime
-      const isFullyReady = (isVideoReadyRef.current && isWebGLReadyRef.current) || elapsed >= maxSafetyTimeout
+      const isVideoLoaded = isVideoReadyRef.current
+      const isFullyReady = (isVideoLoaded && (isWebGLReadyRef.current || elapsed >= 1800)) || elapsed >= maxSafetyTimeout
 
       let targetProgress
       if (elapsed >= maxSafetyTimeout) {
         targetProgress = 100
       } else if (isFullyReady) {
-        // Smoothly progress to 100%
+        // Background video and WebGL ready: smoothly glide to 100%
         targetProgress = Math.min(100, (elapsed / baseTargetDuration) * 100)
       } else {
-        // Smoothly ease up to 90% while waiting for assets
-        targetProgress = Math.min(90, (elapsed / maxSafetyTimeout) * 90)
+        // Smoothly ease up to 88% while waiting for video to load in DOM
+        targetProgress = Math.min(88, (elapsed / maxSafetyTimeout) * 88)
       }
 
       // Smooth step: strictly start at 0 and smoothly increment without jumping to higher values
-      const maxStepPerFrame = 2.5
+      const maxStepPerFrame = 2.2
       currentProgress = Math.min(targetProgress, currentProgress + maxStepPerFrame)
 
       if (targetProgress >= 100 && (elapsed >= maxSafetyTimeout || currentProgress >= 98)) {
@@ -203,7 +204,7 @@ export default function Preloader({ onComplete }) {
         } catch (_) {}
         setTimeout(() => {
           if (onComplete) onComplete()
-        }, 200)
+        }, 180)
         return
       }
 

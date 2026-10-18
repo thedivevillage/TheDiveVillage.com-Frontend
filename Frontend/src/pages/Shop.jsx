@@ -15,12 +15,12 @@ import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
 const rawBannerImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791686007/TDV-Media/Merch/banner.jpg'
-const bannerImg = getOptimizedImageUrl(rawBannerImg, { width: 1400, quality: 'auto:good' })
+const bannerImg = rawBannerImg
 
 const rawPop1Local = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458274/TDV-Media/Products/pop1.webp'
 const rawPop2Local = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458275/TDV-Media/Products/pop2.webp'
-const pop1 = getOptimizedImageUrl(rawPop1Local, { width: 320, quality: 'auto:good' })
-const pop2 = getOptimizedImageUrl(rawPop2Local, { width: 320, quality: 'auto:good' })
+const pop1 = rawPop1Local
+const pop2 = rawPop2Local
 
 const CATEGORIES = [
   { key: 'all', label: 'All Merchandise' },
@@ -257,8 +257,8 @@ export default function Shop() {
               className="mobile-sort-select w-full appearance-none rounded-2xl border border-slate-300/80 bg-white pl-3 pr-7 h-[42px] font-semibold text-slate-800 shadow-sm focus:outline-none cursor-pointer truncate"
             >
               <option value="featured" style={{ fontSize: '11px' }}>Featured / Newest</option>
-              <option value="price-low" style={{ fontSize: '11px' }}>Price: Low to High</option>
-              <option value="price-high" style={{ fontSize: '11px' }}>Price: High to Low</option>
+              {/* <option value="price-low" style={{ fontSize: '11px' }}>Price: Low to High</option> */}
+              {/* <option value="price-high" style={{ fontSize: '11px' }}>Price: High to Low</option> */}
               <option value="rating" style={{ fontSize: '11px' }}>Highest Rated</option>
             </select>
             <svg className="pointer-events-none absolute right-2.5 top-3.5 h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -382,8 +382,8 @@ export default function Shop() {
               className="rounded-full border border-navy/15 md:border-white/20 bg-[#F0F2F5] md:bg-[#00223D]/80 pl-4 pr-10 py-2.5 text-xs sm:text-sm font-bold text-navy md:text-white focus:border-navy/15 md:focus:border-white/20 focus:outline-none focus:ring-0 transition cursor-pointer"
             >
               <option value="featured" className="text-navy bg-white md:bg-[#00223D] md:text-white">Featured / Newest</option>
-              <option value="price-low" className="text-navy bg-white md:bg-[#00223D] md:text-white">Price: Low to High</option>
-              <option value="price-high" className="text-navy bg-white md:bg-[#00223D] md:text-white">Price: High to Low</option>
+              {/* <option value="price-low" className="text-navy bg-white md:bg-[#00223D] md:text-white">Price: Low to High</option> */}
+              {/* <option value="price-high" className="text-navy bg-white md:bg-[#00223D] md:text-white">Price: High to Low</option> */}
               <option value="rating" className="text-navy bg-white md:bg-[#00223D] md:text-white">Highest Rated</option>
             </select>
 
@@ -569,8 +569,8 @@ export default function Shop() {
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { val: 'featured', label: 'Featured / Newest' },
-                    { val: 'price-low', label: 'Price: Low to High' },
-                    { val: 'price-high', label: 'Price: High to Low' },
+                    // { val: 'price-low', label: 'Price: Low to High' },
+                    // { val: 'price-high', label: 'Price: High to Low' },
                     { val: 'rating', label: 'Highest Rated' },
                   ].map((opt) => {
                     const isSelected = sortBy === opt.val
@@ -725,7 +725,6 @@ function GroupGallerySection() {
               src={photo.src}
               alt="Community Photo"
               className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
-              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-3" />
           </div>
@@ -934,59 +933,111 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
             })
           }
 
-          // Deep recursive traversal across all Three.js materials
+          // Safe traversal across Three.js materials
           const visited = new Set()
           const threeMaterials = new Set()
 
+          const FORBIDDEN_KEYS = new Set([
+            'ref', 'key', '_owner', '_store', 'children',
+            'stateNode', 'memoizedProps', 'pendingProps', 'memoizedState',
+            'return', 'sibling', 'child', 'alternate',
+            'dependencies', 'current', '_debugOwner', '_debugSource',
+            'parentNode', 'parentElement', 'childNodes',
+            'firstChild', 'lastChild', 'previousSibling', 'nextSibling',
+            'ownerDocument', 'defaultView', 'style'
+          ])
+
+          const isForbiddenProp = (k) => {
+            if (typeof k !== 'string') return false
+            if (FORBIDDEN_KEYS.has(k)) return true
+            if (k.startsWith('__react') || k.startsWith('_react') || k.startsWith('__v_')) return true
+            return false
+          }
+
           const scan = (obj, depth = 0) => {
-            if (!obj || depth > 6 || visited.has(obj) || typeof obj !== 'object') return
+            if (!obj || depth > 6 || typeof obj !== 'object' || visited.has(obj)) return
             visited.add(obj)
 
+            // Never touch React virtual elements, Fibers, or Window
+            if (obj.$$typeof || obj._reactInternals || (obj.stateNode && obj.memoizedProps)) return
+            if (typeof Window !== 'undefined' && obj instanceof Window) return
+
+            // Three.js material found
             if (obj.isMaterial) {
               threeMaterials.add(obj)
               return
             }
+
+            // Three.js mesh with material
             if (obj.isMesh && obj.material) {
               if (Array.isArray(obj.material)) {
-                obj.material.forEach((m) => threeMaterials.add(m))
-              } else {
+                obj.material.forEach((m) => m && m.isMaterial && threeMaterials.add(m))
+              } else if (obj.material && obj.material.isMaterial) {
                 threeMaterials.add(obj.material)
               }
             }
+
+            // Three.js scene / Object3D: use native traverse for speed and safety
             if (obj.isScene || obj.isObject3D) {
-              obj.traverse((node) => {
-                if (node.isMesh && node.material) {
-                  if (Array.isArray(node.material)) {
-                    node.material.forEach((m) => threeMaterials.add(m))
-                  } else {
-                    threeMaterials.add(node.material)
+              try {
+                obj.traverse((node) => {
+                  if (node && node.isMesh && node.material) {
+                    if (Array.isArray(node.material)) {
+                      node.material.forEach((m) => m && m.isMaterial && threeMaterials.add(m))
+                    } else if (node.material && node.material.isMaterial) {
+                      threeMaterials.add(node.material)
+                    }
                   }
-                }
-              })
+                })
+              } catch (e) {}
               return
             }
 
-            if (typeof obj.forEach === 'function') {
+            // If it is a DOM Node (like <model-viewer>), ONLY inspect its Symbols, never its DOM/React property names!
+            const isDomNode = typeof Node !== 'undefined' && obj instanceof Node
+            if (!isDomNode) {
+              if (Array.isArray(obj) || typeof obj.forEach === 'function') {
+                try {
+                  obj.forEach((item) => scan(item, depth + 1))
+                } catch (e) {}
+              }
+
               try {
-                obj.forEach((item) => scan(item, depth + 1))
+                const names = Object.getOwnPropertyNames(obj)
+                for (let i = 0; i < names.length; i++) {
+                  const key = names[i]
+                  if (isForbiddenProp(key)) continue
+
+                  try {
+                    const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+                    if (descriptor && descriptor.get && !descriptor.set) {
+                      continue
+                    }
+                    scan(obj[key], depth + 1)
+                  } catch (e) {}
+                }
               } catch (e) {}
             }
 
-            Object.getOwnPropertySymbols(obj).forEach((sym) => {
-              try {
-                scan(obj[sym], depth + 1)
-              } catch (e) {}
-            })
-
-            Object.getOwnPropertyNames(obj).forEach((key) => {
-              try {
-                scan(obj[key], depth + 1)
-              } catch (e) {}
-            })
+            // Traverse Symbols (model-viewer stores scene, renderer, materials on symbols)
+            try {
+              const symbols = Object.getOwnPropertySymbols(obj)
+              for (let i = 0; i < symbols.length; i++) {
+                try {
+                  scan(obj[symbols[i]], depth + 1)
+                } catch (e) {}
+              }
+            } catch (e) {}
           }
 
+          // Scan model-viewer symbols and model properties safely
           scan(el)
-          if (el.model) scan(el.model)
+          if (el.model) {
+            scan(el.model)
+            if (el.model.materials && Array.isArray(el.model.materials)) {
+              el.model.materials.forEach((mat) => scan(mat, 1))
+            }
+          }
 
           threeMaterials.forEach((threeMat) => {
             if (!threeMat || !threeMat.isMaterial) return
@@ -1104,7 +1155,6 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
             src={product.image}
             alt={product.title || product.name}
             className="max-h-full max-w-full object-contain mx-auto"
-            loading="lazy"
           />
         </div>
 
@@ -1170,14 +1220,13 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
                 <div
                   data-product-media="true"
                   style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
-                  className={`absolute inset-0 w-full h-full z-10 bg-white flex items-center justify-center transition-opacity duration-300 cursor-grab active:cursor-grabbing ${show3D ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                  className={`absolute inset-0 w-full h-full z-10 bg-white flex items-center justify-center transition-opacity duration-300 pointer-events-none ${show3D ? 'opacity-100' : 'opacity-0'}`}
                 >
                   <model-viewer
                     ref={viewerRef}
                     data-product-media="true"
                     src={product.glb}
                     alt={product.title}
-                    loading="eager"
                     reveal="auto"
                     auto-rotate
                     auto-rotate-delay="0"
@@ -1198,6 +1247,7 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
                     style={{
                       width: '100%',
                       height: '100%',
+                      pointerEvents: 'none',
                       backgroundColor: '#ffffff',
                       background: '#ffffff',
                       '--poster-color': '#ffffff',

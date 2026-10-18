@@ -1,14 +1,5 @@
-import { useState, useRef, useMemo, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import {
-  getLqipUrl,
-  getOptimizedImageUrl,
-  getPresetImageUrl,
-  getResponsiveSrcSet,
-  isMediaLoaded,
-  markMediaLoaded,
-} from '../utils/mediaOptimizer'
-import { MEDIA_CONFIG } from '../config/mediaConfig'
 
 function FallbackPlaceholder({ alt, className }) {
   return (
@@ -32,55 +23,25 @@ function FallbackPlaceholder({ alt, className }) {
 }
 
 /**
- * Reusable OptimizedImage component for Cloudinary assets.
- * Implements f_auto, q_auto:good, c_limit, responsive srcset/sizes, LQIP blur-up, and CLS protection.
+ * OptimizedImage component (All Optimizations & Loading Priorities Removed)
+ * Directly renders raw image without LQIP placeholders, downscaling, or fetchpriority.
  */
 export default function OptimizedImage({
   src,
   alt = '',
-  preset = null,
-  targetWidth = 900,
-  quality = 'auto:good',
-  responsive = true,
-  widths = [320, 640, 960, 1280, 1600],
-  sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
-  priority = false,
-  lqip = true,
   aspectRatio = null,
   width = undefined,
   height = undefined,
   className = '',
   imgClassName = '',
   disableParallax = true,
+  priority = false,
   ...props
 }) {
-  const targetSrc = useMemo(() => {
-    if (!src) return ''
-    if (preset) {
-      return getPresetImageUrl(src, preset) || src
-    }
-    return getOptimizedImageUrl(src, { width: targetWidth, quality }) || src
-  }, [src, preset, targetWidth, quality])
-
-  const srcSetString = useMemo(() => {
-    if (!responsive || !src || !src.includes('res.cloudinary.com')) return undefined
-    return getResponsiveSrcSet(src, widths)
-  }, [responsive, src, widths])
-
-  const alreadyCached = useMemo(() => isMediaLoaded(targetSrc), [targetSrc])
-  const [loaded, setLoaded] = useState(alreadyCached)
   const [failed, setFailed] = useState(false)
   const imgRef = useRef(null)
   const containerRef = useRef(null)
   const reduce = useReducedMotion()
-
-  useEffect(() => {
-    const isCached = isMediaLoaded(targetSrc)
-    if (isCached) {
-      setLoaded(true)
-    }
-    setFailed(false)
-  }, [targetSrc])
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -88,23 +49,6 @@ export default function OptimizedImage({
   })
 
   const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
-
-  const lqipUrl = useMemo(() => {
-    if (!lqip || !src || alreadyCached || priority) return null
-    return getLqipUrl(src)
-  }, [src, lqip, alreadyCached, priority])
-
-  useEffect(() => {
-    if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0 && !loaded) {
-      setLoaded(true)
-      markMediaLoaded(targetSrc)
-    }
-  }, [targetSrc, loaded])
-
-  const handleLoadSuccess = () => {
-    setLoaded(true)
-    markMediaLoaded(targetSrc)
-  }
 
   if (!src || failed) {
     return (
@@ -125,62 +69,35 @@ export default function OptimizedImage({
       className={`overflow-hidden relative bg-[#00172b] ${className}`}
       style={aspectRatio ? { aspectRatio } : undefined}
     >
-      {/* 1. Low Quality Image Placeholder (LQIP): Instant ~300-500 byte blurred micro-preview */}
-      {lqipUrl && !alreadyCached && (
-        <img
-          src={lqipUrl}
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-          className={`absolute inset-0 w-full h-full ${
-            imgClassName?.includes('object-') ? '' : 'object-cover'
-          } filter blur-[12px] scale-110 pointer-events-none z-0 ${imgClassName}`}
-        />
-      )}
-
-      {/* 2. High-Performance Modern Image */}
       {useParallax ? (
         <motion.img
           ref={imgRef}
           style={{ y, scale: 1.2 }}
-          src={targetSrc}
-          srcSet={srcSetString}
-          sizes={srcSetString ? sizes : undefined}
+          src={src}
           alt={alt}
           width={width}
           height={height}
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
-          decoding="async"
-          onLoad={handleLoadSuccess}
           onError={() => setFailed(true)}
           className={`h-full w-full ${
             imgClassName?.includes('object-') ? '' : 'object-cover'
-          } relative z-[1] ${loaded ? 'opacity-100' : 'opacity-0'} ${
-            alreadyCached ? '' : 'transition-opacity duration-300 ease-out'
-          } ${imgClassName}`}
+          } relative z-[1] ${imgClassName}`}
           {...props}
         />
       ) : (
         <img
           ref={imgRef}
-          src={targetSrc}
-          srcSet={srcSetString}
-          sizes={srcSetString ? sizes : undefined}
+          src={src}
           alt={alt}
           width={width}
           height={height}
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
-          decoding="async"
-          onLoad={handleLoadSuccess}
           onError={() => setFailed(true)}
           className={`h-full w-full ${
             imgClassName?.includes('object-') ? '' : 'object-cover'
-          } relative z-[1] ${loaded ? 'opacity-100' : 'opacity-0'} ${
-            alreadyCached ? '' : 'transition-opacity duration-300 ease-out'
-          } ${imgClassName}`}
+          } relative z-[1] ${imgClassName}`}
           {...props}
         />
       )}

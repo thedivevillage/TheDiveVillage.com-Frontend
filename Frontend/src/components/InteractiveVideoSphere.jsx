@@ -56,7 +56,6 @@ function useDirectVideoTexture(src, isVisible = true) {
     video.autoplay = true
     video.preload = 'auto'
     video.playbackRate = 0.45
-    video.setAttribute('fetchpriority', 'high')
 
     domContainer.appendChild(video)
     videoRef.current = video

@@ -1,6 +1,5 @@
-import { useState, useRef, useMemo, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { getLqipUrl, getOptimizedImageUrl, isMediaLoaded, markMediaLoaded } from '../utils/mediaOptimizer'
 
 function Placeholder({ alt, className }) {
   return (
@@ -23,65 +22,30 @@ function Placeholder({ alt, className }) {
   )
 }
 
+/**
+ * SafeImage component (Optimizations & Priorities Removed)
+ * Renders raw image directly without LQIP placeholders, downscaling, or fetchpriority.
+ */
 export default function SafeImage({
   src,
   alt = '',
   className = '',
   imgClassName = '',
-  dark = false,
-  lqip = true,
-  targetWidth = 900,
   disableParallax = false,
+  priority = false,
   ...props
 }) {
-  const targetSrc = useMemo(() => {
-    if (!src) return ''
-    return getOptimizedImageUrl(src, { width: targetWidth }) || src
-  }, [src, targetWidth])
-
-  // Check if image is already cached or previously loaded in this session
-  const alreadyCached = useMemo(() => isMediaLoaded(targetSrc), [targetSrc])
-  const [loaded, setLoaded] = useState(alreadyCached)
   const [failed, setFailed] = useState(false)
   const imgRef = useRef(null)
   const containerRef = useRef(null)
   const reduce = useReducedMotion()
-
-  // Reset when src changes
-  useEffect(() => {
-    const isCached = isMediaLoaded(targetSrc)
-    if (isCached) {
-      setLoaded(true)
-    }
-    setFailed(false)
-  }, [targetSrc])
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start'],
   })
 
-  // Parallax shifts image up and down within its bounds
   const y = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
-
-  // Ultra-lightweight ~400-byte Low Quality Image Placeholder
-  const lqipUrl = useMemo(() => {
-    if (!lqip || !src || alreadyCached) return null
-    return getLqipUrl(src)
-  }, [src, lqip, alreadyCached])
-
-  // Check if browser has it in memory cache already on mount
-  useEffect(() => {
-    if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0 && !loaded) {
-      setLoaded(true)
-      markMediaLoaded(targetSrc)
-    }
-  }, [targetSrc, loaded])
-
-  const handleLoadSuccess = () => {
-    setLoaded(true)
-    markMediaLoaded(targetSrc)
-  }
 
   if (!src || failed) {
     return (
@@ -95,48 +59,27 @@ export default function SafeImage({
 
   return (
     <div ref={containerRef} className={`overflow-hidden relative bg-[#00172b] ${className}`}>
-      {/* 1. Low Quality Image Placeholder (LQIP): Instant 400-byte blurred silhouette */}
-      {/* Stays permanently mounted underneath at z-0 while image loads. NEVER reveals background. */}
-      {lqipUrl && !alreadyCached && (
-        <img
-          src={lqipUrl}
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          className={`absolute inset-0 w-full h-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} filter blur-[10px] scale-110 pointer-events-none z-0 ${imgClassName}`}
-        />
-      )}
-
-      {/* 2. Proper High-Resolution Media: Sits directly on top at z-[1] */}
       {useParallaxMotion ? (
         <motion.img
           ref={imgRef}
           style={{ y, scale: 1.25 }}
-          src={targetSrc}
+          src={src}
           alt={alt}
-          loading="lazy"
-          decoding="async"
-          onLoad={handleLoadSuccess}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : 'auto'}
           onError={() => setFailed(true)}
-          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${
-            loaded ? 'opacity-100' : 'opacity-0'
-          } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'} ${imgClassName}`}
+          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${imgClassName}`}
           {...props}
         />
       ) : (
         <img
           ref={imgRef}
-          src={targetSrc}
+          src={src}
           alt={alt}
-          loading="lazy"
-          decoding="async"
-          onLoad={handleLoadSuccess}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : 'auto'}
           onError={() => setFailed(true)}
-          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${
-            loaded ? 'opacity-100' : 'opacity-0'
-          } ${alreadyCached ? '' : 'transition-opacity duration-300 ease-out'} ${imgClassName}`}
+          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${imgClassName}`}
           {...props}
         />
       )}

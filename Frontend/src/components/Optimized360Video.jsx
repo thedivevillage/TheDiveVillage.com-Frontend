@@ -48,9 +48,8 @@ function useR2VideoTexture(hlsSrc, mp4Fallback, isVisible = true) {
     video.defaultMuted = true
     video.loop = true
     video.autoplay = true
-    video.preload = isVisible ? 'auto' : 'none'
+    video.preload = 'auto'
     video.playbackRate = 0.5
-    video.setAttribute('fetchpriority', 'high')
 
     domContainer.appendChild(video)
     videoRef.current = video

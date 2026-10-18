@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
 const rawTdvViberQr = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691228/TDV-Media/UI/tdv_viber_qr.webp'
-const tdvViberQr = getOptimizedImageUrl(rawTdvViberQr, { width: 320 })
+const tdvViberQr = rawTdvViberQr
 
 export default function ViberQRModal({ isOpen, onClose }) {
   useEffect(() => {

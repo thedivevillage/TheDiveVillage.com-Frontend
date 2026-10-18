@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Logo from './Logo'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 const rawLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
-const LogoImg = getOptimizedImageUrl(rawLogoImg, { width: 140 })
+const LogoImg = rawLogoImg
 import ThemeToggle from './ThemeToggle'
 import { isNightModeDisabledRoute } from '../hooks/useNightDive'
 import ViberQRModal from './ViberQRModal'

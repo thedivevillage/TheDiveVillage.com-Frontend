@@ -4,8 +4,8 @@ import { useLocation } from 'react-router'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 const cursorVideo = '/media/TDV-Media/UI/cursor.webm'
 const rawCursorLogo = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
-const cursorPng = getOptimizedImageUrl(rawCursorLogo, { width: 64 })
-const cursorHoverPng = getOptimizedImageUrl(rawCursorLogo, { width: 64 })
+const cursorPng = rawCursorLogo
+const cursorHoverPng = rawCursorLogo
 import useNightDive from '../hooks/useNightDive'
 
 export default function CustomCursor() {
@@ -46,14 +46,18 @@ export default function CustomCursor() {
       if (!target) return false
       const el = target instanceof Element ? target : target.parentElement
       if (!el || !(el instanceof Element)) return false
-      return !!el.closest('input, textarea, select, [contenteditable="true"], .normal-cursor, [data-normal-cursor], form, [data-auth-container], model-viewer, .maplibregl-map, .maplibregl-canvas, .maplibregl-canvas-container, [data-dive-map]')
+      // Never hide custom cursor over product cards or product media
+      if (el.closest('[data-product-card], .product-card, [data-product-media], [data-product-subpage], .product-3d-wrapper')) {
+        return false
+      }
+      return !!el.closest('input, textarea, select, [contenteditable="true"], .normal-cursor, [data-normal-cursor], form, [data-auth-container], .maplibregl-map, .maplibregl-canvas, .maplibregl-canvas-container, [data-dive-map]')
     }
 
     const checkInteractive = (target) => {
       if (!target) return false
       const el = target instanceof Element ? target : target.parentElement
       if (!el || !(el instanceof Element)) return false
-      return !!el.closest('a, button, input, select, textarea, [role="button"], .cursor-pointer, [data-cursor-interactive], label, [data-360-toggle="clickable"], [data-gallery-close], [aria-label="Close Lightbox"]')
+      return !!el.closest('a, button, input, select, textarea, [role="button"], .cursor-pointer, [data-cursor-interactive], label, [data-product-card], .product-card, [data-360-toggle="clickable"], [data-gallery-close], [aria-label="Close Lightbox"]')
     }
 
     const checkRadiusForInteractive = (x, y) => {
@@ -194,7 +198,8 @@ export default function CustomCursor() {
       }
 
       const now = performance.now()
-      if (now - lastCheckTime >= 32 && latestX >= 0 && latestY >= 0) { // Limit to ~30fps for radius checks
+      const isScrolling = typeof document !== 'undefined' && document.body.classList.contains('is-scrolling')
+      if (!isScrolling && now - lastCheckTime >= 32 && latestX >= 0 && latestY >= 0) { // Limit to ~30fps for radius checks, bypass during scroll
         lastCheckTime = now
         const elUnderPoint = document.elementFromPoint(latestX, latestY) || currentTarget
         isOverNormalCursor = checkNormalCursor(elUnderPoint) || isPointInsideGlobe(latestX, latestY)

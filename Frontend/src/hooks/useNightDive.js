@@ -5,6 +5,7 @@ export function isNightModeDisabledRoute(pathname) {
   if (!pathname) return false
   const cleanPath = pathname.toLowerCase()
   return (
+    cleanPath.startsWith('/shop/') ||
     cleanPath === '/cart' ||
     cleanPath.startsWith('/cart/') ||
     cleanPath === '/checkout' ||
@@ -37,12 +38,18 @@ export function useNightDive() {
         if (document.body.classList.contains('night-dive')) {
           document.body.classList.remove('night-dive')
         }
+        if (document.documentElement.classList.contains('night-dive')) {
+          document.documentElement.classList.remove('night-dive')
+        }
         return false
       }
       try {
         if (localStorage.getItem('tdv_night_dive') === 'true') {
           if (!document.body.classList.contains('night-dive')) {
             document.body.classList.add('night-dive')
+          }
+          if (!document.documentElement.classList.contains('night-dive')) {
+            document.documentElement.classList.add('night-dive')
           }
           return true
         }
@@ -56,6 +63,9 @@ export function useNightDive() {
     if (isNightDisabled) {
       if (document.body.classList.contains('night-dive')) {
         document.body.classList.remove('night-dive')
+      }
+      if (document.documentElement.classList.contains('night-dive')) {
+        document.documentElement.classList.remove('night-dive')
       }
       setIsNightDive(false)
       return

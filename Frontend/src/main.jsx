@@ -35,7 +35,11 @@ if (typeof console !== 'undefined') {
   if (console.warn) {
     const origWarn = console.warn
     console.warn = (...args) => {
-      if (typeof args[0] === 'string' && args[0].includes('THREE.Clock: This module has been deprecated')) {
+      if (
+        typeof args[0] === 'string' &&
+        (args[0].includes('THREE.Clock: This module has been deprecated') ||
+         args[0].includes('Multiple instances of Three.js being imported'))
+      ) {
         return
       }
       origWarn.apply(console, args)

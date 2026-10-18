@@ -16,11 +16,7 @@
     content="Join our vibrant ocean community for certified scuba diving courses, freediving excursions, and premium marine gear." />
   <meta property="og:type" content="website" />
 
-  <link rel="preload" href="/fonts/Antonio-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/GoogleSansFlex-VariableFont.woff2" as="font" type="font/woff2" crossorigin />
 
-  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-  <link rel="dns-prefetch" href="https://res.cloudinary.com" />
 
   <script type="application/ld+json">
       {
@@ -62,6 +58,23 @@
     webkit-playsinline
     style="display:none;position:fixed;pointer-events:none;"
   ></audio>
+  <!-- In-DOM Hero 360 Video Stream (Buffering from millisecond zero) -->
+  <div
+    id="hero-360-video-dom-root"
+    style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0.001;pointer-events:none;overflow:hidden;z-index:-99999;"
+  >
+    <video
+      id="hero-360-dom-video"
+      src="/media/TDV-Media/Background/ClownFish.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      crossorigin="anonymous"
+    ></video>
+  </div>
   <script>
     (function () {
       try {

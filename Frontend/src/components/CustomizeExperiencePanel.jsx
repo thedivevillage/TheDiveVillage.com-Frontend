@@ -5,26 +5,26 @@ import { PANEL_IMAGES } from '../utils/images'
 import FloatingVideoPip from './FloatingVideoPip'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
-// Activity Media (High-Performance Cloudinary Video & Poster URLs)
+// Activity Media (Raw URLs)
 const vidSafari = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
-const imgSafari = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp', { width: 320 })
+const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
 
 const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
-const imgTrekking = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp', { width: 320 })
+const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
 
 const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
-const imgSightseeing = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp', { width: 320 })
+const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
 
 const vidCampers = '/media/TDV-Media/AddOns/Campers.mp4'
-const imgCampers = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp', { width: 320 })
+const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
 
 const vidLiveaboard = '/media/TDV-Media/AddOns/liveaboard.mp4'
-const imgLiveaboard = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp', { width: 320 })
+const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
 
 const vidCanoneering = '/media/TDV-Media/Services/Other/Canoneering.mp4'
 const vidSurfing = '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4'
 const vidSnorkeling = '/media/TDV-Media/Services/Discover_Snorkelling.mp4'
-const imgSnorkeling = getOptimizedImageUrl('https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp', { width: 320 })
+const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
 
 // Low-Resolution 360p Preview Renditions (Instant hover playback, <800KB vs 86MB)
 const prevCanoneering = '/media/TDV-Media/AddOns/previews/canyoneering_preview.mp4'
@@ -281,7 +281,6 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
           className={`absolute inset-0 w-full h-full min-w-full min-h-full object-cover object-center transition-opacity duration-1000 ease-in-out pointer-events-none ${
             i === index ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
           }`}
-          loading="lazy"
         />
       ))}
 

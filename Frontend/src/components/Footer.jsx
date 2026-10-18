@@ -4,7 +4,7 @@ import useNightDive from '../hooks/useNightDive'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 import { clearAllMediaCache } from '../utils/mediaCache'
 const rawFooterLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691227/TDV-Media/UI/footer%20logo.png'
-const footerLogoImg = getOptimizedImageUrl(rawFooterLogoImg, { width: 300 })
+const footerLogoImg = rawFooterLogoImg
 import ViberQRModal from './ViberQRModal'
 
 const QUICK = [
@@ -137,7 +137,6 @@ export default function Footer() {
                 src={footerLogoImg}
                 alt="The Dive Village"
                 className="h-24 w-auto object-contain brightness-0 invert drop-shadow-md"
-                loading="lazy"
                 width="180"
                 height="96"
               />

@@ -8,7 +8,7 @@ export const GALLERY_CATEGORIES = [
   { key: 'photos', label: 'High-Res Stills' },
 ]
 
-export const GALLERY_ITEMS = [
+const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-0",
     "type": "video",
@@ -393,3 +393,36 @@ export const GALLERY_ITEMS = [
     "filename": "Yellowback fusiliers.webp"
   }
 ]
+
+export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
+  if (item.type === 'video') {
+    const src = item.src || ''
+    const filename = src.split('/').pop() || ''
+    if (src.includes('Extras for Gallery')) {
+      const base = filename.replace('.mp4', '')
+      return {
+        ...item,
+        poster: item.poster || `/media/TDV-Media/Extras for Gallery/posters/${base}_thumb.webp`,
+        previewVideo: item.previewVideo || `/media/TDV-Media/Extras for Gallery/previews/${base}_preview.mp4`,
+        lowResSrc: item.lowResSrc || `/media/TDV-Media/Extras for Gallery/previews/${base}_preview.mp4`,
+      }
+    }
+    if (filename === 'Scuba_Diver.mp4') {
+      return {
+        ...item,
+        poster: item.poster || '/media/thumbnails/course-1_thumb.webp',
+        previewVideo: item.previewVideo || '/media/TDV-Media/Services/previews/scubadiver_preview.mp4',
+        lowResSrc: item.lowResSrc || '/media/TDV-Media/Services/previews/scubadiver_preview.mp4',
+      }
+    }
+    if (filename === 'AdventureDiver.mp4') {
+      return {
+        ...item,
+        poster: item.poster || '/media/thumbnails/course-2_thumb.webp',
+        previewVideo: item.previewVideo || '/media/TDV-Media/Services/previews/adventurediver_preview.mp4',
+        lowResSrc: item.lowResSrc || '/media/TDV-Media/Services/previews/adventurediver_preview.mp4',
+      }
+    }
+  }
+  return item
+})

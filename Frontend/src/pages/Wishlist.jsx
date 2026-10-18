@@ -164,7 +164,6 @@ export default function Wishlist() {
                         src={item.image}
                         alt={item.title || item.name}
                         className="max-h-full max-w-full object-contain mx-auto transition duration-300 group-hover:scale-105"
-                        loading="lazy"
                       />
                     </div>
 

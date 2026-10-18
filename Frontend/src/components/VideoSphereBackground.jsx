@@ -33,6 +33,9 @@ import {
   HERO_VIDEO_SRC,
   pauseHeroVideo,
   resumeHeroVideo,
+  preloadNightDiveFirst5Seconds,
+  getHeroVideoReady,
+  subscribeHeroVideoReady,
 } from '../utils/mediaReadyManager'
 import { usePageVisibility } from '../hooks/usePageVisibility'
 import { attachHlsStream } from '../hooks/useCloudinaryHls'
@@ -265,7 +268,7 @@ function useDirectVideoTexture(src, fallbackMp4, playbackRate = 0.5, priority = 
   return { texture, hasNewFrameRef, lastTimeRef }
 }
 
-function VideoSphere({ videoSrc, joystickVelocity, isNightDive, isVisible }) {
+function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) {
   const meshRef = useRef()
   const meshRef2 = useRef()
   const meshRef3 = useRef()
@@ -298,8 +301,8 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightDive, isVisible }) {
 
   // Primary playback rate is 0.5x for smooth ambient feel
   const primaryPlaybackRate = 0.5
-  const isHeroSingleton = !isNightDive && isHome
-  const activeHeroSrc = !isNightDive ? videoSrc || (isAbout ? bookFile : videoFile) : null
+  const isHeroSingleton = isHome
+  const activeHeroSrc = videoSrc || (isAbout ? bookFile : videoFile)
   const heroFallbackMp4 = isAbout ? MASTER_1080P_BARRACUDA : MASTER_1080P_CLOWNFISH
 
   const { texture, hasNewFrameRef: hasNewFrame1, lastTimeRef: lastTime1 } = useDirectVideoTexture(
@@ -311,7 +314,7 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightDive, isVisible }) {
   )
 
   // Secondary videos are strictly lazy-loaded only when user scrolls or needs them ON DESKTOP
-  const shouldLoadSecondary = !isMobile && isHome && !isNightDive && loadSecondary
+  const shouldLoadSecondary = !isMobile && isHome && !isNightSettled && loadSecondary
   const { texture: texture2, hasNewFrameRef: hasNewFrame2, lastTimeRef: lastTime2 } = useDirectVideoTexture(
     shouldLoadSecondary ? bookFile : null,
     MASTER_1080P_BARRACUDA,
@@ -469,7 +472,7 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightDive, isVisible }) {
   }, [])
 
   useFrame((state, delta) => {
-    if (isNightDive || !isVisible) return
+    if (isNightSettled || !isVisible) return
     if (meshRef.current) {
       // 1. Frame-driven texture 1 update (strictly on presented frames)
       if (texture && texture.image) {
@@ -572,7 +575,7 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightDive, isVisible }) {
           color="#ffffff"
         />
       </mesh>
-      {!isMobile && isHome && !isNightDive && (
+      {!isMobile && isHome && !isNightSettled && (
         <>
           <mesh ref={meshRef2} scale={[-0.99, 0.99, 0.99]} visible={Boolean(texture2)}>
             <sphereGeometry args={[500, 60, 40]} />
@@ -597,13 +600,16 @@ export default function VideoSphereBackground() {
   const nightVideoRef = useRef(null)
   const nightHlsControllerRef = useRef(null)
 
+  const [isNightTransitioning, setIsNightTransitioning] = useState(false)
+  const [isNightSettled, setIsNightSettled] = useState(false)
+
   // Reusable Page Visibility hook
   const isVisible = usePageVisibility()
 
   const isAbout = location.pathname === '/about'
   const isSpherePage = location.pathname === '/' || isAbout
-  const shouldRenderCanvas = isVisible && isSpherePage && !isNightDive
-  const currentVideo = isNightDive ? nightDiveVideo : isAbout ? bookFile : videoFile
+  const sphereVideo = isAbout ? bookFile : videoFile
+  const shouldRenderCanvas = isVisible && isSpherePage && (!isNightSettled || isNightTransitioning)
 
   useEffect(() => {
     setMounted(true)
@@ -618,37 +624,72 @@ export default function VideoSphereBackground() {
     return () => observer.disconnect()
   }, [])
 
-  // Control night dive video playback and HLS stream when mode changes or tab visibility changes
+  // Requirement: After Day Dive has loaded, immediately preload the first 5 seconds of Night Dive!
   useEffect(() => {
-    const video = nightVideoRef.current
-    if (!video) return
-
-    if (isNightDive && isSpherePage && isVisible) {
-      if (!nightHlsControllerRef.current) {
-        nightHlsControllerRef.current = attachHlsStream({
-          video,
-          hlsUrl: nightDiveVideo,
-          mp4FallbackUrl: MASTER_1080P_NIGHT_DIVE,
-          autoPlay: true,
-        })
-      } else {
-        nightHlsControllerRef.current.startLoad()
-        video.play().catch(() => {})
-      }
-    } else {
-      if (nightHlsControllerRef.current) {
-        nightHlsControllerRef.current.stopLoad()
-      }
-      video.pause()
+    if (getHeroVideoReady()) {
+      preloadNightDiveFirst5Seconds()
     }
-  }, [isNightDive, isSpherePage, isVisible])
+    const unsub = subscribeHeroVideoReady((ready) => {
+      if (ready) {
+        preloadNightDiveFirst5Seconds()
+      }
+    })
+    return () => unsub()
+  }, [])
 
-  // Pause / resume hero 360 video when switching between sphere pages, non-sphere pages, or hidden tab
+  // Seamless crossfade blending when user switches between Day Dive and Night Dive
   useEffect(() => {
-    if (!isSpherePage || !isVisible || isNightDive) {
-      pauseHeroVideo()
+    setIsNightTransitioning(true)
+    const video = nightVideoRef.current
+
+    if (isNightDive) {
+      // 1. Day Dive -> Night Dive:
+      // Instantly start preloaded Night Dive video at millisecond 0
+      if (video) {
+        video.playbackRate = 1.0
+        const playPromise = video.play()
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {})
+        }
+      }
+      // 2. Day Dive sphere keeps animating beneath during the 800ms crossfade
+      // 3. Once fully blended into Night Dive, softly pause Day Dive video to save GPU
+      const timer = setTimeout(() => {
+        setIsNightTransitioning(false)
+        setIsNightSettled(true)
+        pauseHeroVideo()
+      }, 850)
+      return () => clearTimeout(timer)
     } else {
+      // 1. Night Dive -> Day Dive:
+      // Immediately wake up Day Dive video so it's live beneath the fade
+      setIsNightSettled(false)
       resumeHeroVideo()
+      // 2. Night dive video dissolves away over 800ms
+      // 3. Pause Night dive video once completely hidden
+      const timer = setTimeout(() => {
+        setIsNightTransitioning(false)
+        if (video) video.pause()
+      }, 850)
+      return () => clearTimeout(timer)
+    }
+  }, [isNightDive])
+
+  // Pause / resume media based on tab visibility or non-sphere pages
+  useEffect(() => {
+    if (!isSpherePage || !isVisible) {
+      pauseHeroVideo()
+      if (nightVideoRef.current && !nightVideoRef.current.paused) {
+        nightVideoRef.current.pause()
+      }
+    } else {
+      if (isNightDive) {
+        if (nightVideoRef.current && nightVideoRef.current.paused) {
+          nightVideoRef.current.play().catch(() => {})
+        }
+      } else {
+        resumeHeroVideo()
+      }
     }
   }, [isSpherePage, isVisible, isNightDive])
 
@@ -693,6 +734,7 @@ export default function VideoSphereBackground() {
             background: 'radial-gradient(circle at center, #003865 0%, #001e3d 55%, #000e1c 100%)',
           }}
         >
+          {/* Layer 2: Preloaded Night Dive Video (Crossfades seamlessly with 0ms lag) */}
           <video
             ref={(el) => {
               if (el) {
@@ -701,11 +743,11 @@ export default function VideoSphereBackground() {
                 nightVideoRef.current = el
               }
             }}
-            autoPlay={isSpherePage && isNightDive && isVisible}
+            src={nightDiveVideo}
             loop
             muted
             playsInline
-            preload={isSpherePage && isNightDive ? 'auto' : 'none'}
+            preload="auto"
             disablePictureInPicture
             disableRemotePlayback
             style={{
@@ -717,14 +759,16 @@ export default function VideoSphereBackground() {
               left: 0,
               opacity: isSpherePage && isNightDive ? 1 : 0,
               pointerEvents: 'none',
-              transition: 'opacity 0.4s ease-in-out',
-              zIndex: isSpherePage && isNightDive ? 2 : -1,
+              transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+              zIndex: 2,
               transform: 'translate3d(0, 0, 0)',
               willChange: 'opacity, transform',
               backfaceVisibility: 'hidden',
               display: isSpherePage ? 'block' : 'none',
             }}
           />
+
+          {/* Layer 1: Day Dive 360 Video Sphere (Continues live during crossfade) */}
           <div
             style={{
               width: '100%',
@@ -733,8 +777,8 @@ export default function VideoSphereBackground() {
               top: 0,
               left: 0,
               zIndex: 1,
-              display: shouldRenderCanvas ? 'block' : 'none',
-              pointerEvents: shouldRenderCanvas ? 'auto' : 'none',
+              display: isSpherePage ? 'block' : 'none',
+              pointerEvents: (!isNightDive && isSpherePage) ? 'auto' : 'none',
             }}
           >
             <Canvas
@@ -766,9 +810,8 @@ export default function VideoSphereBackground() {
                 <>
                   <Suspense fallback={null}>
                     <VideoSphere
-                      videoSrc={currentVideo}
-                      key={currentVideo}
-                      isNightDive={isNightDive}
+                      videoSrc={sphereVideo}
+                      isNightSettled={isNightSettled}
                       joystickVelocity={joystickVelocity}
                       isVisible={isVisible}
                     />
@@ -804,6 +847,10 @@ function AudioToggle({ isMuted, onToggle }) {
     location.pathname === '/wishlist' ||
     location.pathname === '/checkout'
 
+  const isProductDetailPage =
+    location.pathname.startsWith('/shop/product-') ||
+    location.pathname.startsWith('/product')
+
   const lastClickRef = useRef(0)
 
   const handleDebouncedToggle = (e) => {
@@ -817,7 +864,7 @@ function AudioToggle({ isMuted, onToggle }) {
   return (
     <button
       onClick={handleDebouncedToggle}
-      className={`fixed bottom-6 right-6 z-[9000] flex h-11 w-11 sm:h-12 sm:w-12 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border shadow-2xl transition-all duration-300 hover:scale-110 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] cursor-pointer touch-manipulation active:scale-95 ${
+      className={`fixed ${isProductDetailPage ? 'bottom-20 right-4 lg:bottom-6 lg:right-6' : 'bottom-6 right-6'} z-[9000] flex h-11 w-11 sm:h-12 sm:w-12 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border shadow-2xl transition-all duration-300 hover:scale-110 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] cursor-pointer touch-manipulation active:scale-95 ${
         isLightPage
           ? 'bg-[#001e3d] text-white border-white/20 shadow-[0_6px_24px_rgba(0,30,61,0.35)]'
           : 'bg-[#001e3d]/85 text-white border-white/30 backdrop-blur-2xl shadow-[0_6px_24px_rgba(0,0,0,0.5)]'

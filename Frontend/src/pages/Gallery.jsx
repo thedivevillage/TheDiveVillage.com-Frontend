@@ -1,18 +1,19 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation, useSearchParams } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Button from '../components/Button'
 import SafeImage from '../components/SafeImage'
 import LazyVideo from '../components/LazyVideo'
 import SEOHead from '../components/SEOHead'
-import { GALLERY_ITEMS } from '../utils/galleryData'
+import { GALLERY_ITEMS, GALLERY_CATEGORIES } from '../utils/galleryData'
 import { triggerHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { useLenis } from '../utils/lenisReact'
 import { getOptimizedImageUrl, getOptimizedVideoPoster } from '../utils/mediaOptimizer'
 
 const rawDiversBg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458258/TDV-Media/Products/Group/4M7A6732.jpg'
-const diversBg = getOptimizedImageUrl(rawDiversBg, { width: 1600 })
+const diversBg = rawDiversBg
 
 const cleanTitle = (t) => (t ? t.replace(/\s*\(\d+\)/g, '').trim() : '')
 const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
@@ -22,6 +23,7 @@ const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
 
 export default function Gallery() {
   const [itemsList, setItemsList] = useState(SANITIZED_GALLERY_ITEMS)
+  const [activeTab, setActiveTab] = useState('all')
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(null)
   const [highlightedItemId, setHighlightedItemId] = useState(null)
   const location = useLocation()
@@ -32,7 +34,22 @@ export default function Gallery() {
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
 
-  const filteredItems = itemsList
+  const handleTabChange = (key) => {
+    setActiveTab(key)
+    const activeLenis = lenis || (typeof window !== 'undefined' ? window.lenis : null)
+    if (activeLenis && typeof activeLenis.scrollTo === 'function') {
+      activeLenis.scrollTo(0, { duration: 0.6 })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const filteredItems = useMemo(() => {
+    if (activeTab === 'all') return itemsList
+    if (activeTab === 'videos') return itemsList.filter((i) => i.type === 'video')
+    if (activeTab === 'photos') return itemsList.filter((i) => i.type === 'image')
+    return itemsList.filter((i) => i.category === activeTab)
+  }, [itemsList, activeTab])
   const targetItemId = searchParams.get('item') || (location.hash ? location.hash.replace('#', '') : null)
 
   // Scroll handling: If arriving for a specific item, smoothly scroll to that image. Otherwise scroll to top.
@@ -100,20 +117,7 @@ export default function Gallery() {
     }
   }, [targetItemId, lenis])
 
-  // High-Res Preloading for adjacent images in Lightbox
-  useEffect(() => {
-    if (selectedMediaIndex === null || !filteredItems.length) return
-    const prevIdx = (selectedMediaIndex - 1 + filteredItems.length) % filteredItems.length
-    const nextIdx = (selectedMediaIndex + 1) % filteredItems.length
 
-    ;[prevIdx, nextIdx].forEach((idx) => {
-      const item = filteredItems[idx]
-      if (item && item.type !== 'video' && item.src) {
-        const img = new Image()
-        img.src = item.src
-      }
-    })
-  }, [selectedMediaIndex, filteredItems])
 
   const handleLightboxTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX
@@ -152,11 +156,18 @@ export default function Gallery() {
 
   // Lock background scrolling and pause Lenis when gallery preview / lightbox is open
   useEffect(() => {
-    if (selectedMediaIndex === null) return
+    const activeLenis = lenis || (typeof window !== 'undefined' ? window.lenis : null)
+
+    if (selectedMediaIndex === null) {
+      if (activeLenis && typeof activeLenis.start === 'function') {
+        activeLenis.start()
+      }
+      return
+    }
 
     // 1. Pause Lenis smooth scroll
-    if (lenis) {
-      lenis.stop()
+    if (activeLenis && typeof activeLenis.stop === 'function') {
+      activeLenis.stop()
     }
 
     // 2. Lock body & html scroll & contain overscroll
@@ -179,8 +190,8 @@ export default function Gallery() {
     window.addEventListener('touchmove', preventBackgroundScroll, { passive: false })
 
     return () => {
-      if (lenis) {
-        lenis.start()
+      if (activeLenis && typeof activeLenis.start === 'function') {
+        activeLenis.start()
       }
       document.body.style.overflow = originalBodyOverflow
       document.body.style.overscrollBehavior = originalBodyOverscroll
@@ -213,20 +224,19 @@ export default function Gallery() {
 
   const currentItem = selectedMediaIndex !== null ? filteredItems[selectedMediaIndex] : null
 
-  // Ensure only 10 thumbnails are visible in a given time
-  const thumbStartIndex = useMemo(() => {
-    if (selectedMediaIndex === null || filteredItems.length <= 10) return 0
-    return Math.max(0, Math.min(selectedMediaIndex - 4, filteredItems.length - 10))
-  }, [selectedMediaIndex, filteredItems.length])
+  const activeThumbRef = useRef(null)
+  const thumbContainerRef = useRef(null)
 
-  const visibleThumbs = useMemo(() => {
-    if (!filteredItems.length) return []
-    const count = Math.min(10, filteredItems.length)
-    return filteredItems.slice(thumbStartIndex, thumbStartIndex + count).map((item, idx) => ({
-      item,
-      index: thumbStartIndex + idx,
-    }))
-  }, [filteredItems, thumbStartIndex])
+  // Smoothly scroll active thumbnail into view when selected media changes
+  useEffect(() => {
+    if (activeThumbRef.current) {
+      activeThumbRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      })
+    }
+  }, [selectedMediaIndex])
 
   const handleShareVisual = async (item = currentItem) => {
     if (!item) return
@@ -263,6 +273,25 @@ export default function Gallery() {
           </p>
         </div>
 
+        {/* 2. CATEGORY FILTER TABS */}
+        <div className="grid grid-cols-3 md:flex md:flex-wrap gap-2 md:gap-3 mb-10 sm:mb-16 border-b border-navy/10 pb-5 sm:pb-6">
+          {GALLERY_CATEGORIES.map((cat) => (
+            <button
+              key={cat.key}
+              data-category-tab={cat.key}
+              data-active={activeTab === cat.key ? 'true' : 'false'}
+              onClick={() => handleTabChange(cat.key)}
+              className={`group gallery-category-tab w-full md:w-auto rounded-xl md:rounded-full px-2 sm:px-3 md:px-5 py-2 md:py-2.5 text-[11px] xs:text-xs sm:text-sm font-bold text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                activeTab === cat.key
+                  ? 'bg-navy text-white shadow-md border-2 border-transparent'
+                  : 'bg-white text-navy border border-navy/15 hover:bg-navy/5'
+              }`}
+            >
+              <span className="truncate">{cat.label}</span>
+            </button>
+          ))}
+        </div>
+
         {/* GALLERY MASONRY / GRID: 2 Cards per row on mobile, 3 on desktop */}
         <div className="gallery-grid-container grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8 mb-14 sm:mb-24">
           {filteredItems.map((item, idx) => (
@@ -270,6 +299,7 @@ export default function Gallery() {
               key={item.id}
               item={item}
               idx={idx}
+              priority={idx < 8}
               reduce={reduce}
               onClick={() => openLightbox(idx)}
               isHighlighted={highlightedItemId === item.id}
@@ -341,259 +371,201 @@ export default function Gallery() {
 
       </div>
 
-      {/* 6. IMMERSIVE LIGHTBOX MODAL */}
-      <AnimatePresence>
-        {selectedMediaIndex !== null && currentItem && (
-          <div 
-            data-lenis-prevent="true"
-            className="fixed inset-0 z-[9990] bg-black/90 backdrop-blur-sm select-none overflow-hidden"
-            style={{
-              overscrollBehavior: 'contain',
-              touchAction: 'none',
-            }}
-            onClick={() => setSelectedMediaIndex(null)}
-            onTouchStart={handleLightboxTouchStart}
-            onTouchEnd={handleLightboxTouchEnd}
-          >
-            {/* Modal Content Wrapper - Strictly positioned in space below toolbar */}
-            <div
-              className="absolute inset-x-0 bottom-0 top-[64px] lg:top-[68px] flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6"
-              style={{
-                top: 'var(--toolbar-bottom, 68px)',
-              }}
-              onClick={() => setSelectedMediaIndex(null)}
-            >
-              {/* Dark Blue, Preview Panel strictly below toolbar */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.97, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97, y: 10 }}
-                transition={{ duration: 0.2 }}
-                className="gallery-preview-modal relative bg-navy rounded-2xl sm:rounded-3xl shadow-2xl p-2 sm:p-3.5 max-w-4xl sm:max-w-5xl lg:max-w-6xl w-full h-full max-h-[calc(100vh-var(--toolbar-bottom,68px)-36px)] flex flex-col gap-2 select-none border border-white/15 overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-              {/* Floating Top-Right Close Button */}
-              <button
-                id="gallery-preview-close"
-                data-gallery-close="true"
-                data-cursor-static="true"
-                type="button"
+      {/* 6. CLEAN LIGHTBOX MODAL (E-COMMERCE PREVIEW STYLE) */}
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {selectedMediaIndex !== null && currentItem && (
+              <div 
+                data-lenis-prevent="true"
+                data-gallery-modal="true"
+                className="fixed inset-0 z-[9990] bg-black/75 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-6 lg:p-8 select-none overflow-hidden"
+                style={{
+                  overscrollBehavior: 'contain',
+                  touchAction: 'none',
+                }}
                 onClick={() => setSelectedMediaIndex(null)}
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-[#FFCD00] hover:text-[#001e3d] text-white flex items-center justify-center transition active:scale-90 cursor-pointer font-bold text-xs sm:text-sm border border-white/20 shadow-lg backdrop-blur-md"
-                aria-label="Close Lightbox"
+                onTouchStart={handleLightboxTouchStart}
+                onTouchEnd={handleLightboxTouchEnd}
               >
-                ✕
-              </button>
-
-              {/* Media Display Area (Fit to Window Size, No Overflow, No Crop) */}
-              <div className="relative flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl bg-black/95">
-                {/* Previous Media Arrow */}
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); prevMedia() }}
-                  className="absolute left-3 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/15 hover:bg-[#FFCD00] hover:text-[#001e3d] text-white transition hover:scale-110 active:scale-90 cursor-pointer shadow-xl backdrop-blur-md border border-white/15"
-                  aria-label="Previous visual"
+                {/* White Modal Card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  data-gallery-modal="true"
+                  style={{
+                    backgroundColor: '#ffffff',
+                    color: '#171717',
+                  }}
+                  className="gallery-preview-modal relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl h-[88vh] max-h-[820px] flex flex-col items-center justify-between p-3 sm:p-5 select-none overflow-hidden border border-neutral-100"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
+                  {/* Close Button: Dark circular button with white cross in top right */}
+                  <button
+                    id="gallery-preview-close"
+                    data-gallery-close="true"
+                    data-cursor-static="true"
+                    type="button"
+                    onClick={() => setSelectedMediaIndex(null)}
+                    className="gallery-close-btn absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-[#5f6368] hover:bg-[#3c4043] text-white flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
+                    aria-label="Close Lightbox"
+                    title="Close"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
 
-                {/* Next Media Arrow */}
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); nextMedia() }}
-                  className="absolute right-3 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/15 hover:bg-[#FFCD00] hover:text-[#001e3d] text-white transition hover:scale-110 active:scale-90 cursor-pointer shadow-xl backdrop-blur-md border border-white/15"
-                  aria-label="Next visual"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+                  {/* Main Media Showcase Area */}
+                  <div className="relative flex-1 min-h-0 w-full flex items-center justify-center overflow-hidden px-4 sm:px-14 py-1">
+                    {/* Previous Media Arrow: White Circle with Drop Shadow */}
+                    {filteredItems.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); prevMedia() }}
+                        className="gallery-nav-arrow absolute left-1 sm:left-4 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white text-neutral-700 hover:text-black hover:bg-neutral-50 shadow-[0_4px_16px_rgba(0,0,0,0.14)] border border-neutral-100 transition hover:scale-105 active:scale-95 cursor-pointer"
+                        aria-label="Previous visual"
+                        title="Previous"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                    )}
 
-                {currentItem.type === 'video' ? (
-                  <LazyVideo
-                    src={currentItem.src}
-                    controls
-                    controlsList="nodownload noplaybackrate noremoteplayback"
-                    disablePictureInPicture={true}
-                    autoPlay
-                    loop
-                    playsInline
-                    muted={true}
-                    defaultMuted={true}
-                    playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                    className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video"
-                    videoClassName="gallery-preview-video-element"
-                  />
-                ) : (
-                  <img
-                    src={currentItem.src}
-                    alt={currentItem.title || 'Gallery visual'}
-                    loading="eager"
-                    decoding="async"
-                    style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                    className="w-full h-full max-w-full max-h-full object-contain select-none m-auto block pointer-events-auto"
-                    draggable={false}
-                  />
-                )}
-              </div>
+                    {/* Next Media Arrow: White Circle with Drop Shadow */}
+                    {filteredItems.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); nextMedia() }}
+                        className="gallery-nav-arrow absolute right-1 sm:right-4 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white text-neutral-700 hover:text-black hover:bg-neutral-50 shadow-[0_4px_16px_rgba(0,0,0,0.14)] border border-neutral-100 transition hover:scale-105 active:scale-95 cursor-pointer"
+                        aria-label="Next visual"
+                        title="Next"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
 
-              {/* Bottom Title Bar: Bigger Title & Count */}
-              <div className="flex items-center justify-between gap-4 px-1.5 w-full shrink-0">
-                <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl font-heading font-extrabold text-white tracking-wide truncate">
-                  {currentItem.title}
-                </h2>
-                <span className="text-xs sm:text-sm md:text-base font-bold text-[#FFCD00] tracking-wider shrink-0 font-mono bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
-                  {selectedMediaIndex + 1} / {filteredItems.length}
-                </span>
-              </div>
-
-              {/* Only 10 Thumbnails Visible in a Given Time (Compact & Centered at Bottom) */}
-              {filteredItems.length > 1 && (
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 max-w-xl sm:max-w-2xl md:max-w-3xl mx-auto w-full pt-0.5 shrink-0">
-                  {filteredItems.length > 10 && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedMediaIndex((prev) => Math.max(0, prev - 10))
-                      }}
-                      disabled={thumbStartIndex === 0}
-                      className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-lg bg-white/10 hover:bg-[#FFCD00] hover:text-[#001e3d] disabled:opacity-20 disabled:pointer-events-none text-white flex items-center justify-center transition active:scale-90 cursor-pointer font-bold border border-white/15 shadow-sm text-xs"
-                      aria-label="Previous 10 thumbnails"
-                      title="Previous 10"
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-                  )}
-
-                  {/* 10 Compact Visible Thumbnail Slots */}
-                  <div className="grid grid-cols-10 gap-1 sm:gap-1.5 flex-1 min-w-0">
-                    {visibleThumbs.map(({ item, index }) => {
-                      const isActive = index === selectedMediaIndex
-                      return (
-                        <button
-                          key={item.id || index}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            triggerHaptic(8)
-                            setSelectedMediaIndex(index)
-                          }}
-                          className={`relative aspect-square w-full rounded-md sm:rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-                            isActive
-                              ? 'border-[#FFCD00] shadow-md shadow-[#FFCD00]/20 ring-1 sm:ring-2 ring-[#FFCD00]/40 scale-105 opacity-100'
-                              : 'border-white/15 opacity-50 hover:opacity-100 hover:border-white/40 bg-white/5'
-                          }`}
-                          title={item.title}
-                        >
-                          {item.type === 'video' ? (
-                            <div className="relative w-full h-full bg-black flex items-center justify-center">
-                              <img
-                                src={getOptimizedVideoPoster(item.src, { width: 120 })}
-                                alt=""
-                                className="w-full h-full object-cover pointer-events-none opacity-85"
-                                loading="lazy"
-                                decoding="async"
-                              />
-                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[7px] sm:text-[8px]">
-                                ▶
-                              </div>
-                            </div>
-                          ) : (
-                            <img
-                              src={getOptimizedImageUrl(item.src, { width: 120 })}
-                              alt=""
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          )}
-                        </button>
-                      )
-                    })}
+                    {/* Media Item (Video or Image) */}
+                    {currentItem.type === 'video' ? (
+                      <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative">
+                        <LazyVideo
+                          key={currentItem.src}
+                          src={currentItem.src}
+                          priority={true}
+                          lowResSrc={currentItem.lowResSrc || currentItem.previewVideo || currentItem.preview}
+                          poster={currentItem.poster || currentItem.thumbnail || currentItem.image}
+                          controls
+                          controlsList="nodownload noplaybackrate noremoteplayback"
+                          disablePictureInPicture={true}
+                          autoPlay
+                          loop
+                          playsInline
+                          muted={true}
+                          defaultMuted={true}
+                          playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
+                          style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                          className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video"
+                          videoClassName="gallery-preview-video-element"
+                        />
+                      </div>
+                    ) : (
+                      <img
+                        key={currentItem.src}
+                        src={currentItem.src}
+                        alt={currentItem.title || 'Gallery visual'}
+                        decoding="async"
+                        style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                        className="max-w-full max-h-full object-contain select-none m-auto block pointer-events-auto rounded-sm"
+                        draggable={false}
+                      />
+                    )}
                   </div>
 
-                  {filteredItems.length > 10 && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedMediaIndex((prev) => Math.min(filteredItems.length - 1, prev + 10))
+                  {/* Title & Index (Minimal & Clean) */}
+                  <div className="flex items-center justify-between w-full px-2 sm:px-4 pt-1.5 pb-1 shrink-0">
+                    <span className="gallery-title-text text-xs sm:text-sm font-semibold tracking-wide truncate max-w-[75%] text-neutral-800">
+                      {currentItem.title}
+                    </span>
+                    <span className="gallery-counter-text text-[11px] sm:text-xs text-neutral-400 font-mono shrink-0">
+                      {selectedMediaIndex + 1} / {filteredItems.length}
+                    </span>
+                  </div>
+
+                  {/* Bottom Thumbnail Strip */}
+                  {filteredItems.length > 1 && (
+                    <div 
+                      ref={thumbContainerRef}
+                      className="flex items-center justify-start sm:justify-center gap-2 sm:gap-2.5 overflow-x-auto w-full max-w-full px-2 pt-1 pb-1 shrink-0 select-none"
+                      style={{
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
                       }}
-                      disabled={thumbStartIndex + 10 >= filteredItems.length}
-                      className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-lg bg-white/10 hover:bg-[#FFCD00] hover:text-[#001e3d] disabled:opacity-20 disabled:pointer-events-none text-white flex items-center justify-center transition active:scale-90 cursor-pointer font-bold border border-white/15 shadow-sm text-xs"
-                      aria-label="Next 10 thumbnails"
-                      title="Next 10"
                     >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
+                      {filteredItems.map((item, idx) => {
+                        const isActive = idx === selectedMediaIndex
+                        return (
+                          <button
+                            key={item.id || idx}
+                            ref={isActive ? activeThumbRef : null}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              triggerHaptic(8)
+                              setSelectedMediaIndex(idx)
+                            }}
+                            className={`relative shrink-0 w-12 h-16 sm:w-14 sm:h-20 rounded-md overflow-hidden transition-all cursor-pointer ${
+                              isActive
+                                ? 'gallery-thumb-active border-2 border-black ring-1 ring-black/10 scale-105 opacity-100 shadow-sm'
+                                : 'gallery-thumb-inactive border border-neutral-200 opacity-60 hover:opacity-100 hover:border-neutral-400 bg-neutral-100'
+                            }`}
+                            title={item.title}
+                          >
+                            {item.type === 'video' ? (
+                              <div className="relative w-full h-full bg-neutral-900 flex items-center justify-center">
+                                <video
+                                  src={item.src}
+                                  muted
+                                  preload="metadata"
+                                  className="w-full h-full object-cover pointer-events-none"
+                                />
+                                <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                                  <div className="w-4 h-4 rounded-full bg-black/70 text-white flex items-center justify-center text-[7px] pl-0.5">
+                                    ▶
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <img
+                                src={item.src}
+                                alt=""
+                                loading="lazy"
+                                decoding="async"
+                                className="w-full h-full object-cover pointer-events-none"
+                              />
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
                   )}
-                </div>
-              )}
-            </motion.div>
-          </div>
-        </div>
-      )}
-      </AnimatePresence>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
     </div>
   )
 }
 
-function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
+function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted }) {
   const cardRef = useRef(null)
-  const hoverTimerRef = useRef(null)
-
-  const handleMouseEnter = () => {
-    if (item.type !== 'video') return
-    if (hoverTimerRef.current) {
-      clearTimeout(hoverTimerRef.current)
-    }
-    // Hover 3 seconds to play
-    hoverTimerRef.current = setTimeout(() => {
-      const vid = cardRef.current?.querySelector('video')
-      if (vid) {
-        const rate = item.playbackRate || (item.title?.toLowerCase().includes('clownfish and sea anemone') || item.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)
-        if (rate && rate !== 1) {
-          vid.playbackRate = rate
-        }
-        vid.play().catch(() => {})
-      }
-    }, 3000)
-  }
-
-  const handleMouseLeave = () => {
-    if (item.type !== 'video') return
-    // Cancel pending timer
-    if (hoverTimerRef.current) {
-      clearTimeout(hoverTimerRef.current)
-      hoverTimerRef.current = null
-    }
-    // Stop video playing immediately and reset
-    const vid = cardRef.current?.querySelector('video')
-    if (vid) {
-      vid.pause()
-      vid.currentTime = 0
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimerRef.current) {
-        clearTimeout(hoverTimerRef.current)
-      }
-      const vid = cardRef.current?.querySelector('video')
-      if (vid) {
-        vid.pause()
-      }
-    }
-  }, [])
 
   return (
     <motion.div
@@ -602,10 +574,9 @@ function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
       initial={reduce ? false : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(idx * 0.02, 0.25) }}
-      className={`scroll-mt-28 group flex flex-col rounded-2xl sm:rounded-[24px] overflow-hidden bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-500 cursor-pointer active:scale-[0.99]`}
+      className={`scroll-mt-28 group flex flex-col rounded-2xl sm:rounded-[24px] overflow-hidden bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-500 cursor-pointer active:scale-[0.99] transform-gpu hover:will-change-transform`}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 350px', contain: 'layout paint' }}
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       {/* Media Container */}
       <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden bg-[#00172b]">
@@ -613,11 +584,14 @@ function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
           <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
             <LazyVideo
               src={item.src}
+              lowResSrc={item.lowResSrc || item.previewVideo || item.preview}
+              poster={item.poster || item.thumbnail || item.image}
+              priority={priority}
               muted={true}
               defaultMuted={true}
               loop
               playsInline
-              autoPlay={false}
+              autoPlay={true}
               playbackRate={item.playbackRate || (item.title?.toLowerCase().includes('clownfish and sea anemone') || item.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
               zoom={
                 item.title?.toLowerCase().includes('moray eel') || item.id === 'gallery-item-0'
@@ -636,6 +610,7 @@ function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
           <SafeImage
             src={item.src}
             alt={item.title || 'Gallery item'}
+            priority={priority}
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
           />
         )}
@@ -667,3 +642,4 @@ function GalleryGridCard({ item, idx, reduce, onClick, isHighlighted }) {
     </motion.div>
   )
 }
+
