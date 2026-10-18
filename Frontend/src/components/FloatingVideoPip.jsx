@@ -107,7 +107,7 @@ export default function FloatingVideoPip({
             e.stopPropagation()
             onClose?.()
           }}
-          className="absolute top-2 right-2 z-30 p-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/90 hover:text-white transition-opacity duration-200 opacity-0 group-hover:opacity-100 cursor-pointer shadow-md"
+          className="absolute top-2 right-2 z-30 p-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/90 hover:text-white transition-opacity duration-200 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer shadow-md"
           title="Close"
           aria-label="Close"
         >

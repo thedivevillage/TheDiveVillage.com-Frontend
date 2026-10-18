@@ -120,12 +120,11 @@ export default function Services() {
           </p>
         </div>
 
-        {/* 2. CATEGORY FILTER TABS: Preserved in crisp day mode styling */}
-        <div className="grid grid-cols-3 md:flex md:flex-wrap gap-2 md:gap-3 mb-10 sm:mb-16 border-b border-navy/10 pb-5 sm:pb-6">
+        {/* 2. CATEGORY FILTER TABS: Preserved in crisp day mode styling with Night Dive support */}
+        <div className={`grid grid-cols-3 md:flex md:flex-wrap gap-2 md:gap-3 mb-10 sm:mb-16 border-b pb-5 sm:pb-6 ${isNightDive ? 'border-white/10' : 'border-navy/10'}`}>
           {CATEGORIES.map((cat) => (
             <button
               key={cat.key}
-              data-day-panel="true"
               data-category-tab={cat.key}
               data-active={activeTab === cat.key ? 'true' : 'false'}
               onClick={() => handleTabChange(cat.key)}
@@ -134,7 +133,7 @@ export default function Services() {
                   : 'bg-white text-navy border border-navy/15 hover:bg-navy/5'
                 }`}
             >
-              <span className="truncate">{cat.label}</span>
+              <span className={`truncate ${activeTab === cat.key ? 'text-white' : ''}`}>{cat.label}</span>
             </button>
           ))}
         </div>

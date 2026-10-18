@@ -1855,24 +1855,115 @@ html body.night-dive [data-power-diving] .w-12.h-12.bg-navy {
 }
 
 /* 4. Services Category Filter Tabs */
-html body.night-dive .services-category-tab[data-active="true"] {
+/* Active Tab: Solid Navy with crisp white text & border */
+html body.night-dive .services-category-tab[data-active="true"],
+html body.night-dive button[data-category-tab][data-active="true"],
+.night-dive .services-category-tab[data-active="true"],
+.night-dive button[data-category-tab][data-active="true"] {
   background-color: #001e3d !important;
   color: #ffffff !important;
-  border-color: transparent !important;
+  border: 2px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
 }
-html body.night-dive .services-category-tab[data-active="true"] span {
+html body.night-dive .services-category-tab[data-active="true"] span,
+html body.night-dive .services-category-tab[data-active="true"] *,
+html body.night-dive button[data-category-tab][data-active="true"] span,
+html body.night-dive button[data-category-tab][data-active="true"] *,
+.night-dive .services-category-tab[data-active="true"] span,
+.night-dive .services-category-tab[data-active="true"] *,
+.night-dive button[data-category-tab][data-active="true"] span,
+.night-dive button[data-category-tab][data-active="true"] * {
   color: #ffffff !important;
 }
-html body.night-dive .services-category-tab[data-active="false"] {
+
+/* Inactive Tab Default (idle): Crisp white pill with navy text */
+html body.night-dive .services-category-tab[data-active="false"]:not(:hover):not(:active):not(:focus),
+html body.night-dive button[data-category-tab][data-active="false"]:not(:hover):not(:active):not(:focus),
+.night-dive .services-category-tab[data-active="false"]:not(:hover):not(:active):not(:focus),
+.night-dive button[data-category-tab][data-active="false"]:not(:hover):not(:active):not(:focus) {
   background-color: #ffffff !important;
   color: #001e3d !important;
   border-color: rgba(0, 30, 61, 0.15) !important;
 }
-html body.night-dive .services-category-tab[data-active="false"]:hover {
-  background-color: rgba(0, 30, 61, 0.05) !important;
-}
-html body.night-dive .services-category-tab[data-active="false"] span {
+html body.night-dive .services-category-tab[data-active="false"]:not(:hover):not(:active):not(:focus) span,
+html body.night-dive button[data-category-tab][data-active="false"]:not(:hover):not(:active):not(:focus) span,
+.night-dive .services-category-tab[data-active="false"]:not(:hover):not(:active):not(:focus) span,
+.night-dive button[data-category-tab][data-active="false"]:not(:hover):not(:active):not(:focus) span {
   color: #001e3d !important;
+}
+
+/* Hover, Tap, Active, Focus States: Text MUST ALWAYS BE WHITE (#ffffff) */
+html body.night-dive .services-category-tab:hover,
+html body.night-dive .services-category-tab:active,
+html body.night-dive .services-category-tab:focus,
+html body.night-dive .services-category-tab:focus-visible,
+html body.night-dive button[data-category-tab]:hover,
+html body.night-dive button[data-category-tab]:active,
+html body.night-dive button[data-category-tab]:focus,
+html body.night-dive button[data-category-tab]:focus-visible,
+.night-dive .services-category-tab:hover,
+.night-dive .services-category-tab:active,
+.night-dive .services-category-tab:focus,
+.night-dive .services-category-tab:focus-visible,
+.night-dive button[data-category-tab]:hover,
+.night-dive button[data-category-tab]:active,
+.night-dive button[data-category-tab]:focus,
+.night-dive button[data-category-tab]:focus-visible {
+  background-color: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+}
+html body.night-dive .services-category-tab:hover span,
+html body.night-dive .services-category-tab:hover *,
+html body.night-dive .services-category-tab:active span,
+html body.night-dive .services-category-tab:active *,
+html body.night-dive .services-category-tab:focus span,
+html body.night-dive .services-category-tab:focus *,
+html body.night-dive .services-category-tab:focus-visible span,
+html body.night-dive .services-category-tab:focus-visible *,
+html body.night-dive button[data-category-tab]:hover span,
+html body.night-dive button[data-category-tab]:hover *,
+html body.night-dive button[data-category-tab]:active span,
+html body.night-dive button[data-category-tab]:active *,
+html body.night-dive button[data-category-tab]:focus span,
+html body.night-dive button[data-category-tab]:focus *,
+html body.night-dive button[data-category-tab]:focus-visible span,
+html body.night-dive button[data-category-tab]:focus-visible *,
+.night-dive .services-category-tab:hover span,
+.night-dive .services-category-tab:hover *,
+.night-dive .services-category-tab:active span,
+.night-dive .services-category-tab:active *,
+.night-dive .services-category-tab:focus span,
+.night-dive .services-category-tab:focus *,
+.night-dive .services-category-tab:focus-visible span,
+.night-dive .services-category-tab:focus-visible *,
+.night-dive button[data-category-tab]:hover span,
+.night-dive button[data-category-tab]:hover *,
+.night-dive button[data-category-tab]:active span,
+.night-dive button[data-category-tab]:active *,
+.night-dive button[data-category-tab]:focus span,
+.night-dive button[data-category-tab]:focus *,
+.night-dive button[data-category-tab]:focus-visible span,
+.night-dive button[data-category-tab]:focus-visible * {
+  color: #ffffff !important;
+}
+
+/* Active Tab Hover State */
+html body.night-dive .services-category-tab[data-active="true"]:hover,
+html body.night-dive .services-category-tab[data-active="true"]:active,
+html body.night-dive .services-category-tab[data-active="true"]:focus,
+html body.night-dive button[data-category-tab][data-active="true"]:hover,
+html body.night-dive button[data-category-tab][data-active="true"]:active,
+html body.night-dive button[data-category-tab][data-active="true"]:focus,
+.night-dive .services-category-tab[data-active="true"]:hover,
+.night-dive .services-category-tab[data-active="true"]:active,
+.night-dive .services-category-tab[data-active="true"]:focus,
+.night-dive button[data-category-tab][data-active="true"]:hover,
+.night-dive button[data-category-tab][data-active="true"]:active,
+.night-dive button[data-category-tab][data-active="true"]:focus {
+  background-color: #00172e !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
 }
 
 /* 5. Contact Us Form Container, Inputs, Selects, Labels, Text */
@@ -1962,8 +2053,8 @@ html body.night-dive [data-day-panel] h4:not(.text-white):not([class*="text-whit
 html body.night-dive [data-day-panel] h5:not(.text-white):not([class*="text-white"]),
 html body.night-dive [data-day-panel] h6:not(.text-white):not([class*="text-white"]),
 html body.night-dive [data-day-panel] p:not(.text-white):not([class*="text-white"]),
-html body.night-dive [data-day-panel] span:not(.text-accent):not([class*="text-accent"]):not(.text-white):not([class*="text-white"]):not(.text-red-500):not(.text-emerald-600),
-html body.night-dive [data-day-panel] [class*="text-navy"]:not(.text-white):not([class*="text-white"]),
+html body.night-dive [data-day-panel] span:not(.text-accent):not([class*="text-accent"]):not(.text-white):not([class*="text-white"]):not(.text-red-500):not(.text-emerald-600):not(.services-category-tab *):not([data-category-tab] *),
+html body.night-dive [data-day-panel] [class*="text-navy"]:not(.text-white):not([class*="text-white"]):not(.services-category-tab):not(.services-category-tab *):not([data-category-tab]):not([data-category-tab] *),
 html body.night-dive [data-day-panel] [class*="text-slate-"]:not(.text-white):not([class*="text-white"]),
 html body.night-dive [data-day-panel] [class*="text-gray-"]:not(.text-white):not([class*="text-white"]) {
   color: #001e3d !important;

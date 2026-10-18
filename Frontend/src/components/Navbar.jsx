@@ -178,6 +178,7 @@ export default function Navbar() {
         {!isNightModeDisabled ? (
           <button
             type="button"
+            id="mobile-theme-toggle-btn"
             onClick={toggleNightDive}
             className="flex flex-col items-center justify-center cursor-pointer transition active:scale-95 px-1 py-0.5 shrink-0 rounded-xl focus:outline-none"
             aria-label="Toggle Night Mode"
@@ -266,6 +267,7 @@ export default function Navbar() {
           {!isNightModeDisabled && (
             <button
               type="button"
+              id="desktop-theme-toggle-btn"
               onClick={toggleNightDive}
               className={`hidden sm:flex h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 cursor-pointer shadow-sm active:scale-95`}
               aria-label="Toggle Night Dive mode"
