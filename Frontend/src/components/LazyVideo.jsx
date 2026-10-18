@@ -229,7 +229,10 @@ const LazyVideo = forwardRef(function LazyVideo({
     <div
       ref={containerRef}
       className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-[#00172b]'} ${className}`}
-      style={{ contain: 'layout paint' }}
+      style={{
+        contain: 'layout paint',
+        backgroundColor: className.includes('bg-white') ? '#ffffff' : (props.style?.backgroundColor || undefined)
+      }}
     >
       {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and moves) */}
       {poster && (
@@ -242,7 +245,11 @@ const LazyVideo = forwardRef(function LazyVideo({
           className={`absolute inset-0 w-full h-full ${fitClass} z-0 pointer-events-none transition-opacity duration-300 ease-out ${
             masterStarted || previewStarted ? 'opacity-0' : 'opacity-100'
           }`}
-          style={{ objectFit: fitClass === 'object-contain' ? 'contain' : 'cover', ...zoomStyle }}
+          style={{
+            objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
+            backgroundColor: className.includes('bg-white') ? '#ffffff' : undefined,
+            ...zoomStyle
+          }}
         />
       )}
 
@@ -269,6 +276,7 @@ const LazyVideo = forwardRef(function LazyVideo({
           }`}
           style={{
             objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
+            backgroundColor: className.includes('bg-white') ? '#ffffff' : undefined,
             ...zoomStyle,
           }}
         />
@@ -307,6 +315,7 @@ const LazyVideo = forwardRef(function LazyVideo({
         } ${!controls ? 'pointer-events-none' : ''} ${videoClassName}`}
         style={{
           objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
+          backgroundColor: className.includes('bg-white') ? '#ffffff' : undefined,
           ...zoomStyle,
           ...(props.style || {}),
         }}

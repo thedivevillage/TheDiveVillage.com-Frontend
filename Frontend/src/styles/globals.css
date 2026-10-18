@@ -905,6 +905,18 @@ body.night-dive #root,
   color: #9ca3af !important;
 }
 
+/* Gallery Lightbox Video - Pure White Blanks, Pillars & Letterboxing */
+[data-gallery-modal] .gallery-preview-video,
+[data-gallery-modal] .gallery-preview-video-element,
+[data-gallery-modal] video,
+[data-gallery-modal] img {
+  background-color: #ffffff !important;
+}
+
+[data-gallery-modal] .gallery-preview-video {
+  background: #ffffff !important;
+}
+
 /* Borders */
 .night-dive [class*="border-gray-100"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
 .night-dive [class*="border-gray-200"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),

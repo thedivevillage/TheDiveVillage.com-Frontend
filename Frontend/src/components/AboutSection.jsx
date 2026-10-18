@@ -16,7 +16,7 @@ export default function AboutSection() {
               The Dive Village began with one man and one belief. For Sanjeev, the ocean was more than a passion—it was a sanctuary. A place of healing, discovery, and profound transformation. And he knew, deep down, that this magic was not meant to be kept to himself.
             </p>
             <p className="mt-4 text-lg text-white/90 leading-relaxed">
-              So he built a door to 'The Dive Village,' a community for divers. A home beneath the waves, built by ocean lovers, for ocean lovers.
+              He opened the door to 'The Dive Village,' a community for divers. A home beneath the waves, built by ocean lovers, for ocean lovers.
             </p>
             <p className="mt-6 font-heading font-bold text-white">Sanjeev Bajaj — Founder</p>
           </div>

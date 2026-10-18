@@ -252,15 +252,7 @@ export default function Gallery() {
     setVideoNaturalRatio(null)
   }, [selectedMediaIndex])
 
-  // Vertical media detection:
-  // Baked vertical videos (zoom 2.85 in 16:9 canvas like Giant Barrel Sponge, Hawksbill Sea Turtle 2, Whale Shark, etc.)
-  const isBakedVertical = Boolean(
-    currentItem?.zoom === 2.85 ||
-    ['Giant Barrel Sponge', 'Hawksbill Sea Turtle', 'Whale Shark', 'Whitetip Reef Shark'].some(
-      (t) => currentItem?.title?.trim() === t
-    )
-  )
-
+  // Vertical media detection (all 9:16 portrait videos)
   const isKnownVerticalVideo = Boolean(
     currentItem && [
       'A Seafan',
@@ -274,12 +266,14 @@ export default function Gallery() {
       'Silver Barracudas',
       'A Moray Eel in a Giant Barrel Sponge',
       'Free Diving',
+      'Giant Barrel Sponge',
+      'Whale Shark',
+      'Whitetip Reef Shark',
     ].some((t) => currentItem.title?.includes(t))
   )
 
   const isVerticalVideo = Boolean(
     currentItem?.type === 'video' && (
-      isBakedVertical ||
       isKnownVerticalVideo ||
       (videoNaturalRatio !== null && videoNaturalRatio < 0.95)
     )
@@ -524,12 +518,12 @@ export default function Gallery() {
 
                     {/* Media Item (Video or Image) */}
                     {currentItem.type === 'video' ? (
-                      <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative">
+                      <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative bg-white">
                         {isVerticalVideo ? (
                           <div 
-                            className="h-full max-h-full max-w-full flex items-center justify-center relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl bg-black"
+                            className="h-full max-h-full max-w-full flex items-center justify-center relative rounded-xl sm:rounded-2xl overflow-hidden shadow-sm bg-white"
                             style={{
-                              aspectRatio: isBakedVertical ? '9 / 16' : (videoNaturalRatio ? `${videoNaturalRatio}` : '9 / 16'),
+                              aspectRatio: videoNaturalRatio ? `${videoNaturalRatio}` : '9 / 16',
                               maxHeight: '100%',
                             }}
                           >
@@ -554,14 +548,13 @@ export default function Gallery() {
                                   setVideoNaturalRatio(vid.videoWidth / vid.videoHeight)
                                 }
                               }}
-                              className={`w-full h-full max-w-full max-h-full bg-black flex items-center justify-center gallery-preview-video ${
-                                isBakedVertical ? 'object-cover' : 'object-contain'
-                              }`}
-                              videoClassName="gallery-preview-video-element"
+                              style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%', backgroundColor: '#ffffff' }}
+                              className="w-full h-full max-w-full max-h-full bg-white flex items-center justify-center gallery-preview-video object-contain"
+                              videoClassName="gallery-preview-video-element bg-white"
                             />
                           </div>
                         ) : (
-                          <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative">
+                          <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative bg-white">
                             <LazyVideo
                               key={currentItem.src}
                               src={currentItem.src}
@@ -583,9 +576,9 @@ export default function Gallery() {
                                   setVideoNaturalRatio(vid.videoWidth / vid.videoHeight)
                                 }
                               }}
-                              style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                              className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video bg-black/5 rounded-lg"
-                              videoClassName="gallery-preview-video-element"
+                              style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%', backgroundColor: '#ffffff' }}
+                              className="w-full h-full max-w-full max-h-full object-contain flex items-center justify-center gallery-preview-video bg-white rounded-lg"
+                              videoClassName="gallery-preview-video-element bg-white"
                             />
                           </div>
                         )}
@@ -689,7 +682,7 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted }
       onClick={onClick}
     >
       {/* Media Container */}
-      <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden bg-[#00172b]">
+      <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden bg-white">
         {item.type === 'video' ? (
           <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
             <LazyVideo
@@ -703,16 +696,7 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted }
               playsInline
               autoPlay={true}
               playbackRate={item.playbackRate || (item.title?.toLowerCase().includes('clownfish and sea anemone') || item.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-              zoom={
-                item.title?.toLowerCase().includes('moray eel') || item.id === 'gallery-item-0'
-                  ? 1
-                  : (item.zoom || (
-                      ['gallery-item-7', 'gallery-item-8', 'gallery-item-18', 'gallery-item-19', 'gallery-item-20'].includes(item.id) ||
-                      ['Giant Barrel Sponge', 'Hawksbill Sea Turtle', 'Whale Shark', 'Whitetip Reef Shark'].some((t) => item.title?.trim() === t)
-                        ? 2.85
-                        : 1
-                    ))
-              }
+              zoom={item.zoom || 1}
               className="w-full h-full object-cover"
             />
           </div>
