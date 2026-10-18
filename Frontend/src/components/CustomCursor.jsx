@@ -57,40 +57,12 @@ export default function CustomCursor() {
       if (!target) return false
       const el = target instanceof Element ? target : target.parentElement
       if (!el || !(el instanceof Element)) return false
-      return !!el.closest(
-        'a, button, input, select, textarea, [role="button"], [role="switch"], [role="link"], [role="tab"], [role="checkbox"], .cursor-pointer, [data-cursor-interactive], [data-cursor-static], label, summary, [data-product-card], .product-card, [data-360-toggle], .joystick-container, [data-gallery-close], [aria-label*="close" i], [aria-label*="toggle" i], [tabindex]:not([tabindex="-1"]), .switch, .clickable, [onclick]'
-      )
+      return !!el.closest('a, button, input, select, textarea, [role="button"], .cursor-pointer, [data-cursor-interactive], label, [data-product-card], .product-card, [data-360-toggle="clickable"], [data-gallery-close], [aria-label="Close Lightbox"]')
     }
 
     const checkRadiusForInteractive = (x, y) => {
-      if (x < 0 || y < 0) return false
       let el = document.elementFromPoint(x, y)
-      if (el && checkInteractive(el)) return true
-
-      // Proximity scan around the cursor vicinity (~50px) across two concentric rings
-      const r1 = 25
-      const r2 = 50
-      const points = [
-        // Ring 1 (25px)
-        [x + r1, y], [x - r1, y], [x, y + r1], [x, y - r1],
-        // Ring 2 (50px cardinals & diagonals)
-        [x + r2, y], [x - r2, y], [x, y + r2], [x, y - r2],
-        [x + r2 * 0.707, y + r2 * 0.707], [x - r2 * 0.707, y - r2 * 0.707],
-        [x + r2 * 0.707, y - r2 * 0.707], [x - r2 * 0.707, y + r2 * 0.707]
-      ]
-
-      const w = window.innerWidth
-      const h = window.innerHeight
-
-      for (let i = 0; i < points.length; i++) {
-        const px = points[i][0]
-        const py = points[i][1]
-        if (px >= 0 && py >= 0 && px <= w && py <= h) {
-          const pel = document.elementFromPoint(px, py)
-          if (pel && checkInteractive(pel)) return true
-        }
-      }
-      return false
+      return el ? checkInteractive(el) : false
     }
 
     let cachedToggleCenter = null
@@ -112,9 +84,9 @@ export default function CustomCursor() {
       }
 
       const now = performance.now()
-      if (!cachedToggleCenter || now - lastToggleCheckTime > 150) {
+      if (!cachedToggleCenter || now - lastToggleCheckTime > 300) {
         lastToggleCheckTime = now
-        const toggleEl = document.querySelector('[data-360-toggle="clickable"]') || document.querySelector('.joystick-container') || document.querySelector('[data-360-toggle]')
+        const toggleEl = document.querySelector('[data-360-toggle="clickable"]') || document.querySelector('.joystick-container')
         if (toggleEl && toggleEl.offsetParent !== null) {
           const rect = toggleEl.getBoundingClientRect()
           cachedToggleCenter = {
@@ -138,14 +110,14 @@ export default function CustomCursor() {
     const isNearGalleryClose = (x, y, target) => {
       if (typeof document === 'undefined') return false
 
-      if (target instanceof Element && target.closest('[data-gallery-close], [aria-label*="close" i], [data-cursor-static], #gallery-preview-close')) {
+      if (target instanceof Element && target.closest('[data-gallery-close], [aria-label="Close Lightbox"], [data-cursor-static], #gallery-preview-close')) {
         return true
       }
 
       const now = performance.now()
-      if (!cachedGalleryCloseCenter || now - lastGalleryCloseCheckTime > 150) {
+      if (!cachedGalleryCloseCenter || now - lastGalleryCloseCheckTime > 300) {
         lastGalleryCloseCheckTime = now
-        const closeBtn = document.querySelector('[data-gallery-close], [aria-label*="close" i], [data-cursor-static], #gallery-preview-close')
+        const closeBtn = document.querySelector('[data-gallery-close], [aria-label="Close Lightbox"], [data-cursor-static], #gallery-preview-close')
         if (closeBtn && closeBtn.offsetParent !== null) {
           const rect = closeBtn.getBoundingClientRect()
           cachedGalleryCloseCenter = {
@@ -180,33 +152,23 @@ export default function CustomCursor() {
         const near360 = isNear360Toggle(latestX, latestY, currentTarget)
         const nearGalleryClose = isNearGalleryClose(latestX, latestY, currentTarget)
         const isNearStaticZone = near360 || nearGalleryClose
-        const isStatic = isHoveringInteractive || isNearStaticZone
 
-        // Static orientation lock: When the cursor goes anywhere near anything clickable or interactable,
-        // it locks completely static (horizontal, 0deg, scaleX: 1) and will NOT move/tilt up, down, left, or right.
-        if (isStatic) {
+        // Smooth, natural orientation without wild spinning or erratic 90-degree glitching
+        if (isHoveringInteractive || isNearStaticZone) {
           targetRotation = 0
           targetScaleX = 1
-        } else if (Math.abs(dx) > 1.2 || Math.abs(dy) > 1.2) {
-          // In open water, diver dynamically points up (-dy) or down (+dy), or turns left/right
-          if (Math.abs(dx) > Math.abs(dy)) {
-            targetRotation = 0
-            targetScaleX = dx > 0 ? -1 : 1
-          } else {
-            targetRotation = dy < 0 ? 90 : -90
-            targetScaleX = 1
+        } else {
+          const speed = Math.hypot(dx, dy)
+          if (speed > 1.5) {
+            targetRotation = Math.max(-10, Math.min(10, dy * 0.6))
+            if (dx > 2) targetScaleX = 1
+            else if (dx < -2) targetScaleX = -1
           }
         }
 
-        const lerpFactor = isStatic ? 0.45 : 0.2
+        const lerpFactor = 0.35
         currentRotation += (targetRotation - currentRotation) * lerpFactor
         currentScaleX += (targetScaleX - currentScaleX) * lerpFactor
-
-        // Snap to static rest state when close to prevent any lingering drift or wobbling around buttons
-        if (isStatic) {
-          if (Math.abs(currentRotation) < 1.5) currentRotation = 0
-          if (Math.abs(currentScaleX - 1) < 0.03) currentScaleX = 1
-        }
 
         cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0) rotate(${currentRotation}deg) scaleX(${currentScaleX})`
 
@@ -221,7 +183,7 @@ export default function CustomCursor() {
 
       const now = performance.now()
       const isScrolling = typeof document !== 'undefined' && document.body.classList.contains('is-scrolling')
-      if (!isScrolling && now - lastCheckTime >= 24 && latestX >= 0 && latestY >= 0) { // ~40fps for high-responsiveness vicinity detection
+      if (!isScrolling && now - lastCheckTime >= 64 && latestX >= 0 && latestY >= 0) { // Limit to ~15fps for radius checks, bypass during scroll
         lastCheckTime = now
         const elUnderPoint = document.elementFromPoint(latestX, latestY) || currentTarget
         isOverNormalCursor = checkNormalCursor(elUnderPoint) || isPointInsideGlobe(latestX, latestY)
