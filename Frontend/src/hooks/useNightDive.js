@@ -1,116 +1,99 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router'
 
-/**
- * Universal night-dive mode manager.
- * Guarantees that:
- * 1. Both document.documentElement and document.body always have 'night-dive' synchronously added or removed together.
- * 2. localStorage ('tdv_night_dive') is updated consistently.
- * 3. A window custom event ('tdv_night_dive_change') is dispatched so all active components across every page update instantly.
- * 4. Cross-tab storage changes and external DOM mutations are caught via storage & MutationObserver listeners.
- */
-
-export function applyNightDive(enable) {
-  if (typeof document === 'undefined') return
-  const isNight = Boolean(enable)
-
-  if (isNight) {
-    if (!document.documentElement.classList.contains('night-dive')) {
-      document.documentElement.classList.add('night-dive')
-    }
-    if (!document.body.classList.contains('night-dive')) {
-      document.body.classList.add('night-dive')
-    }
-    try {
-      localStorage.setItem('tdv_night_dive', 'true')
-    } catch (e) {}
-  } else {
-    if (document.documentElement.classList.contains('night-dive')) {
-      document.documentElement.classList.remove('night-dive')
-    }
-    if (document.body.classList.contains('night-dive')) {
-      document.body.classList.remove('night-dive')
-    }
-    try {
-      localStorage.setItem('tdv_night_dive', 'false')
-    } catch (e) {}
+export function isNightModeAllowedRoute(pathname) {
+  if (!pathname && typeof window !== 'undefined') {
+    pathname = window.location.pathname
   }
+  const cleanPath = (pathname || '/').split('?')[0].split('#')[0].trim().toLowerCase().replace(/\/+$/, '') || '/'
+  return cleanPath === '/' || cleanPath === '/about'
+}
 
+export function isNightModeDisabledRoute(pathname) {
+  return !isNightModeAllowedRoute(pathname)
+}
+
+function useSafeLocation() {
   try {
-    window.dispatchEvent(new CustomEvent('tdv_night_dive_change', { detail: { isNightDive: isNight } }))
-  } catch (e) {}
-}
-
-export function getIsNightDive() {
-  if (typeof document === 'undefined') return false
-  try {
-    const stored = localStorage.getItem('tdv_night_dive')
-    if (stored === 'true') return true
-    if (stored === 'false') return false
-  } catch (e) {}
-  return (
-    document.body.classList.contains('night-dive') ||
-    document.documentElement.classList.contains('night-dive')
-  )
-}
-
-export function toggleNightDive() {
-  const current = getIsNightDive()
-  const next = !current
-  applyNightDive(next)
-  return next
-}
-
-/**
- * Backward compatibility stub: Night mode is now universally enabled across every page.
- */
-export function isNightModeDisabledRoute() {
-  return false
+    return useLocation()
+  } catch (e) {
+    return { pathname: typeof window !== 'undefined' ? window.location.pathname : '' }
+  }
 }
 
 export function useNightDive() {
-  const [isNightDive, setIsNightDive] = useState(getIsNightDive)
+  const location = useSafeLocation()
+  const isNightDisabled = isNightModeDisabledRoute(location?.pathname)
+
+  const [isNightDive, setIsNightDive] = useState(() => {
+    if (typeof document !== 'undefined') {
+      const currentDisabled = isNightModeDisabledRoute(
+        location?.pathname || (typeof window !== 'undefined' ? window.location.pathname : '')
+      )
+      if (currentDisabled) {
+        if (document.body.classList.contains('night-dive')) {
+          document.body.classList.remove('night-dive')
+        }
+        if (document.documentElement.classList.contains('night-dive')) {
+          document.documentElement.classList.remove('night-dive')
+        }
+        return false
+      }
+      try {
+        if (localStorage.getItem('tdv_night_dive') === 'true') {
+          if (!document.body.classList.contains('night-dive')) {
+            document.body.classList.add('night-dive')
+          }
+          if (!document.documentElement.classList.contains('night-dive')) {
+            document.documentElement.classList.add('night-dive')
+          }
+          return true
+        }
+      } catch (e) {}
+      return document.body.classList.contains('night-dive')
+    }
+    return false
+  })
 
   useEffect(() => {
-    // 1. Sync DOM with saved preference on mount
+    if (isNightDisabled) {
+      if (document.body.classList.contains('night-dive')) {
+        document.body.classList.remove('night-dive')
+      }
+      if (document.documentElement.classList.contains('night-dive')) {
+        document.documentElement.classList.remove('night-dive')
+      }
+      setIsNightDive(false)
+      return
+    }
+
     try {
-      const stored = localStorage.getItem('tdv_night_dive')
-      if (stored === 'true') {
-        if (!document.documentElement.classList.contains('night-dive') || !document.body.classList.contains('night-dive')) {
-          applyNightDive(true)
+      if (localStorage.getItem('tdv_night_dive') === 'true') {
+        if (!document.body.classList.contains('night-dive')) {
+          document.body.classList.add('night-dive')
         }
-      } else if (stored === 'false') {
-        if (document.documentElement.classList.contains('night-dive') || document.body.classList.contains('night-dive')) {
-          applyNightDive(false)
+        if (!document.documentElement.classList.contains('night-dive')) {
+          document.documentElement.classList.add('night-dive')
         }
       }
     } catch (e) {}
 
-    const handleUpdate = () => {
-      setIsNightDive(getIsNightDive())
+    const updateTheme = () => {
+      if (isNightModeDisabledRoute(location?.pathname)) {
+        setIsNightDive(false)
+      } else {
+        setIsNightDive(document.body.classList.contains('night-dive'))
+      }
     }
 
-    handleUpdate()
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+    updateTheme()
 
-    window.addEventListener('tdv_night_dive_change', handleUpdate)
-    window.addEventListener('storage', handleUpdate)
+    return () => observer.disconnect()
+  }, [isNightDisabled, location?.pathname])
 
-    const observer = new MutationObserver(handleUpdate)
-    if (document.body) {
-      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
-    }
-    if (document.documentElement) {
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-    }
-
-    return () => {
-      window.removeEventListener('tdv_night_dive_change', handleUpdate)
-      window.removeEventListener('storage', handleUpdate)
-      observer.disconnect()
-    }
-  }, [])
-
-  return isNightDive
+  return isNightDisabled ? false : isNightDive
 }
 
 export default useNightDive
-

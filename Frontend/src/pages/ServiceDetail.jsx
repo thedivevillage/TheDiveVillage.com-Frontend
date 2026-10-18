@@ -7,7 +7,6 @@ import LazyVideo from '../components/LazyVideo'
 import Button from '../components/Button'
 import SEOHead from '../components/SEOHead'
 import { Sun, Sunrise, Moon } from 'lucide-react'
-import useNightDive from '../hooks/useNightDive'
 
 const DEFAULT_FAQS = [
   {
@@ -26,7 +25,6 @@ const DEFAULT_FAQS = [
 
 export default function ServiceDetail() {
   const { id } = useParams()
-  const isNightDive = useNightDive()
   const [openFaq, setOpenFaq] = useState(null)
   const [selectedFunPackage, setSelectedFunPackage] = useState(FUN_DIVES_PACKAGES[1] || FUN_DIVES_PACKAGES[0])
   const [selectedDiveTimings, setSelectedDiveTimings] = useState(['day'])
@@ -74,7 +72,7 @@ export default function ServiceDetail() {
   const activeHeroDesc = service.short_desc
 
   return (
-    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body overflow-x-hidden transition-colors duration-500`} style={{ textShadow: 'none' }}>
+    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body overflow-x-hidden" style={{ textShadow: 'none' }}>
       <SEOHead
         title={`${activeHeroTitle} | The Dive Village Services`}
         description={activeHeroDesc || service.long_desc}
@@ -127,11 +125,7 @@ export default function ServiceDetail() {
         </div>
         
         {/* Bottom Ultra-Smooth Dissolve & Merge Layer into page background */}
-        <div className={`absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] transition-colors duration-500 ${
-          isNightDive
-            ? 'bg-gradient-to-t from-[#003865] via-[#003865]/90 via-45% to-transparent'
-            : 'bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent'
-        }`} />
+        <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent" />
         
         <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
@@ -185,7 +179,7 @@ export default function ServiceDetail() {
       {/* 2. DEDICATED FUN DIVES PACKAGE SELECTOR (IF VIEWING FUN DIVES COMBO) */}
       {isFunDivesCombo && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
-          <div className={`rounded-[36px] ${isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-white border-navy/10 text-navy'} border p-6 sm:p-10 lg:p-12 shadow-card`}>
+          <div className="rounded-[36px] bg-white border border-navy/10 p-6 sm:p-10 lg:p-12 shadow-card">
             
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 pb-6 border-b border-navy/10">
@@ -203,7 +197,7 @@ export default function ServiceDetail() {
             </div>
 
             {/* Dive Timings Multi-Select Bar (Multiple Choice) */}
-            <div className={`mb-10 p-5 sm:p-6 rounded-2xl sm:rounded-3xl ${isNightDive ? 'bg-[#002747] border-white/15' : 'bg-[#F0F2F5]/80 border-navy/10'} border`}>
+            <div className="mb-10 p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#F0F2F5]/80 border border-navy/10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                 <div>
                   <div className="flex items-center gap-2">

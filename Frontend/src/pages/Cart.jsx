@@ -3,10 +3,8 @@ import { Link, useLocation } from 'react-router'
 import { useCart } from '../hooks/useCart'
 import { formatCurrency } from '../utils/formatCurrency'
 import Button from '../components/Button'
-import useNightDive from '../hooks/useNightDive'
 
 export default function Cart() {
-  const isNightDive = useNightDive()
   const { items, itemCount, subtotal, loading, removeItem, updateQuantity } = useCart()
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
@@ -14,7 +12,7 @@ export default function Cart() {
 
   return (
     <div
-      className={isDashboard ? 'text-navy font-body' : `min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} font-body pt-24 sm:pt-32 pb-32 sm:pb-24 transition-colors duration-500`}
+      className={isDashboard ? 'text-navy font-body' : 'min-h-screen bg-[#FAFAFA] text-navy font-body pt-24 sm:pt-32 pb-32 sm:pb-24'}
       style={{ textShadow: 'none' }}
     >
       <div className={isDashboard ? 'w-full' : 'mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'}>
@@ -37,8 +35,8 @@ export default function Cart() {
         </div>
 
         {items.length === 0 && !loading ? (
-          <div className={`py-16 sm:py-20 text-center max-w-xl mx-auto ${isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-[#F8FAFC] border-navy/5 text-navy'} rounded-[36px] p-8 sm:p-12 shadow-sm border`}>
-            <div className={`w-20 h-20 rounded-full ${isNightDive ? 'bg-white/10 text-white border-white/20' : 'bg-white text-navy/60 border-navy/10'} flex items-center justify-center mx-auto mb-6 shadow-sm border`}>
+          <div className="py-16 sm:py-20 text-center max-w-xl mx-auto bg-[#F8FAFC] rounded-[36px] p-8 sm:p-12 shadow-sm border border-navy/5">
+            <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto mb-6 text-navy/60 shadow-sm border border-navy/10">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                 <line x1="3" y1="6" x2="21" y2="6"/>
@@ -65,7 +63,7 @@ export default function Cart() {
             <div className="lg:col-span-8 space-y-6">
 
               {/* Items List */}
-              <div className={`rounded-[32px] border ${isNightDive ? 'bg-[#001e3d] border-white/10 text-white divide-white/10' : 'bg-white border-navy/5 text-navy divide-navy/10'} p-6 sm:p-8 shadow-card divide-y`}>
+              <div className="bg-white rounded-[32px] border border-navy/5 p-6 sm:p-8 shadow-card divide-y divide-navy/10">
                 {items.map((item) => {
                   const product = item.product || {}
                   const itemPrice = item.price ?? product.price ?? 0
@@ -171,7 +169,7 @@ export default function Cart() {
             </div>
 
             {/* Right Column: Order Summary */}
-            <div className={`lg:col-span-4 sticky top-28 rounded-[36px] ${isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-white border-navy/5 text-navy'} border p-6 sm:p-8 shadow-card space-y-6`}>
+            <div className="lg:col-span-4 sticky top-28 rounded-[36px] bg-white border border-navy/5 p-6 sm:p-8 shadow-card space-y-6">
               <h2 className="font-heading text-xl font-bold text-navy pb-4 border-b border-navy/10">
                 Order Summary
               </h2>
