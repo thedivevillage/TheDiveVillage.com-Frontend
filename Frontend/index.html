@@ -42,6 +42,9 @@
         if (localStorage.getItem('tdv_night_dive') === 'true') {
           document.documentElement.classList.add('night-dive');
           document.body.classList.add('night-dive');
+        } else {
+          document.documentElement.classList.remove('night-dive');
+          document.body.classList.remove('night-dive');
         }
       } catch (e) {}
     })();

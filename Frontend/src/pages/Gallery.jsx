@@ -11,6 +11,7 @@ import { triggerHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { useLenis } from '../utils/lenisReact'
 import { getOptimizedImageUrl, getOptimizedVideoPoster } from '../utils/mediaOptimizer'
+import useNightDive from '../hooks/useNightDive'
 
 const rawDiversBg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458258/TDV-Media/Products/Group/4M7A6732.jpg'
 const diversBg = rawDiversBg
@@ -22,6 +23,7 @@ const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
 }))
 
 export default function Gallery() {
+  const isNightDive = useNightDive()
   const [itemsList, setItemsList] = useState(SANITIZED_GALLERY_ITEMS)
   const [activeTab, setActiveTab] = useState('all')
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(null)
@@ -249,7 +251,7 @@ export default function Gallery() {
   }
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden" style={{ textShadow: 'none' }}>
+    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body pt-24 sm:pt-32 pb-24 overflow-x-hidden transition-colors duration-500`} style={{ textShadow: 'none' }}>
       <SEOHead
         title="Underwater Photography & Scuba Gallery | The Dive Village"
         description="Explore our visual gallery of underwater expeditions, vibrant coral reefs, sea turtle encounters, and diving moments captured at The Dive Village."
@@ -283,8 +285,8 @@ export default function Gallery() {
               onClick={() => handleTabChange(cat.key)}
               className={`group gallery-category-tab w-full md:w-auto rounded-xl md:rounded-full px-2 sm:px-3 md:px-5 py-2 md:py-2.5 text-[11px] xs:text-xs sm:text-sm font-bold text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${
                 activeTab === cat.key
-                  ? 'bg-navy text-white shadow-md border-2 border-transparent'
-                  : 'bg-white text-navy border border-navy/15 hover:bg-navy/5'
+                  ? `bg-navy text-white shadow-md border-2 ${isNightDive ? 'border-[#FFCD00]' : 'border-transparent'}`
+                  : `${isNightDive ? 'bg-[#001e3d] text-white/90 border-white/15 hover:bg-white/10 hover:text-white' : 'bg-white text-navy border border-navy/15 hover:bg-navy/5'}`
               }`}
             >
               <span className="truncate">{cat.label}</span>
@@ -303,6 +305,7 @@ export default function Gallery() {
               reduce={reduce}
               onClick={() => openLightbox(idx)}
               isHighlighted={highlightedItemId === item.id}
+              isNightDive={isNightDive}
             />
           ))}
         </div>
@@ -564,7 +567,7 @@ export default function Gallery() {
   )
 }
 
-function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted }) {
+function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, isNightDive }) {
   const cardRef = useRef(null)
 
   return (
@@ -574,7 +577,9 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted }
       initial={reduce ? false : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(idx * 0.02, 0.25) }}
-      className={`scroll-mt-28 group flex flex-col rounded-2xl sm:rounded-[24px] overflow-hidden bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-500 cursor-pointer active:scale-[0.99] transform-gpu hover:will-change-transform`}
+      className={`scroll-mt-28 group flex flex-col rounded-2xl sm:rounded-[24px] overflow-hidden ${
+        isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-white border-navy/10 text-navy'
+      } shadow-sm hover:shadow-xl hover:border-cyan-500/30 transition-all duration-500 cursor-pointer active:scale-[0.99] transform-gpu hover:will-change-transform`}
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 350px', contain: 'layout paint' }}
       onClick={onClick}
     >
@@ -627,9 +632,9 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted }
       </div>
 
       {/* Information Panel Below Media - Title */}
-      <div className="p-2 sm:p-5 bg-white flex items-center justify-between gap-2">
+      <div className={`p-2 sm:p-5 ${isNightDive ? 'bg-[#001e3d]' : 'bg-white'} flex items-center justify-between gap-2`}>
         <h3 className={`font-heading text-xs sm:text-lg font-bold group-hover:text-accent transition duration-200 line-clamp-1 leading-tight ${
-          isHighlighted ? 'text-accent font-extrabold' : 'text-navy'
+          isHighlighted ? 'text-accent font-extrabold' : (isNightDive ? 'text-white' : 'text-navy')
         }`}>
           {item.title}
         </h3>

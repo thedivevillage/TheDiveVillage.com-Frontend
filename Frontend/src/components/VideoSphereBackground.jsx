@@ -39,6 +39,7 @@ import {
 } from '../utils/mediaReadyManager'
 import { usePageVisibility } from '../hooks/usePageVisibility'
 import { attachHlsStream } from '../hooks/useCloudinaryHls'
+import useNightDive from '../hooks/useNightDive'
 
 const videoFile = CLOUDINARY_CLOWNFISH
 const bookFile = CLOUDINARY_BARRACUDA
@@ -594,7 +595,7 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
 export default function VideoSphereBackground() {
   const [mounted, setMounted] = useState(true)
   const [isMuted, setIsMuted] = useState(globalAudio.getIsMuted())
-  const [isNightDive, setIsNightDive] = useState(false)
+  const isNightDive = useNightDive()
   const location = useLocation()
   const joystickVelocity = useRef({ x: 0, y: 0 })
   const nightVideoRef = useRef(null)
@@ -613,15 +614,6 @@ export default function VideoSphereBackground() {
 
   useEffect(() => {
     setMounted(true)
-  }, [])
-
-  // Watch for night-dive class on body
-  useEffect(() => {
-    const checkNightDive = () => setIsNightDive(document.body.classList.contains('night-dive'))
-    checkNightDive()
-    const observer = new MutationObserver(checkNightDive)
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
   }, [])
 
   // Requirement: After Day Dive has loaded, immediately preload the first 5 seconds of Night Dive!

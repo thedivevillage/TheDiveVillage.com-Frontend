@@ -154,19 +154,6 @@ export default function ProductDetail() {
     return 'PREMIUM DIVE WEAR'
   }, [product])
 
-  // Guarantee pure light e-commerce appearance on product detail subpage
-  useEffect(() => {
-    const wasBodyNight = document.body.classList.contains('night-dive')
-    const wasHtmlNight = document.documentElement.classList.contains('night-dive')
-    if (wasBodyNight) document.body.classList.remove('night-dive')
-    if (wasHtmlNight) document.documentElement.classList.remove('night-dive')
-    return () => {
-      if ((wasBodyNight || wasHtmlNight) && localStorage.getItem('tdv_night_dive') === 'true') {
-        document.body.classList.add('night-dive')
-        document.documentElement.classList.add('night-dive')
-      }
-    }
-  }, [])
 
   // Reset states and scroll position when ID changes
   useEffect(() => {

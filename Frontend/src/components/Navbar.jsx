@@ -7,7 +7,7 @@ import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 const rawLogoImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
 const LogoImg = rawLogoImg
 import ThemeToggle from './ThemeToggle'
-import { isNightModeDisabledRoute } from '../hooks/useNightDive'
+import useNightDive, { toggleNightDive as globalToggleNightDive } from '../hooks/useNightDive'
 import ViberQRModal from './ViberQRModal'
 import { useCart } from '../hooks/useCart'
 import { useWishlist } from '../hooks/useWishlist'
@@ -34,61 +34,7 @@ export default function Navbar() {
   const reduce = useReducedMotion()
 
   const location = useLocation()
-  const isNightModeDisabled = isNightModeDisabledRoute(location.pathname)
-
-  const [isNightDive, setIsNightDive] = useState(() => {
-    if (typeof document !== 'undefined') {
-      const currentDisabled = isNightModeDisabledRoute(
-        location?.pathname || (typeof window !== 'undefined' ? window.location.pathname : '')
-      )
-      if (currentDisabled) {
-        if (document.body.classList.contains('night-dive')) {
-          document.body.classList.remove('night-dive')
-        }
-        return false
-      }
-      try {
-        if (localStorage.getItem('tdv_night_dive') === 'true') {
-          document.body.classList.add('night-dive')
-          return true
-        }
-      } catch (e) {}
-      return document.body.classList.contains('night-dive')
-    }
-    return false
-  })
-
-  useEffect(() => {
-    if (isNightModeDisabled) {
-      if (document.body.classList.contains('night-dive')) {
-        document.body.classList.remove('night-dive')
-      }
-      setIsNightDive(false)
-      return
-    }
-
-    try {
-      const stored = localStorage.getItem('tdv_night_dive')
-      if (stored === 'true') {
-        document.body.classList.add('night-dive')
-        setIsNightDive(true)
-      } else if (stored === 'false') {
-        document.body.classList.remove('night-dive')
-        setIsNightDive(false)
-      }
-    } catch (e) {}
-
-    const observer = new MutationObserver(() => {
-      if (isNightModeDisabled) {
-        setIsNightDive(false)
-      } else {
-        setIsNightDive(document.body.classList.contains('night-dive'))
-      }
-    })
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
-    setIsNightDive(isNightModeDisabled ? false : document.body.classList.contains('night-dive'))
-    return () => observer.disconnect()
-  }, [isNightModeDisabled, location.pathname])
+  const isNightDive = useNightDive()
 
   useEffect(() => {
     const updateToolbarBottom = () => {
@@ -112,23 +58,13 @@ export default function Navbar() {
   }, [])
 
   const toggleNightDive = () => {
-    if (isNightModeDisabled) return
-    const isNight = document.body.classList.contains('night-dive')
-    if (isNight) {
-      document.body.classList.remove('night-dive')
-      setIsNightDive(false)
-      try { localStorage.setItem('tdv_night_dive', 'false') } catch (e) {}
-    } else {
-      document.body.classList.add('night-dive')
-      setIsNightDive(true)
-      try { localStorage.setItem('tdv_night_dive', 'true') } catch (e) {}
-    }
+    globalToggleNightDive()
   }
 
   const isHomePage = location.pathname === '/'
 
   // Night dive gets #001C39 without shadow; Home page keeps original translucent styling; all other pages get full opaque blue
-  const containerGlass = (isNightDive && !isNightModeDisabled)
+  const containerGlass = isNightDive
     ? 'border border-white/20 bg-[#001C39] text-white shadow-none'
     : isHomePage
       ? 'border border-white/25 bg-[#001e3d]/55 backdrop-blur-2xl text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.35)]'
@@ -164,22 +100,18 @@ export default function Navbar() {
         </Link>
 
         {/* Right: Neomorphism Night Dive Toggle (Mobile Only) */}
-        {!isNightModeDisabled ? (
-          <button
-            type="button"
-            onClick={toggleNightDive}
-            className="flex flex-col items-center justify-center cursor-pointer transition active:scale-95 px-1 py-0.5 shrink-0 rounded-xl focus:outline-none"
-            aria-label="Toggle Night Mode"
-            title={isNightDive ? 'Day Mode' : 'Night Mode'}
-          >
-            <ThemeToggle isNightDive={isNightDive} className="inline-block" />
-            <span className="text-[9px] font-extrabold tracking-tight mt-0.5 text-white/90 uppercase whitespace-nowrap leading-none select-none">
-              {isNightDive ? 'Day Mode' : 'Night Mode'}
-            </span>
-          </button>
-        ) : (
-          <div className="w-9 h-9" aria-hidden="true" />
-        )}
+        <button
+          type="button"
+          onClick={toggleNightDive}
+          className="flex flex-col items-center justify-center cursor-pointer transition active:scale-95 px-1 py-0.5 shrink-0 rounded-xl focus:outline-none"
+          aria-label="Toggle Night Mode"
+          title={isNightDive ? 'Day Mode' : 'Night Mode'}
+        >
+          <ThemeToggle isNightDive={isNightDive} className="inline-block" />
+          <span className="text-[9px] font-extrabold tracking-tight mt-0.5 text-white/90 uppercase whitespace-nowrap leading-none select-none">
+            {isNightDive ? 'Day Mode' : 'Night Mode'}
+          </span>
+        </button>
       </div>
 
       {/* DESKTOP TOOLBAR (hidden sm:grid - 100% Preserved) */}
@@ -252,19 +184,17 @@ export default function Navbar() {
             <span className="hidden xl:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap">Get In Touch</span>
           </button>
 
-          {!isNightModeDisabled && (
-            <button
-              type="button"
-              onClick={toggleNightDive}
-              className={`hidden sm:flex h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 cursor-pointer shadow-sm active:scale-95`}
-              aria-label="Toggle Night Dive mode"
-            >
-              <ThemeToggle isNightDive={isNightDive} className="hidden lg:inline-block" />
-              <span className="hidden sm:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap select-none">
-                {isNightDive ? 'Day Dive' : 'Night Dive'}
-              </span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={toggleNightDive}
+            className={`hidden sm:flex h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 cursor-pointer shadow-sm active:scale-95`}
+            aria-label="Toggle Night Dive mode"
+          >
+            <ThemeToggle isNightDive={isNightDive} className="hidden lg:inline-block" />
+            <span className="hidden sm:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap select-none">
+              {isNightDive ? 'Day Dive' : 'Night Dive'}
+            </span>
+          </button>
 
           <Link
             to={isAuthenticated ? '/dashboard/profile' : '/login'}
@@ -373,18 +303,16 @@ export default function Navbar() {
                   <PhoneIcon />
                   Call / Connect Options
                 </button>
-                {!isNightModeDisabled && (
-                  <button
-                    onClick={() => {
-                      toggleNightDive()
-                      setOpen(false)
-                    }}
-                    className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left text-white hover:bg-white/10 cursor-pointer flex items-center gap-2"
-                  >
-                    <ThemeToggle isNightDive={isNightDive} className="inline-block" />
-                    <span>{isNightDive ? 'Switch to Day Dive' : 'Switch to Night Dive'}</span>
-                  </button>
-                )}
+                <button
+                  onClick={() => {
+                    toggleNightDive()
+                    setOpen(false)
+                  }}
+                  className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left text-white hover:bg-white/10 cursor-pointer flex items-center gap-2"
+                >
+                  <ThemeToggle isNightDive={isNightDive} className="inline-block" />
+                  <span>{isNightDive ? 'Switch to Day Dive' : 'Switch to Night Dive'}</span>
+                </button>
                 <Link
                   to={isAuthenticated ? '/dashboard/profile' : '/login'}
                   onClick={() => setOpen(false)}

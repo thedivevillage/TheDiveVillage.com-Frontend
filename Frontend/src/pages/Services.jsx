@@ -90,7 +90,7 @@ export default function Services() {
   })).filter(g => g.services.length > 0)
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-navy font-body pt-24 sm:pt-32 pb-24 overflow-x-clip" style={{ textShadow: 'none' }}>
+    <div className={`${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} min-h-screen font-body pt-24 sm:pt-32 pb-24 overflow-x-clip transition-colors duration-500`} style={{ textShadow: 'none' }}>
       <SEOHead
         title="Scuba Diving & Ocean Services | Certified Courses, Snorkeling & Charters | The Dive Village"
         description="Explore professional scuba diving courses, certifications, guided snorkeling safaris, freediving, and bespoke dive charters at The Dive Village."

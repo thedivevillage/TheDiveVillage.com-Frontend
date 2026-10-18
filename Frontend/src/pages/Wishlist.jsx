@@ -6,8 +6,10 @@ import { useAuth } from '../hooks/useAuth'
 import { formatCurrency } from '../utils/formatCurrency'
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import Button from '../components/Button'
+import useNightDive from '../hooks/useNightDive'
 
 export default function Wishlist() {
+  const isNightDive = useNightDive()
   const { user } = useAuth()
   const { items, count, remove } = useWishlist()
   const { addItem } = useCart()
@@ -72,7 +74,7 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-navy font-body pt-20 sm:pt-32 pb-24" style={{ textShadow: 'none' }}>
+    <div className={`min-h-screen ${isNightDive ? 'bg-[#003865] text-white' : 'bg-[#FAFAFA] text-navy'} font-body pt-20 sm:pt-32 pb-24 transition-colors duration-500`} style={{ textShadow: 'none' }}>
       <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8">
 
         {/* Toast Notification */}
@@ -86,26 +88,26 @@ export default function Wishlist() {
         )}
 
         {/* Header */}
-        <div className="mb-6 sm:mb-10 border-b border-navy/10 pb-5 sm:pb-6 flex items-end justify-between">
+        <div className={`mb-6 sm:mb-10 border-b ${isNightDive ? 'border-white/10' : 'border-navy/10'} pb-5 sm:pb-6 flex items-end justify-between`}>
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-accent mb-1 block">Saved Items</span>
-            <h1 className="font-heading text-3xl sm:text-5xl font-bold text-navy tracking-tight">Your Wishlist</h1>
-            <p className="mt-1 text-xs sm:text-sm text-navy/60 font-medium">{count} item{count !== 1 && 's'} saved</p>
+            <h1 className={`font-heading text-3xl sm:text-5xl font-bold ${isNightDive ? 'text-white' : 'text-navy'} tracking-tight`}>Your Wishlist</h1>
+            <p className={`mt-1 text-xs sm:text-sm ${isNightDive ? 'text-white/60' : 'text-navy/60'} font-medium`}>{count} item{count !== 1 && 's'} saved</p>
           </div>
-          <Link to="/shop" className="text-xs sm:text-sm font-bold text-navy hover:text-accent transition underline decoration-2 underline-offset-4">
+          <Link to="/shop" className={`text-xs sm:text-sm font-bold ${isNightDive ? 'text-accent hover:text-white' : 'text-navy hover:text-accent'} transition underline decoration-2 underline-offset-4`}>
             ← Continue Shopping
           </Link>
         </div>
 
         {items.length === 0 ? (
-          <div className="py-20 text-center max-w-lg mx-auto bg-white rounded-[40px] p-8 sm:p-12 shadow-card border border-navy/5">
+          <div className={`py-20 text-center max-w-lg mx-auto ${isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-white border-navy/5 text-navy'} rounded-[40px] p-8 sm:p-12 shadow-card border`}>
             <div className="w-20 h-20 rounded-full bg-navy flex items-center justify-center mx-auto mb-6 shadow-md border border-white/20">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFCD00" stroke="#FFCD00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             </div>
-            <h2 className="font-heading text-3xl font-bold mb-3 text-navy">Your wishlist is empty.</h2>
-            <p className="text-navy/60 mb-8 text-sm leading-relaxed">
+            <h2 className={`font-heading text-3xl font-bold mb-3 ${isNightDive ? 'text-white' : 'text-navy'}`}>Your wishlist is empty.</h2>
+            <p className={`${isNightDive ? 'text-white/70' : 'text-navy/60'} mb-8 text-sm leading-relaxed`}>
               Explore our ocean-crafted hoodies, pro dive suits, rash guards, and branded essentials, and tap the heart icon on any product to save it here.
             </p>
             <Button as={Link} to="/shop" className="w-full justify-center bg-navy text-white hover:bg-accent">
@@ -131,7 +133,7 @@ export default function Wishlist() {
                   <div
                     key={item.id}
                     onClick={() => navigate(`/shop/${item.id}`)}
-                    className="group rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-2.5 xs:p-3 flex flex-col justify-between cursor-pointer relative transition active:scale-[0.99] hover:shadow-md"
+                    className={`group rounded-2xl ${isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-white border-slate-200/80 text-navy'} shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-2.5 xs:p-3 flex flex-col justify-between cursor-pointer relative transition active:scale-[0.99] hover:shadow-md border`}
                   >
                     {/* Remove Wishlist Button (Top Right) */}
                     <button
@@ -141,7 +143,7 @@ export default function Wishlist() {
                         triggerHaptic(15)
                         remove(item.id)
                       }}
-                      className="absolute top-2.5 right-2.5 z-10 w-7.5 h-7.5 xs:w-8 xs:h-8 rounded-full bg-slate-50/90 border border-slate-200/90 text-[#FFCD00] hover:text-rose-600 flex items-center justify-center shadow-sm transition active:scale-90 cursor-pointer"
+                      className={`absolute top-2.5 right-2.5 z-10 w-7.5 h-7.5 xs:w-8 xs:h-8 rounded-full ${isNightDive ? 'bg-[#003865]/90 border-white/20' : 'bg-slate-50/90 border-slate-200/90'} text-[#FFCD00] hover:text-rose-600 flex items-center justify-center shadow-sm transition active:scale-90 cursor-pointer border`}
                       aria-label="Remove from wishlist"
                       title="Remove from wishlist"
                     >
@@ -159,7 +161,7 @@ export default function Wishlist() {
                     </button>
 
                     {/* Product Image */}
-                    <div className="w-full aspect-[4/5] flex items-center justify-center p-2 mb-1 bg-white">
+                    <div className={`w-full aspect-[4/5] flex items-center justify-center p-2 mb-1 ${isNightDive ? 'bg-white/5 rounded-xl' : 'bg-white'}`}>
                       <img
                         src={item.image}
                         alt={item.title || item.name}
@@ -170,10 +172,10 @@ export default function Wishlist() {
                     {/* Info */}
                     <div className="flex flex-col flex-1 justify-between mb-2.5">
                       <div>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">
+                        <span className={`text-[10px] font-semibold uppercase tracking-wider ${isNightDive ? 'text-white/50' : 'text-slate-400'} block mb-0.5`}>
                           {item.category || 'MERCH'}
                         </span>
-                        <h3 className="font-bold text-slate-900 text-xs xs:text-[13px] leading-snug line-clamp-2 min-h-[32px] group-hover:text-accent transition">
+                        <h3 className={`font-bold ${isNightDive ? 'text-white' : 'text-slate-900'} text-xs xs:text-[13px] leading-snug line-clamp-2 min-h-[32px] group-hover:text-accent transition`}>
                           {item.title || item.name}
                         </h3>
                       </div>
@@ -199,13 +201,13 @@ export default function Wishlist() {
 
             {/* Right Column: Wishlist Summary Card */}
             <div className="lg:col-span-4">
-              <div className="bg-white rounded-[32px] border border-navy/5 p-6 sm:p-8 shadow-card space-y-6 sticky top-28">
-                <h2 className="font-heading text-2xl font-bold text-navy">Wishlist Summary</h2>
+              <div className={`${isNightDive ? 'bg-[#001e3d] border-white/10 text-white' : 'bg-white border-navy/5 text-navy'} rounded-[32px] border p-6 sm:p-8 shadow-card space-y-6 sticky top-28`}>
+                <h2 className={`font-heading text-2xl font-bold ${isNightDive ? 'text-white' : 'text-navy'}`}>Wishlist Summary</h2>
 
-                <div className="space-y-3 border-y border-navy/10 py-4 text-sm font-medium text-navy/70">
+                <div className={`space-y-3 border-y ${isNightDive ? 'border-white/10 text-white/70' : 'border-navy/10 text-navy/70'} py-4 text-sm font-medium`}>
                   <div className="flex justify-between">
                     <span>Saved Items</span>
-                    <span className="font-bold text-navy">{count}</span>
+                    <span className={`font-bold ${isNightDive ? 'text-white' : 'text-navy'}`}>{count}</span>
                   </div>
                 </div>
 
@@ -220,7 +222,7 @@ export default function Wishlist() {
 
                   <Link
                     to="/shop"
-                    className="w-full text-center block rounded-full bg-white border-2 border-navy/20 hover:border-navy hover:bg-navy hover:text-white text-navy font-bold py-3 px-6 text-xs transition-all duration-200 shadow-xs cursor-pointer"
+                    className={`w-full text-center block rounded-full ${isNightDive ? 'bg-[#003865] border border-white/20 hover:bg-accent hover:text-navy text-white' : 'bg-white border-2 border-navy/20 hover:border-navy hover:bg-navy hover:text-white text-navy'} font-bold py-3 px-6 text-xs transition-all duration-200 shadow-xs cursor-pointer`}
                   >
                     Continue Shopping
                   </Link>
