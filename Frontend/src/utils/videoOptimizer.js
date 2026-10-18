@@ -4,14 +4,15 @@
  */
 
 // Master Source Assets (Cloudflare R2 endpoints)
-export const RAW_CLOUDINARY_CLOWNFISH = '/media/TDV-Media/Background/ClownFish.mp4'
-export const RAW_CLOUDINARY_BARRACUDA = '/media/TDV-Media/Background/baracuda.mp4'
+// Serving the 1080p stream (13MB) instead of the 4K raw master (61MB) enables instant loading on all devices
+export const RAW_CLOUDINARY_CLOWNFISH = '/media/TDV-Media/Background/ClownFish_1080p.mp4'
+export const RAW_CLOUDINARY_BARRACUDA = '/media/TDV-Media/Background/baracuda_1080p.mp4'
 export const RAW_CLOUDINARY_TURTLE = '/media/TDV-Media/Background/Turtle.mp4'
 export const RAW_CLOUDINARY_NIGHT_DIVE = '/media/TDV-Media/Background/Night_Dive.mp4'
 
 // Master Bitrate Video Assets
-export const MASTER_1080P_CLOWNFISH = RAW_CLOUDINARY_CLOWNFISH
-export const MASTER_1080P_BARRACUDA = RAW_CLOUDINARY_BARRACUDA
+export const MASTER_1080P_CLOWNFISH = '/media/TDV-Media/Background/ClownFish_1080p.mp4'
+export const MASTER_1080P_BARRACUDA = '/media/TDV-Media/Background/baracuda_1080p.mp4'
 export const MASTER_1080P_TURTLE = RAW_CLOUDINARY_TURTLE
 export const MASTER_1080P_NIGHT_DIVE = RAW_CLOUDINARY_NIGHT_DIVE
 
@@ -46,7 +47,7 @@ export const OPTIMIZED_BARRACUDA_360 = RAW_CLOUDINARY_BARRACUDA
 export const OPTIMIZED_TURTLE_360 = RAW_CLOUDINARY_TURTLE
 export const OPTIMIZED_NIGHT_DIVE_360 = RAW_CLOUDINARY_NIGHT_DIVE
 
-export const POSTER_CLOWNFISH_360 = ''
-export const POSTER_BARRACUDA_360 = ''
-export const POSTER_TURTLE_360 = ''
-export const POSTER_NIGHT_DIVE_360 = ''
+export const POSTER_CLOWNFISH_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325557/TDV-Media/AirportToAirport/gallery1.webp'
+export const POSTER_BARRACUDA_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp'
+export const POSTER_TURTLE_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325578/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
+export const POSTER_NIGHT_DIVE_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp'

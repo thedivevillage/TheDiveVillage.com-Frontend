@@ -133,12 +133,15 @@ export function preloadNightDiveFirst5Seconds() {
 
   const src = NIGHT_DIVE_VIDEO_SRC // '/media/TDV-Media/Background/Night_Dive.mp4'
 
-  // Step A: Eager Range Request to cache the first 5.5 seconds (3.5 MB) in browser and server RAM cache
-  try {
-    fetch(src, {
-      headers: { range: 'bytes=0-3670016' }
-    }).catch(() => {})
-  } catch (e) {}
+  // Step A: Range request on idle to avoid network contention with active page assets
+  const idleRun = window.requestIdleCallback || ((cb) => setTimeout(cb, 3500))
+  idleRun(() => {
+    try {
+      fetch(src, {
+        headers: { range: 'bytes=0-1048576' }
+      }).catch(() => {})
+    } catch (e) {}
+  })
 
   // Step B: Warm video element initialized in background to prime hardware media decoders
   let container = document.getElementById('hero-360-video-dom-root')

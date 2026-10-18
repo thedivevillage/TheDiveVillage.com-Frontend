@@ -1739,13 +1739,7 @@ export default function BookUs() {
 
       {/* 1. HEADER VIDEO HERO (DYNAMIC COMPILED NIGHT DIVE VIDEO - DESKTOP ONLY) */}
       <section className="hidden sm:flex relative h-[56vh] min-h-[420px] lg:h-[60vh] lg:min-h-[460px] w-full items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 z-0 overflow-hidden"
-          style={{
-            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)'
-          }}
-        >
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <LazyVideo
             key={isNightDive ? 'night-compiled' : 'day-turtle'}
             src={isNightDive ? compiledNightDiveVideo : turtleAnnaVideo}

@@ -15,125 +15,28 @@ import { usePageVisibility } from '../hooks/usePageVisibility'
 import useNightDive from '../hooks/useNightDive'
 
 function DiverAnimation({ src, fallbackSrc, className, isNightDive }) {
-  const videoRef = useRef(null)
-  const canvasRef = useRef(null)
-  const isVisible = usePageVisibility()
-  const isRunningRef = useRef(true)
   const [currentSrc, setCurrentSrc] = useState(src)
 
-  useEffect(() => {
-    setCurrentSrc(src)
-  }, [src])
-
-  const handleVideoError = () => {
-    if (fallbackSrc && currentSrc !== fallbackSrc) {
-      console.warn('Preloader video failed to load, switching to fallback:', fallbackSrc)
-      setCurrentSrc(fallbackSrc)
-    }
-  }
-
-  useEffect(() => {
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    if (!video || !canvas) return
-
-    video.muted = true
-    video.setAttribute('muted', '')
-    video.setAttribute('playsinline', '')
-    video.setAttribute('webkit-playsinline', '')
-
-    const playVideo = () => {
-      if (isVisible) {
-        const p = video.play()
-        if (p && typeof p.catch === 'function') {
-          p.catch(() => {})
-        }
-      }
-    }
-
-    playVideo()
-    video.addEventListener('canplay', playVideo)
-    video.addEventListener('loadeddata', playVideo)
-
-    const ctx = canvas.getContext('2d', { willReadFrequently: true })
-    let animId
-    isRunningRef.current = isVisible
-
-    const render = () => {
-      if (!isRunningRef.current) return
-      if (video.readyState >= 2) {
-        const targetW = 320
-        const aspect = (video.videoWidth && video.videoHeight) ? (video.videoHeight / video.videoWidth) : (9 / 16)
-        const targetH = Math.round(targetW * aspect) || 180
-        if (canvas.width !== targetW || canvas.height !== targetH) {
-          canvas.width = targetW
-          canvas.height = targetH
-        }
-        ctx.drawImage(video, 0, 0, targetW, targetH)
-        try {
-          const frame = ctx.getImageData(0, 0, targetW, targetH)
-          const data = frame.data
-          const len = data.length
-          for (let i = 0; i < len; i += 4) {
-            const r = data[i]
-            const g = data[i + 1]
-            const b = data[i + 2]
-            const minVal = Math.min(r, g, b)
-            // Key out any off-white/grey video background pixels completely to transparent
-            if (minVal >= 210) {
-              data[i + 3] = 0
-            } else if (minVal > 165) {
-              const factor = (210 - minVal) / 45
-              data[i + 3] = Math.round(data[i + 3] * Math.max(0, Math.min(1, factor)))
-            }
-            // In night dive mode: convert the diver figure to pure solid white
-            if (isNightDive && data[i + 3] > 0) {
-              data[i] = 255
-              data[i + 1] = 255
-              data[i + 2] = 255
-            }
-          }
-          ctx.putImageData(frame, 0, 0)
-        } catch (e) {
-          // Fallback if canvas is tainted before crossOrigin resolves
-        }
-      }
-      animId = requestAnimationFrame(render)
-    }
-
-    if (isVisible) {
-      animId = requestAnimationFrame(render)
-    }
-
-    return () => {
-      isRunningRef.current = false
-      if (animId) cancelAnimationFrame(animId)
-      video.removeEventListener('canplay', playVideo)
-      video.removeEventListener('loadeddata', playVideo)
-    }
-  }, [currentSrc, isVisible, isNightDive])
-
   return (
-    <>
-      <video
-        ref={videoRef}
-        src={currentSrc || null}
-        autoPlay
-        loop
-        muted
-        playsInline
-        crossOrigin="anonymous"
-        onError={handleVideoError}
-        style={{ position: 'fixed', left: '-9999px', top: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
-      />
-      <canvas
-        ref={canvasRef}
-        width={320}
-        height={180}
-        className={`${className} pointer-events-none`}
-        style={isNightDive ? { filter: 'brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.4))' } : undefined}
-      />
-    </>
+    <video
+      src={currentSrc || fallbackSrc}
+      autoPlay
+      loop
+      muted
+      playsInline
+      webkit-playsinline=""
+      crossOrigin="anonymous"
+      onError={() => {
+        if (fallbackSrc && currentSrc !== fallbackSrc) setCurrentSrc(fallbackSrc)
+      }}
+      className={`${className} pointer-events-none select-none`}
+      style={{
+        mixBlendMode: isNightDive ? 'screen' : 'multiply',
+        filter: isNightDive
+          ? 'brightness(0) invert(1) drop-shadow(0 0 10px rgba(0, 242, 254, 0.6))'
+          : 'contrast(1.4) brightness(1.12) saturate(1.05)',
+      }}
+    />
   )
 }
 
@@ -157,8 +60,14 @@ export default function Preloader({ onComplete }) {
   }, [])
 
   useEffect(() => {
-    const maxSafetyTimeout = 3000 // Hard safety cap guaranteeing preloader finishes within 3 seconds
-    const baseTargetDuration = 2200 // Smooth progress duration (~2.2s)
+    // If the user already experienced the preloader in this session, don't block them again
+    if (typeof window !== 'undefined' && sessionStorage.getItem('tdv_preloaded')) {
+      if (onComplete) onComplete()
+      return
+    }
+
+    const maxSafetyTimeout = 1400 // Snappy safety cap
+    const baseTargetDuration = 800 // Fast, polished progress (~0.8s)
     let animationFrameId
     let completed = false
     let firstFrameTime = null
@@ -174,24 +83,21 @@ export default function Preloader({ onComplete }) {
 
       const elapsed = currentTime - firstFrameTime
       const isVideoLoaded = isVideoReadyRef.current
-      const isFullyReady = (isVideoLoaded && (isWebGLReadyRef.current || elapsed >= 1800)) || elapsed >= maxSafetyTimeout
+      const isFullyReady = (isVideoLoaded && (isWebGLReadyRef.current || elapsed >= 700)) || elapsed >= maxSafetyTimeout
 
       let targetProgress
       if (elapsed >= maxSafetyTimeout) {
         targetProgress = 100
       } else if (isFullyReady) {
-        // Background video and WebGL ready: smoothly glide to 100%
         targetProgress = Math.min(100, (elapsed / baseTargetDuration) * 100)
       } else {
-        // Smoothly ease up to 88% while waiting for video to load in DOM
         targetProgress = Math.min(88, (elapsed / maxSafetyTimeout) * 88)
       }
 
-      // Smooth step: strictly start at 0 and smoothly increment without jumping to higher values
-      const maxStepPerFrame = 2.2
+      const maxStepPerFrame = 4.0
       currentProgress = Math.min(targetProgress, currentProgress + maxStepPerFrame)
 
-      if (targetProgress >= 100 && (elapsed >= maxSafetyTimeout || currentProgress >= 98)) {
+      if (targetProgress >= 100 && (elapsed >= maxSafetyTimeout || currentProgress >= 96)) {
         currentProgress = 100
       }
 
@@ -200,11 +106,12 @@ export default function Preloader({ onComplete }) {
       if (currentProgress >= 100 && !completed) {
         completed = true
         try {
+          sessionStorage.setItem('tdv_preloaded', 'true')
           window.dispatchEvent(new Event('tdv-unlock-audio'))
         } catch (_) {}
         setTimeout(() => {
           if (onComplete) onComplete()
-        }, 180)
+        }, 120)
         return
       }
 

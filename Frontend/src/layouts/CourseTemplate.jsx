@@ -33,13 +33,7 @@ export default function CourseTemplate({
     <div className="bg-[#FAFAFA] min-h-screen text-navy font-body overflow-x-clip" style={{ textShadow: 'none' }}>
       {/* 1. HEADER VIDEO HERO (EXACT MATCH TO BOOK US DESIGN) */}
       <section className="relative h-[56vh] min-h-[420px] lg:h-[60vh] lg:min-h-[460px] w-full flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0 overflow-hidden"
-          style={{
-            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)'
-          }}
-        >
+        <div className="absolute inset-0 z-0 overflow-hidden">
           {heroVideo ? (
             <LazyVideo
               ref={(el) => {

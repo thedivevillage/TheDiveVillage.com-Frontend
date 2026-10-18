@@ -27,6 +27,7 @@ const videoObserverCallbacks = new Map()
 function getSharedVideoObserver() {
   if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return null
   if (!sharedVideoObserver) {
+    const isMobile = window.innerWidth < 768
     sharedVideoObserver = new IntersectionObserver(
       (entries) => {
         for (let i = 0; i < entries.length; i++) {
@@ -38,7 +39,7 @@ function getSharedVideoObserver() {
         }
       },
       {
-        rootMargin: '250px 0px 250px 0px',
+        rootMargin: isMobile ? '120px 20px 120px 20px' : '200px 0px 200px 0px',
         threshold: 0,
       }
     )
@@ -228,13 +229,13 @@ const LazyVideo = forwardRef(function LazyVideo({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-[#00172b]'} ${className}`}
+      className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-transparent'} ${className}`}
       style={{
         contain: 'layout paint',
         backgroundColor: className.includes('bg-white') ? '#ffffff' : (props.style?.backgroundColor || undefined)
       }}
     >
-      {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and moves) */}
+      {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and actively plays) */}
       {poster && (
         <img
           src={poster}
@@ -242,8 +243,8 @@ const LazyVideo = forwardRef(function LazyVideo({
           aria-hidden="true"
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
-          className={`absolute inset-0 w-full h-full ${fitClass} z-0 pointer-events-none transition-opacity duration-300 ease-out ${
-            masterStarted || previewStarted ? 'opacity-0' : 'opacity-100'
+          className={`absolute inset-0 w-full h-full ${fitClass} z-0 pointer-events-none transition-opacity duration-500 ease-out ${
+            masterStarted ? 'opacity-0' : 'opacity-100'
           }`}
           style={{
             objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
@@ -258,21 +259,21 @@ const LazyVideo = forwardRef(function LazyVideo({
         <video
           ref={previewRef}
           src={hasEnteredView ? lowResSrc : undefined}
-          autoPlay={autoPlay && isInView && !masterReady}
+          autoPlay={autoPlay && isInView && !masterStarted}
           loop={loop}
           muted={muted}
           playsInline={playsInline}
           webkit-playsinline=""
           x5-playsinline=""
-          preload={hasEnteredView ? 'auto' : 'none'}
+          preload={isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none')}
           onTimeUpdate={() => {
             if (!previewStarted) setPreviewStarted(true)
           }}
           onPlaying={() => {
             setPreviewStarted(true)
           }}
-          className={`absolute inset-0 w-full h-full ${fitClass} pointer-events-none transition-opacity duration-400 ease-out z-[1] ${
-            masterReady ? 'opacity-0' : previewStarted ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 w-full h-full ${fitClass} pointer-events-none transition-opacity duration-500 ease-out z-[1] ${
+            masterStarted ? 'opacity-0' : previewStarted ? 'opacity-100' : 'opacity-0'
           }`}
           style={{
             objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
@@ -295,7 +296,7 @@ const LazyVideo = forwardRef(function LazyVideo({
         controls={controls}
         controlsList={controlsList}
         disablePictureInPicture={disablePictureInPicture}
-        preload={hasEnteredView ? 'auto' : 'none'}
+        preload={priority ? 'auto' : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none'))}
         onTimeUpdate={(e) => {
           if (!masterStarted) setMasterStarted(true)
           if (typeof props.onTimeUpdate === 'function') {
@@ -310,8 +311,8 @@ const LazyVideo = forwardRef(function LazyVideo({
             props.onLoadedData(e)
           }
         }}
-        className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-400 ease-out z-[2] ${
-          masterReady ? 'opacity-100' : 'opacity-0'
+        className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-500 ease-out z-[2] ${
+          masterStarted || (!poster && masterReady) ? 'opacity-100' : 'opacity-0'
         } ${!controls ? 'pointer-events-none' : ''} ${videoClassName}`}
         style={{
           objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',

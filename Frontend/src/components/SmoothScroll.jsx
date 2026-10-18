@@ -41,11 +41,11 @@ export default function SmoothScroll({ children, options = {} }) {
       root
       options={{
         ...defaultLenisOptions,
-        duration: 1.0,
+        duration: 0.45,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         wheelMultiplier: 1.0,
-        touchMultiplier: 1.2,
+        touchMultiplier: 1.0,
         infinite: false,
         syncTouch: false,
         autoRaf: true,

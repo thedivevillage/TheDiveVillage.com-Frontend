@@ -82,13 +82,7 @@ export default function ServiceDetail() {
       
       {/* 1. HERO BANNER WITH SMOOTH FADE OUT */}
       <section className="relative w-full h-[58vh] min-h-[440px] lg:h-[62vh] lg:min-h-[480px] overflow-hidden flex flex-col justify-end pt-24 sm:pt-28 pb-12 sm:pb-16">
-        <div
-          className="absolute inset-0 z-0 overflow-hidden"
-          style={{
-            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)'
-          }}
-        >
+        <div className="absolute inset-0 z-0 overflow-hidden">
           {activeHeroVideo ? (
             <LazyVideo
               key={activeHeroVideo}

@@ -119,7 +119,7 @@ function useDirectVideoTexture(src, fallbackMp4, playbackRate = 0.5, priority = 
 
     const checkReadiness = () => {
       if (!isMounted) return false
-      return video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0
+      return (video.readyState >= 1 && video.videoWidth > 0) || video.readyState >= 2
     }
 
     const registerFrameCallback = () => {
@@ -602,14 +602,33 @@ export default function VideoSphereBackground() {
 
   const [isNightTransitioning, setIsNightTransitioning] = useState(false)
   const [isNightSettled, setIsNightSettled] = useState(false)
-
-  // Reusable Page Visibility hook
   const isVisible = usePageVisibility()
+
+  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false)
 
   const isAbout = location.pathname === '/about'
   const isSpherePage = location.pathname === '/' || isAbout
   const sphereVideo = isAbout ? bookFile : videoFile
-  const shouldRenderCanvas = isVisible && isSpherePage && (!isNightSettled || isNightTransitioning)
+
+  useEffect(() => {
+    if (!isSpherePage) return
+    let raf = null
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        const past = window.scrollY > (window.innerHeight * 1.25)
+        setIsScrolledPastHero(past)
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [isSpherePage])
+
+  const shouldRenderCanvas = isVisible && isSpherePage && !isScrolledPastHero && (!isNightSettled || isNightTransitioning)
 
   useEffect(() => {
     setMounted(true)
@@ -768,66 +787,63 @@ export default function VideoSphereBackground() {
             }}
           />
 
-          {/* Layer 1: Day Dive 360 Video Sphere (Continues live during crossfade) */}
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              zIndex: 1,
-              display: isSpherePage ? 'block' : 'none',
-              pointerEvents: (!isNightDive && isSpherePage) ? 'auto' : 'none',
-            }}
-          >
-            <Canvas
-              frameloop={shouldRenderCanvas ? 'always' : 'never'}
-              dpr={[1, 1.5]}
-              camera={{ position: [0, 0, 0.1], fov: 85 }}
-              gl={{ powerPreference: 'high-performance', antialias: false }}
-              onCreated={({ gl, scene }) => {
-                scene.background = new THREE.Color('#001e3d')
-                gl.domElement.addEventListener(
-                  'webglcontextlost',
-                  (e) => {
-                    e.preventDefault()
-                    console.warn('THREE.WebGLRenderer: Context Lost. Handling gracefully.')
-                  },
-                  false
-                )
-                gl.domElement.addEventListener(
-                  'webglcontextrestored',
-                  () => {
-                    console.info('THREE.WebGLRenderer: Context Restored.')
-                  },
-                  false
-                )
+          {/* Layer 1: Day Dive 360 Video Sphere (Only mounted on sphere routes) */}
+          {isSpherePage && (
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 1,
+                pointerEvents: !isNightDive ? 'auto' : 'none',
               }}
             >
-              <color attach="background" args={['#001e3d']} />
-              {isSpherePage && (
-                <>
-                  <Suspense fallback={null}>
-                    <VideoSphere
-                      videoSrc={sphereVideo}
-                      isNightSettled={isNightSettled}
-                      joystickVelocity={joystickVelocity}
-                      isVisible={isVisible}
-                    />
-                  </Suspense>
-                  <OrbitControls
-                    enableZoom={false}
-                    enablePan={false}
-                    enableDamping={true}
-                    dampingFactor={0.05}
-                    autoRotate={false}
-                    rotateSpeed={-0.15}
+              <Canvas
+                frameloop={shouldRenderCanvas ? 'always' : 'never'}
+                dpr={[1, 1.5]}
+                camera={{ position: [0, 0, 0.1], fov: 85 }}
+                gl={{ powerPreference: 'high-performance', antialias: false }}
+                onCreated={({ gl, scene }) => {
+                  scene.background = new THREE.Color('#001e3d')
+                  gl.domElement.addEventListener(
+                    'webglcontextlost',
+                    (e) => {
+                      e.preventDefault()
+                      console.warn('THREE.WebGLRenderer: Context Lost. Handling gracefully.')
+                    },
+                    false
+                  )
+                  gl.domElement.addEventListener(
+                    'webglcontextrestored',
+                    () => {
+                      console.info('THREE.WebGLRenderer: Context Restored.')
+                    },
+                    false
+                  )
+                }}
+              >
+                <color attach="background" args={['#001e3d']} />
+                <Suspense fallback={null}>
+                  <VideoSphere
+                    videoSrc={sphereVideo}
+                    isNightSettled={isNightSettled}
+                    joystickVelocity={joystickVelocity}
+                    isVisible={isVisible && !isScrolledPastHero}
                   />
-                </>
-              )}
-            </Canvas>
-          </div>
+                </Suspense>
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  enableDamping={true}
+                  dampingFactor={0.05}
+                  autoRotate={false}
+                  rotateSpeed={-0.15}
+                />
+              </Canvas>
+            </div>
+          )}
         </div>
       </div>
       {!isNightDive && !isHiddenJoystickPath && <JoystickControl joystickVelocity={joystickVelocity} />}

@@ -18,6 +18,9 @@
 
 
 
+  <link rel="preload" href="/fonts/Antonio-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/GoogleSansFlex-VariableFont.woff2" as="font" type="font/woff2" crossorigin />
+
   <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -60,23 +63,32 @@
     webkit-playsinline
     style="display:none;position:fixed;pointer-events:none;"
   ></audio>
-  <!-- In-DOM Hero 360 Video Stream (Buffering from millisecond zero) -->
-  <div
-    id="hero-360-video-dom-root"
-    style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0.001;pointer-events:none;overflow:hidden;z-index:-99999;"
-  >
-    <video
-      id="hero-360-dom-video"
-      src="/media/TDV-Media/Background/ClownFish.mp4"
-      autoplay
-      loop
-      muted
-      playsinline
-      webkit-playsinline
-      preload="auto"
-      crossorigin="anonymous"
-    ></video>
-  </div>
+  <!-- In-DOM Hero 360 Video Stream (Buffering only on sphere routes to save 20MB network bandwidth) -->
+  <script>
+    (function () {
+      try {
+        var path = (window.location.pathname || '/').split('?')[0].split('#')[0].trim().toLowerCase().replace(/\/+$/, '') || '/';
+        if (path === '/' || path === '/about') {
+          var container = document.createElement('div');
+          container.id = 'hero-360-video-dom-root';
+          container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0.001;pointer-events:none;overflow:hidden;z-index:-99999;';
+          var vid = document.createElement('video');
+          vid.id = 'hero-360-dom-video';
+          vid.src = '/media/TDV-Media/Background/ClownFish_1080p.mp4';
+          vid.autoplay = true;
+          vid.loop = true;
+          vid.muted = true;
+          vid.playsInline = true;
+          vid.setAttribute('playsinline', '');
+          vid.setAttribute('webkit-playsinline', '');
+          vid.preload = 'auto';
+          vid.crossOrigin = 'anonymous';
+          container.appendChild(vid);
+          document.body.appendChild(container);
+        }
+      } catch (e) {}
+    })();
+  </script>
   <script>
     (function () {
       try {
@@ -123,9 +135,9 @@
         document.addEventListener('DOMContentLoaded', startPlay, { once: true });
         window.addEventListener('load', startPlay, { once: true });
 
-        // Unmute on ANY micro-gesture (cursor movement, wheel, touch, scroll, focus, key) without needing a click
-        var microEvents = ['mousemove', 'pointermove', 'pointerdown', 'touchstart', 'mousedown', 'keydown', 'wheel', 'scroll', 'focus'];
-        var onMicroGesture = function () {
+        // Unmute on first user interaction without polling high-frequency mousemove/scroll
+        var unlockEvents = ['pointerdown', 'touchstart', 'click'];
+        var onUserUnlock = function () {
           if (localStorage.getItem('tdv_audio_muted') === 'true') return;
           if (document.hidden) return;
           if (audio.muted || audio.paused) {
@@ -136,27 +148,12 @@
               p.then(function () {
                 audio.muted = false;
                 audio.volume = 0.5;
-                if ('mediaSession' in navigator && typeof MediaMetadata !== 'undefined') {
-                  try {
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                      title: 'Underwater Ambiance',
-                      artist: 'The Dive Village',
-                      album: "It's a Community",
-                      artwork: [{ src: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png', sizes: '512x512', type: 'image/png' }]
-                    });
-                  } catch (e) {}
-                }
-                microEvents.forEach(function (e) {
-                  window.removeEventListener(e, onMicroGesture, true);
-                  document.removeEventListener(e, onMicroGesture, true);
-                });
               }).catch(function () {});
             }
           }
         };
-        microEvents.forEach(function (e) {
-          window.addEventListener(e, onMicroGesture, { capture: true, passive: true });
-          document.addEventListener(e, onMicroGesture, { capture: true, passive: true });
+        unlockEvents.forEach(function (e) {
+          window.addEventListener(e, onUserUnlock, { once: true, passive: true });
         });
       } catch (e) {}
     })();

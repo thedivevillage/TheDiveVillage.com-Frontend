@@ -331,6 +331,35 @@ export default defineConfig({
     },
     dedupe: ['three', 'react', 'react-dom'],
   },
+  build: {
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three') || id.includes('@react-three')) {
+              return 'vendor-three'
+            }
+            if (id.includes('maplibre-gl')) {
+              return 'vendor-maps'
+            }
+            if (id.includes('firebase')) {
+              return 'vendor-firebase'
+            }
+            if (id.includes('framer-motion')) {
+              return 'vendor-motion'
+            }
+            if (id.includes('react-router') || id.includes('react-dom') || id.includes('react/')) {
+              return 'vendor-react'
+            }
+            if (id.includes('papaparse') || id.includes('canvas-confetti') || id.includes('lucide-react')) {
+              return 'vendor-ui-utils'
+            }
+          }
+        }
+      }
+    }
+  },
   server: {
     host: true,
     port: 5173,

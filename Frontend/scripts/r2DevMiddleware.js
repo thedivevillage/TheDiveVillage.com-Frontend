@@ -54,8 +54,8 @@ function getR2Credentials() {
   }
 
   return {
-    accessKeyId: env.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: env.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY,
+    accessKeyId: env.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID || 'c94775f05ccec5fefaa79206167e5d18',
+    secretAccessKey: env.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY || 'fb886b042d18e4c7118459b4435eb0da5af3986d86e0b320d6b8d80a943dcf37',
     bucket: env.R2_BUCKET_NAME || 'thedivevillage-media',
     endpoint: env.R2_ENDPOINT || 'https://e89adf53cebe848fd4e126c6b9d88d0c.r2.cloudflarestorage.com'
   };
@@ -347,8 +347,8 @@ export function r2DevMediaPlugin() {
             agent: httpsAgent
           }, (r2Res) => {
             if (r2Res.statusCode && r2Res.statusCode >= 400) {
-              // Fallback to live API proxy if R2 returns an error
-              proxyToLiveApi(req, res, cleanKey, req.headers.range);
+              res.statusCode = r2Res.statusCode;
+              res.end('Not Found in R2');
               return;
             }
 
@@ -414,8 +414,11 @@ export function r2DevMediaPlugin() {
           });
 
           r2Req.on('error', (err) => {
-            console.error('[R2 Dev Media] Error fetching, falling back to live API:', cleanKey, err);
-            proxyToLiveApi(req, res, cleanKey, req.headers.range);
+            console.error('[R2 Dev Media] Error fetching:', cleanKey, err);
+            if (!res.headersSent) {
+              res.statusCode = 502;
+              res.end('R2 Gateway Error');
+            }
           });
 
           r2Req.end();

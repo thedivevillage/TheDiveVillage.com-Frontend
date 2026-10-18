@@ -22,9 +22,34 @@ function Placeholder({ alt, className }) {
   )
 }
 
+function MotionParallaxImg({ src, alt, priority, imgClassName, setFailed, ...props }) {
+  const containerRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  })
+  const y = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
+
+  return (
+    <div ref={containerRef} className="w-full h-full overflow-hidden relative">
+      <motion.img
+        style={{ y, scale: 1.25 }}
+        src={src}
+        alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
+        onError={() => setFailed(true)}
+        className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${imgClassName}`}
+        {...props}
+      />
+    </div>
+  )
+}
+
 /**
- * SafeImage component (Optimizations & Priorities Removed)
- * Renders raw image directly without LQIP placeholders, downscaling, or fetchpriority.
+ * SafeImage component
+ * Renders native hardware-accelerated <img> with lazy-loading and fallback placeholder.
+ * Parallax is opt-in to avoid creating dozens of scroll listeners.
  */
 export default function SafeImage({
   src,
@@ -32,20 +57,12 @@ export default function SafeImage({
   className = '',
   imgClassName = '',
   disableParallax = false,
+  parallax = false,
   priority = false,
   ...props
 }) {
   const [failed, setFailed] = useState(false)
-  const imgRef = useRef(null)
-  const containerRef = useRef(null)
   const reduce = useReducedMotion()
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start'],
-  })
-
-  const y = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
 
   if (!src || failed) {
     return (
@@ -55,25 +72,21 @@ export default function SafeImage({
     )
   }
 
-  const useParallaxMotion = !reduce && !disableParallax
+  const useParallaxMotion = parallax && !disableParallax && !reduce
 
   return (
-    <div ref={containerRef} className={`overflow-hidden relative bg-[#00172b] ${className}`}>
+    <div className={`overflow-hidden relative bg-[#00172b] ${className}`}>
       {useParallaxMotion ? (
-        <motion.img
-          ref={imgRef}
-          style={{ y, scale: 1.25 }}
+        <MotionParallaxImg
           src={src}
           alt={alt}
-          loading={priority ? 'eager' : 'lazy'}
-          fetchPriority={priority ? 'high' : 'auto'}
-          onError={() => setFailed(true)}
-          className={`h-full w-full ${imgClassName?.includes('object-') ? '' : 'object-cover'} relative z-[1] ${imgClassName}`}
+          priority={priority}
+          imgClassName={imgClassName}
+          setFailed={setFailed}
           {...props}
         />
       ) : (
         <img
-          ref={imgRef}
           src={src}
           alt={alt}
           loading={priority ? 'eager' : 'lazy'}

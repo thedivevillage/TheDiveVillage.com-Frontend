@@ -22,6 +22,7 @@ export default function Wishlist() {
   const handleAddToCart = (item, e) => {
     if (e) {
       e.preventDefault()
+
       e.stopPropagation()
     }
     triggerSuccessHaptic()
