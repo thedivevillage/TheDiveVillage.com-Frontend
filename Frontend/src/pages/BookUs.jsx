@@ -1,5 +1,5 @@
 import LazyVideo from '../components/LazyVideo'
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense, lazy } from 'react'
 import { useSearchParams, useLocation } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import PhoneInput, { parsePhoneNumber, getCountryCallingCode } from 'react-phone-number-input'
@@ -31,7 +31,7 @@ import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '../util
 const turtleAnnaVideo = '/media/TDV-Media/Background/Turtle.mp4'
 const compiledNightDiveVideo = '/media/TDV-Media/Background/Night_Dive.mp4'
 import useNightDive from '../hooks/useNightDive'
-import DiveExplorerMap from '../components/DiveExplorerMap'
+const DiveExplorerMap = lazy(() => import('../components/DiveExplorerMap'))
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandsForCountry, getSitesForIsland, getIslandForSite } from '../utils/diveIslandCatalog'
 
@@ -2643,18 +2643,31 @@ export default function BookUs() {
 
           {/* Column 2: Interactive 2D Worldwide Dive Map (Beside Booking Form on Desktop, Directly Below on Mobile) */}
           <div id="dive-explorer-map" data-lenis-prevent="true" className="lg:col-span-6 xl:col-span-7 w-full min-w-0 lg:sticky lg:top-28 self-start mt-6 sm:mt-10 lg:mt-0">
-            <DiveExplorerMap
-              onSelectSite={handleMapSelectSite}
-              onBookSite={handleMapSelectSite}
-              onSelectCountry={handleMapSelectCountry}
-              selectedCountry={country}
-              selectedIsland={island}
-              selectedSite={location}
-              selectedSiteId={locationId}
-              title="Dive Explorer"
-              subtitle="Explore 3,500+ worldwide dive sites on this interactive 2D map. Click any site to auto-fill your booking location!"
-              showHeading={true}
-            />
+            <Suspense
+              fallback={
+                <div className="w-full h-[400px] xs:h-[460px] sm:h-[540px] lg:h-[600px] rounded-3xl bg-[#00172b] border border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#001428]/60 via-[#001428]/80 to-[#001428] pointer-events-none" />
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="w-12 h-12 border-4 border-white/20 border-t-[#FFCD00] rounded-full animate-spin mb-4" />
+                    <h4 className="font-heading text-base sm:text-lg font-bold text-white tracking-wide">Loading Dive Explorer Map...</h4>
+                    <p className="text-xs text-white/60 mt-1 max-w-sm">Streaming global oceanic coordinates and verified dive locations</p>
+                  </div>
+                </div>
+              }
+            >
+              <DiveExplorerMap
+                onSelectSite={handleMapSelectSite}
+                onBookSite={handleMapSelectSite}
+                onSelectCountry={handleMapSelectCountry}
+                selectedCountry={country}
+                selectedIsland={island}
+                selectedSite={location}
+                selectedSiteId={locationId}
+                title="Dive Explorer"
+                subtitle="Explore 3,500+ worldwide dive sites on this interactive 2D map. Click any site to auto-fill your booking location!"
+                showHeading={true}
+              />
+            </Suspense>
           </div>
         </div>
       </div>

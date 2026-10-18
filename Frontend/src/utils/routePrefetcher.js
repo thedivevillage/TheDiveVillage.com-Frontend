@@ -37,6 +37,10 @@ export function prefetchRoute(to) {
 
   if (path.includes('services')) {
     prefetchServicesMedia()
+  } else if (path.includes('book-us') || path.includes('book')) {
+    try {
+      fetch('/data/dive-sites.json', { cache: 'force-cache' }).catch(() => {})
+    } catch (_) {}
   }
 }
 
@@ -44,7 +48,10 @@ export function initIdlePrefetching() {
   if (typeof window === 'undefined') return
   const schedule = window.requestIdleCallback || ((cb) => setTimeout(cb, 2500))
   schedule(() => {
-    // Lightly warm up the very first service video when idle
+    // Lightly warm up top assets when idle
     prefetchVideoChunk(TOP_SERVICE_VIDEOS[0])
+    try {
+      fetch('/data/dive-sites.json', { cache: 'force-cache' }).catch(() => {})
+    } catch (_) {}
   })
 }

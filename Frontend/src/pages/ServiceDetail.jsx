@@ -80,8 +80,8 @@ export default function ServiceDetail() {
         canonicalUrl={`https://thedivevillage.com/services/${service.id}`}
       />
       
-      {/* 1. HERO BANNER WITH SMOOTH FADE OUT */}
-      <section className="relative w-full h-[58vh] min-h-[440px] lg:h-[62vh] lg:min-h-[480px] overflow-hidden flex flex-col justify-end pt-24 sm:pt-28 pb-12 sm:pb-16">
+      {/* 1. HERO BANNER WITH EXPANDED LENGTH & SMOOTH FADE OUT */}
+      <section className="relative w-full h-[72vh] min-h-[520px] sm:h-[76vh] sm:min-h-[580px] lg:h-[82vh] lg:min-h-[660px] overflow-hidden flex flex-col justify-end pt-28 sm:pt-36 pb-16 sm:pb-24">
         <div className="absolute inset-0 z-0 overflow-hidden">
           {activeHeroVideo ? (
             <LazyVideo
@@ -96,6 +96,7 @@ export default function ServiceDetail() {
                 }
               }}
               src={activeHeroVideo}
+              lowResSrc={service.previewVideo || service.lowResVideo}
               poster={activeHeroImage}
               autoPlay
               loop
@@ -119,7 +120,7 @@ export default function ServiceDetail() {
         </div>
         
         {/* Bottom Ultra-Smooth Dissolve & Merge Layer into page background */}
-        <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent" />
+        <div className="absolute bottom-0 inset-x-0 h-36 sm:h-48 lg:h-56 pointer-events-none z-[5] bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent" />
         
         <div className="relative z-20 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
@@ -268,7 +269,7 @@ export default function ServiceDetail() {
 
             {/* Grid of Fun Dive Packages - Permanent Day Dives Programs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {FUN_DIVES_PACKAGES.map((pkg) => {
+              {FUN_DIVES_PACKAGES.map((pkg, pkgIndex) => {
                 const isSelected = selectedFunPackage?.id === pkg.id
                 return (
                   <div
@@ -286,7 +287,9 @@ export default function ServiceDetail() {
                         {pkg.video ? (
                           <LazyVideo
                             src={pkg.video}
+                            lowResSrc={pkg.previewVideo || pkg.lowResVideo}
                             poster={pkg.image}
+                            priority={pkgIndex === 0}
                             autoPlay={true}
                             loop={true}
                             muted={true}

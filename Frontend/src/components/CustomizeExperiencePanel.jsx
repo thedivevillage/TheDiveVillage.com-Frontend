@@ -110,7 +110,7 @@ const CUSTOM_ACTIVITIES = [
     name: 'Canyoneering',
     video: vidCanoneering,
     previewVideo: prevCanoneering,
-    poster: imgTrekking,
+    poster: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325105/TDV-Media/thumbnails/addon-1_thumb.webp',
   },
   {
     id: 'safari',
@@ -206,6 +206,26 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
     }, duration)
     return () => clearInterval(timer)
   }, [images])
+
+  // Pre-warm preview videos for top activities during idle time so hover/tap plays instantly
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const previewsToWarm = [prevCanoneering, prevSafari, prevTrekking]
+    const warmNext = () => {
+      previewsToWarm.forEach((url) => {
+        try {
+          fetch(url, { headers: { Range: 'bytes=0-262144' }, cache: 'force-cache' }).catch(() => {})
+        } catch (_) {}
+      })
+    }
+    if ('requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(warmNext, { timeout: 2000 })
+      return () => window.cancelIdleCallback(handle)
+    } else {
+      const timer = setTimeout(warmNext, 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
   const toggleActivity = (id) => {
     setSelectedActivities((prev) => {

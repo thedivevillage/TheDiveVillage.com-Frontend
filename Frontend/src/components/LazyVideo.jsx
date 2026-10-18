@@ -173,13 +173,16 @@ const LazyVideo = forwardRef(function LazyVideo({
         if (prev) safePause(prev, previewPlayPromiseRef)
       } else {
         if (prev) safePlay(prev, previewPlayPromiseRef)
-        safePlay(master, masterPlayPromiseRef)
+        // If there's a fast preview, give it first priority so it starts in 0ms without network contention
+        if (!hasPreview || previewStarted || priority) {
+          safePlay(master, masterPlayPromiseRef)
+        }
       }
     } else {
       if (master) safePause(master, masterPlayPromiseRef)
       if (prev) safePause(prev, previewPlayPromiseRef)
     }
-  }, [isInView, autoPlay, masterReady, safePlay, safePause])
+  }, [isInView, autoPlay, masterReady, hasPreview, previewStarted, priority, safePlay, safePause])
 
   // 3. Decoder Recycling: Pause preview once master has smoothly faded in
   useEffect(() => {
@@ -296,7 +299,7 @@ const LazyVideo = forwardRef(function LazyVideo({
         controls={controls}
         controlsList={controlsList}
         disablePictureInPicture={disablePictureInPicture}
-        preload={priority ? 'auto' : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none'))}
+        preload={priority ? 'auto' : (hasPreview ? (previewStarted ? 'auto' : 'none') : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none')))}
         onTimeUpdate={(e) => {
           if (!masterStarted) setMasterStarted(true)
           if (typeof props.onTimeUpdate === 'function') {

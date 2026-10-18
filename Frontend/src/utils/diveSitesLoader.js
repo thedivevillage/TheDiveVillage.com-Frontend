@@ -9,7 +9,7 @@ let pendingPromise = null
  * Adheres strictly to the supplied columns without fabricating ratings,
  * reviews, or missing attributes.
  */
-export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
+export async function loadDiveSites(jsonUrl = '/data/dive-sites.json', csvUrl = '/data/dive-sites.csv') {
   if (cachedData) {
     return cachedData
   }
@@ -19,6 +19,21 @@ export async function loadDiveSites(csvUrl = '/data/dive-sites.csv') {
   }
 
   pendingPromise = (async () => {
+    // 1. Fast Path: Fetch pre-compiled, optimized JSON dataset (0ms CPU parsing, parsed by native browser C++)
+    try {
+      const jsonRes = await fetch(jsonUrl)
+      if (jsonRes.ok) {
+        const jsonData = await jsonRes.json()
+        if (jsonData && jsonData.sites && jsonData.sites.length > 0) {
+          cachedData = jsonData
+          return cachedData
+        }
+      }
+    } catch (jsonErr) {
+      console.warn('[DiveExplorer] Precompiled JSON notice, falling back to CSV parser:', jsonErr)
+    }
+
+    // 2. Fallback Path: Raw CSV parsing via PapaParse
     try {
       const response = await fetch(csvUrl)
       if (!response.ok) {
