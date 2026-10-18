@@ -1,5 +1,4 @@
-import LazyVideo from '../../components/LazyVideo'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import SectionReveal from '../../components/SectionReveal'
 import { contentService } from '../../services/contentService'
 import CloudinaryUploadWidget from '../../components/admin/CloudinaryUploadWidget'
@@ -16,7 +15,223 @@ import {
   X,
   CheckCircle,
   AlertCircle,
+  Play,
+  Copy,
+  ExternalLink,
 } from 'lucide-react'
+
+export function getMediaPoster(item) {
+  if (!item) return ''
+  if (item.posterSrc) return item.posterSrc
+  if (item.thumbnail) return item.thumbnail
+  if (item.poster) return item.poster
+
+  const src = item.src || ''
+  const filename = src.split('/').pop() || ''
+
+  if (src.includes('Extras for Gallery')) {
+    const base = filename.replace(/\.(mp4|mov|webm)$/i, '')
+    return `https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`
+  }
+  if (filename === 'Scuba_Diver.mp4') {
+    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp'
+  }
+  if (filename === 'AdventureDiver.mp4') {
+    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp'
+  }
+  if (filename === 'Turtle.mp4') {
+    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325578/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
+  }
+  if (filename === 'ClownFish_1080p.mp4') {
+    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325557/TDV-Media/AirportToAirport/gallery1.webp'
+  }
+  if (filename === 'baracuda_1080p.mp4' || filename === 'Night_Dive.mp4') {
+    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp'
+  }
+
+  // If image, source itself is the preview
+  if ((item.type || item.mediaType || '').toLowerCase() === 'image') {
+    return item.optimizedSrc || item.src
+  }
+
+  return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325578/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
+}
+
+function AdminMediaCard({ item, onPreview, onEdit, onDelete, onToggleActive }) {
+  const isVideo = (item.type || item.mediaType || '').toLowerCase() === 'video'
+  const posterUrl = getMediaPoster(item)
+  const videoRef = useRef(null)
+  const [isHovered, setIsHovered] = useState(false)
+  const [imgError, setImgError] = useState(false)
+
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+    if (isVideo && videoRef.current) {
+      videoRef.current.play()?.catch(() => {})
+    }
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+    if (isVideo && videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }
+
+  const isR2 = (item.src || '').startsWith('/media/')
+  const isCloudinary = (item.src || '').includes('res.cloudinary.com')
+  const hostBadge = isR2 ? 'Cloudflare R2' : isCloudinary ? 'Cloudinary' : 'Hosted Media'
+
+  return (
+    <div
+      className={`group bg-white border rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between ${
+        item.isActive ? 'border-gray-200 hover:border-slate-400' : 'border-rose-200 opacity-70 bg-rose-50/20'
+      }`}
+    >
+      {/* Media Preview Thumbnail Container */}
+      <div
+        className="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer select-none"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={() => onPreview(item)}
+      >
+        {isVideo ? (
+          <>
+            {/* Poster thumbnail - always present and loaded fast */}
+            <img
+              src={posterUrl}
+              alt={item.title || 'Video poster'}
+              onError={() => setImgError(true)}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${
+                isHovered ? 'opacity-0' : 'opacity-100'
+              }`}
+            />
+            {/* Video element - plays smoothly on hover */}
+            <video
+              ref={videoRef}
+              src={item.src}
+              muted
+              loop
+              playsInline
+              preload="none"
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+            {/* Center Play Button Overlay */}
+            <div
+              className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+                isHovered ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
+              }`}
+            >
+              <div className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <img
+            src={imgError ? 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458009/TDV-Media/Extras%20for%20Gallery/Articulata.webp' : (item.optimizedSrc || item.src)}
+            alt={item.title || 'Gallery item'}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
+
+        {/* Hover Click to Preview Pill */}
+        <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-2 pointer-events-none">
+          <span className="px-2.5 py-1 bg-black/75 backdrop-blur-md rounded-full text-[10px] font-semibold text-white tracking-wide shadow-sm flex items-center gap-1">
+            <Eye className="w-3 h-3" /> Click to Preview
+          </span>
+        </div>
+
+        {/* Media Type Badge */}
+        <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[10px] font-semibold text-white shadow-xs">
+          {isVideo ? (
+            <>
+              <Film className="w-3 h-3 text-amber-300" /> Video
+            </>
+          ) : (
+            <>
+              <ImageIcon className="w-3 h-3 text-blue-300" /> Image
+            </>
+          )}
+        </div>
+
+        {/* Status Toggle Button */}
+        <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => onToggleActive(item)}
+            title={item.isActive ? 'Active on website (Click to hide)' : 'Hidden from website (Click to activate)'}
+            className={`p-1.5 rounded-md border backdrop-blur-xs transition-all cursor-pointer shadow-xs ${
+              item.isActive
+                ? 'bg-emerald-600/90 hover:bg-emerald-500 text-white border-emerald-400'
+                : 'bg-rose-600/90 hover:bg-rose-500 text-white border-rose-400'
+            }`}
+          >
+            {item.isActive ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Details & Metadata */}
+      <div className="p-3.5 flex-1 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between gap-1 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-100">
+              {item.category || 'general'}
+            </span>
+            <span className="text-[10px] text-slate-400 font-medium">
+              Order: {item.sortOrder ?? item.displayOrder ?? 0}
+            </span>
+          </div>
+
+          <h4
+            className="font-bold text-slate-900 text-xs sm:text-sm line-clamp-1 cursor-pointer hover:text-teal-600 transition-colors"
+            onClick={() => onPreview(item)}
+            title={item.title || 'Untitled Media'}
+          >
+            {item.title || 'Untitled Media'}
+          </h4>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1">
+            <span className="text-slate-400 truncate max-w-[140px] text-[10px]" title={item.src}>
+              {hostBadge}
+            </span>
+            <span className={`text-[10px] font-semibold ${item.isActive ? 'text-emerald-600' : 'text-rose-500'}`}>
+              {item.isActive ? '● Live' : '○ Hidden'}
+            </span>
+          </div>
+        </div>
+
+        {/* Card Actions */}
+        <div className="flex items-center justify-between gap-1.5 mt-3 pt-2.5 border-t border-gray-100">
+          <button
+            onClick={() => onPreview(item)}
+            className="flex items-center justify-center gap-1 py-1 px-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-gray-200 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+            title="Preview media"
+          >
+            <Eye className="w-3 h-3" /> Preview
+          </button>
+          <button
+            onClick={() => onEdit(item)}
+            className="flex-1 flex items-center justify-center gap-1 py-1 bg-white border border-gray-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-all shadow-2xs cursor-pointer"
+          >
+            <Edit2 className="w-3 h-3" /> Edit
+          </button>
+          <button
+            onClick={() => onDelete(item.id)}
+            className="p-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg transition-all cursor-pointer"
+            title="Delete media item"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function AdminContent() {
   const [activeTab, setActiveTab] = useState('faq') // 'faq' | 'gallery'
@@ -45,6 +260,7 @@ export default function AdminContent() {
   const [galleryTypeFilter, setGalleryTypeFilter] = useState('ALL') // 'ALL' | 'IMAGE' | 'VIDEO'
   const [galleryModalOpen, setGalleryModalOpen] = useState(false)
   const [editingGallery, setEditingGallery] = useState(null)
+  const [previewMediaItem, setPreviewMediaItem] = useState(null)
 
   const [galleryFormData, setGalleryFormData] = useState({
     id: '',
@@ -526,89 +742,14 @@ export default function AdminContent() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredGallery.map((item) => (
-                <div
+                <AdminMediaCard
                   key={item.id}
-                  className={`group bg-white border rounded-xl overflow-hidden shadow-xs transition-all flex flex-col justify-between ${
-                    item.isActive ? 'border-gray-200 hover:border-gray-300' : 'border-rose-200 opacity-70'
-                  }`}
-                >
-                  {/* Media Preview Thumbnail */}
-                  <div className="relative aspect-video bg-slate-100 overflow-hidden">
-                    {(item.type || item.mediaType || '').toLowerCase() === 'video' ? (
-                      <LazyVideo
-                        src={item.src}
-                        poster={item.thumbnail || undefined}
-                        className="w-full h-full object-cover"
-                        muted
-                        loop
-                        onMouseEnter={(e) => e.currentTarget.play()}
-                        onMouseLeave={(e) => e.currentTarget.pause()}
-                      />
-                    ) : (
-                      <img
-                        src={item.src}
-                        alt={item.title || 'Gallery item'}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    )}
-
-                    {/* Media Type Badge */}
-                    <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[10px] font-semibold text-white">
-                      {(item.type || item.mediaType || '').toLowerCase() === 'video' ? (
-                        <>
-                          <Film className="w-3 h-3 text-amber-300" /> Video
-                        </>
-                      ) : (
-                        <>
-                          <ImageIcon className="w-3 h-3 text-blue-300" /> Image
-                        </>
-                      )}
-                    </div>
-
-                    {/* Status Badge */}
-                    <div className="absolute top-2 right-2">
-                      <button
-                        onClick={() => handleToggleGalleryActive(item)}
-                        className={`p-1 rounded-md border backdrop-blur-xs transition-all cursor-pointer ${
-                          item.isActive
-                            ? 'bg-emerald-600 text-white border-emerald-500'
-                            : 'bg-rose-600 text-white border-rose-500'
-                        }`}
-                      >
-                        {item.isActive ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Details */}
-                  <div className="p-3.5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-xs sm:text-sm line-clamp-1">
-                        {item.title || 'Untitled Media'}
-                      </h4>
-                      <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1">
-                        <span>{item.location || 'Dive Village'}</span>
-                        <span className="text-slate-400">Order: {item.displayOrder}</span>
-                      </div>
-                    </div>
-
-                    {/* Card Actions */}
-                    <div className="flex items-center justify-between gap-1.5 mt-3 pt-2.5 border-t border-gray-100">
-                      <button
-                        onClick={() => handleOpenGalleryModal(item)}
-                        className="flex-1 flex items-center justify-center gap-1 py-1 bg-white border border-gray-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-all shadow-2xs cursor-pointer"
-                      >
-                        <Edit2 className="w-3 h-3" /> Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGallery(item.id)}
-                        className="p-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg transition-all cursor-pointer"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  item={item}
+                  onPreview={(itm) => setPreviewMediaItem(itm)}
+                  onEdit={(itm) => handleOpenGalleryModal(itm)}
+                  onDelete={(id) => handleDeleteGallery(id)}
+                  onToggleActive={(itm) => handleToggleGalleryActive(itm)}
+                />
               ))}
             </div>
           )}
@@ -898,6 +1039,109 @@ export default function AdminContent() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MEDIA PREVIEW MODAL */}
+      {/* ========================================================================= */}
+      {previewMediaItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-3xl bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl text-white flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800 bg-slate-950/60">
+              <div className="flex items-center gap-2.5">
+                {(previewMediaItem.type || previewMediaItem.mediaType || '').toLowerCase() === 'video' ? (
+                  <Film className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <ImageIcon className="w-4 h-4 text-blue-400" />
+                )}
+                <div>
+                  <h3 className="font-bold text-sm text-slate-100 truncate max-w-md">
+                    {previewMediaItem.title || 'Media Preview'}
+                  </h3>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                    {previewMediaItem.category || 'General'} • {((previewMediaItem.type || previewMediaItem.mediaType || '').toLowerCase() === 'video') ? 'Video Asset' : 'Image Asset'}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setPreviewMediaItem(null)}
+                className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
+                title="Close preview"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Media Player / Image Display Area */}
+            <div className="relative bg-black flex items-center justify-center flex-1 min-h-[300px] max-h-[60vh] overflow-hidden">
+              {(previewMediaItem.type || previewMediaItem.mediaType || '').toLowerCase() === 'video' ? (
+                <video
+                  src={previewMediaItem.src}
+                  poster={getMediaPoster(previewMediaItem)}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full max-h-[60vh] object-contain"
+                />
+              ) : (
+                <img
+                  src={previewMediaItem.src}
+                  alt={previewMediaItem.title}
+                  className="w-full max-h-[60vh] object-contain"
+                />
+              )}
+            </div>
+
+            {/* Metadata Footer */}
+            <div className="p-4 bg-slate-950 border-t border-slate-800 space-y-2.5 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-semibold uppercase text-[10px] border border-teal-500/30">
+                    Category: {previewMediaItem.category || 'general'}
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                      previewMediaItem.isActive
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                        : 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                    }`}
+                  >
+                    {previewMediaItem.isActive ? '● Live on Site' : '○ Hidden'}
+                  </span>
+                  <span className="text-slate-400 text-[11px]">
+                    Sort Order: {previewMediaItem.sortOrder ?? previewMediaItem.displayOrder ?? 0}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(previewMediaItem.src)
+                      showToast('success', 'Media URL copied to clipboard!')
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Copy className="w-3.5 h-3.5" /> Copy URL
+                  </button>
+                  <a
+                    href={previewMediaItem.src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-xs font-semibold transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Open in New Tab
+                  </a>
+                </div>
+              </div>
+
+              <div className="text-[11px] text-slate-400 break-all font-mono bg-slate-900/90 p-2 rounded-lg border border-slate-800">
+                <span className="text-slate-500 select-none">Source URL: </span>
+                {previewMediaItem.src}
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -75,12 +75,12 @@ function firebaseMessagingPlugin() {
   return {
     name: 'firebase-messaging-sw-builder',
     generateBundle() {
-      const apiKey = process.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVj-lZlrZP7ccmP0YdfkBhddei2pj6UMU'
-      const authDomain = process.env.VITE_FIREBASE_AUTH_DOMAIN || 'the-dive-village-ffed3.firebaseapp.com'
-      const projectId = process.env.VITE_FIREBASE_PROJECT_ID || 'the-dive-village-ffed3'
-      const storageBucket = process.env.VITE_FIREBASE_STORAGE_BUCKET || 'the-dive-village-ffed3.firebasestorage.app'
-      const messagingSenderId = process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '298649884006'
-      const appId = process.env.VITE_FIREBASE_APP_ID || '1:298649884006:web:b2f393b8b8fdebdf19a4a7'
+      const apiKey = process.env.VITE_FIREBASE_API_KEY || 'AIzaSyDAxPsEFVub2IVrpSuCQxCn-JnsBU0NbdY'
+      const authDomain = process.env.VITE_FIREBASE_AUTH_DOMAIN || 'the-dive-village.firebaseapp.com'
+      const projectId = process.env.VITE_FIREBASE_PROJECT_ID || 'the-dive-village'
+      const storageBucket = process.env.VITE_FIREBASE_STORAGE_BUCKET || 'the-dive-village.firebasestorage.app'
+      const messagingSenderId = process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '458045547653'
+      const appId = process.env.VITE_FIREBASE_APP_ID || '1:458045547653:web:54a40c550a07edf8d8b5ec'
 
       const swContent = `/* eslint-disable no-undef */
 // Firebase Cloud Messaging Service Worker for thedivevillage.com

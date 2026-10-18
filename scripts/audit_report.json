@@ -1,0 +1,522 @@
+{
+  "timestamp": "2026-10-18T12:26:19.189Z",
+  "media": {
+    "total": 145,
+    "passed": 100,
+    "cloudflare": 100,
+    "broken": [
+      {
+        "path": "/media/thumbnails/prog-4_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/prog-4_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876d78c5ae45-SIN",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/prog-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/prog-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876c1d7dace6-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/snork-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/snork-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876f9d8cae45-SIN",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/prog-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/prog-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876d8fda201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/snork-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/snork-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876f6adf5280-WAW",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/prog-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/prog-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876c8be35e49-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787716d7eace6-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787726c15201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-5_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-5_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787745fc6ae45-SIN",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78773f8275280-WAW",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/prog-5_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/prog-5_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78772de517557-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-4_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-4_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787740c12e1ac-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-6_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-6_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787757b755e49-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-7_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-7_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78776f8a9201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-10_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-10_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78778a9a3ae45-SIN",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-8_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-8_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7877719ecb97c-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/course-9_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/course-9_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78777ed7ce16a-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7877b0c4d201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7877bdf86b97c-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7877c3e9595e1-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-4_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-4_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7877d0a9e308e-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-5_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-5_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7877efa736899-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-7_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-7_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78780e8055e49-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/spec-6_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/spec-6_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787804a92201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/snork-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/snork-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7876e7e691354-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/combo-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/combo-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78781be175280-WAW",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/combo-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/combo-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78781286095e1-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/combo-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/combo-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78782cc9e308e-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/combo-fundives_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/combo-fundives_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787847f0f5e49-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/pro-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/pro-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787853f1b5280-WAW",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/pro-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/pro-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787862ba4e1ac-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/free-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/free-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787883de65e49-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/pro-4_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/pro-4_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78787aaf1b97c-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/free-2_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/free-2_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78789bde3ae45-SIN",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/pro-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/pro-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c78784bf09201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/addon-campers_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/addon-campers_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878d5e3bae45-SIN",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/surf-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/surf-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878a5f30308e-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/surf-3_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/surf-3_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878bcc47e1ac-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/addon-trekking_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/addon-trekking_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878c2967b97c-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/addon-sightseeing_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/addon-sightseeing_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878cd9411354-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/addon-safari_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/addon-safari_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878e8e6face6-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/addon-1_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/addon-1_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878becd35e49-SJC",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/thumbnails/addon-liveaboard_thumb.webp",
+        "url": "https://www.thedivevillage.com/media/thumbnails/addon-liveaboard_thumb.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c7878f6fde201d-SEA",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/TDV-Media/AirportToAirport/travel.webp",
+        "url": "https://www.thedivevillage.com/media/TDV-Media/AirportToAirport/travel.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787900923e1ac-MRS",
+        "acceptRanges": null
+      },
+      {
+        "path": "/media/TDV-Media/AirportToAirport/gallery1.webp",
+        "url": "https://www.thedivevillage.com/media/TDV-Media/AirportToAirport/gallery1.webp",
+        "status": 404,
+        "ok": false,
+        "contentType": "text/plain;charset=UTF-8",
+        "isCloudflare": true,
+        "server": "cloudflare",
+        "cfRay": "a4c787900d64b97c-MRS",
+        "acceptRanges": null
+      }
+    ]
+  },
+  "remote": {
+    "total": 151,
+    "passed": 150,
+    "broken": [
+      {
+        "url": "https://api.thedivevillage.com",
+        "status": "TIMEOUT/ERROR",
+        "ok": false,
+        "error": "The operation was aborted due to timeout"
+      }
+    ]
+  },
+  "routes": {
+    "total": 17,
+    "passed": 17,
+    "broken": []
+  }
+}

@@ -7,14 +7,14 @@ let messagingSwRegistration = null
 
 const getEnvVar = (key) => (import.meta.env[key] || '').trim()
 
-// Firebase configuration loaded strictly from build-time environment variables
+// Firebase configuration loaded strictly from build-time environment variables or verified project defaults
 export const firebaseConfig = {
-  apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
-  authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') || 'the-dive-village-ffed3.firebaseapp.com',
-  projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID') || 'the-dive-village-ffed3',
-  storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET') || 'the-dive-village-ffed3.firebasestorage.app',
-  messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID') || '298649884006',
-  appId: getEnvVar('VITE_FIREBASE_APP_ID') || '1:298649884006:web:b2f393b8b8fdebdf19a4a7',
+  apiKey: getEnvVar('VITE_FIREBASE_API_KEY') || 'AIzaSyDAxPsEFVub2IVrpSuCQxCn-JnsBU0NbdY',
+  authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') || 'the-dive-village.firebaseapp.com',
+  projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID') || 'the-dive-village',
+  storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET') || 'the-dive-village.firebasestorage.app',
+  messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID') || '458045547653',
+  appId: getEnvVar('VITE_FIREBASE_APP_ID') || '1:458045547653:web:54a40c550a07edf8d8b5ec',
 }
 
 export const isFirebaseConfigured = Boolean(
