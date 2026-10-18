@@ -128,6 +128,48 @@ if (firebaseConfig.apiKey && firebaseConfig.apiKey !== 'placeholder' && firebase
   }
 }
 
+function r2PagesOutputFilterPlugin() {
+  return {
+    name: 'r2-pages-output-filter',
+    closeBundle() {
+      const distDir = fileURLToPath(new URL('./dist', import.meta.url))
+      if (!fs.existsSync(distDir)) return
+
+      function filterDirectory(dir) {
+        const entries = fs.readdirSync(dir, { withFileTypes: true })
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name)
+          if (entry.isDirectory()) {
+            filterDirectory(fullPath)
+            try {
+              if (fs.readdirSync(fullPath).length === 0) {
+                fs.rmdirSync(fullPath)
+              }
+            } catch (_) {}
+          } else if (entry.isFile()) {
+            const relPath = path.relative(distDir, fullPath).replace(/\\/g, '/')
+            const size = fs.statSync(fullPath).size
+            const ext = path.extname(entry.name).toLowerCase()
+            const isVideo = ['.mp4', '.mov', '.webm'].includes(ext)
+            const isPreview = entry.name.toLowerCase().includes('_preview.')
+
+            // Exclude already-R2-hosted master videos or files >= 25 MiB from Pages static output
+            const isR2MasterVideo = relPath.startsWith('media/TDV-Media/') && isVideo && !isPreview
+            const exceedsPagesLimit = size >= 25 * 1024 * 1024
+
+            if (isR2MasterVideo || exceedsPagesLimit) {
+              fs.unlinkSync(fullPath)
+              console.log(`🧹 [R2 Pages Output Filter] Excluded from Pages static output: ${relPath} (${(size / (1024 * 1024)).toFixed(2)} MB)`)
+            }
+          }
+        }
+      }
+
+      filterDirectory(distDir)
+    }
+  }
+}
+
 import { VitePWA } from 'vite-plugin-pwa'
 import { r2DevMediaPlugin } from './scripts/r2DevMiddleware.js'
 
@@ -137,6 +179,7 @@ export default defineConfig({
     missingAssetFallbackPlugin(), 
     r2DevMediaPlugin(),
     firebaseMessagingPlugin(),
+    r2PagesOutputFilterPlugin(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
