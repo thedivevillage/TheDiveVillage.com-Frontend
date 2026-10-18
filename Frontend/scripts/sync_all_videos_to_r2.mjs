@@ -170,8 +170,14 @@ const preloaderPath = path.resolve(__dirname, '../src/assets/preloader.mp4');
 if (fs.existsSync(preloaderPath)) {
   videoFiles.push(preloaderPath);
 }
+const cursorPath = path.resolve(__dirname, '../src/assets/cursor.webm');
+if (fs.existsSync(cursorPath)) {
+  videoFiles.push(cursorPath);
+}
 
 console.log(`Found ${videoFiles.length} local video files. Verifying each against Cloudflare R2...`);
+
+const normMediaDir = mediaDir.replace(/\\/g, '/');
 
 async function syncVideos() {
   let uploaded = 0;
@@ -180,11 +186,14 @@ async function syncVideos() {
 
   for (let i = 0; i < videoFiles.length; i++) {
     const filePath = videoFiles[i];
+    const normPath = filePath.replace(/\\/g, '/');
     let key;
-    if (filePath.includes('public/media/')) {
-      key = path.relative(mediaDir, filePath).replace(/\\/g, '/');
-    } else if (filePath.includes('preloader.mp4')) {
+    if (normPath.startsWith(normMediaDir)) {
+      key = normPath.slice(normMediaDir.length + 1);
+    } else if (normPath.includes('preloader.mp4')) {
       key = 'TDV-Media/UI/preloader.mp4';
+    } else if (normPath.includes('cursor.webm')) {
+      key = 'TDV-Media/UI/cursor.webm';
     } else {
       key = 'TDV-Media/' + path.basename(filePath);
     }

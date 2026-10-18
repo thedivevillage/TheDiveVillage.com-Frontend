@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import preloaderVideoLocal from '../assets/preloader.mp4'
+
 
 const CLOUD_PRELOADER = '/media/TDV-Media/UI/preloader.mp4'
-const preloaderVideo = preloaderVideoLocal || CLOUD_PRELOADER
+const preloaderVideo = CLOUD_PRELOADER
 import {
   subscribeHeroVideoReady,
   getHeroVideoReady,

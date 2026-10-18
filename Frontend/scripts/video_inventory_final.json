@@ -11,12 +11,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\1.mp4'"
     }
   },
   {
@@ -40,12 +35,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\2.mp4'"
     }
   },
   {
@@ -60,12 +50,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\3.mp4'"
     }
   },
   {
@@ -80,12 +65,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\4.mp4'"
     }
   },
   {
@@ -100,12 +80,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\5.mov'"
     }
   },
   {
@@ -125,12 +100,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Book(2).mp4'"
     }
   },
   {
@@ -150,12 +120,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Book_fast.mp4'"
     }
   },
   {
@@ -208,12 +173,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Diving(1).mp4'"
     }
   },
   {
@@ -228,12 +188,7 @@
     "isAboveFold": true,
     "isLazy": false,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Hero(1).mp4'"
     }
   },
   {
@@ -257,12 +212,7 @@
     "isAboveFold": true,
     "isLazy": false,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Hero_fast.mp4'"
     }
   },
   {
@@ -277,12 +227,7 @@
     "isAboveFold": true,
     "isLazy": false,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Hero_optimized.mp4'"
     }
   },
   {
@@ -302,12 +247,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\20260630_153650_005.mp4'"
     }
   },
   {
@@ -327,12 +267,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\20260707_165729_460.mp4'"
     }
   },
   {
@@ -352,12 +287,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\20260707_170454_824.mp4'"
     }
   },
   {
@@ -377,12 +307,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Dive.MP4'"
     }
   },
   {
@@ -402,12 +327,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\DJI_20260525102811_0007_D.MP4'"
     }
   },
   {
@@ -427,12 +347,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\DJI_20260525104139_0011_D.MP4'"
     }
   },
   {
@@ -452,12 +367,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\DJI_20260525123656_0017_D.MP4'"
     }
   },
   {
@@ -477,12 +387,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\DJI_20260525124204_0018_D.MP4'"
     }
   },
   {
@@ -502,12 +407,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\dji_mimo_20260124_112020_0_1769300692742_video.mp4'"
     }
   },
   {
@@ -527,12 +427,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\dji_mimo_20260204_084830_0_1770187393265_video.mp4'"
     }
   },
   {
@@ -552,12 +447,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\dji_mimo_20260204_084858_0_1770187391850_video.mp4'"
     }
   },
   {
@@ -577,12 +467,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\dji_mimo_20260220_140750_0_1771571076972_video.mp4'"
     }
   },
   {
@@ -602,12 +487,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\free diving .mp4'"
     }
   },
   {
@@ -627,12 +507,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Free Diving 1.mov'"
     }
   },
   {
@@ -652,12 +527,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\free diving 3.mp4'"
     }
   },
   {
@@ -677,12 +547,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\gallery1.mp4'"
     }
   },
   {
@@ -702,12 +567,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\GX018833.mp4'"
     }
   },
   {
@@ -727,12 +587,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\GX018841.MP4'"
     }
   },
   {
@@ -756,12 +611,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Itinerary.mp4'"
     }
   },
   {
@@ -789,12 +639,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\merch 5.mp4'"
     }
   },
   {
@@ -814,12 +659,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\surfing.mp4'"
     }
   },
   {
@@ -843,12 +683,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Travel.mp4'"
     }
   },
   {
@@ -868,12 +703,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Turtle Anna(1).mp4'"
     }
   },
   {
@@ -888,12 +718,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Turtle Anna.mp4'"
     }
   },
   {
@@ -908,12 +733,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": false
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\New folder\\Turtle Flyinnn.mov'"
     }
   },
   {
@@ -928,12 +748,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.265 (HEVC)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": true,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\nightdive.mp4'"
     }
   },
   {
@@ -953,12 +768,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\nightdive_fast.mp4'"
     }
   },
   {
@@ -982,7 +792,7 @@
       "width": 1920,
       "height": 1080,
       "durationSec": 10,
-      "hasAudio": true,
+      "hasAudio": false,
       "is360": false
     }
   },
@@ -1003,12 +813,7 @@
     "isAboveFold": false,
     "isLazy": true,
     "meta": {
-      "codec": "H.264 (avc1)",
-      "width": 1920,
-      "height": 1080,
-      "durationSec": 10,
-      "hasAudio": false,
-      "is360": true
+      "error": "ENOENT: no such file or directory, open 'C:\\Users\\Sonia\\Downloads\\TheDiveVillage.com\\TheDiveVillage.com-Frontend\\Frontend\\src\\assets\\Turtle_fast.mp4'"
     }
   }
 ]

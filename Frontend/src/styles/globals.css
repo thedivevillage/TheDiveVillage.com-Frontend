@@ -968,19 +968,19 @@ body.night-dive #root,
 }
 
 /* Secondary / Outline Buttons */
-.night-dive button[class*="border-gray-300"],
-.night-dive a[class*="border-gray-300"],
-.night-dive button[class*="bg-white"]:not([data-thumb-btn]):not([data-product-media]):not(.hero-btn):not([data-product-card]):not([data-product-card] *),
-.night-dive a[class*="bg-white"]:not(.hero-btn):not([data-product-card]):not([data-product-card] *) {
+.night-dive button[class*="border-gray-300"]:not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):not([data-category-tab]):not(.services-category-tab),
+.night-dive a[class*="border-gray-300"]:not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *),
+.night-dive button[class*="bg-white"]:not([data-thumb-btn]):not([data-product-media]):not(.hero-btn):not([data-product-card]):not([data-product-card] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):not([data-category-tab]):not(.services-category-tab),
+.night-dive a[class*="bg-white"]:not(.hero-btn):not([data-product-card]):not([data-product-card] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *) {
   background-color: rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-.night-dive button[class*="border-gray-300"]:hover,
-.night-dive a[class*="border-gray-300"]:hover,
-.night-dive button[class*="bg-white"]:not([data-thumb-btn]):not([data-product-media]):not(.hero-btn):not([data-product-card]):not([data-product-card] *):hover,
-.night-dive a[class*="bg-white"]:not(.hero-btn):not([data-product-card]):not([data-product-card] *):hover {
+.night-dive button[class*="border-gray-300"]:not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):not([data-category-tab]):not(.services-category-tab):hover,
+.night-dive a[class*="border-gray-300"]:not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):hover,
+.night-dive button[class*="bg-white"]:not([data-thumb-btn]):not([data-product-media]):not(.hero-btn):not([data-product-card]):not([data-product-card] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):not([data-category-tab]):not(.services-category-tab):hover,
+.night-dive a[class*="bg-white"]:not(.hero-btn):not([data-product-card]):not([data-product-card] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):hover {
   background-color: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
 }
@@ -2518,58 +2518,7 @@ html body.night-dive [data-product-card] .product-add-btn-mobile span {
   filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)) !important;
 }
 
-/* ==========================================================================
-   SERVICES PAGE: CATEGORY TABS IN NIGHT DIVE MODE
-   Hovering over an unselected category tab turns text white and background dark navy.
-   ========================================================================== */
-html body.night-dive button.services-category-tab:hover,
-html body.night-dive button[data-category-tab]:hover,
-html body.night-dive .services-category-tab:hover,
-html body.night-dive [data-category-tab]:hover,
-.night-dive button.services-category-tab:hover,
-.night-dive button[data-category-tab]:hover,
-.night-dive .services-category-tab:hover,
-.night-dive [data-category-tab]:hover {
-  background-color: #001e3d !important;
-  background: #001e3d !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
 
-html body.night-dive button.services-category-tab:hover *,
-html body.night-dive button.services-category-tab:hover span,
-html body.night-dive button[data-category-tab]:hover *,
-html body.night-dive button[data-category-tab]:hover span,
-html body.night-dive .services-category-tab:hover *,
-html body.night-dive .services-category-tab:hover span,
-html body.night-dive [data-category-tab]:hover *,
-html body.night-dive [data-category-tab]:hover span,
-.night-dive button.services-category-tab:hover *,
-.night-dive button.services-category-tab:hover span,
-.night-dive button[data-category-tab]:hover *,
-.night-dive button[data-category-tab]:hover span,
-.night-dive .services-category-tab:hover *,
-.night-dive .services-category-tab:hover span,
-.night-dive [data-category-tab]:hover *,
-.night-dive [data-category-tab]:hover span {
-  color: #ffffff !important;
-}
-
-html body.night-dive button.services-category-tab[data-active="true"],
-html body.night-dive button.services-category-tab[data-active="true"]:hover,
-.night-dive button.services-category-tab[data-active="true"],
-.night-dive button.services-category-tab[data-active="true"]:hover {
-  border-color: #FFCD00 !important;
-  background-color: #001e3d !important;
-  color: #ffffff !important;
-}
-
-html body.night-dive button.services-category-tab[data-active="true"] *,
-html body.night-dive button.services-category-tab[data-active="true"]:hover *,
-.night-dive button.services-category-tab[data-active="true"] *,
-.night-dive button.services-category-tab[data-active="true"]:hover * {
-  color: #ffffff !important;
-}
 
 /* ==========================================================================
    GLOBAL NIGHT DIVE RULES (User Requirements):
@@ -2876,12 +2825,12 @@ body.night-dive .selected:not([data-booking-page]):not([data-booking-page] *):no
 }
 
 /* Hover on interactive selectable buttons: YELLOW BORDER */
-body.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([disabled]):hover,
-body.night-dive a.btn:not([data-booking-page]):not([data-booking-page] *):hover,
-body.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-page] *):hover,
-.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([disabled]):hover,
-.night-dive a.btn:not([data-booking-page]):not([data-booking-page] *):hover,
-.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-page] *):hover {
+body.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([data-day-panel]):not([data-day-panel] *):not([data-category-tab]):not(.services-category-tab):not([data-shop-controls]):not([data-shop-controls] *):not([disabled]):hover,
+body.night-dive a.btn:not([data-booking-page]):not([data-booking-page] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):hover,
+body.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-page] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):hover,
+.night-dive button:not([data-booking-page]):not([data-booking-page] *):not([data-day-panel]):not([data-day-panel] *):not([data-category-tab]):not(.services-category-tab):not([data-shop-controls]):not([data-shop-controls] *):not([disabled]):hover,
+.night-dive a.btn:not([data-booking-page]):not([data-booking-page] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):hover,
+.night-dive .hover-yellow-border:not([data-booking-page]):not([data-booking-page] *):not([data-day-panel]):not([data-day-panel] *):not([data-shop-controls]):not([data-shop-controls] *):hover {
   border-color: #FFCD00 !important;
 }
 

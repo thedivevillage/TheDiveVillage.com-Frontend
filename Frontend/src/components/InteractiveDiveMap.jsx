@@ -3,7 +3,7 @@ import { COUNTRY_CENTROIDS } from '../data/countryCentroids'
 import { diveSiteService, getLocationDisplayName, normalizeCountryKey } from '../services/diveSiteService'
 import { getDiveSiteImage, getDiveSiteCreatureInfo } from '../data/diveSiteImages'
 import { loadCesium } from '../services/cesiumLoader'
-import pinIconUrl from '../assets/pin.png'
+const pinIconUrl = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325069/TDV-Media/UI/pin.png'
 
 // Memoization cache for generated marker SVG data URIs
 const svgCache = new Map()

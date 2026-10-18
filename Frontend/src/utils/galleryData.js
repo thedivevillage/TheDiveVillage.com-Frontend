@@ -397,7 +397,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
       const base = filename.replace('.mp4', '')
       return {
         ...item,
-        poster: item.poster || `/media/TDV-Media/Extras for Gallery/posters/${base}_thumb.webp`,
+        poster: item.poster || `https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`,
         previewVideo: item.previewVideo || `/media/TDV-Media/Extras for Gallery/previews/${base}_preview.mp4`,
         lowResSrc: item.lowResSrc || `/media/TDV-Media/Extras for Gallery/previews/${base}_preview.mp4`,
       }
@@ -405,7 +405,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'Scuba_Diver.mp4') {
       return {
         ...item,
-        poster: item.poster || '/media/thumbnails/course-1_thumb.webp',
+        poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp',
         previewVideo: item.previewVideo || '/media/TDV-Media/Services/previews/scubadiver_preview.mp4',
         lowResSrc: item.lowResSrc || '/media/TDV-Media/Services/previews/scubadiver_preview.mp4',
       }
@@ -413,7 +413,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'AdventureDiver.mp4') {
       return {
         ...item,
-        poster: item.poster || '/media/thumbnails/course-2_thumb.webp',
+        poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp',
         previewVideo: item.previewVideo || '/media/TDV-Media/Services/previews/adventurediver_preview.mp4',
         lowResSrc: item.lowResSrc || '/media/TDV-Media/Services/previews/adventurediver_preview.mp4',
       }
