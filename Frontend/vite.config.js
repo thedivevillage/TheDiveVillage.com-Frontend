@@ -308,6 +308,21 @@ export default defineConfig({
                 statuses: [0, 200]
               }
             }
+          },
+          {
+            // 6. OpenFreeMap Vector Map Tiles, Sprites, and Glyphs
+            urlPattern: /^https:\/\/tiles\.openfreemap\.org\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tdv-map-tiles',
+              expiration: {
+                maxEntries: 2000,
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 Days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
           }
         ]
       }

@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 /**
  * FloatingVideoPip - Pure Picture-in-Picture floating video player
  * Strictly no text overlays, controls, scrubber, or icons - just the pristine video stream.
+ * Features instant 0ms progressive preview playback with seamless background HD handoff.
  */
 export default function FloatingVideoPip({
   videoSrc,
@@ -12,45 +13,65 @@ export default function FloatingVideoPip({
   poster,
   onClose,
 }) {
-  const videoRef = useRef(null)
-  const [currentSrc, setCurrentSrc] = useState(videoSrc)
-  const [triedFallback, setTriedFallback] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const masterRef = useRef(null)
+  const previewRef = useRef(null)
 
-  // Update src when videoSrc prop changes
+  const fastSrc = fallbackSrc || videoSrc
+  const hdSrc = videoSrc && videoSrc !== fallbackSrc ? videoSrc : null
+
+  const [previewStarted, setPreviewStarted] = useState(false)
+  const [masterReady, setMasterReady] = useState(false)
+  const [masterStarted, setMasterStarted] = useState(false)
+
+  // Reset states when source changes
   useEffect(() => {
-    setCurrentSrc(videoSrc)
-    setTriedFallback(false)
-    setIsLoaded(false)
-  }, [videoSrc])
+    setPreviewStarted(false)
+    setMasterReady(false)
+    setMasterStarted(false)
+  }, [videoSrc, fallbackSrc])
 
-  // Play video on mount / src change
+  // Play preview video immediately
   useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
+    const prev = previewRef.current
+    if (!prev) return
 
-    video.muted = true
-    video.defaultMuted = true
-    video.volume = 0
+    prev.muted = true
+    prev.defaultMuted = true
+    prev.volume = 0
 
-    if (video.readyState >= 2) {
-      setIsLoaded(true)
+    if (prev.readyState >= 2) {
+      setPreviewStarted(true)
     }
 
-    const playPromise = video.play()
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => setIsLoaded(true))
-        .catch(() => {})
+    const p = prev.play()
+    if (p !== undefined) {
+      p.then(() => setPreviewStarted(true)).catch(() => {})
     }
-  }, [currentSrc])
+  }, [fastSrc])
 
-  const handleVideoError = () => {
-    if (!triedFallback && fallbackSrc && fallbackSrc !== currentSrc) {
-      setTriedFallback(true)
-      setCurrentSrc(fallbackSrc)
-    }
-  }
+  // Start master video smoothly once preview is playing or immediately if no preview
+  useEffect(() => {
+    if (!hdSrc) return
+    const master = masterRef.current
+    if (!master) return
+
+    master.muted = true
+    master.defaultMuted = true
+    master.volume = 0
+
+    // Small delay to let fast preview get established first
+    const timer = setTimeout(() => {
+      const p = master.play()
+      if (p !== undefined) {
+        p.then(() => {
+          setMasterReady(true)
+          setMasterStarted(true)
+        }).catch(() => {})
+      }
+    }, fallbackSrc ? 250 : 0)
+
+    return () => clearTimeout(timer)
+  }, [hdSrc, fallbackSrc])
 
   return (
     <AnimatePresence>
@@ -66,39 +87,62 @@ export default function FloatingVideoPip({
         className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9999] w-[calc(100vw-32px)] max-w-[320px] xs:max-w-[340px] sm:w-[360px] aspect-video rounded-2xl sm:rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.85),0_0_35px_rgba(255,205,0,0.2)] border-2 border-[#FFCD00] overflow-hidden bg-black select-none cursor-grab active:cursor-grabbing group"
         title="Tap to close"
       >
-        {/* Poster fallback image while buffering */}
+        {/* Layer 0: Poster fallback image while buffering */}
         {poster && (
           <img
             src={poster}
             alt=""
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none z-0 ${
-              isLoaded ? 'opacity-0' : 'opacity-100'
+              previewStarted || masterStarted ? 'opacity-0' : 'opacity-100'
             }`}
           />
         )}
 
-        {/* Pure Video Element - Strictly just the video */}
-        <video
-          ref={videoRef}
-          src={currentSrc}
-          poster={poster || undefined}
-          autoPlay
-          loop
-          muted
-          playsInline
-          webkit-playsinline=""
-          x5-playsinline=""
-          preload="auto"
-          onLoadedMetadata={() => setIsLoaded(true)}
-          onLoadedData={() => setIsLoaded(true)}
-          onCanPlay={() => setIsLoaded(true)}
-          onPlay={() => setIsLoaded(true)}
-          onPlaying={() => setIsLoaded(true)}
-          onError={handleVideoError}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 z-10 pointer-events-none ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
+        {/* Layer 1: Fast 360p Preview Video Layer (Plays in 0ms, <750KB) */}
+        {fastSrc && (
+          <video
+            ref={previewRef}
+            src={fastSrc}
+            poster={poster || undefined}
+            autoPlay
+            loop
+            muted
+            playsInline
+            webkit-playsinline=""
+            x5-playsinline=""
+            preload="auto"
+            onTimeUpdate={() => {
+              if (!previewStarted) setPreviewStarted(true)
+            }}
+            onPlaying={() => setPreviewStarted(true)}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 z-10 pointer-events-none ${
+              masterStarted ? 'opacity-0' : previewStarted ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        )}
+
+        {/* Layer 2: HD Master Video Layer (Seamless background crossfade) */}
+        {hdSrc && (
+          <video
+            ref={masterRef}
+            src={hdSrc}
+            autoPlay
+            loop
+            muted
+            playsInline
+            webkit-playsinline=""
+            x5-playsinline=""
+            preload="metadata"
+            onCanPlay={() => setMasterReady(true)}
+            onPlaying={() => {
+              setMasterReady(true)
+              setMasterStarted(true)
+            }}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 z-20 pointer-events-none ${
+              masterStarted ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        )}
 
         {/* Subtle close button in corner on hover; or tap/click pip directly to close */}
         <button
@@ -107,7 +151,7 @@ export default function FloatingVideoPip({
             e.stopPropagation()
             onClose?.()
           }}
-          className="absolute top-2 right-2 z-30 p-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/90 hover:text-white transition-opacity duration-200 opacity-0 group-hover:opacity-100 cursor-pointer shadow-md"
+          className="absolute top-2 right-2 z-30 p-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/90 hover:text-white transition-opacity duration-200 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 cursor-pointer shadow-md"
           title="Close"
           aria-label="Close"
         >

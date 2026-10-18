@@ -55,7 +55,7 @@ const TESTIMONIALS = [
     id: 'rev-2',
     name: "Krishawn Rahul",
     role: "Certified Diver",
-    text: "Every dive felt relaxed and unhurried. Top-notch equipment, small groups, and instructors who focus on safety and technique. Pure weightlessness from start to finish.",
+    text: "Every dive felt relaxed and unhurried. Top-notch equipment, small groups, and instructors who focus on safety and technique. Pure weightlessness from start to finish. I loved every moment!",
     image: CAROUSEL_IMAGES[2]
   },
   {

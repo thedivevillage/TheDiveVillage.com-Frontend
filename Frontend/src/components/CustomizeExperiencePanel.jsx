@@ -110,7 +110,7 @@ const CUSTOM_ACTIVITIES = [
     name: 'Canyoneering',
     video: vidCanoneering,
     previewVideo: prevCanoneering,
-    poster: imgTrekking,
+    poster: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325105/TDV-Media/thumbnails/addon-1_thumb.webp',
   },
   {
     id: 'safari',
@@ -167,26 +167,27 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
   const [selectedActivities, setSelectedActivities] = useState([])
   const [customText, setCustomText] = useState('')
   const [hoveredActivity, setHoveredActivity] = useState(null)
+  const [suppressedHoverId, setSuppressedHoverId] = useState(null)
   const [pipVideo, setPipVideo] = useState(null)
   const navigate = useNavigate()
 
-  const openPipForCampers = () => {
-    setPipVideo({
-      id: 'camping_camper',
-      video: vidCampers,
-      poster: imgCampers,
-    })
-    setHoveredActivity(null)
-  }
-
   const handleActivityClick = (activity) => {
+    const isCurrentlySelected = selectedActivities.includes(activity.id)
     toggleActivity(activity.id)
-    if (activity.id === 'camping_camper') {
-      if (pipVideo) {
-        setPipVideo(null)
-      } else {
-        openPipForCampers()
-      }
+    setHoveredActivity(null)
+    setSuppressedHoverId(activity.id)
+
+    if (pipVideo && pipVideo.id === activity.id) {
+      // Tap again on active activity video -> close video
+      setPipVideo(null)
+    } else if (!isCurrentlySelected && activity.video) {
+      // Tap once to select activity -> load video
+      setPipVideo({
+        id: activity.id,
+        video: activity.video,
+        fallbackVideo: activity.previewVideo,
+        poster: activity.poster,
+      })
     }
   }
   
@@ -205,6 +206,26 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
     }, duration)
     return () => clearInterval(timer)
   }, [images])
+
+  // Pre-warm preview videos for top activities during idle time so hover/tap plays instantly
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const previewsToWarm = [prevCanoneering, prevSafari, prevTrekking]
+    const warmNext = () => {
+      previewsToWarm.forEach((url) => {
+        try {
+          fetch(url, { headers: { Range: 'bytes=0-262144' }, cache: 'force-cache' }).catch(() => {})
+        } catch (_) {}
+      })
+    }
+    if ('requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(warmNext, { timeout: 2000 })
+      return () => window.cancelIdleCallback(handle)
+    } else {
+      const timer = setTimeout(warmNext, 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
   const toggleActivity = (id) => {
     setSelectedActivities((prev) => {
@@ -319,34 +340,13 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                     const activity = CUSTOM_ACTIVITIES.find((a) => a.id === actId)
                     if (!activity) return null
                     const isSelected = selectedActivities.includes(activity.id)
-                    const isHovered = hoveredActivity === activity.id
                     const displayName = activity.id === 'sightseeing' ? 'Sightseeing' : activity.name
 
                     return (
                       <div
                         key={activity.id}
                         className="relative shrink-0"
-                        onMouseEnter={() => setHoveredActivity(activity.id)}
-                        onMouseLeave={() => setHoveredActivity(null)}
                       >
-                        <AnimatePresence>
-                          {isHovered && activity.video && (!pipVideo || pipVideo.id !== activity.id) && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10, scale: 0.88 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                              transition={{ type: 'spring', damping: 22, stiffness: 350 }}
-                              className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-32 h-32 rounded-2xl overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.7)] border-2 border-[#FFCD00] bg-[#001428] z-50 pointer-events-none flex flex-col justify-between"
-                            >
-                              <HoverVideoPreview
-                                videoSrc={activity.previewVideo || activity.video}
-                                poster={activity.poster}
-                                displayName={displayName}
-                              />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-
                         <button
                           type="button"
                           onClick={() => handleActivityClick(activity)}
@@ -372,14 +372,23 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
             <div className="hidden sm:flex flex-wrap gap-2.5">
               {CUSTOM_ACTIVITIES.map((activity) => {
                 const isSelected = selectedActivities.includes(activity.id)
-                const isHovered = hoveredActivity === activity.id
+                const isHovered = hoveredActivity === activity.id && suppressedHoverId !== activity.id
 
                 return (
                   <div
                     key={activity.id}
                     className="relative"
-                    onMouseEnter={() => setHoveredActivity(activity.id)}
-                    onMouseLeave={() => setHoveredActivity(null)}
+                    onMouseEnter={() => {
+                      if (suppressedHoverId !== activity.id) {
+                        setHoveredActivity(activity.id)
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredActivity(null)
+                      if (suppressedHoverId === activity.id) {
+                        setSuppressedHoverId(null)
+                      }
+                    }}
                   >
                     {/* Hover Floating Video Preview Box */}
                     <AnimatePresence>
@@ -461,7 +470,10 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
           videoSrc={pipVideo.video}
           fallbackSrc={pipVideo.fallbackVideo}
           poster={pipVideo.poster}
-          onClose={() => setPipVideo(null)}
+          onClose={() => {
+            setPipVideo(null)
+            setHoveredActivity(null)
+          }}
         />
       )}
     </div>

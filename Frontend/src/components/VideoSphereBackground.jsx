@@ -313,8 +313,17 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
     isVisible
   )
 
-  // Secondary videos are strictly lazy-loaded only when user scrolls or needs them ON DESKTOP
-  const shouldLoadSecondary = !isMobile && isHome && !isNightSettled && loadSecondary
+  // Preload secondary videos on idle or scroll
+  useEffect(() => {
+    if (loadSecondary || !isHome) return
+    const timer = setTimeout(() => {
+      setLoadSecondary(true)
+    }, 2500)
+    return () => clearTimeout(timer)
+  }, [loadSecondary, isHome])
+
+  // Secondary videos are lazy-loaded when user scrolls or after short idle
+  const shouldLoadSecondary = isHome && !isNightSettled && loadSecondary
   const { texture: texture2, hasNewFrameRef: hasNewFrame2, lastTimeRef: lastTime2 } = useDirectVideoTexture(
     shouldLoadSecondary ? bookFile : null,
     MASTER_1080P_BARRACUDA,
@@ -363,15 +372,12 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
         if (isMobileScreen) {
           targetRotation.current.y = INITIAL_YAW
           targetRotation.current.x = INITIAL_PITCH
-          targetOpacity2.current = 0
-          targetOpacity3.current = 0
-          return
         }
 
         const scrollY = window.scrollY
 
         if (isHome) {
-          if (!loadSecondary && scrollY > 150) {
+          if (!loadSecondary && scrollY > 50) {
             setLoadSecondary(true)
           }
 
@@ -415,11 +421,17 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    if (window.lenis) {
+      window.lenis.on('scroll', handleScroll)
+    }
     handleScroll()
 
     return () => {
       if (scrollRafId) cancelAnimationFrame(scrollRafId)
       window.removeEventListener('scroll', handleScroll)
+      if (window.lenis) {
+        window.lenis.off('scroll', handleScroll)
+      }
     }
   }, [isAbout, isHome, loadSecondary, INITIAL_PITCH, INITIAL_YAW])
 
@@ -473,25 +485,41 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
 
   useFrame((state, delta) => {
     if (isNightSettled || !isVisible) return
+    const safeDelta = Math.min(delta, 0.1)
+
     if (meshRef.current) {
-      // 1. Frame-driven texture 1 update (strictly on presented frames)
+      const op2 = meshRef2.current?.material?.opacity || 0
+      const op3 = meshRef3.current?.material?.opacity || 0
+
+      // When Barracuda or Turtle is fully opaque, Clownfish is completely occluded.
+      // Softly pause Clownfish to avoid decoding multiple 1080p videos simultaneously.
+      const isClownfishOccluded = (op2 > 0.98 || op3 > 0.98) && (targetOpacity2.current > 0.9 || targetOpacity3.current > 0.9)
+
+      // 1. Frame-driven texture 1 (Clownfish) update
       if (texture && texture.image) {
         const vid1 = texture.image
-        if (!vid1.paused && vid1.readyState >= 2 && vid1.videoWidth > 0) {
-          if (hasNewFrame1.current || vid1.currentTime !== lastTime1.current) {
-            lastTime1.current = vid1.currentTime
-            hasNewFrame1.current = false
-            texture.needsUpdate = true
-            if (!hasRenderedInitialFrameRef.current) {
-              hasRenderedInitialFrameRef.current = true
-              setHeroWebGLReady(true)
+        if (isClownfishOccluded) {
+          if (!vid1.paused) vid1.pause()
+        } else {
+          if (vid1.paused && isVisible) {
+            vid1.play().catch(() => {})
+          }
+          if (!vid1.paused && vid1.readyState >= 2 && vid1.videoWidth > 0) {
+            if (hasNewFrame1.current || vid1.currentTime !== lastTime1.current) {
+              lastTime1.current = vid1.currentTime
+              hasNewFrame1.current = false
+              texture.needsUpdate = true
+              if (!hasRenderedInitialFrameRef.current) {
+                hasRenderedInitialFrameRef.current = true
+                setHeroWebGLReady(true)
+              }
             }
           }
         }
       }
 
-      // 2. Secondary texture 2 update with state-transition play/pause (desktop only)
-      if (!isMobile && texture2 && texture2.image) {
+      // 2. Secondary texture 2 (Barracuda) update
+      if (texture2 && texture2.image) {
         const vid2 = texture2.image
         if (targetOpacity2.current > 0.01 && isVisible) {
           if (vid2.paused) {
@@ -513,8 +541,8 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
         }
       }
 
-      // 3. Secondary texture 3 update with state-transition play/pause (desktop only)
-      if (!isMobile && texture3 && texture3.image) {
+      // 3. Secondary texture 3 (Turtle) update
+      if (texture3 && texture3.image) {
         const vid3 = texture3.image
         if (targetOpacity3.current > 0.01 && isVisible) {
           if (vid3.paused) {
@@ -537,26 +565,33 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
       }
 
       if (joystickVelocity && joystickVelocity.current) {
-        dragOffset.current.y += joystickVelocity.current.x * delta * 0.4
-        dragOffset.current.x += joystickVelocity.current.y * delta * 0.4
+        dragOffset.current.y += joystickVelocity.current.x * safeDelta * 0.4
+        dragOffset.current.x += joystickVelocity.current.y * safeDelta * 0.4
       }
 
       const finalTargetX = targetRotation.current.x + dragOffset.current.x
       const finalTargetY = targetRotation.current.y + dragOffset.current.y
 
-      meshRef.current.rotation.y += (finalTargetY - meshRef.current.rotation.y) * delta * 5
-      meshRef.current.rotation.x += (finalTargetX - meshRef.current.rotation.x) * delta * 5
+      meshRef.current.rotation.y += (finalTargetY - meshRef.current.rotation.y) * safeDelta * 5
+      meshRef.current.rotation.x += (finalTargetX - meshRef.current.rotation.x) * safeDelta * 5
 
-      if (!isMobile && meshRef2.current && meshRef2.current.material && isHome) {
+      // Only draw Clownfish sphere when not 100% occluded
+      meshRef.current.visible = Boolean(texture) && !isClownfishOccluded
+
+      if (meshRef2.current && meshRef2.current.material && isHome) {
         meshRef2.current.rotation.y = meshRef.current.rotation.y - Math.PI / 2.5
         meshRef2.current.rotation.x = meshRef.current.rotation.x - Math.PI / 6
-        meshRef2.current.material.opacity += (targetOpacity2.current - meshRef2.current.material.opacity) * delta * 2.5
+        meshRef2.current.material.opacity += (targetOpacity2.current - meshRef2.current.material.opacity) * safeDelta * 2.5
+        // Skip Three.js draw call when opacity is 0
+        meshRef2.current.visible = Boolean(texture2) && meshRef2.current.material.opacity > 0.005
       }
 
-      if (!isMobile && meshRef3.current && meshRef3.current.material && isHome) {
+      if (meshRef3.current && meshRef3.current.material && isHome) {
         meshRef3.current.rotation.y = meshRef.current.rotation.y + Math.PI * 1.45
         meshRef3.current.rotation.x = meshRef.current.rotation.x - Math.PI / 7
-        meshRef3.current.material.opacity += (targetOpacity3.current - meshRef3.current.material.opacity) * delta * 2.5
+        meshRef3.current.material.opacity += (targetOpacity3.current - meshRef3.current.material.opacity) * safeDelta * 2.5
+        // Skip Three.js draw call when opacity is 0
+        meshRef3.current.visible = Boolean(texture3) && meshRef3.current.material.opacity > 0.005
       }
     }
   })
@@ -575,7 +610,7 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
           color="#ffffff"
         />
       </mesh>
-      {!isMobile && isHome && !isNightSettled && (
+      {isHome && !isNightSettled && (
         <>
           <mesh ref={meshRef2} scale={[-0.99, 0.99, 0.99]} visible={Boolean(texture2)}>
             <sphereGeometry args={[500, 60, 40]} />
@@ -604,31 +639,11 @@ export default function VideoSphereBackground() {
   const [isNightSettled, setIsNightSettled] = useState(false)
   const isVisible = usePageVisibility()
 
-  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false)
-
   const isAbout = location.pathname === '/about'
   const isSpherePage = location.pathname === '/' || isAbout
   const sphereVideo = isAbout ? bookFile : videoFile
 
-  useEffect(() => {
-    if (!isSpherePage) return
-    let raf = null
-    const onScroll = () => {
-      if (raf) return
-      raf = requestAnimationFrame(() => {
-        raf = null
-        const past = window.scrollY > (window.innerHeight * 1.25)
-        setIsScrolledPastHero(past)
-      })
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [isSpherePage])
-
-  const shouldRenderCanvas = isVisible && isSpherePage && !isScrolledPastHero && (!isNightSettled || isNightTransitioning)
+  const shouldRenderCanvas = isVisible && isSpherePage && (!isNightSettled || isNightTransitioning)
 
   useEffect(() => {
     setMounted(true)
@@ -830,7 +845,7 @@ export default function VideoSphereBackground() {
                     videoSrc={sphereVideo}
                     isNightSettled={isNightSettled}
                     joystickVelocity={joystickVelocity}
-                    isVisible={isVisible && !isScrolledPastHero}
+                    isVisible={isVisible}
                   />
                 </Suspense>
                 <OrbitControls
