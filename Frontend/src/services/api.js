@@ -13,19 +13,20 @@ const isLocalNetworkHost =
     window.location.hostname.endsWith('.local')
   )
 
-// In production on the live domain, default cleanly to https://api.thedivevillage.com
+// Prioritize local backend on localhost/dev, otherwise use configured or production API
 export const apiBaseUrl =
-  rawApiUrl ||
-  (import.meta.env.DEV && isLocalNetworkHost
-    ? `http://${window.location.hostname}:5000`
-    : 'https://api.thedivevillage.com')
+  (import.meta.env.DEV && isLocalNetworkHost)
+    ? (rawApiUrl && (rawApiUrl.includes('localhost') || rawApiUrl.includes('127.0.0.1'))
+        ? rawApiUrl
+        : `http://${window.location.hostname}:5000`)
+    : (rawApiUrl || 'https://api.thedivevillage.com')
 
 export const isApiConfigured = true
 
 const api = axios.create({
   baseURL: apiBaseUrl,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 45000,
+  timeout: 10000,
 })
 
 api.interceptors.request.use((config) => {

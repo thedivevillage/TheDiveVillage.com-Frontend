@@ -31,13 +31,13 @@ In Cloudflare Pages Dashboard, go to **Settings > Environment variables** and ad
 
 | Variable Name | Description | Example / Fallback |
 | :--- | :--- | :--- |
-| `VITE_API_BASE_URL` | Your Backend API base URL | `https://api.thedivevillage.com` |
-| `VITE_FIREBASE_API_KEY` | Firebase Web API Key | `AIzaSyDVj-lZlrZP7ccmP0YdfkBhddei2pj6UMU` |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | `the-dive-village-ffed3.firebaseapp.com` |
-| `VITE_FIREBASE_PROJECT_ID` | Firebase Project ID | `the-dive-village-ffed3` |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase Storage Bucket | `the-dive-village-ffed3.firebasestorage.app` |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase Sender ID | `298649884006` |
-| `VITE_FIREBASE_APP_ID` | Firebase App ID | `1:298649884006:web:b2f393b8b8fdebdf19a4a7` |
+| `VITE_API_BASE_URL` | Your Backend API base URL | `https://api.thedivevillage.com` (or your Render URL) |
+| `VITE_FIREBASE_API_KEY` | Firebase Web API Key | `AIzaSyDAxPsEFVub2IVrpSuCQxCn-JnsBU0NbdY` |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | `the-dive-village.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | Firebase Project ID | `the-dive-village` |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase Storage Bucket | `the-dive-village.firebasestorage.app` |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase Sender ID | `458045547653` |
+| `VITE_FIREBASE_APP_ID` | Firebase App ID | `1:458045547653:web:54a40c550a07edf8d8b5ec` |
 | `VITE_FIREBASE_VAPID_KEY` | Firebase Web Push VAPID Public Key | Generated in Firebase Console → Project Settings → Cloud Messaging |
 
 *(Note: When `VITE_API_BASE_URL` is omitted, the frontend automatically serves catalog items and experiences using static offline assets and will never request local device permissions).*
