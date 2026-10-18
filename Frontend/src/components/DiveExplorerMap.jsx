@@ -349,11 +349,16 @@ export default function DiveExplorerMap({
       const dLng = Math.abs(ne[0] - sw[0])
       const dLat = Math.abs(ne[1] - sw[1])
 
-      // Single-site or zero-area bounding box (e.g. Libya, Iran, Russia, Romania, Senegal)
+      const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640
+      const dynamicPadding = isSmallScreen
+        ? { top: 75, bottom: 50, left: 45, right: 45 }
+        : { top: 90, bottom: 70, left: 80, right: 80 }
+
+      // Single-site or tight bounding box (e.g. Libya, Iran, Russia, Romania, Senegal)
       if (dLng < 0.05 && dLat < 0.05) {
         map.flyTo({
           center: [sw[0], sw[1]],
-          zoom: 7.5,
+          zoom: 5.2,
           duration: 1200,
         })
         return
@@ -361,25 +366,31 @@ export default function DiveExplorerMap({
 
       // Very wide territory spanning oceans (e.g. USA with Hawaii, huge archipelago)
       if (dLng > 65) {
-        const centerCoord = clickedLngLat
-          ? [clickedLngLat.lng ?? clickedLngLat[0], clickedLngLat.lat ?? clickedLngLat[1]]
-          : [countryData.longitude, countryData.latitude]
-        map.flyTo({
-          center: centerCoord,
-          zoom: 5.2,
-          duration: 1200,
-        })
+        if (clickedLngLat) {
+          map.flyTo({
+            center: [clickedLngLat.lng ?? clickedLngLat[0], clickedLngLat.lat ?? clickedLngLat[1]],
+            zoom: 4.2,
+            duration: 1200,
+          })
+        } else {
+          map.flyTo({
+            center: [countryData.longitude, countryData.latitude],
+            zoom: 3.2,
+            duration: 1200,
+          })
+        }
         return
       }
 
-      // Normal multi-site country: compute camera ensuring minZoom >= 4.5
+      // Normal multi-site country: camera framing capped at zoom 5.2 so all dive sites fit on screen
       try {
         const camera = map.cameraForBounds(countryData.bounds, {
-          padding: { top: 60, bottom: 60, left: 60, right: 60 },
-          maxZoom: 8.5,
+          padding: dynamicPadding,
+          maxZoom: 5.2,
         })
         if (camera && camera.center) {
-          const clampedZoom = Math.max(4.5, Math.min(8.5, camera.zoom))
+          // Generous margin ensures dive sites on outer coasts or islands are never cut off
+          const clampedZoom = Math.max(2.2, Math.min(5.2, (camera.zoom || 4.8) - 0.15))
           const centerCoord = [
             camera.center.lng ?? (Array.isArray(camera.center) ? camera.center[0] : countryData.longitude),
             camera.center.lat ?? (Array.isArray(camera.center) ? camera.center[1] : countryData.latitude),
@@ -396,17 +407,17 @@ export default function DiveExplorerMap({
       }
 
       map.fitBounds(countryData.bounds, {
-        padding: 60,
-        maxZoom: 8.5,
+        padding: dynamicPadding,
+        maxZoom: 5.2,
         duration: 1200,
       })
       return
     }
 
-    // Fallback if no bounds: center on centroid
+    // Fallback if no bounds: center on centroid with comfortable framing
     map.flyTo({
       center: [countryData.longitude, countryData.latitude],
-      zoom: 6.8,
+      zoom: 4.5,
       duration: 1200,
     })
   }, [])
