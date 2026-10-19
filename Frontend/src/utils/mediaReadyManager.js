@@ -7,12 +7,15 @@
 import {
   RAW_CLOUDINARY_CLOWNFISH,
   MASTER_1080P_CLOWNFISH,
-  RAW_CLOUDINARY_NIGHT_DIVE
+  RAW_CLOUDINARY_NIGHT_DIVE,
+  MASTER_1080P_NIGHT_DIVE,
+  HLS_CLOWNFISH,
+  HLS_NIGHT_DIVE,
 } from './videoOptimizer'
 import { attachHlsStream } from '../hooks/useCloudinaryHls'
 
-export const HERO_VIDEO_SRC = RAW_CLOUDINARY_CLOWNFISH
-export const NIGHT_DIVE_VIDEO_SRC = RAW_CLOUDINARY_NIGHT_DIVE
+export const HERO_VIDEO_SRC = HLS_CLOWNFISH
+export const NIGHT_DIVE_VIDEO_SRC = HLS_NIGHT_DIVE
 
 const isInitialSpherePage = typeof window !== 'undefined' 
   ? (window.location.pathname === '/' || window.location.pathname === '/about')
@@ -131,19 +134,9 @@ export function preloadNightDiveFirst5Seconds() {
   if (isNightDivePreloading) return
   isNightDivePreloading = true
 
-  const src = NIGHT_DIVE_VIDEO_SRC // '/media/TDV-Media/Background/Night_Dive.mp4'
+  const src = NIGHT_DIVE_VIDEO_SRC
 
-  // Step A: Range request on idle to avoid network contention with active page assets
-  const idleRun = window.requestIdleCallback || ((cb) => setTimeout(cb, 3500))
-  idleRun(() => {
-    try {
-      fetch(src, {
-        headers: { range: 'bytes=0-1048576' }
-      }).catch(() => {})
-    } catch (e) {}
-  })
-
-  // Step B: Warm video element initialized in background to prime hardware media decoders
+  // Warm video element initialized in background to prime hardware media decoders
   let container = document.getElementById('hero-360-video-dom-root')
   if (!container) {
     container = document.createElement('div')
@@ -157,6 +150,7 @@ export function preloadNightDiveFirst5Seconds() {
   if (!video) {
     video = document.createElement('video')
     video.id = 'night-dive-dom-video'
+    video.crossOrigin = 'anonymous'
     video.muted = true
     video.defaultMuted = true
     video.volume = 0
@@ -178,8 +172,7 @@ export function preloadNightDiveFirst5Seconds() {
       if (video.buffered && video.buffered.length > 0) {
         bufferedEnd = video.buffered.end(0)
       }
-      // If 4.5+ seconds buffered or video is ready to play through
-      if (bufferedEnd >= 4.5 || video.readyState >= 3) {
+      if (bufferedEnd >= 2 || video.readyState >= 3) {
         setNightDiveReady(true)
       }
     }
@@ -188,9 +181,24 @@ export function preloadNightDiveFirst5Seconds() {
   const events = ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'progress']
   events.forEach((evt) => video.addEventListener(evt, evaluateNightDiveReadiness))
 
-  if (!video.src || !video.src.includes(src)) {
-    video.src = src
-    video.load()
+  if (src && src.includes('.m3u8')) {
+    if (video.src && !video.src.startsWith('blob:')) {
+      video.removeAttribute('src')
+      video.load()
+    }
+    attachHlsStream({
+      video,
+      hlsUrl: src,
+      mp4FallbackUrl: MASTER_1080P_NIGHT_DIVE,
+      autoPlay: false,
+      playbackRate: 1.0,
+      onLoaded: evaluateNightDiveReadiness,
+    })
+  } else {
+    if (!video.src || !video.src.includes(src)) {
+      video.src = src
+      video.load()
+    }
   }
 
   evaluateNightDiveReadiness()
@@ -230,9 +238,7 @@ export function getOrCreateHeroVideoElement(src = HERO_VIDEO_SRC, playbackRate =
   if (!video) {
     video = document.createElement('video')
     video.id = 'hero-360-dom-video'
-    if (src && (src.startsWith('http://') || src.startsWith('https://')) && !src.includes(window.location.host)) {
-      video.crossOrigin = 'anonymous'
-    }
+    video.crossOrigin = 'anonymous'
     video.muted = true
     video.defaultMuted = true
     video.volume = 0
@@ -245,6 +251,8 @@ export function getOrCreateHeroVideoElement(src = HERO_VIDEO_SRC, playbackRate =
     video.preload = 'auto'
     video.playbackRate = playbackRate
     container.appendChild(video)
+  } else {
+    video.crossOrigin = 'anonymous'
   }
 
   warmHeroVideo = video
@@ -273,6 +281,10 @@ export function getOrCreateHeroVideoElement(src = HERO_VIDEO_SRC, playbackRate =
   })
 
   if (src && src.includes('.m3u8')) {
+    if (video.src && !video.src.startsWith('blob:')) {
+      video.removeAttribute('src')
+      video.load()
+    }
     warmHeroHlsController = attachHlsStream({
       video,
       hlsUrl: src,

@@ -1,7 +1,7 @@
 import CourseTemplate from '../layouts/CourseTemplate'
 import SEOHead from '../components/SEOHead'
 import { IMAGES } from '../utils/images'
-const freediveVideo = '/media/TDV-Media/Services/Freediver.mp4';
+const freediveVideo = 'https://media.thedivevillage.com/TDV-Media/Services/Freediver.mp4';
 
 export default function Surfing() {
   const tours = [

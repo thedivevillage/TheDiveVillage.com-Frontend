@@ -79,7 +79,7 @@ function AdminMediaCard({ item, onPreview, onEdit, onDelete, onToggleActive }) {
     }
   }
 
-  const isR2 = (item.src || '').startsWith('/media/')
+  const isR2 = (item.src || '').startsWith('/media/') || (item.src || '').includes('media.thedivevillage.com') || (item.src || '').includes('.r2.')
   const isCloudinary = (item.src || '').includes('res.cloudinary.com')
   const hostBadge = isR2 ? 'Cloudflare R2' : isCloudinary ? 'Cloudinary' : 'Hosted Media'
 

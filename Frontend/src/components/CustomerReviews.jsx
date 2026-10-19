@@ -6,7 +6,7 @@ const merch1 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244022/div
 const merch2 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244024/dive-village/reviews/hyfyou1sr4xmjg87vqp0.jpg'
 const merch3 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244025/dive-village/reviews/feaskib6hvao8x3ucetz.jpg'
 const merch4 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1790244030/dive-village/reviews/aqniyjug5ropcb9xcorv.jpg'
-const merch5 = '/media/TDV-Media/Reviews/merch_5_mp4.mp4';
+const merch5 = 'https://media.thedivevillage.com/TDV-Media/Reviews/merch_5_mp4.mp4';
 import LazyVideo from './LazyVideo'
 
 export const MERCH_MEDIA_ITEMS = [

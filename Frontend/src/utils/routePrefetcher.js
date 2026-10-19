@@ -7,11 +7,11 @@
 const prefetchedUrls = new Set()
 
 const TOP_SERVICE_VIDEOS = [
-  '/media/TDV-Media/Services/Try_Dive.mp4',
-  '/media/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4',
-  '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4',
-  '/media/TDV-Media/Services/Bubblemaker.mp4',
-  '/media/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4',
+  'https://media.thedivevillage.com/TDV-Media/Services/Try_Dive.mp4',
+  'https://media.thedivevillage.com/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4',
+  'https://media.thedivevillage.com/TDV-Media/Services/Discover_Scuba_Dive.mp4',
+  'https://media.thedivevillage.com/TDV-Media/Services/Bubblemaker.mp4',
+  'https://media.thedivevillage.com/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4',
 ]
 
 export function prefetchVideoChunk(url, bytes = '0-327680') {

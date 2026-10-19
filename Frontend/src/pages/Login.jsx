@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import { firebaseAuth } from '../services/firebase'
-const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4'
+const vidDiscoverScuba = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Scuba_Dive.mp4'
 
 export default function Login() {
   const navigate = useNavigate()

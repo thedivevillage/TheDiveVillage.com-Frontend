@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocation } from 'react-router'
-import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
-const cursorVideo = '/media/TDV-Media/UI/cursor.webm'
-const rawCursorLogo = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
-const cursorPng = rawCursorLogo
-const cursorHoverPng = rawCursorLogo
+import { MEDIA_CONFIG } from '../config/mediaConfig'
 import useNightDive from '../hooks/useNightDive'
+
+const cursorVideo = MEDIA_CONFIG?.r2?.ui?.cursor || 'https://media.thedivevillage.com/TDV-Media/UI/cursor.webm'
 
 export default function CustomCursor() {
   const cursorRef = useRef(null)
@@ -23,7 +21,7 @@ export default function CustomCursor() {
     location?.pathname?.startsWith('/signup/')
 
   useEffect(() => {
-    if (isAuthPage || (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)) {
+    if (isAuthPage || videoError || (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)) {
       if (typeof document !== 'undefined') {
         document.body.classList.remove('hide-cursors')
       }
@@ -383,7 +381,7 @@ export default function CustomCursor() {
       window.removeEventListener('click', ensureVideoPlaying)
       document.body.classList.remove('hide-cursors')
     }
-  }, [isAuthPage])
+  }, [isAuthPage, videoError])
 
   // Keep video playing continuously across theme toggles and visibility changes
   useEffect(() => {
@@ -392,7 +390,7 @@ export default function CustomCursor() {
     }
   }, [isNightDive])
 
-  if (isAuthPage || (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)) {
+  if (isAuthPage || videoError || (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)) {
     return null
   }
 
@@ -448,25 +446,17 @@ export default function CustomCursor() {
                   : 'drop-shadow(0 2px 8px rgba(0, 30, 61, 0.25))'),
           }}
         >
-          {!videoError ? (
-            <video
-              ref={videoRef}
-              src={cursorVideo}
-              autoPlay
-              loop
-              muted
-              playsInline
-              crossOrigin="anonymous"
-              onError={() => setVideoError(true)}
-              className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
-            />
-          ) : (
-            <img
-              src={isHovering ? cursorHoverPng : cursorPng}
-              alt="Scuba Diver Cursor"
-              className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
-            />
-          )}
+          <video
+            ref={videoRef}
+            src={cursorVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            onError={() => setVideoError(true)}
+            className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
+          />
         </div>
       </div>
     </div>

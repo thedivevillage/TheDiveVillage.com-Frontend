@@ -1,5 +1,5 @@
 // Production CDN Audio URLs:
-const CLOUDINARY_AUDIO_URL = '/media/TDV-Media/Audio/Audio.mp3'
+const CLOUDINARY_AUDIO_URL = 'https://media.thedivevillage.com/TDV-Media/Audio/Audio.mp3'
 
 const AUDIO_SOURCES = [
   CLOUDINARY_AUDIO_URL,

@@ -2,9 +2,9 @@ import LazyVideo from './LazyVideo'
 import { Link, useNavigate } from 'react-router'
 import SectionReveal, { StaggerGrid, StaggerItem } from './SectionReveal'
 import { CAROUSEL_IMAGES } from '../utils/images'
-const diveSuitVid = '/media/TDV-Media/Reviews/merch_5_mp4.mp4';
-const tryDiveVid = '/media/TDV-Media/Services/Try_Dive.mp4';
-const certVid = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
+const diveSuitVid = 'https://media.thedivevillage.com/TDV-Media/Reviews/merch_5_mp4.mp4';
+const tryDiveVid = 'https://media.thedivevillage.com/TDV-Media/Services/Try_Dive.mp4';
+const certVid = 'https://media.thedivevillage.com/TDV-Media/Services/Open_Water_Diver.mp4';
 
 const PROGRAMS = [
   {
@@ -24,7 +24,7 @@ const PROGRAMS = [
     desc: 'Perfect for first-timers. Experience scuba safely in shallow water with professional 1-on-1 supervision.',
     img: CAROUSEL_IMAGES[0],
     video: tryDiveVid,
-    previewVideo: '/media/TDV-Media/Services/previews/prog_try_dive_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_try_dive_preview.mp4',
     link: '/services',
     btnText: 'Explore Services',
   },

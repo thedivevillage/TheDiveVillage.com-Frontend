@@ -49,7 +49,16 @@ export function attachHlsStream({
     }
   }
 
+  if (video && !video.crossOrigin) {
+    video.crossOrigin = 'anonymous'
+  }
+
   if (Hls.isSupported() && hlsUrl) {
+    if (video.src && !video.src.startsWith('blob:')) {
+      video.removeAttribute('src')
+      video.load()
+    }
+
     const hls = new Hls({
       // NON-NEGOTIABLE FOR 360° VIDEO:
       // Prevent hls.js from capping quality to the canvas/window DOM dimensions.

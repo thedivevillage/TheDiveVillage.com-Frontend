@@ -28,7 +28,7 @@ import {
 } from '../utils/courseEligibility'
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '../utils/haptics'
 
-const turtleAnnaVideo = '/media/TDV-Media/Background/Turtle.mp4'
+const turtleAnnaVideo = 'https://media.thedivevillage.com/TDV-Media/Background/Turtle.mp4'
 const DiveExplorerMap = lazy(() => import('../components/DiveExplorerMap'))
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandsForCountry, getSitesForIsland, getIslandForSite } from '../utils/diveIslandCatalog'

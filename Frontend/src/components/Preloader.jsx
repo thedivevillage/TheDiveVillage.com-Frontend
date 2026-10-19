@@ -1,31 +1,46 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-
-
-const CLOUD_PRELOADER = '/media/TDV-Media/UI/preloader.mp4'
-const preloaderVideo = CLOUD_PRELOADER
+import { MEDIA_CONFIG } from '../config/mediaConfig'
 import {
   subscribeHeroVideoReady,
   getHeroVideoReady,
   subscribeHeroWebGLReady,
   getHeroWebGLReady
 } from '../utils/mediaReadyManager'
-
 import { usePageVisibility } from '../hooks/usePageVisibility'
 import useNightDive from '../hooks/useNightDive'
 
+const CLOUD_PRELOADER = 'https://media.thedivevillage.com/TDV-Media/UI/preloader.mp4'
+const preloaderVideo = CLOUD_PRELOADER
+
 function DiverAnimation({ src, fallbackSrc, className, isNightDive }) {
-  const [currentSrc, setCurrentSrc] = useState(src)
+  const [currentSrc, setCurrentSrc] = useState(src || CLOUD_PRELOADER)
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    if (src) setCurrentSrc(src)
+  }, [src])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    video.defaultMuted = true
+    const p = video.play()
+    if (p !== undefined) {
+      p.catch(() => {})
+    }
+  }, [currentSrc])
 
   return (
     <video
-      src={currentSrc || fallbackSrc}
+      ref={videoRef}
+      src={currentSrc}
       autoPlay
       loop
       muted
       playsInline
-      webkit-playsinline=""
-      crossOrigin="anonymous"
+      preload="auto"
       onError={() => {
         if (fallbackSrc && currentSrc !== fallbackSrc) setCurrentSrc(fallbackSrc)
       }}

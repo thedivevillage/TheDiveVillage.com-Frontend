@@ -74,7 +74,7 @@ for (const file of jsFiles) {
   if (file.endsWith('DiveExplorerMap.jsx') || file.endsWith('InteractiveDiveMap.jsx')) {
     content = content.replace(
       "import pinIconUrl from '../assets/pin.png'",
-      "const pinIconUrl = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325069/TDV-Media/UI/pin.png'"
+      "const pinIconUrl = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792425523/pin-CG20ymQb.png'"
     );
   }
 

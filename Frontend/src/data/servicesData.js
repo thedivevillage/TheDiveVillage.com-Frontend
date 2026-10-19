@@ -64,71 +64,71 @@ const extGiantClam = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v17914581
 const extLionfish = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458123/TDV-Media/Extras%20for%20Gallery/Lionfish.webp';
 const extBubbleCoral = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458078/TDV-Media/Extras%20for%20Gallery/Bubble_Coral.webp';
 const extBaitball = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp';
-const extMantaRayVid = '/media/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4';
-const extBarracudasVid = '/media/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4';
-const extTurtleVid = '/media/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4';
-const extTrevallyVid = '/media/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4';
-const extStingrayVid = '/media/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4';
-const extScubaDiverVid = '/media/TDV-Media/Services/Scuba_Diver.mp4';
-const extMorayEelVid = '/media/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4';
-const extAnemoneVid = '/media/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4';
-const extSeafanVid = '/media/TDV-Media/Extras for Gallery/A_Seafan.mp4';
+const extMantaRayVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4';
+const extBarracudasVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4';
+const extTurtleVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4';
+const extTrevallyVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4';
+const extStingrayVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4';
+const extScubaDiverVid = 'https://media.thedivevillage.com/TDV-Media/Services/Scuba_Diver.mp4';
+const extMorayEelVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4';
+const extAnemoneVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4';
+const extSeafanVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/A_Seafan.mp4';
 
 // Exact Service Media Video Imports from Assets/Media/Services
-const vidTryDive = '/media/TDV-Media/Services/Try_Dive.mp4';
-const vidTryDivePreview = '/media/TDV-Media/Services/previews/prog_try_dive_preview.mp4';
-const vidDSDLite = '/media/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4';
-const vidDSDLitePreview = '/media/TDV-Media/Services/previews/prog_dsd_lite_preview.mp4';
-const vidDiscoverScuba = '/media/TDV-Media/Services/Discover_Scuba_Dive.mp4';
-const vidDiscoverScubaPreview = '/media/TDV-Media/Services/previews/prog_dsd_preview.mp4';
-const vidDiscoverSnorkelling = '/media/TDV-Media/Services/Discover_Snorkelling.mp4';
-const vidBubblemaker = '/media/TDV-Media/Services/Bubblemaker.mp4';
-const vidBubblemakerPreview = '/media/TDV-Media/Services/previews/prog_bubblemaker_preview.mp4';
-const vidAddDiveAfterDSD = '/media/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4';
-const vidAddDiveAfterDSDPreview = '/media/TDV-Media/Services/previews/prog_add_dive_preview.mp4';
-const vidSkinDiver = '/media/TDV-Media/Services/Skin_Diver.mp4';
-const vidScubaDiver = '/media/TDV-Media/Services/Scuba_Diver.mp4';
-const vidOpenWater = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
-const vidAdventureDiver = '/media/TDV-Media/Services/AdventureDiver.mp4';
-const vidAdvancedOpenWater = '/media/TDV-Media/Services/Advanced_Open_Water.mp4';
-const vidEFR = '/media/TDV-Media/Services/EFR_Primary_Secondary_Care.mp4';
-const vidRescueDiver = '/media/TDV-Media/Services/Rescue_Diver.mp4';
-const vidReactivate = '/media/TDV-Media/Services/Reactivate_with_dive.mp4';
-const vidFullRefresher = '/media/TDV-Media/Services/Full_Refresher_with_dive.mp4';
-const vidLiteRefresher = '/media/TDV-Media/Services/Lite_Refresher.mp4';
-const vidBuoyancy = '/media/TDV-Media/Services/Peak_Perormance_Buoyancy.mp4';
-const vidProjectAware = '/media/TDV-Media/Services/Project_AWARE.mp4';
-const vidDeepDiver = '/media/TDV-Media/Services/DeepDiver.mp4';
-const vidWreckDiver = '/media/TDV-Media/Services/Wreck_Diver.mp4';
-const vidNightDiveBackground = '/media/TDV-Media/Services/Night_Diver.mp4';
-const vidNitrox = '/media/TDV-Media/Services/Enriched_Air_Nitrox.mp4';
+const vidTryDive = 'https://media.thedivevillage.com/TDV-Media/Services/Try_Dive.mp4';
+const vidTryDivePreview = 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_try_dive_preview.mp4';
+const vidDSDLite = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Scuba_Dive_Lite.mp4';
+const vidDSDLitePreview = 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_dsd_lite_preview.mp4';
+const vidDiscoverScuba = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Scuba_Dive.mp4';
+const vidDiscoverScubaPreview = 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_dsd_preview.mp4';
+const vidDiscoverSnorkelling = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4';
+const vidBubblemaker = 'https://media.thedivevillage.com/TDV-Media/Services/Bubblemaker.mp4';
+const vidBubblemakerPreview = 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_bubblemaker_preview.mp4';
+const vidAddDiveAfterDSD = 'https://media.thedivevillage.com/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4';
+const vidAddDiveAfterDSDPreview = 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_add_dive_preview.mp4';
+const vidSkinDiver = 'https://media.thedivevillage.com/TDV-Media/Services/Skin_Diver.mp4';
+const vidScubaDiver = 'https://media.thedivevillage.com/TDV-Media/Services/Scuba_Diver.mp4';
+const vidOpenWater = 'https://media.thedivevillage.com/TDV-Media/Services/Open_Water_Diver.mp4';
+const vidAdventureDiver = 'https://media.thedivevillage.com/TDV-Media/Services/AdventureDiver.mp4';
+const vidAdvancedOpenWater = 'https://media.thedivevillage.com/TDV-Media/Services/Advanced_Open_Water.mp4';
+const vidEFR = 'https://media.thedivevillage.com/TDV-Media/Services/EFR_Primary_Secondary_Care.mp4';
+const vidRescueDiver = 'https://media.thedivevillage.com/TDV-Media/Services/Rescue_Diver.mp4';
+const vidReactivate = 'https://media.thedivevillage.com/TDV-Media/Services/Reactivate_with_dive.mp4';
+const vidFullRefresher = 'https://media.thedivevillage.com/TDV-Media/Services/Full_Refresher_with_dive.mp4';
+const vidLiteRefresher = 'https://media.thedivevillage.com/TDV-Media/Services/Lite_Refresher.mp4';
+const vidBuoyancy = 'https://media.thedivevillage.com/TDV-Media/Services/Peak_Perormance_Buoyancy.mp4';
+const vidProjectAware = 'https://media.thedivevillage.com/TDV-Media/Services/Project_AWARE.mp4';
+const vidDeepDiver = 'https://media.thedivevillage.com/TDV-Media/Services/DeepDiver.mp4';
+const vidWreckDiver = 'https://media.thedivevillage.com/TDV-Media/Services/Wreck_Diver.mp4';
+const vidNightDiveBackground = 'https://media.thedivevillage.com/TDV-Media/Services/Night_Diver.mp4';
+const vidNitrox = 'https://media.thedivevillage.com/TDV-Media/Services/Enriched_Air_Nitrox.mp4';
 const vidFunDive = extTurtleVid;
-const vidDSDOpenWater = '/media/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4';
-const vidOWAdvanced = '/media/TDV-Media/Services/Open_water_Advanced_Openwater.mp4';
-const vidEFRRescue = '/media/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4';
-const vidDivemaster = '/media/TDV-Media/Services/DiveMaster.mp4';
-const vidEFRRescueDM = '/media/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4';
-const vidEFRRescueDMPrereq = '/media/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4';
-const vidZeroToHero = '/media/TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master.mp4';
-const vidBasicFreediver = '/media/TDV-Media/Services/BasicFreeDiver.mp4';
-const vidFreediver = '/media/TDV-Media/Services/Freediver.mp4';
-const vidReefExplorer = '/media/TDV-Media/Services/reefexplorer.mp4';
-const vidOceanExplorer = '/media/TDV-Media/Services/oceanexplorer.mp4';
-const vidDriftDiver = '/media/TDV-Media/Services/Drift_Dive.mp4';
-const vid3DaySurf = '/media/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4';
-const vidDiscoverSurfing = '/media/TDV-Media/Services/discover_surfing.mp4';
-const vidCanoneering = '/media/TDV-Media/Services/Other/Canoneering.mp4';
+const vidDSDOpenWater = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4';
+const vidOWAdvanced = 'https://media.thedivevillage.com/TDV-Media/Services/Open_water_Advanced_Openwater.mp4';
+const vidEFRRescue = 'https://media.thedivevillage.com/TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4';
+const vidDivemaster = 'https://media.thedivevillage.com/TDV-Media/Services/DiveMaster.mp4';
+const vidEFRRescueDM = 'https://media.thedivevillage.com/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster.mp4';
+const vidEFRRescueDMPrereq = 'https://media.thedivevillage.com/TDV-Media/Services/Emergency_First_Response_Rescue_DiveMaster_Prequesites.mp4';
+const vidZeroToHero = 'https://media.thedivevillage.com/TDV-Media/Services/Zero_to_hero_-_Open_Water_to_Dive_Master.mp4';
+const vidBasicFreediver = 'https://media.thedivevillage.com/TDV-Media/Services/BasicFreeDiver.mp4';
+const vidFreediver = 'https://media.thedivevillage.com/TDV-Media/Services/Freediver.mp4';
+const vidReefExplorer = 'https://media.thedivevillage.com/TDV-Media/Services/reefexplorer.mp4';
+const vidOceanExplorer = 'https://media.thedivevillage.com/TDV-Media/Services/oceanexplorer.mp4';
+const vidDriftDiver = 'https://media.thedivevillage.com/TDV-Media/Services/Drift_Dive.mp4';
+const vid3DaySurf = 'https://media.thedivevillage.com/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4';
+const vidDiscoverSurfing = 'https://media.thedivevillage.com/TDV-Media/Services/discover_surfing.mp4';
+const vidCanoneering = 'https://media.thedivevillage.com/TDV-Media/Services/Other/Canoneering.mp4';
 
 // Add Ons Media (Cloudinary URLs)
-const vidTrekking = '/media/TDV-Media/AddOns/Trekking.mp4'
+const vidTrekking = 'https://media.thedivevillage.com/TDV-Media/AddOns/Trekking.mp4'
 const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
-const vidSightseeing = '/media/TDV-Media/AddOns/sightseeing.mp4'
+const vidSightseeing = 'https://media.thedivevillage.com/TDV-Media/AddOns/sightseeing.mp4'
 const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
-const vidCampers = '/media/TDV-Media/AddOns/Campers.mp4'
+const vidCampers = 'https://media.thedivevillage.com/TDV-Media/AddOns/Campers.mp4'
 const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
-const vidSafari = '/media/TDV-Media/AirportToAirport/gallery1.mp4'
+const vidSafari = 'https://media.thedivevillage.com/TDV-Media/AirportToAirport/gallery1.mp4'
 const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
-const vidLiveaboard = '/media/TDV-Media/AddOns/liveaboard.mp4'
+const vidLiveaboard = 'https://media.thedivevillage.com/TDV-Media/AddOns/liveaboard.mp4'
 const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
 
 export const CATEGORIES = [
@@ -279,7 +279,7 @@ export const SERVICES_DATA = [
     short_desc: 'Learn the basics of snorkeling in a safe, guided setting.',
     long_desc: 'Includes briefing, equipment use orientation, and a 1 hour open water snorkeling session with a professional leading you.',
     video: vidDiscoverSnorkelling,
-    previewVideo: '/media/TDV-Media/AddOns/previews/snorkeling_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/snorkeling_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325173/TDV-Media/thumbnails/snork-1_thumb.webp',
     highlights: 'Total Time: 1 hr | Knowledge development + water session',
     faqs: [
@@ -300,7 +300,7 @@ export const SERVICES_DATA = [
     short_desc: 'Guided reef snorkeling for beginners.',
     long_desc: 'Perfect shallow-water snorkel trip to see colorful reef fish, corals, and safe lagoon sites.',
     video: vidReefExplorer,
-    previewVideo: '/media/TDV-Media/Services/previews/reefexplorer_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/reefexplorer_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325177/TDV-Media/thumbnails/snork-2_thumb.webp',
     highlights: 'Total Time: 1–1.5 hrs | Suitable for all ages',
     faqs: [
@@ -321,7 +321,7 @@ export const SERVICES_DATA = [
     short_desc: 'Snorkel further into the blue.',
     long_desc: 'Explore deeper reef areas, spot turtles and bigger marine life, with guided safety.',
     video: vidOceanExplorer,
-    previewVideo: '/media/TDV-Media/Services/previews/oceanexplorer_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/oceanexplorer_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325178/TDV-Media/thumbnails/snork-3_thumb.webp',
     highlights: 'Total Time: 1.5–2 hrs | Includes equipment & guide',
     faqs: [
@@ -344,7 +344,7 @@ export const SERVICES_DATA = [
     short_desc: 'Learn snorkeling & skin diving.',
     long_desc: 'Dive on a single breath upto 6 meters. Learn the basics of breath-hold diving, safety considerations and efficient technique.',
     video: vidSkinDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/skindiver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/skindiver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp',
     highlights: 'Duration: 1–2 days | Includes knowledge + water sessions',
     days_min: 1.0,
@@ -367,7 +367,7 @@ export const SERVICES_DATA = [
     short_desc: 'Entry-level certification.',
     long_desc: 'The first step towards scuba certification for beginners with limited time. The certification will enable you to dive upto 12m under professional supervision. Upgrade to open water diver anytime by completing the remaining training sections. Includes theory, confined water skill development and 2 open water dives upto 12 meters.',
     video: vidScubaDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/scubadiver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/scubadiver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp',
     highlights: 'Duration: 1–2 days | Credit toward Open Water',
     days_min: 1.0,
@@ -395,7 +395,7 @@ export const SERVICES_DATA = [
     short_desc: "The world's most popular scuba certification.",
     long_desc: 'Learn essential dive theory, skills, and complete 4 open water dives. This certification lets you dive upto 18m without professional supervision.',
     video: vidOpenWater,
-    previewVideo: '/media/TDV-Media/Services/previews/openwater_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/openwater_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325138/TDV-Media/thumbnails/course-3_thumb.webp',
     highlights: 'Duration: 3–4 days | Certification to 18m',
     days_min: 3.0,
@@ -423,7 +423,7 @@ export const SERVICES_DATA = [
     short_desc: 'Complete 3 adventure dives.',
     long_desc: 'Expand skills in areas like navigation, buoyancy, or night diving.',
     video: vidAdventureDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/adventurediver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/adventurediver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325140/TDV-Media/thumbnails/course-4_thumb.webp',
     highlights: 'Duration: 1–2 days | Credit toward Advanced | Prequisites: Open Water Diver',
     days_min: 1.0,
@@ -452,7 +452,7 @@ export const SERVICES_DATA = [
     short_desc: 'Take your skills deeper.',
     long_desc: 'Includes 5 adventure dives: Deep + Navigation + 3 electives.',
     video: vidAdvancedOpenWater,
-    previewVideo: '/media/TDV-Media/Services/previews/advancedow_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/advancedow_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325141/TDV-Media/thumbnails/course-5_thumb.webp',
     highlights: 'Duration: 2–3 days | Certification to 30m | Prerequisites: Open water diver',
     days_min: 2.0,
@@ -480,7 +480,7 @@ export const SERVICES_DATA = [
     short_desc: 'Learn CPR and first aid.',
     long_desc: 'Emergency First Responder course for divers and non-divers. Develop Skills to be able to respond in a medical emergency and make a difference in saving peoples lives.',
     video: vidEFR,
-    previewVideo: '/media/TDV-Media/Services/previews/efr_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/efr_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325143/TDV-Media/thumbnails/course-6_thumb.webp',
     highlights: 'Duration: 1–2 days | Certification valid 2 years',
     days_min: 1.0,
@@ -507,7 +507,7 @@ export const SERVICES_DATA = [
     short_desc: 'Expand your rescue skills and become a safer diver.',
     long_desc: 'Learn to manage dive emergencies and assist other divers.',
     video: vidRescueDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/rescuediver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/rescuediver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325143/TDV-Media/thumbnails/course-7_thumb.webp',
     highlights: 'Duration: 3–4 days | Prereq: Advanced + EFR',
     days_min: 3.0,
@@ -535,7 +535,7 @@ export const SERVICES_DATA = [
     short_desc: 'Refresh your skills with certification credit.',
     long_desc: 'Includes theory review and 1 open water dive.',
     video: vidReactivate,
-    previewVideo: '/media/TDV-Media/Services/previews/reactivate_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/reactivate_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325145/TDV-Media/thumbnails/course-8_thumb.webp',
     highlights: 'Duration: 1 day | 1 Open Water Dive',
     days_min: 1.0,
@@ -558,7 +558,7 @@ export const SERVICES_DATA = [
     short_desc: 'Refresher without certification credit.',
     long_desc: 'Skills practice and 1 open water dive.',
     video: vidFullRefresher,
-    previewVideo: '/media/TDV-Media/Services/previews/fullrefresher_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fullrefresher_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325148/TDV-Media/thumbnails/course-9_thumb.webp',
     highlights: 'Duration: 1 day | 1 Open Water Dive',
     days_min: 1.0,
@@ -581,7 +581,7 @@ export const SERVICES_DATA = [
     short_desc: 'Confined water refresher only.',
     long_desc: 'Quick skill refresh in pool or shallow water.',
     video: vidLiteRefresher,
-    previewVideo: '/media/TDV-Media/Services/previews/literefresher_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/literefresher_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325133/TDV-Media/thumbnails/course-10_thumb.webp',
     highlights: 'Duration: 1 day | Confined water only',
     days_min: 1.0,
@@ -606,7 +606,7 @@ export const SERVICES_DATA = [
     short_desc: 'Become a buoyancy master.',
     long_desc: 'Explore more and dive comfortably while improving air consumption, trim, finning and overall bouyancy skills.',
     video: vidBuoyancy,
-    previewVideo: '/media/TDV-Media/Services/previews/buoyancy_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/buoyancy_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325181/TDV-Media/thumbnails/spec-1_thumb.webp',
     highlights: 'Duration: 1–2 days | Includes 2 dives | Preqeruisites: Open Water Diver',
     days_min: 1.0,
@@ -629,7 +629,7 @@ export const SERVICES_DATA = [
     short_desc: 'Support ocean conservation.',
     long_desc: 'Knowledge-based specialty focused on marine protection.',
     video: vidProjectAware,
-    previewVideo: '/media/TDV-Media/Services/previews/projectaware_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/projectaware_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325184/TDV-Media/thumbnails/spec-2_thumb.webp',
     highlights: 'Duration: 1–2 days | Non-diving course',
     days_min: 1.0,
@@ -652,7 +652,7 @@ export const SERVICES_DATA = [
     short_desc: 'Dive deeper safely.',
     long_desc: 'Learn advanced deep diving by taking planning, techniques, and safety to the next level for 18–40m dives.',
     video: vidDeepDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/deepdiver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/deepdiver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325187/TDV-Media/thumbnails/spec-3_thumb.webp',
     highlights: 'Duration: 2 days | 4 dives | Preqeruisites: Open Water',
     days_min: 2.0,
@@ -675,7 +675,7 @@ export const SERVICES_DATA = [
     short_desc: 'Explore underwater wrecks.',
     long_desc: 'Learn how to safely and effectively dive in wrecks.',
     video: vidWreckDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/wreckdiver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/wreckdiver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325189/TDV-Media/thumbnails/spec-4_thumb.webp',
     highlights: 'Duration: 1–2 days | 4 dives',
     days_min: 2.0,
@@ -698,7 +698,7 @@ export const SERVICES_DATA = [
     short_desc: 'Experience diving at night.',
     long_desc: 'Use torches, signals, and practice navigation in the dark.',
     video: vidNightDiveBackground,
-    previewVideo: '/media/TDV-Media/Services/previews/nightdiver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/nightdiver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325190/TDV-Media/thumbnails/spec-5_thumb.webp',
     highlights: 'Duration: 2 days | 3 dives',
     days_min: 2.0,
@@ -721,7 +721,7 @@ export const SERVICES_DATA = [
     short_desc: 'Extend your bottom time.',
     long_desc: 'Learn safe use of enriched air nitrox for longer no-decompression limits.',
     video: vidNitrox,
-    previewVideo: '/media/TDV-Media/Services/previews/nitrox_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/nitrox_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325192/TDV-Media/thumbnails/spec-6_thumb.webp',
     highlights: 'Duration: 1 day | Knowledge + practical session',
     days_min: 1.0,
@@ -744,7 +744,7 @@ export const SERVICES_DATA = [
     short_desc: 'Go with the flow!',
     long_desc: 'Learn the techiques to be able to dive in moderate to strong current. Many of the world class diving sites are in areas of high current, so this certificaiton is very useful.',
     video: vidDriftDiver,
-    previewVideo: '/media/TDV-Media/Services/previews/driftdiver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/driftdiver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325193/TDV-Media/thumbnails/spec-7_thumb.webp',
     highlights: 'Prerequisites: Open Water Diver',
     days_min: 2.0,
@@ -769,7 +769,7 @@ export const SERVICES_DATA = [
     short_desc: 'Start with Discover Scuba Dive then complete Open Water.',
     long_desc: 'A progressive bundle for beginners to move into certification.',
     video: vidDSDOpenWater,
-    previewVideo: '/media/TDV-Media/Services/previews/dsdow_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/dsdow_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325123/TDV-Media/thumbnails/combo-1_thumb.webp',
     highlights: 'Duration: 3–4 days | Includes Course registration',
     days_min: 3.0,
@@ -792,7 +792,7 @@ export const SERVICES_DATA = [
     short_desc: 'Bundle Open Water and Advanced courses.',
     long_desc: 'Go from beginner to advanced diver.',
     video: vidOWAdvanced,
-    previewVideo: '/media/TDV-Media/Services/previews/owadvanced_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/owadvanced_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325126/TDV-Media/thumbnails/combo-2_thumb.webp',
     highlights: 'Duration: 5–7 days | Max Depth: 30m',
     days_min: 5.0,
@@ -815,7 +815,7 @@ export const SERVICES_DATA = [
     short_desc: 'Combine first aid with rescue training.',
     long_desc: 'Learn EFR then apply skills in Rescue Diver.',
     video: vidEFRRescue,
-    previewVideo: '/media/TDV-Media/Services/previews/efrrescue_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/efrrescue_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325131/TDV-Media/thumbnails/combo-3_thumb.webp',
     highlights: 'Duration: 4–6 days | Prerequisite: Advanced OpenWater',
     days_min: 4.0,
@@ -838,7 +838,7 @@ export const SERVICES_DATA = [
     short_desc: 'Flexible guided dive packages for certified divers. Choose from 1 to 12+ dives, night dives, and dawn dives.',
     long_desc: 'Explore reefs and walls with flexible guided dive packages tailored directly to your schedule. Choose from 1 to 12+ dives, specialized Night Dives, and Dawn Dives with certified Divemasters.',
     video: vidFunDive,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325132/TDV-Media/thumbnails/combo-fundives_thumb.webp',
     highlights: 'Certified divers only | 1 to 12+ Dives | Custom Packages',
     isFunDivesContainer: true,
@@ -864,7 +864,7 @@ export const SERVICES_DATA = [
     short_desc: 'The first professional step.',
     long_desc: 'Learn to supervise dives, assist instructors, and lead certified divers.',
     video: vidDivemaster,
-    previewVideo: '/media/TDV-Media/Services/previews/divemaster_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/divemaster_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325151/TDV-Media/thumbnails/pro-1_thumb.webp',
     highlights: 'Duration: 20–25 days | Excludes crewpak & Certification fee',
     days_min: 20.0,
@@ -887,7 +887,7 @@ export const SERVICES_DATA = [
     short_desc: 'Complete pro-level bundle.',
     long_desc: 'Progress from EFR to Rescue Diver, then Divemaster.',
     video: vidEFRRescueDM,
-    previewVideo: '/media/TDV-Media/Services/previews/efrrescuedm_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/efrrescuedm_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325153/TDV-Media/thumbnails/pro-2_thumb.webp',
     highlights: 'Duration: 24–31 days | Excludes crewpak & Certification fees',
     days_min: 24.0,
@@ -910,7 +910,7 @@ export const SERVICES_DATA = [
     short_desc: 'Accelerated path with prerequisites.',
     long_desc: 'Skip prior modules and move into Divemaster.',
     video: vidEFRRescueDMPrereq,
-    previewVideo: '/media/TDV-Media/Services/previews/efrrescuedmprereq_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/efrrescuedmprereq_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325155/TDV-Media/thumbnails/pro-3_thumb.webp',
     highlights: 'Duration: varies | Excludes crewpak & Certification fees',
     faqs: [
@@ -927,7 +927,7 @@ export const SERVICES_DATA = [
     short_desc: 'Pathway from beginner to Divemaster.',
     long_desc: 'Start at OW and continue to Divemaster certification.',
     video: vidZeroToHero,
-    previewVideo: '/media/TDV-Media/Services/previews/zerotohero_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/zerotohero_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325156/TDV-Media/thumbnails/pro-4_thumb.webp',
     highlights: 'Duration: 90–120 days | Permit included | Food & stay extra',
     days_min: 90.0,
@@ -952,7 +952,7 @@ export const SERVICES_DATA = [
     short_desc: 'Learn the basics of breath-hold diving.',
     long_desc: 'Focus on static apnea, dynamic apnea, and safety in confined water.',
     video: vidBasicFreediver,
-    previewVideo: '/media/TDV-Media/Services/previews/basicfreediver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/basicfreediver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325149/TDV-Media/thumbnails/free-1_thumb.webp',
     highlights: 'Duration: 1–2 days | Confined water + theory',
     days_min: 1.0,
@@ -975,7 +975,7 @@ export const SERVICES_DATA = [
     short_desc: 'Build strong freediving skills.',
     long_desc: 'Expand breath-hold time and depth techniques in open water.',
     video: vidFreediver,
-    previewVideo: '/media/TDV-Media/Services/previews/freediver_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/freediver_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325150/TDV-Media/thumbnails/free-2_thumb.webp',
     highlights: 'Duration: 2–3 days | Includes confined + open water',
     days_min: 2.0,
@@ -1000,7 +1000,7 @@ export const SERVICES_DATA = [
     short_desc: 'Introductory surfboard lesson for beginners.',
     long_desc: 'Learn pop-up techniques, wave timing, board balance, and safety in shallow ocean breaks with an experienced instructor.',
     video: vidDiscoverSurfing,
-    previewVideo: '/media/TDV-Media/AddOns/previews/surfing_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/surfing_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325194/TDV-Media/thumbnails/surf-1_thumb.webp',
     highlights: 'Total Time: 2 hrs | Includes surfboard, rashguard & instructor',
     min_age: 8.0,
@@ -1022,7 +1022,7 @@ export const SERVICES_DATA = [
     short_desc: 'Master wave reading, paddling, and maneuvers.',
     long_desc: 'Comprehensive 3-day surfing course covering ocean currents, line-up positioning, turns, and riding green waves.',
     video: vid3DaySurf,
-    previewVideo: '/media/TDV-Media/Services/previews/surfacademy_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/surfacademy_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325195/TDV-Media/thumbnails/surf-3_thumb.webp',
     highlights: 'Duration: 3 Days | Video analysis & surf log included',
     days_min: 3.0,
@@ -1048,7 +1048,7 @@ export const SERVICES_DATA = [
     short_desc: 'An adventurous canyoneering experience.',
     long_desc: 'Explore the rugged terrains, rappel down waterfalls, and navigate through natural canyons in this thrilling canyoneering adventure.',
     video: vidCanoneering,
-    previewVideo: '/media/TDV-Media/AddOns/previews/canyoneering_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/canyoneering_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325105/TDV-Media/thumbnails/addon-1_thumb.webp',
     highlights: 'Adventurous | Guided Tour',
     faqs: [
@@ -1065,7 +1065,7 @@ export const SERVICES_DATA = [
     short_desc: 'Guided nature trails and scenic coastal mountain treks.',
     long_desc: 'Immerse yourself in lush rainforest trails, scenic ridges, and panoramic island viewpoints led by experienced backcountry guides.',
     video: vidTrekking,
-    previewVideo: '/media/TDV-Media/AddOns/previews/trekking_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/trekking_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325122/TDV-Media/thumbnails/addon-trekking_thumb.webp',
     highlights: 'Scenic Trails | Guided Expeditions | Panoramic Views',
     faqs: [
@@ -1086,7 +1086,7 @@ export const SERVICES_DATA = [
     short_desc: 'Discover historical landmarks, viewpoints, and hidden gems.',
     long_desc: 'Experience local culture, historical landmarks, pristine beaches, and breathtaking coastal lookouts on our curated island sightseeing tours.',
     video: vidSightseeing,
-    previewVideo: '/media/TDV-Media/AddOns/previews/sightseeing_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/sightseeing_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325118/TDV-Media/thumbnails/addon-sightseeing_thumb.webp',
     highlights: 'Cultural Landmarks | Island Heritage | Hidden Gems',
     faqs: [
@@ -1107,7 +1107,7 @@ export const SERVICES_DATA = [
     short_desc: 'Overland adventure camper vans for nomadic island exploration.',
     long_desc: 'Hit the open road in fully equipped camper vehicles. Complete with sleeping quarters, outdoor cooking gear, and off-grid amenities for independent island living under the stars.',
     video: vidCampers,
-    previewVideo: '/media/TDV-Media/AddOns/previews/campers_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/campers_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325109/TDV-Media/thumbnails/addon-campers_thumb.webp',
     highlights: 'Fully Equipped Vehicles | Off-Grid Freedom | Coastal Camping',
     faqs: [
@@ -1128,7 +1128,7 @@ export const SERVICES_DATA = [
     short_desc: 'Thrilling wildlife safaris and pristine nature expeditions.',
     long_desc: 'Venture deep into protected habitats, mangrove waterways, and wilderness reserves to observe native wildlife, exotic birds, and marine fauna in their natural sanctuary.',
     video: vidSafari,
-    previewVideo: '/media/TDV-Media/AddOns/previews/safari_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/safari_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325116/TDV-Media/thumbnails/addon-safari_thumb.webp',
     highlights: 'Wildlife Watching | Marine Sanctuaries | Nature Safari',
     faqs: [
@@ -1149,7 +1149,7 @@ export const SERVICES_DATA = [
     short_desc: 'Multi-day offshore dive yacht excursions and remote reef expeditions.',
     long_desc: 'Sleep, eat, and dive aboard our dedicated expedition vessel. Reach untouched offshore pinnacles, pristine outer reefs, and nocturnal marine sites inaccessible on day trips.',
     video: vidLiveaboard,
-    previewVideo: '/media/TDV-Media/AddOns/previews/liveaboard_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/liveaboard_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325111/TDV-Media/thumbnails/addon-liveaboard_thumb.webp',
     highlights: 'Remote Dive Sites | All-Inclusive Cabins | Night Diving',
     faqs: [
@@ -1176,7 +1176,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'A single guided dive for certified divers.',
     long_desc: 'Explore vibrant reefs or steep drop-offs with a certified guide.',
     video: extScubaDiverVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extScubadiving1,
     highlights: 'Certified divers only | Full Gear Included',
     badge: 'Single Dive',
@@ -1191,7 +1191,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Two guided ocean dives in one day.',
     long_desc: 'Perfect for a short getaway, explore two distinct dive sites.',
     video: extTurtleVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325132/TDV-Media/thumbnails/combo-fundives_thumb.webp',
     highlights: 'Certified divers only | 2 Unique Sites',
     badge: '1 Day Trip',
@@ -1206,7 +1206,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Four dives spread across your island vacation.',
     long_desc: 'Explore multiple outer reefs and pinnacles with this package.',
     video: extBarracudasVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extShoal,
     highlights: 'Certified divers only | Multi-Site Access',
     badge: 'Popular',
@@ -1221,7 +1221,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Six dives for extended coral reef exploration.',
     long_desc: 'Enjoy a multi-day immersive dive adventure across premier sites.',
     video: extMantaRayVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extSeaFan,
     highlights: 'Certified divers only | Dedicated DM Guide',
     badge: 'Great Value',
@@ -1236,7 +1236,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Eight dives for enthusiastic ocean explorers.',
     long_desc: 'Covers multiple days of diving across varied outer reef ecosystems.',
     video: extTrevallyVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extYellowback,
     highlights: 'Certified divers only | Deep & Drift Sites',
     badge: 'Avid Diver',
@@ -1251,7 +1251,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Ten dive package for committed ocean divers.',
     long_desc: 'The perfect balance of cost and deep Andaman exploration.',
     video: extMorayEelVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extLionfish,
     highlights: 'Certified divers only | Island-wide Sites',
     badge: 'Best Value',
@@ -1266,7 +1266,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Twelve comprehensive dives for dive enthusiasts.',
     long_desc: 'Extended package covering secret walls, coral gardens, and currents.',
     video: extStingrayVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extBubbleCoral,
     highlights: 'Certified divers only | Ultimate Expedition',
     badge: 'Ultimate',
@@ -1281,7 +1281,7 @@ export const FUN_DIVES_PACKAGES = [
     short_desc: 'Add on two extra dives to keep exploring.',
     long_desc: 'Flexible add-on to extend your multi-day package anytime.',
     video: extAnemoneVid,
-    previewVideo: '/media/TDV-Media/Services/previews/fundives_preview.mp4',
+    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/fundives_preview.mp4',
     image: extVaricose,
     highlights: 'Certified divers only | Extension Pack',
     badge: 'Add-On',

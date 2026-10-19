@@ -1,7 +1,7 @@
 import CourseTemplate from '../layouts/CourseTemplate'
 import SEOHead from '../components/SEOHead'
 import { IMAGES, FEATURED_EXPERIENCES } from '../utils/images'
-const turtleSnorkelVideo = '/media/TDV-Media/Services/Discover_Snorkelling.mp4';
+const turtleSnorkelVideo = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4';
 
 export default function Snorkeling() {
   const tours = [

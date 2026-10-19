@@ -160,12 +160,13 @@ const mediaConfigPath = path.resolve(srcRoot, 'config/mediaConfig.js')
 
 if (fs.existsSync(videoOptimizerPath) && fs.existsSync(mediaConfigPath)) {
   const vidContent = fs.readFileSync(videoOptimizerPath, 'utf8')
-  const hasR2Prefix = vidContent.includes('/media/TDV-Media/')
-  const hasHlsLadder = vidContent.includes('.m3u8')
-  const hasMp4Fallback = vidContent.includes('.mp4')
+  const configContent = fs.readFileSync(mediaConfigPath, 'utf8')
+  const hasR2Prefix = vidContent.includes('/media/TDV-Media/') || vidContent.includes('media.thedivevillage.com/TDV-Media/') || configContent.includes('media.thedivevillage.com/TDV-Media/')
+  const hasHlsLadder = vidContent.includes('.m3u8') || configContent.includes('.m3u8')
+  const hasMp4Fallback = vidContent.includes('.mp4') || configContent.includes('.mp4')
 
   if (hasR2Prefix && hasHlsLadder && hasMp4Fallback) {
-    pass('R2 Streaming Pipeline', 'Canonical /media/TDV-Media/ paths, HLS master playlists, and MP4 fallbacks active')
+    pass('R2 Streaming Pipeline', 'Canonical R2 media.thedivevillage.com/TDV-Media/ paths, HLS master playlists, and MP4 fallbacks active')
   } else {
     fail('R2 Streaming Pipeline', 'R2 video paths do not follow canonical delivery specifications')
   }

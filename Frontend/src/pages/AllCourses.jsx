@@ -4,9 +4,9 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { IMAGES } from '../utils/images'
 import Button from '../components/Button'
 
-const scubaVid = '/media/TDV-Media/Services/Open_Water_Diver.mp4';
-const snorkelingVid = '/media/TDV-Media/Services/Discover_Snorkelling.mp4';
-const freedivingVid = '/media/TDV-Media/Services/Freediver.mp4';
+const scubaVid = 'https://media.thedivevillage.com/TDV-Media/Services/Open_Water_Diver.mp4';
+const snorkelingVid = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4';
+const freedivingVid = 'https://media.thedivevillage.com/TDV-Media/Services/Freediver.mp4';
 
 export default function AllCourses() {
   const reduce = useReducedMotion()

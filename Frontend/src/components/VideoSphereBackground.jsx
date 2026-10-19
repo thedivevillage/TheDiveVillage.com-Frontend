@@ -23,7 +23,7 @@ const CLOUDINARY_CLOWNFISH = OPTIMIZED_CLOWNFISH_360 || RAW_CLOUDINARY_CLOWNFISH
 const CLOUDINARY_BARRACUDA = OPTIMIZED_BARRACUDA_360 || RAW_CLOUDINARY_BARRACUDA
 const CLOUDINARY_TURTLE = OPTIMIZED_TURTLE_360 || RAW_CLOUDINARY_TURTLE
 const CLOUDINARY_NIGHT_DIVE = OPTIMIZED_NIGHT_DIVE_360 || RAW_CLOUDINARY_NIGHT_DIVE
-const CLOUDINARY_AUDIO = '/media/TDV-Media/Audio/Audio.mp3'
+const CLOUDINARY_AUDIO = 'https://media.thedivevillage.com/TDV-Media/Audio/Audio.mp3'
 
 import { globalAudio } from '../utils/audioManager'
 import {
@@ -85,9 +85,7 @@ function useDirectVideoTexture(src, fallbackMp4, playbackRate = 0.5, priority = 
     } else {
       const domContainer = getOrCreateDomVideoContainer()
       video = document.createElement('video')
-      if (src && (src.startsWith('http://') || src.startsWith('https://')) && !src.includes(window.location.host)) {
-        video.crossOrigin = 'anonymous'
-      }
+      video.crossOrigin = 'anonymous'
       video.muted = true
       video.defaultMuted = true
       video.volume = 0
@@ -671,6 +669,37 @@ export default function VideoSphereBackground() {
     return () => unsub()
   }, [])
 
+  // Initialize and attach HLS to Night Dive video
+  useEffect(() => {
+    const video = nightVideoRef.current
+    if (!video || !nightDiveVideo) return
+
+    if (nightDiveVideo.includes('.m3u8')) {
+      if (video.src && !video.src.startsWith('blob:')) {
+        video.removeAttribute('src')
+        video.load()
+      }
+      nightHlsControllerRef.current = attachHlsStream({
+        video,
+        hlsUrl: nightDiveVideo,
+        mp4FallbackUrl: MASTER_1080P_NIGHT_DIVE,
+        autoPlay: false,
+        playbackRate: 1.0,
+      })
+    } else {
+      if (!video.src || !video.src.includes(nightDiveVideo)) {
+        video.src = nightDiveVideo
+      }
+    }
+
+    return () => {
+      if (nightHlsControllerRef.current) {
+        nightHlsControllerRef.current.destroy()
+        nightHlsControllerRef.current = null
+      }
+    }
+  }, [])
+
   // Seamless crossfade blending when user switches between Day Dive and Night Dive
   useEffect(() => {
     setIsNightTransitioning(true)
@@ -777,11 +806,11 @@ export default function VideoSphereBackground() {
                 nightVideoRef.current = el
               }
             }}
-            src={nightDiveVideo}
             loop
             muted
             playsInline
             preload="auto"
+            crossOrigin="anonymous"
             disablePictureInPicture
             disableRemotePlayback
             style={{

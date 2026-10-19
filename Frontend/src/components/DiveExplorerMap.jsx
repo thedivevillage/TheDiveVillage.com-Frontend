@@ -5,7 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandForSite } from '../utils/diveIslandCatalog'
 
-const pinIconUrl = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325069/TDV-Media/UI/pin.png'
+const pinIconUrl = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792425523/pin-CG20ymQb.png'
 
 // Official Vite worker setup for MapLibre GL JS
 setWorkerUrl(workerUrl)

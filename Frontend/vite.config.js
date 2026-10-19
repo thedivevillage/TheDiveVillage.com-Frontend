@@ -248,7 +248,7 @@ export default defineConfig({
           },
           {
             // 2. Cloudflare R2 Media & Streaming (HLS, MP4, WebM, Posters)
-            urlPattern: /^https:\/\/.*\.r2\.(?:cloudflarestorage\.com|dev)\/.*/i,
+            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'tdv-media-r2',

@@ -56,7 +56,7 @@
   <!-- Global Ambient Audio Stream (Loaded and playing from millisecond zero) -->
   <audio
     id="tdv-global-ambient-audio"
-    src="/media/TDV-Media/Audio/Audio.mp3"
+    src="https://media.thedivevillage.com/TDV-Media/Audio/Audio.mp3"
     autoplay
     loop
     preload="auto"
@@ -65,32 +65,7 @@
     webkit-playsinline
     style="display:none;position:fixed;pointer-events:none;"
   ></audio>
-  <!-- In-DOM Hero 360 Video Stream (Buffering only on sphere routes to save 20MB network bandwidth) -->
-  <script>
-    (function () {
-      try {
-        var path = (window.location.pathname || '/').split('?')[0].split('#')[0].trim().toLowerCase().replace(/\/+$/, '') || '/';
-        if (path === '/' || path === '/about') {
-          var container = document.createElement('div');
-          container.id = 'hero-360-video-dom-root';
-          container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0.001;pointer-events:none;overflow:hidden;z-index:-99999;';
-          var vid = document.createElement('video');
-          vid.id = 'hero-360-dom-video';
-          vid.src = '/media/TDV-Media/Background/ClownFish_1080p.mp4';
-          vid.autoplay = true;
-          vid.loop = true;
-          vid.muted = true;
-          vid.playsInline = true;
-          vid.setAttribute('playsinline', '');
-          vid.setAttribute('webkit-playsinline', '');
-          vid.preload = 'auto';
-          vid.crossOrigin = 'anonymous';
-          container.appendChild(vid);
-          document.body.appendChild(container);
-        }
-      } catch (e) {}
-    })();
-  </script>
+  <!-- In-DOM Hero 360 Video Stream initialized by mediaReadyManager with Cloudflare R2 HLS -->
   <script>
     (function () {
       try {
