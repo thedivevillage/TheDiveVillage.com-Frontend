@@ -1157,7 +1157,7 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
         data-white-bg="true"
         onClick={() => navigate(`/shop/${product.id}`)}
         style={{ backgroundColor: '#ffffff', background: '#ffffff', color: '#001e3d' }}
-        className="md:hidden group rounded-2xl bg-white border border-slate-200/90 text-[#001e3d] shadow-sm p-2.5 xs:p-3 flex flex-col justify-between cursor-pointer relative transition active:scale-[0.99]"
+        className="md:hidden group rounded-2xl bg-white border border-slate-200/90 text-[#001e3d] shadow-sm p-2.5 xs:p-3 flex flex-col justify-between cursor-pointer relative transition active:scale-[0.99] h-full"
       >
         {/* Wishlist Button (Top Right) */}
         <button
@@ -1184,23 +1184,28 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
           </svg>
         </button>
 
-        {/* Product Image */}
-        <div data-product-media="true" style={{ backgroundColor: '#ffffff' }} className="w-full aspect-[4/5] flex items-center justify-center p-2 mb-1 bg-white">
-          <img
-            src={product.image}
-            alt={product.title || product.name}
-            className="max-h-full max-w-full object-contain mx-auto"
-          />
-        </div>
+        {/* Top Content: Uniform Image Container and Title Section */}
+        <div className="w-full flex flex-col">
+          {/* Product Image: Locked strictly to 4:5 aspect ratio with zero expansion overflow */}
+          <div
+            data-product-media="true"
+            style={{ backgroundColor: '#ffffff' }}
+            className="relative w-full aspect-[4/5] shrink-0 overflow-hidden flex items-center justify-center p-2 mb-1.5 bg-white"
+          >
+            <img
+              src={product.image}
+              alt={product.title || product.name}
+              className="absolute inset-0 w-full h-full object-contain p-2 mx-auto"
+            />
+          </div>
 
-        {/* Info */}
-        <div className="flex flex-col flex-1 justify-between mb-2.5">
-          <div>
-            <span className="product-card-category text-[10px] font-semibold uppercase tracking-wider text-[#00AEC7] block mb-0.5">
+          {/* Info: Category and Title aligned on the exact same axis across cards */}
+          <div className="w-full">
+            <span className="product-card-category text-[10px] font-semibold uppercase tracking-wider text-[#00AEC7] block mb-0.5 truncate leading-tight">
               {product.category || 'MERCH'}
             </span>
             <h3
-              className="product-card-title font-bold text-[#001e3d] text-xs xs:text-[13px] leading-snug line-clamp-2 min-h-[32px]"
+              className="product-card-title font-bold text-[#001e3d] text-xs xs:text-[13px] leading-snug line-clamp-2 min-h-[34px] xs:min-h-[36px] flex items-start"
               style={{ color: '#001e3d' }}
             >
               {product.title || product.name}
@@ -1208,11 +1213,11 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
           </div>
         </div>
 
-        {/* Add to Cart Yellow Button */}
+        {/* Add to Cart Yellow Button (Pinned to Bottom) */}
         <button
           type="button"
           onClick={(e) => onQuickAdd(product, e)}
-          className="product-add-btn-mobile w-full bg-[#FFCD00] hover:bg-[#FFD700] text-black font-bold py-2 xs:py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs xs:text-sm active:scale-95 transition shadow-sm cursor-pointer"
+          className="product-add-btn-mobile w-full bg-[#FFCD00] hover:bg-[#FFD700] text-black font-bold py-2 xs:py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs xs:text-sm active:scale-95 transition shadow-sm cursor-pointer mt-3"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />

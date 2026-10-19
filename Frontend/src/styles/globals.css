@@ -924,7 +924,7 @@ body.night-dive #root,
 .night-dive [class*="border-slate-100"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
 .night-dive [class*="border-slate-200"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
 .night-dive [class*="border-slate-300"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *),
-.night-dive [class*="border-navy"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *) {
+.night-dive [class*="border-navy"]:not([data-booking-page]):not([data-booking-page] *):not([data-booking-modal]):not([data-booking-modal] *):not([data-power-diving]):not([data-power-diving] *) {
   border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
@@ -1820,18 +1820,28 @@ html body.night-dive [data-service-card]:hover {
 }
 
 /* 3. Power of Diving Container & Cards */
+[data-power-diving] {
+  border: 1px solid rgba(0, 56, 101, 0.2);
+}
+[data-power-diving] .power-point-card {
+  border: 1px solid rgba(0, 56, 101, 0.15);
+}
+
 html body.night-dive [data-power-diving],
 html body.night-dive div[data-power-diving],
 html body.night-dive .night-dive [data-power-diving] {
   background-color: #F0F2F5 !important;
   background: #F0F2F5 !important;
-  border-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
   color: #001e3d !important;
 }
 html body.night-dive [data-power-diving] .power-point-card,
 html body.night-dive [data-power-diving] [data-day-panel] {
   background-color: #ffffff !important;
   background: #ffffff !important;
+  border: 1px solid #ffffff !important;
+  border-color: #ffffff !important;
   color: #001e3d !important;
   box-shadow: 0 4px 20px -2px rgba(0, 30, 61, 0.08) !important;
 }

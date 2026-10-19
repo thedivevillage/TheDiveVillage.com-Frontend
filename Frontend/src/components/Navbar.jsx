@@ -174,8 +174,8 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Right: Neomorphism Night Dive Toggle & User Profile (Mobile Only) */}
-        <div className="flex items-center gap-1.5 xs:gap-2 shrink-0">
+        {/* Right: Neomorphism Night Dive Toggle (Mobile Only) */}
+        <div className="flex items-center justify-end min-w-[36px] gap-1.5 xs:gap-2 shrink-0">
           {!isNightModeDisabled && (
             <button
               type="button"
@@ -191,25 +191,6 @@ export default function Navbar() {
               </span>
             </button>
           )}
-
-          <Link
-            to={isAuthenticated ? '/dashboard/profile' : '/login'}
-            className={`flex h-8 w-8 xs:h-8.5 xs:w-8.5 items-center justify-center rounded-full border ${borderColor} ${btnBg} backdrop-blur-md ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 shadow-sm active:scale-95`}
-            aria-label={isAuthenticated ? 'Account' : 'Login'}
-            title={user?.displayName || user?.email || 'Profile'}
-          >
-            {user?.photoURL && !avatarError ? (
-              <img
-                referrerPolicy="no-referrer"
-                src={user.photoURL}
-                alt={user.displayName || 'Profile'}
-                onError={() => setAvatarError(true)}
-                className="h-4.5 w-4.5 xs:h-5 xs:w-5 rounded-full object-cover shrink-0"
-              />
-            ) : (
-              <UserIcon />
-            )}
-          </Link>
         </div>
       </div>
 

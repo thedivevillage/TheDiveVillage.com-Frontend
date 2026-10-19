@@ -10,6 +10,7 @@ import useNightDive from '../hooks/useNightDive'
 
 export default function CustomCursor() {
   const cursorRef = useRef(null)
+  const orientationRef = useRef(null)
   const videoRef = useRef(null)
   const isNightDive = useNightDive()
   const location = useLocation()
@@ -137,40 +138,83 @@ export default function CustomCursor() {
 
     let lastRenderX = -100
     let lastRenderY = -100
+    let lastTime = performance.now()
+    let lastMoveTime = 0
     let currentRotation = 0
     let targetRotation = 0
-    let currentScaleX = 1
-    let targetScaleX = 1
+    let currentScaleX = -1
+    let targetScaleX = -1
+    let smoothDx = 0
+    let smoothDy = 0
 
-    const updateCursorPosition = () => {
+    const updateCursorPosition = (now = performance.now()) => {
+      const dt = Math.min((now - lastTime) / 1000, 0.05)
+      lastTime = now
+
       if (cursorRef.current) {
         const dx = latestX - lastRenderX
         const dy = latestY - lastRenderY
         lastRenderX = latestX
         lastRenderY = latestY
 
+        const frameSpeed = Math.hypot(dx, dy)
+        if (frameSpeed > 0.5) {
+          lastMoveTime = now
+          // Smooth velocity filter to eliminate monitor refresh / mouse polling stutter
+          smoothDx += (dx - smoothDx) * 0.45
+          smoothDy += (dy - smoothDy) * 0.45
+        } else if (now - lastMoveTime > 120) {
+          // Stationary for > 120ms: decay smoothed velocity so cursor gently settles
+          smoothDx *= 0.7
+          smoothDy *= 0.7
+        }
+
+        const speed = Math.hypot(smoothDx, smoothDy)
         const near360 = isNear360Toggle(latestX, latestY, currentTarget)
         const nearGalleryClose = isNearGalleryClose(latestX, latestY, currentTarget)
         const isNearStaticZone = near360 || nearGalleryClose
 
-        // Smooth, natural orientation without wild spinning or erratic 90-degree glitching
+        // Natural directional swimming:
         if (isHoveringInteractive || isNearStaticZone) {
+          // Level out horizontally over buttons and static close/toggle areas
           targetRotation = 0
-          targetScaleX = 1
-        } else {
-          const speed = Math.hypot(dx, dy)
-          if (speed > 1.5) {
-            targetRotation = Math.max(-10, Math.min(10, dy * 0.6))
-            if (dx > 2) targetScaleX = 1
-            else if (dx < -2) targetScaleX = -1
+        } else if (speed > 1.0) {
+          // 1. Determine horizontal facing direction (left vs right)
+          if (smoothDx > 1.0) {
+            targetScaleX = -1 // Moving rightwards -> turn RIGHT
+          } else if (smoothDx < -1.0) {
+            targetScaleX = 1 // Moving leftwards -> turn LEFT
           }
+          // If smoothDx is between -1.0 and 1.0 (mostly vertical motion), preserve current targetScaleX
+
+          // 2. Determine swimming pitch (turn up/top vs down)
+          const forwardX = Math.max(0.2, Math.abs(smoothDx))
+          const pitch = Math.atan2(smoothDy, forwardX) * (180 / Math.PI)
+          const clampedPitch = Math.max(-80, Math.min(80, pitch))
+
+          // When facing right (scaleX = -1): clockwise is down (+), counter-clockwise is up (-)
+          // When facing left (scaleX = 1): clockwise is up (+), counter-clockwise is down (-)
+          targetRotation = targetScaleX === -1 ? clampedPitch : -clampedPitch
+        } else {
+          // Stopped / resting: gently return pitch to level horizontal (0deg)
+          targetRotation = 0
         }
 
-        const lerpFactor = 0.35
-        currentRotation += (targetRotation - currentRotation) * lerpFactor
-        currentScaleX += (targetScaleX - currentScaleX) * lerpFactor
+        // Frame-rate independent exponential smoothing
+        const rotLerp = 1 - Math.exp(-14 * dt)
+        const scaleLerp = 1 - Math.exp(-22 * dt)
+        currentRotation += (targetRotation - currentRotation) * rotLerp
+        currentScaleX += (targetScaleX - currentScaleX) * scaleLerp
 
-        cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0) rotate(${currentRotation}deg) scaleX(${currentScaleX})`
+        // Snap near targets to prevent floating point drift
+        if (Math.abs(currentRotation) < 0.1 && targetRotation === 0) currentRotation = 0
+        if (Math.abs(currentScaleX - targetScaleX) < 0.01) currentScaleX = targetScaleX
+
+        cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0)`
+
+        if (orientationRef.current) {
+          orientationRef.current.style.transform = `rotate(${currentRotation.toFixed(2)}deg) scaleX(${currentScaleX.toFixed(3)})`
+        }
 
         if (isOverNormalCursor || isHidden) {
           cursorRef.current.style.opacity = '0'
@@ -181,7 +225,7 @@ export default function CustomCursor() {
         }
       }
 
-      const now = performance.now()
+      // Radius check throttled to ~15fps (bypass during active scroll)
       const isScrolling = typeof document !== 'undefined' && document.body.classList.contains('is-scrolling')
       if (!isScrolling && now - lastCheckTime >= 64 && latestX >= 0 && latestY >= 0) { // Limit to ~15fps for radius checks, bypass during scroll
         lastCheckTime = now
@@ -207,6 +251,10 @@ export default function CustomCursor() {
     rafId = requestAnimationFrame(updateCursorPosition)
 
     const onMouseMove = (e) => {
+      if (latestX === -100 && latestY === -100) {
+        lastRenderX = e.clientX
+        lastRenderY = e.clientY
+      }
       latestX = e.clientX
       latestY = e.clientY
       currentTarget = e.target
@@ -263,6 +311,12 @@ export default function CustomCursor() {
 
     const onMouseEnter = (e) => {
       isHidden = false
+      if (e?.clientX != null && e?.clientY != null) {
+        latestX = e.clientX
+        latestY = e.clientY
+        lastRenderX = e.clientX
+        lastRenderY = e.clientY
+      }
       const target = e?.target || document.elementFromPoint(latestX, latestY)
       isOverNormalCursor = checkNormalCursor(target) || isPointInsideGlobe(latestX, latestY)
       if (cursorRef.current) {
@@ -370,40 +424,50 @@ export default function CustomCursor() {
         />
       )}
 
-      {/* Scuba Diver with Dynamic Luminescence and Interactive Scale */}
+      {/* Orientation & Swimming Physics Layer (Smooth rotation and flip around fingertip hotspot) */}
       <div
-        className="will-change-transform transition-transform duration-100 ease-out"
+        ref={orientationRef}
         style={{
-          transformOrigin: '4.6% 57.5%',
-          transform: `translate(-4.6%, -57.5%) rotate(20deg) scale(${isHovering ? 1.15 : 1.0})`,
-          filter: isNightDive
-            ? (isHovering
-                ? 'drop-shadow(0 0 6px rgba(0, 242, 254, 0.6)) brightness(1.15) contrast(1.05)'
-                : 'drop-shadow(0 0 4px rgba(0, 242, 254, 0.4)) brightness(1.1) contrast(1.05)')
-            : (isHovering
-                ? 'drop-shadow(0 4px 12px rgba(0, 56, 101, 0.4)) brightness(1.05)'
-                : 'drop-shadow(0 2px 8px rgba(0, 30, 61, 0.25))'),
+          transformOrigin: '0 0',
+          transform: 'rotate(0deg) scaleX(1)',
+          willChange: 'transform',
         }}
       >
-        {!videoError ? (
-          <video
-            ref={videoRef}
-            src={cursorVideo}
-            autoPlay
-            loop
-            muted
-            playsInline
-            crossOrigin="anonymous"
-            onError={() => setVideoError(true)}
-            className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
-          />
-        ) : (
-          <img
-            src={isHovering ? cursorHoverPng : cursorPng}
-            alt="Scuba Diver Cursor"
-            className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
-          />
-        )}
+        {/* Scuba Diver with Dynamic Luminescence and Interactive Scale */}
+        <div
+          className="will-change-transform transition-transform duration-100 ease-out"
+          style={{
+            transformOrigin: '4.6% 57.5%',
+            transform: `translate(-4.6%, -57.5%) scale(${isHovering ? 1.15 : 1.0})`,
+            filter: isNightDive
+              ? (isHovering
+                  ? 'drop-shadow(0 0 6px rgba(0, 242, 254, 0.6)) brightness(1.15) contrast(1.05)'
+                  : 'drop-shadow(0 0 4px rgba(0, 242, 254, 0.4)) brightness(1.1) contrast(1.05)')
+              : (isHovering
+                  ? 'drop-shadow(0 4px 12px rgba(0, 56, 101, 0.4)) brightness(1.05)'
+                  : 'drop-shadow(0 2px 8px rgba(0, 30, 61, 0.25))'),
+          }}
+        >
+          {!videoError ? (
+            <video
+              ref={videoRef}
+              src={cursorVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              crossOrigin="anonymous"
+              onError={() => setVideoError(true)}
+              className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
+            />
+          ) : (
+            <img
+              src={isHovering ? cursorHoverPng : cursorPng}
+              alt="Scuba Diver Cursor"
+              className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
+            />
+          )}
+        </div>
       </div>
     </div>
   )

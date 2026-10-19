@@ -17,6 +17,14 @@ const rawDiversBg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v179145825
 const diversBg = rawDiversBg
 
 const cleanTitle = (t) => (t ? t.replace(/\s*\(\d+\)/g, '').trim() : '')
+const isBakedVerticalItem = (item) => {
+  if (!item) return false
+  if (item.title?.toLowerCase().includes('moray eel') || item.id === 'gallery-item-0') return false
+  const bakedIds = ['gallery-item-7', 'gallery-item-8', 'gallery-item-18', 'gallery-item-19', 'gallery-item-20']
+  if (bakedIds.includes(item.id)) return true
+  const bakedTitles = ['Giant Barrel Sponge', 'Hawksbill Sea Turtle', 'Whale Shark', 'Whitetip Reef Shark']
+  return bakedTitles.some((t) => item.title?.includes(t))
+}
 const SANITIZED_GALLERY_ITEMS = GALLERY_ITEMS.map((item) => ({
   ...item,
   title: cleanTitle(item.title),
@@ -255,6 +263,10 @@ export default function Gallery() {
   }, [selectedMediaIndex])
 
   // Vertical media detection (all 9:16 portrait videos)
+  const isBakedVertical = Boolean(
+    currentItem && isBakedVerticalItem(currentItem)
+  )
+
   const isKnownVerticalVideo = Boolean(
     currentItem && [
       'A Seafan',
@@ -266,7 +278,6 @@ export default function Gallery() {
       'Manta Ray',
       'Marbled Stingray',
       'Silver Barracudas',
-      'A Moray Eel in a Giant Barrel Sponge',
       'Free Diving',
       'Giant Barrel Sponge',
       'Whale Shark',
@@ -276,6 +287,7 @@ export default function Gallery() {
 
   const isVerticalVideo = Boolean(
     currentItem?.type === 'video' && (
+      isBakedVertical ||
       isKnownVerticalVideo ||
       (videoNaturalRatio !== null && videoNaturalRatio < 0.95)
     )
@@ -530,9 +542,9 @@ export default function Gallery() {
                       <div className="w-full h-full max-w-full max-h-full flex items-center justify-center relative bg-white">
                         {isVerticalVideo ? (
                           <div 
-                            className="h-full max-h-full max-w-full flex items-center justify-center relative rounded-xl sm:rounded-2xl overflow-hidden shadow-sm bg-white"
+                            className="h-full max-h-full max-w-full flex items-center justify-center relative rounded-xl sm:rounded-2xl overflow-hidden shadow-sm bg-neutral-900"
                             style={{
-                              aspectRatio: videoNaturalRatio ? `${videoNaturalRatio}` : '9 / 16',
+                              aspectRatio: (!isBakedVertical && videoNaturalRatio && videoNaturalRatio < 0.95) ? `${videoNaturalRatio}` : '9 / 16',
                               maxHeight: '100%',
                             }}
                           >
@@ -553,13 +565,13 @@ export default function Gallery() {
                               playbackRate={currentItem.playbackRate || (currentItem.title?.toLowerCase().includes('clownfish and sea anemone') || currentItem.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
                               onLoadedMetadata={(e) => {
                                 const vid = e.target
-                                if (vid && vid.videoWidth && vid.videoHeight) {
+                                if (vid && vid.videoWidth && vid.videoHeight && !isBakedVertical) {
                                   setVideoNaturalRatio(vid.videoWidth / vid.videoHeight)
                                 }
                               }}
-                              style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%', backgroundColor: '#ffffff' }}
-                              className="w-full h-full max-w-full max-h-full bg-white flex items-center justify-center gallery-preview-video object-contain"
-                              videoClassName="gallery-preview-video-element bg-white"
+                              style={{ objectFit: 'cover', maxHeight: '100%', maxWidth: '100%' }}
+                              className="w-full h-full max-w-full max-h-full flex items-center justify-center gallery-preview-video object-cover"
+                              videoClassName="gallery-preview-video-element object-cover w-full h-full"
                             />
                           </div>
                         ) : (
@@ -640,12 +652,22 @@ export default function Gallery() {
                           >
                             {item.type === 'video' ? (
                               <div className="relative w-full h-full bg-neutral-900 flex items-center justify-center">
-                                <video
-                                  src={item.src}
-                                  muted
-                                  preload="metadata"
-                                  className="w-full h-full object-cover pointer-events-none"
-                                />
+                                {item.poster ? (
+                                  <img
+                                    src={item.poster}
+                                    alt=""
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-full object-cover pointer-events-none"
+                                  />
+                                ) : (
+                                  <video
+                                    src={item.src}
+                                    muted
+                                    preload="metadata"
+                                    className="w-full h-full object-cover pointer-events-none"
+                                  />
+                                )}
                                 <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
                                   <div className="w-4 h-4 rounded-full bg-black/70 text-white flex items-center justify-center text-[7px] pl-0.5">
                                     ▶
@@ -709,7 +731,11 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, 
               playsInline
               autoPlay={true}
               playbackRate={item.playbackRate || (item.title?.toLowerCase().includes('clownfish and sea anemone') || item.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-              zoom={item.zoom || 1}
+              zoom={
+                item.title?.toLowerCase().includes('moray eel') || item.id === 'gallery-item-0'
+                  ? 1
+                  : (item.zoom || (isBakedVerticalItem(item) ? 2.85 : 1))
+              }
               className="w-full h-full object-cover"
             />
           </div>

@@ -224,7 +224,13 @@ export default function Services() {
         ))}
 
         {/* 4. THE POWER OF DIVING */}
-        <div data-day-panel="true" data-power-diving="true" className="rounded-[40px] bg-[#F0F2F5] p-8 sm:p-14 mb-24">
+        <div
+          data-day-panel="true"
+          data-power-diving="true"
+          className={`rounded-[40px] bg-[#F0F2F5] p-8 sm:p-14 mb-24 border transition-colors duration-300 ${
+            isNightDive ? 'border-white/60' : 'border-navy/20'
+          }`}
+        >
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-navy/60 font-bold tracking-widest uppercase text-xs mb-3 block">Transformative Growth</span>
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-navy">The Power of Diving</h2>
@@ -256,7 +262,9 @@ export default function Services() {
               <div
                 key={p.num}
                 data-day-panel="true"
-                className="power-point-card bg-white rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col justify-between hover:-translate-y-1 transition duration-300"
+                className={`power-point-card bg-white rounded-3xl p-6 sm:p-8 shadow-soft flex flex-col justify-between hover:-translate-y-1 transition duration-300 border ${
+                  isNightDive ? 'border-white' : 'border-navy/15'
+                }`}
               >
                 <div>
                   <div className="w-12 h-12 rounded-full bg-navy text-accent flex items-center justify-center mb-5 text-lg font-bold">

@@ -10,6 +10,7 @@ import Product3DViewer from '../components/Product3DViewer'
 import SEOHead from '../components/SEOHead'
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
+import { isNightModeAllowedRoute } from '../hooks/useNightDive'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -105,9 +106,6 @@ export default function ProductDetail() {
 
   // Modals state
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false)
-  const [isNotifyOpen, setIsNotifyOpen] = useState(false)
-  const [notifyEmail, setNotifyEmail] = useState('')
-  const [notifySuccess, setNotifySuccess] = useState(false)
 
   // Accordion state
   const [expandedAccordion, setExpandedAccordion] = useState('details') // 'details' | 'care' | 'sizing' | '3d' | null
@@ -163,7 +161,7 @@ export default function ProductDetail() {
     return () => {
       if ((wasBodyNight || wasHtmlNight) && localStorage.getItem('tdv_night_dive') === 'true') {
         const path = (window.location.pathname || '/').split('?')[0].split('#')[0].trim().toLowerCase().replace(/\/+$/, '') || '/'
-        if (path === '/' || path === '/about') {
+        if (isNightModeAllowedRoute(path)) {
           document.body.classList.add('night-dive')
           document.documentElement.classList.add('night-dive')
         }
@@ -338,18 +336,6 @@ export default function ProductDetail() {
     }
   }
 
-  // Notify submit handler
-  const handleNotifySubmit = (e) => {
-    e.preventDefault()
-    if (!notifyEmail) return
-    triggerSuccessHaptic()
-    setNotifySuccess(true)
-    setTimeout(() => {
-      setIsNotifyOpen(false)
-      setNotifySuccess(false)
-      setNotifyEmail('')
-    }, 2000)
-  }
 
   // Related products
   const relatedProducts = useMemo(() => {
@@ -752,26 +738,6 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* Size not available? Notify Me When Available */}
-            {!isAccessory && (
-              <div className="flex items-center gap-1.5 text-xs text-gray-600 mt-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-                <span>Size not available?</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    triggerHaptic(8)
-                    setIsNotifyOpen(true)
-                  }}
-                  className="text-[#006666] font-semibold hover:underline cursor-pointer ml-0.5"
-                >
-                  Notify Me When Available
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Quantity Selector */}
@@ -1236,26 +1202,6 @@ export default function ProductDetail() {
                 <span>4-way ultra-stretch memory fabric</span>
               </div>
 
-              {/* Size not available? Notify Me When Available */}
-              {!isAccessory && (
-                <div className="flex items-center gap-1.5 text-xs text-gray-600 mt-2.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                  </svg>
-                  <span>Size not available?</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      triggerHaptic(8)
-                      setIsNotifyOpen(true)
-                    }}
-                    className="text-[#006666] font-semibold hover:underline cursor-pointer ml-0.5"
-                  >
-                    Notify Me When Available
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* Quantity Dropdown */}
@@ -1830,74 +1776,6 @@ export default function ProductDetail() {
         document.body
       )}
 
-      {/* =========================================================================
-          NOTIFY ME MODAL
-          ========================================================================= */}
-      {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          {isNotifyOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsNotifyOpen(false)}
-              style={{
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-              }}
-              className="fixed inset-0 z-[100000] bg-black/65 sm:bg-black/70 flex items-center justify-center p-4 select-none overflow-hidden"
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-md shadow-2xl max-w-sm w-full p-5 relative"
-              >
-                <div className="flex items-center justify-between pb-2 border-b border-gray-200 mb-3">
-                  <h3 className="text-sm font-bold text-gray-900">
-                    Notify Me When Available
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => setIsNotifyOpen(false)}
-                    className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center font-bold text-xs cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {notifySuccess ? (
-                  <div className="py-6 text-center text-emerald-600 font-bold text-sm">
-                    ✓ We will notify you as soon as this size restocks!
-                  </div>
-                ) : (
-                  <form onSubmit={handleNotifySubmit} className="space-y-3">
-                    <p className="text-xs text-gray-600">
-                      Enter your email or phone number to receive an alert when <strong>{selectedSize}</strong> is back in stock.
-                    </p>
-                    <input
-                      type="text"
-                      required
-                      value={notifyEmail}
-                      onChange={(e) => setNotifyEmail(e.target.value)}
-                      placeholder="Enter Email or Mobile"
-                      className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-xs text-gray-900 focus:outline-none focus:border-gray-900"
-                    />
-                    <button
-                      type="submit"
-                      className="w-full bg-[#e11b22] hover:bg-[#c81017] text-white font-bold py-2.5 rounded-md text-xs uppercase tracking-wider transition cursor-pointer"
-                    >
-                      Notify Me
-                    </button>
-                  </form>
-                )}
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
 
       {/* =========================================================================
           MOBILE & TABLET STICKY BOTTOM BAR (MATCHING SCREENSHOT)

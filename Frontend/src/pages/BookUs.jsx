@@ -29,8 +29,6 @@ import {
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '../utils/haptics'
 
 const turtleAnnaVideo = '/media/TDV-Media/Background/Turtle.mp4'
-const compiledNightDiveVideo = '/media/TDV-Media/Background/Night_Dive.mp4'
-import useNightDive from '../hooks/useNightDive'
 const DiveExplorerMap = lazy(() => import('../components/DiveExplorerMap'))
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandsForCountry, getSitesForIsland, getIslandForSite } from '../utils/diveIslandCatalog'
@@ -186,8 +184,15 @@ const normalizeAddOn = (raw) => {
 }
 
 export default function BookUs() {
-  const isNightDive = useNightDive()
   const routerLocation = useLocation()
+
+  // Guarantee pure Day Dive appearance on booking page
+  useEffect(() => {
+    const wasBodyNight = document.body.classList.contains('night-dive')
+    const wasHtmlNight = document.documentElement.classList.contains('night-dive')
+    if (wasBodyNight) document.body.classList.remove('night-dive')
+    if (wasHtmlNight) document.documentElement.classList.remove('night-dive')
+  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const initialProgram = searchParams.get('program') || ''
   const initialCountry = searchParams.get('country') || ''
@@ -1598,8 +1603,8 @@ export default function BookUs() {
       <div
         data-booking-page="true"
         data-booking-confirmation="true"
-        className={`flex min-h-[85vh] flex-col items-center justify-center px-4 py-16 text-center transition-colors duration-500 ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`}
-        style={{ backgroundColor: isNightDive ? '#003865' : '#FAFAFA' }}
+        className="flex min-h-[85vh] flex-col items-center justify-center px-4 py-16 text-center transition-colors duration-500 bg-[#FAFAFA]"
+        style={{ backgroundColor: '#FAFAFA' }}
       >
         <motion.div
           data-booking-page="true"
@@ -1729,7 +1734,7 @@ export default function BookUs() {
   }
 
   return (
-    <div className={`min-h-screen text-navy font-body overflow-x-clip ${isNightDive ? 'bg-[#003865]' : 'bg-[#FAFAFA]'}`} style={{ textShadow: 'none' }}>
+    <div className="min-h-screen text-navy font-body overflow-x-clip bg-[#FAFAFA]" style={{ textShadow: 'none' }}>
       <SEOHead
         title="Book Scuba Diving Courses & Expeditions Online | The Dive Village"
         description="Book certified scuba diving courses, Discovery dives, snorkeling trips, and freediving packages online with instant confirmation at The Dive Village."
@@ -1737,12 +1742,12 @@ export default function BookUs() {
         canonicalUrl="https://thedivevillage.com/book-us"
       />
 
-      {/* 1. HEADER VIDEO HERO (DYNAMIC COMPILED NIGHT DIVE VIDEO - DESKTOP ONLY) */}
+      {/* 1. HEADER VIDEO HERO (DESKTOP ONLY) */}
       <section className="hidden sm:flex relative h-[56vh] min-h-[420px] lg:h-[60vh] lg:min-h-[460px] w-full items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <LazyVideo
-            key={isNightDive ? 'night-compiled' : 'day-turtle'}
-            src={isNightDive ? compiledNightDiveVideo : turtleAnnaVideo}
+            key="day-turtle"
+            src={turtleAnnaVideo}
             autoPlay
             loop
             muted
@@ -1755,10 +1760,7 @@ export default function BookUs() {
 
         {/* Bottom Ultra-Smooth Dissolve & Merge Layer */}
         <div
-          className={`absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] transition-colors duration-500 ${isNightDive
-            ? 'bg-gradient-to-t from-[#003865] via-[#003865]/85 via-45% to-transparent'
-            : 'bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent'
-            }`}
+          className="absolute bottom-0 inset-x-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-[5] transition-colors duration-500 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/90 via-45% to-transparent"
         />
 
         <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-4xl mx-auto pt-4 sm:pt-6">
