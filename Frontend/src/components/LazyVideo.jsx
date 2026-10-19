@@ -70,15 +70,13 @@ const LazyVideo = forwardRef(function LazyVideo({
 }, externalRef) {
   const containerRef = useRef(null)
   const masterRef = useRef(null)
-  const previewRef = useRef(null)
   const masterPlayPromiseRef = useRef(null)
-  const previewPlayPromiseRef = useRef(null)
 
-  const hasPreview = Boolean(lowResSrc && lowResSrc !== src)
+  // Direct single-layer video playback (no preview videos)
+  const hasPreview = false
 
   const [hasEnteredView, setHasEnteredView] = useState(() => priority)
   const [isInView, setIsInView] = useState(() => priority)
-  const [previewStarted, setPreviewStarted] = useState(false)
   const [masterReady, setMasterReady] = useState(false)
   const [masterStarted, setMasterStarted] = useState(false)
 
@@ -86,8 +84,7 @@ const LazyVideo = forwardRef(function LazyVideo({
   useEffect(() => {
     setMasterReady(false)
     setMasterStarted(false)
-    setPreviewStarted(false)
-  }, [src, lowResSrc])
+  }, [src])
 
   const setVideoNode = useCallback((node) => {
     masterRef.current = node
@@ -132,7 +129,7 @@ const LazyVideo = forwardRef(function LazyVideo({
     } catch (e) {}
   }, [])
 
-  // 1. Frame-Aware Shared Intersection Observer (250px margin for pre-warming)
+  // 1. Frame-Aware Shared Intersection Observer (200px margin for pre-warming)
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -162,52 +159,25 @@ const LazyVideo = forwardRef(function LazyVideo({
     }
   }, [])
 
-  // 2. Playback Governor: Manage active playback based on visibility and progressive state
+  // 2. Playback Governor: Manage active playback based on visibility
   useEffect(() => {
     const master = masterRef.current
-    const prev = previewRef.current
 
     if (isInView && autoPlay) {
-      if (masterReady) {
-        safePlay(master, masterPlayPromiseRef)
-        if (prev) safePause(prev, previewPlayPromiseRef)
-      } else {
-        if (prev) safePlay(prev, previewPlayPromiseRef)
-        // If there's a fast preview, give it first priority so it starts in 0ms without network contention
-        if (!hasPreview || previewStarted || priority) {
-          safePlay(master, masterPlayPromiseRef)
-        }
-      }
+      safePlay(master, masterPlayPromiseRef)
     } else {
       if (master) safePause(master, masterPlayPromiseRef)
-      if (prev) safePause(prev, previewPlayPromiseRef)
     }
-  }, [isInView, autoPlay, masterReady, hasPreview, previewStarted, priority, safePlay, safePause])
-
-  // 3. Decoder Recycling: Pause preview once master has smoothly faded in
-  useEffect(() => {
-    if (masterReady && previewRef.current) {
-      const timer = setTimeout(() => {
-        safePause(previewRef.current, previewPlayPromiseRef)
-      }, 450)
-      return () => clearTimeout(timer)
-    }
-  }, [masterReady, safePause])
+  }, [isInView, autoPlay, safePlay, safePause])
 
   // 4. Playback properties sync (muted, playbackRate)
   useEffect(() => {
     const master = masterRef.current
-    const prev = previewRef.current
 
     if (master) {
       master.muted = muted
       master.defaultMuted = defaultMuted !== undefined ? defaultMuted : muted
       if (playbackRate && playbackRate !== 1) master.playbackRate = playbackRate
-    }
-    if (prev) {
-      prev.muted = muted
-      prev.defaultMuted = defaultMuted !== undefined ? defaultMuted : muted
-      if (playbackRate && playbackRate !== 1) prev.playbackRate = playbackRate
     }
   }, [muted, defaultMuted, playbackRate])
 
@@ -257,36 +227,7 @@ const LazyVideo = forwardRef(function LazyVideo({
         />
       )}
 
-      {/* Layer 1: Fast 3-Second Micro-Preview Video Layer (Loads in ~15ms, provides instant 0ms motion) */}
-      {hasPreview && (
-        <video
-          ref={previewRef}
-          src={hasEnteredView ? lowResSrc : undefined}
-          autoPlay={autoPlay && isInView && !masterStarted}
-          loop={loop}
-          muted={muted}
-          playsInline={playsInline}
-          webkit-playsinline=""
-          x5-playsinline=""
-          preload={isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none')}
-          onTimeUpdate={() => {
-            if (!previewStarted) setPreviewStarted(true)
-          }}
-          onPlaying={() => {
-            setPreviewStarted(true)
-          }}
-          className={`absolute inset-0 w-full h-full ${fitClass} pointer-events-none transition-opacity duration-500 ease-out z-[1] ${
-            masterStarted ? 'opacity-0' : previewStarted ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{
-            objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
-            backgroundColor: className.includes('bg-white') ? '#ffffff' : undefined,
-            ...zoomStyle,
-          }}
-        />
-      )}
-
-      {/* Layer 2: Full 1080p HD Master Video Layer (High-Resolution, FastStart, crossfades in seamlessly) */}
+      {/* Master Video Layer (High-Resolution, FastStart, direct instant playback) */}
       <video
         ref={setVideoNode}
         src={hasEnteredView ? src : undefined}
@@ -299,7 +240,7 @@ const LazyVideo = forwardRef(function LazyVideo({
         controls={controls}
         controlsList={controlsList}
         disablePictureInPicture={disablePictureInPicture}
-        preload={priority ? 'auto' : (hasPreview ? (previewStarted ? 'auto' : 'none') : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none')))}
+        preload={priority ? 'auto' : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none'))}
         onTimeUpdate={(e) => {
           if (!masterStarted) setMasterStarted(true)
           if (typeof props.onTimeUpdate === 'function') {

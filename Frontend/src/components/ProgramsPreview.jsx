@@ -24,7 +24,7 @@ const PROGRAMS = [
     desc: 'Perfect for first-timers. Experience scuba safely in shallow water with professional 1-on-1 supervision.',
     img: CAROUSEL_IMAGES[0],
     video: tryDiveVid,
-    previewVideo: 'https://media.thedivevillage.com/TDV-Media/Services/previews/prog_try_dive_preview.mp4',
+    previewVideo: tryDiveVid,
     link: '/services',
     btnText: 'Explore Services',
   },

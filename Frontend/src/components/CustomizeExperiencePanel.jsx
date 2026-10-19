@@ -26,15 +26,15 @@ const vidSurfing = 'https://media.thedivevillage.com/TDV-Media/Services/3_Day_Su
 const vidSnorkeling = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4'
 const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
 
-// Low-Resolution 360p Preview Renditions (Instant hover playback, <800KB vs 86MB)
-const prevCanoneering = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/canyoneering_preview.mp4'
-const prevSafari = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/safari_preview.mp4'
-const prevTrekking = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/trekking_preview.mp4'
-const prevSurfing = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/surfing_preview.mp4'
-const prevSightseeing = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/sightseeing_preview.mp4'
-const prevSnorkeling = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/snorkeling_preview.mp4'
-const prevCampers = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/campers_preview.mp4'
-const prevLiveaboard = 'https://media.thedivevillage.com/TDV-Media/AddOns/previews/liveaboard_preview.mp4'
+// Activity preview URLs pointing directly to original master videos
+const prevCanoneering = vidCanoneering
+const prevSafari = vidSafari
+const prevTrekking = vidTrekking
+const prevSurfing = vidSurfing
+const prevSightseeing = vidSightseeing
+const prevSnorkeling = vidSnorkeling
+const prevCampers = vidCampers
+const prevLiveaboard = vidLiveaboard
 
 function HoverVideoPreview({ videoSrc, poster, displayName }) {
   const videoRef = useRef(null)
@@ -185,7 +185,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
       setPipVideo({
         id: activity.id,
         video: activity.video,
-        fallbackVideo: activity.previewVideo,
+        fallbackVideo: activity.video,
         poster: activity.poster,
       })
     }
@@ -207,25 +207,6 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
     return () => clearInterval(timer)
   }, [images])
 
-  // Pre-warm preview videos for top activities during idle time so hover/tap plays instantly
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const previewsToWarm = [prevCanoneering, prevSafari, prevTrekking]
-    const warmNext = () => {
-      previewsToWarm.forEach((url) => {
-        try {
-          fetch(url, { headers: { Range: 'bytes=0-262144' }, cache: 'force-cache' }).catch(() => {})
-        } catch (_) {}
-      })
-    }
-    if ('requestIdleCallback' in window) {
-      const handle = window.requestIdleCallback(warmNext, { timeout: 2000 })
-      return () => window.cancelIdleCallback(handle)
-    } else {
-      const timer = setTimeout(warmNext, 1200)
-      return () => clearTimeout(timer)
-    }
-  }, [])
 
   const toggleActivity = (id) => {
     setSelectedActivities((prev) => {

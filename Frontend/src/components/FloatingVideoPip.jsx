@@ -13,65 +13,29 @@ export default function FloatingVideoPip({
   poster,
   onClose,
 }) {
-  const masterRef = useRef(null)
-  const previewRef = useRef(null)
+  const videoRef = useRef(null)
+  const activeSrc = videoSrc || fallbackSrc
+  const [isPlaying, setIsPlaying] = useState(false)
 
-  const fastSrc = fallbackSrc || videoSrc
-  const hdSrc = videoSrc && videoSrc !== fallbackSrc ? videoSrc : null
-
-  const [previewStarted, setPreviewStarted] = useState(false)
-  const [masterReady, setMasterReady] = useState(false)
-  const [masterStarted, setMasterStarted] = useState(false)
-
-  // Reset states when source changes
+  // Reset & play when source changes
   useEffect(() => {
-    setPreviewStarted(false)
-    setMasterReady(false)
-    setMasterStarted(false)
-  }, [videoSrc, fallbackSrc])
+    setIsPlaying(false)
+    const video = videoRef.current
+    if (!video || !activeSrc) return
 
-  // Play preview video immediately
-  useEffect(() => {
-    const prev = previewRef.current
-    if (!prev) return
+    video.muted = true
+    video.defaultMuted = true
+    video.volume = 0
 
-    prev.muted = true
-    prev.defaultMuted = true
-    prev.volume = 0
-
-    if (prev.readyState >= 2) {
-      setPreviewStarted(true)
+    if (video.readyState >= 2) {
+      setIsPlaying(true)
     }
 
-    const p = prev.play()
+    const p = video.play()
     if (p !== undefined) {
-      p.then(() => setPreviewStarted(true)).catch(() => {})
+      p.then(() => setIsPlaying(true)).catch(() => {})
     }
-  }, [fastSrc])
-
-  // Start master video smoothly once preview is playing or immediately if no preview
-  useEffect(() => {
-    if (!hdSrc) return
-    const master = masterRef.current
-    if (!master) return
-
-    master.muted = true
-    master.defaultMuted = true
-    master.volume = 0
-
-    // Small delay to let fast preview get established first
-    const timer = setTimeout(() => {
-      const p = master.play()
-      if (p !== undefined) {
-        p.then(() => {
-          setMasterReady(true)
-          setMasterStarted(true)
-        }).catch(() => {})
-      }
-    }, fallbackSrc ? 250 : 0)
-
-    return () => clearTimeout(timer)
-  }, [hdSrc, fallbackSrc])
+  }, [activeSrc])
 
   return (
     <AnimatePresence>
@@ -93,17 +57,16 @@ export default function FloatingVideoPip({
             src={poster}
             alt=""
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none z-0 ${
-              previewStarted || masterStarted ? 'opacity-0' : 'opacity-100'
+              isPlaying ? 'opacity-0' : 'opacity-100'
             }`}
           />
         )}
 
-        {/* Layer 1: Fast 360p Preview Video Layer (Plays in 0ms, <750KB) */}
-        {fastSrc && (
+        {/* Master Video Layer - Direct playback without preview lag */}
+        {activeSrc && (
           <video
-            ref={previewRef}
-            src={fastSrc}
-            poster={poster || undefined}
+            ref={videoRef}
+            src={activeSrc}
             autoPlay
             loop
             muted
@@ -111,35 +74,10 @@ export default function FloatingVideoPip({
             webkit-playsinline=""
             x5-playsinline=""
             preload="auto"
-            onTimeUpdate={() => {
-              if (!previewStarted) setPreviewStarted(true)
-            }}
-            onPlaying={() => setPreviewStarted(true)}
+            onCanPlay={() => setIsPlaying(true)}
+            onPlaying={() => setIsPlaying(true)}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 z-10 pointer-events-none ${
-              masterStarted ? 'opacity-0' : previewStarted ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-        )}
-
-        {/* Layer 2: HD Master Video Layer (Seamless background crossfade) */}
-        {hdSrc && (
-          <video
-            ref={masterRef}
-            src={hdSrc}
-            autoPlay
-            loop
-            muted
-            playsInline
-            webkit-playsinline=""
-            x5-playsinline=""
-            preload="metadata"
-            onCanPlay={() => setMasterReady(true)}
-            onPlaying={() => {
-              setMasterReady(true)
-              setMasterStarted(true)
-            }}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 z-20 pointer-events-none ${
-              masterStarted ? 'opacity-100' : 'opacity-0'
+              isPlaying ? 'opacity-100' : 'opacity-0'
             }`}
           />
         )}

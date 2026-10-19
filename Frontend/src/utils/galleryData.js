@@ -398,25 +398,30 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
       return {
         ...item,
         poster: item.poster || `https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`,
-        previewVideo: item.previewVideo || `https://media.thedivevillage.com/TDV-Media/Extras for Gallery/previews/${base}_preview.mp4`,
-        lowResSrc: item.lowResSrc || `https://media.thedivevillage.com/TDV-Media/Extras for Gallery/previews/${base}_preview.mp4`,
+        previewVideo: item.src,
+        lowResSrc: item.src,
       }
     }
     if (filename === 'Scuba_Diver.mp4') {
       return {
         ...item,
         poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp',
-        previewVideo: item.previewVideo || 'https://media.thedivevillage.com/TDV-Media/Services/previews/scubadiver_preview.mp4',
-        lowResSrc: item.lowResSrc || 'https://media.thedivevillage.com/TDV-Media/Services/previews/scubadiver_preview.mp4',
+        previewVideo: item.src,
+        lowResSrc: item.src,
       }
     }
     if (filename === 'AdventureDiver.mp4') {
       return {
         ...item,
         poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp',
-        previewVideo: item.previewVideo || 'https://media.thedivevillage.com/TDV-Media/Services/previews/adventurediver_preview.mp4',
-        lowResSrc: item.lowResSrc || 'https://media.thedivevillage.com/TDV-Media/Services/previews/adventurediver_preview.mp4',
+        previewVideo: item.src,
+        lowResSrc: item.src,
       }
+    }
+    return {
+      ...item,
+      previewVideo: item.src,
+      lowResSrc: item.src,
     }
   }
   return item
