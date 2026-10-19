@@ -229,7 +229,7 @@ const itemsToProcess = [
   { id: 'dsdow', r2Key: 'TDV-Media/Services/Discover_Scuba_Dive_Open_Water.mp4', previewKey: 'TDV-Media/Services/previews/dsdow_preview.mp4' },
   { id: 'owadvanced', r2Key: 'TDV-Media/Services/Open_water_Advanced_Openwater.mp4', previewKey: 'TDV-Media/Services/previews/owadvanced_preview.mp4' },
   { id: 'efrrescue', r2Key: 'TDV-Media/Services/Emergency_First_Response_Rescue_Diver.mp4', previewKey: 'TDV-Media/Services/previews/efrrescue_preview.mp4' },
-  { id: 'fundives', r2Key: 'TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4', previewKey: 'TDV-Media/Services/previews/fundives_preview.mp4' },
+  { id: 'fundives', r2Key: 'TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4', previewKey: 'TDV-Media/Services/previews/fundives_preview.mp4' },
 
   // Pro Courses
   { id: 'divemaster', r2Key: 'TDV-Media/Services/DiveMaster.mp4', previewKey: 'TDV-Media/Services/previews/divemaster_preview.mp4' },

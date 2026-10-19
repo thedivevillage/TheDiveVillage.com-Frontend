@@ -163,12 +163,12 @@ const LazyVideo = forwardRef(function LazyVideo({
   useEffect(() => {
     const master = masterRef.current
 
-    if (isInView && autoPlay) {
+    if (isInView && autoPlay && hasEnteredView) {
       safePlay(master, masterPlayPromiseRef)
     } else {
       if (master) safePause(master, masterPlayPromiseRef)
     }
-  }, [isInView, autoPlay, safePlay, safePause])
+  }, [isInView, autoPlay, hasEnteredView, src, safePlay, safePause])
 
   // 4. Playback properties sync (muted, playbackRate)
   useEffect(() => {
@@ -186,6 +186,9 @@ const LazyVideo = forwardRef(function LazyVideo({
 
   const handleMasterCanPlay = (e) => {
     setMasterReady(true)
+    if (isInView && autoPlay && masterRef.current && masterRef.current.paused) {
+      safePlay(masterRef.current, masterPlayPromiseRef)
+    }
     if (typeof props.onCanPlay === 'function') {
       props.onCanPlay(e)
     }
@@ -216,6 +219,10 @@ const LazyVideo = forwardRef(function LazyVideo({
           aria-hidden="true"
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+            setMasterReady(true)
+          }}
           className={`absolute inset-0 w-full h-full ${fitClass} z-0 pointer-events-none transition-opacity duration-500 ease-out ${
             masterStarted ? 'opacity-0' : 'opacity-100'
           }`}

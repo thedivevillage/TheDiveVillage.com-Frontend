@@ -713,7 +713,7 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, 
           ? 'bg-[#001e3d] border border-white/15 shadow-none hover:border-accent/40'
           : 'bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30'
       }`}
-      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 350px', contain: 'layout paint' }}
+      style={{ contain: 'layout paint' }}
       onClick={onClick}
     >
       {/* Media Container */}

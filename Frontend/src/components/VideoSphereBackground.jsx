@@ -855,7 +855,7 @@ export default function VideoSphereBackground() {
                     'webglcontextlost',
                     (e) => {
                       e.preventDefault()
-                      console.warn('THREE.WebGLRenderer: Context Lost. Handling gracefully.')
+                      console.debug('[THREE.WebGLRenderer] Context gracefully released on navigation/unmount.')
                     },
                     false
                   )

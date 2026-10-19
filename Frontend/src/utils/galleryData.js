@@ -69,7 +69,8 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-8",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_v.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4",
+    "poster": "https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_v_thumb.webp",
     "title": "Hawksbill Sea Turtle",
     "category": "marine",
     "filename": "Hawksbill Sea Turtle.mp4"

@@ -130,7 +130,7 @@ const GALLERY_VIDEOS = [
   { name: 'Bluespotted_Stingray.mp4', key: 'TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4' },
   { name: 'Clownfish_and_Sea_Anemone.mp4', key: 'TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4' },
   { name: 'Giant_Barrel_Sponge.mp4', key: 'TDV-Media/Extras for Gallery/Giant_Barrel_Sponge.mp4' },
-  { name: 'Hawksbill_Sea_Turtle_2.mp4', key: 'TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle_2.mp4' },
+  { name: 'Hawksbill_Sea_Turtle.mp4', key: 'TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4' },
   { name: 'Leaf_Scorpian_fish.mp4', key: 'TDV-Media/Extras for Gallery/Leaf_Scorpian_fish.mp4' },
   { name: 'Magnificent_Sea_Anemone.mp4', key: 'TDV-Media/Extras for Gallery/Magnificent_Sea_Anemone.mp4' },
   { name: 'Manta_Ray_2.mp4', key: 'TDV-Media/Extras for Gallery/Manta_Ray_2.mp4' },

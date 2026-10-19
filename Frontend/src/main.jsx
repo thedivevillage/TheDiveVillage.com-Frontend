@@ -46,7 +46,8 @@ if (typeof console !== 'undefined') {
       if (
         typeof args[0] === 'string' &&
         (args[0].includes('THREE.Clock: This module has been deprecated') ||
-         args[0].includes('Multiple instances of Three.js being imported'))
+         args[0].includes('Multiple instances of Three.js being imported') ||
+         args[0].includes('THREE.WebGLRenderer: Context Lost'))
       ) {
         return
       }
@@ -56,7 +57,11 @@ if (typeof console !== 'undefined') {
   if (console.error) {
     const origError = console.error
     console.error = (...args) => {
-      if (typeof args[0] === 'string' && args[0].includes('An empty string ("") was passed to the src attribute')) {
+      if (
+        typeof args[0] === 'string' &&
+        (args[0].includes('An empty string ("") was passed to the src attribute') ||
+         args[0].includes('THREE.WebGLRenderer: Context Lost'))
+      ) {
         return
       }
       origError.apply(console, args)
