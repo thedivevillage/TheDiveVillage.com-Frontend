@@ -70,7 +70,7 @@ const RAW_GALLERY_ITEMS = [
     "id": "gallery-item-8",
     "type": "video",
     "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4",
-    "poster": "https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_v_thumb.webp",
+    "poster": "https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_v_thumb.webp",
     "title": "Hawksbill Sea Turtle",
     "category": "marine",
     "filename": "Hawksbill Sea Turtle.mp4"
@@ -398,7 +398,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
       const base = filename.replace('.mp4', '')
       return {
         ...item,
-        poster: item.poster || `https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`,
+        poster: item.poster || `https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`,
         previewVideo: item.src,
         lowResSrc: item.src,
       }
@@ -406,7 +406,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'Scuba_Diver.mp4') {
       return {
         ...item,
-        poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp',
+        poster: item.poster || 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-1_thumb.webp',
         previewVideo: item.src,
         lowResSrc: item.src,
       }
@@ -414,7 +414,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'AdventureDiver.mp4') {
       return {
         ...item,
-        poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp',
+        poster: item.poster || 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-2_thumb.webp',
         previewVideo: item.src,
         lowResSrc: item.src,
       }

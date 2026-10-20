@@ -31,22 +31,22 @@ export function getMediaPoster(item) {
 
   if (src.includes('Extras for Gallery')) {
     const base = filename.replace(/\.(mp4|mov|webm)$/i, '')
-    return `https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`
+    return `https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`
   }
   if (filename === 'Scuba_Diver.mp4') {
-    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp'
+    return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-1_thumb.webp'
   }
   if (filename === 'AdventureDiver.mp4') {
-    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp'
+    return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-2_thumb.webp'
   }
   if (filename === 'Turtle.mp4') {
-    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325578/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
+    return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485613/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
   }
   if (filename === 'ClownFish_1080p.mp4') {
-    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325557/TDV-Media/AirportToAirport/gallery1.webp'
+    return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485610/TDV-Media/AirportToAirport/gallery1.webp'
   }
   if (filename === 'baracuda_1080p.mp4' || filename === 'Night_Dive.mp4') {
-    return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp'
+    return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485611/TDV-Media/AirportToAirport/travel.webp'
   }
 
   // If image, source itself is the preview
@@ -54,7 +54,7 @@ export function getMediaPoster(item) {
     return item.optimizedSrc || item.src
   }
 
-  return 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325578/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
+  return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485613/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
 }
 
 function AdminMediaCard({ item, onPreview, onEdit, onDelete, onToggleActive }) {
