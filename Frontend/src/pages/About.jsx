@@ -117,16 +117,17 @@ export default function About() {
       />
       
       {/* FULL-SCREEN VIDEO BACKGROUND (DYNAMIC FOR NIGHT DIVE ACROSS ENTIRE PAGE) */}
-      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden bg-[#001e3d]">
         <LazyVideo
           key={isNightDive ? 'night-dive-bg' : 'day-about-bg'}
           src={isNightDive ? nightDiveVideo : backgroundVideo}
+          priority={true}
           autoPlay
           loop
           muted
           playsInline
           onPlay={(e) => { e.currentTarget.playbackRate = 0.7 }}
-          className="w-full h-full object-cover transition-opacity duration-700 opacity-95 sm:opacity-100"
+          className="w-full h-full object-cover transition-opacity duration-700 opacity-100"
         />
         <div 
           className="absolute inset-0 pointer-events-none transition-colors duration-700" 
@@ -257,9 +258,10 @@ export default function About() {
             </div>
 
             {/* Right Video Frame next to Sanjeev's Story */}
-            <div className="lg:col-span-5 relative min-h-[360px] lg:min-h-full overflow-hidden rounded-b-[40px] lg:rounded-b-none lg:rounded-r-[40px]">
+            <div className="lg:col-span-5 relative min-h-[360px] lg:min-h-full overflow-hidden rounded-b-[40px] lg:rounded-b-none lg:rounded-r-[40px] bg-[#001e3d]">
               <LazyVideo
                 src={founderVideo} 
+                priority={true}
                 autoPlay
                 loop
                 muted

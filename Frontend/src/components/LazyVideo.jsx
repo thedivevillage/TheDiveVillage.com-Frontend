@@ -93,12 +93,16 @@ const LazyVideo = forwardRef(function LazyVideo({
 
   const setVideoNode = useCallback((node) => {
     masterRef.current = node
+    if (node) {
+      node.muted = muted
+      node.defaultMuted = defaultMuted !== undefined ? defaultMuted : muted
+    }
     if (typeof externalRef === 'function') {
       externalRef(node)
     } else if (externalRef && typeof externalRef === 'object') {
       externalRef.current = node
     }
-  }, [externalRef])
+  }, [externalRef, muted, defaultMuted])
 
   const safePlay = useCallback((video, promiseRef) => {
     if (!video || !autoPlay) return
@@ -246,6 +250,7 @@ const LazyVideo = forwardRef(function LazyVideo({
         autoPlay={autoPlay && isInView}
         loop={loop}
         muted={muted}
+        defaultMuted={defaultMuted !== undefined ? defaultMuted : muted}
         playsInline={playsInline}
         webkit-playsinline=""
         x5-playsinline=""
@@ -261,6 +266,8 @@ const LazyVideo = forwardRef(function LazyVideo({
         }}
         onPlaying={handleMasterPlaying}
         onCanPlay={handleMasterCanPlay}
+        onCanPlayThrough={handleMasterCanPlay}
+        onLoadedMetadata={() => setMasterReady(true)}
         onLoadedData={(e) => {
           setMasterReady(true)
           if (typeof externalOnLoadedData === 'function') {

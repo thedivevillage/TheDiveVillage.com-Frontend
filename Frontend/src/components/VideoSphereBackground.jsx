@@ -274,12 +274,11 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
   const matRef = useRef()
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isAbout = location.pathname === '/about'
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640)
   const { camera } = useThree()
 
   const INITIAL_YAW = Math.PI / 2.65 - Math.PI * 1.1
-  const INITIAL_PITCH = isAbout ? -(Math.PI / 6) : Math.PI / 17.1
+  const INITIAL_PITCH = Math.PI / 17.1
 
   const targetRotation = useRef({ x: INITIAL_PITCH, y: INITIAL_YAW })
   const targetOpacity2 = useRef(0)
@@ -300,8 +299,8 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
   // Primary playback rate is 0.5x for smooth ambient feel
   const primaryPlaybackRate = 0.5
   const isHeroSingleton = isHome
-  const activeHeroSrc = videoSrc || (isAbout ? bookFile : videoFile)
-  const heroFallbackMp4 = isAbout ? MASTER_1080P_BARRACUDA : MASTER_1080P_CLOWNFISH
+  const activeHeroSrc = videoSrc || videoFile
+  const heroFallbackMp4 = MASTER_1080P_CLOWNFISH
 
   const { texture, hasNewFrameRef: hasNewFrame1, lastTimeRef: lastTime1 } = useDirectVideoTexture(
     activeHeroSrc,
@@ -431,7 +430,7 @@ function VideoSphere({ videoSrc, joystickVelocity, isNightSettled, isVisible }) 
         window.lenis.off('scroll', handleScroll)
       }
     }
-  }, [isAbout, isHome, loadSecondary, INITIAL_PITCH, INITIAL_YAW])
+  }, [isHome, loadSecondary, INITIAL_PITCH, INITIAL_YAW])
 
   // --- DRAG LOGIC ---
   const isDragging = useRef(false)
@@ -637,9 +636,8 @@ export default function VideoSphereBackground() {
   const [isNightSettled, setIsNightSettled] = useState(false)
   const isVisible = usePageVisibility()
 
-  const isAbout = location.pathname === '/about'
-  const isSpherePage = location.pathname === '/' || isAbout
-  const sphereVideo = isAbout ? bookFile : videoFile
+  const isSpherePage = location.pathname === '/'
+  const sphereVideo = videoFile
 
   const shouldRenderCanvas = isVisible && isSpherePage && (!isNightSettled || isNightTransitioning)
 

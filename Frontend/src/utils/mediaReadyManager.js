@@ -18,7 +18,7 @@ export const HERO_VIDEO_SRC = HLS_CLOWNFISH
 export const NIGHT_DIVE_VIDEO_SRC = HLS_NIGHT_DIVE
 
 const isInitialSpherePage = typeof window !== 'undefined' 
-  ? (window.location.pathname === '/' || window.location.pathname === '/about')
+  ? window.location.pathname === '/'
   : true
 
 let isHeroVideoReady = !isInitialSpherePage
@@ -328,7 +328,7 @@ export function resumeHeroVideo(playbackRate = 0.5) {
 
 // Start eager buffering on client boot if on a sphere page
 if (typeof window !== 'undefined') {
-  const isSpherePage = window.location.pathname === '/' || window.location.pathname === '/about'
+  const isSpherePage = window.location.pathname === '/'
   if (isSpherePage) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => getOrCreateHeroVideoElement())

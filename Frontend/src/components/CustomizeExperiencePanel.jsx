@@ -5,78 +5,79 @@ import { PANEL_IMAGES } from '../utils/images'
 import FloatingVideoPip from './FloatingVideoPip'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
-// Activity Media (Raw URLs)
+// Activity Media (Raw URLs & High-Res Thumbnails)
 const vidSafari = 'https://media.thedivevillage.com/TDV-Media/AirportToAirport/gallery1.mp4'
-const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685504/TDV-Media/AddOns/safari.webp'
+const imgSafari = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325116/TDV-Media/thumbnails/addon-safari_thumb.webp'
 
 const vidTrekking = 'https://media.thedivevillage.com/TDV-Media/AddOns/Trekking.mp4'
-const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685508/TDV-Media/AddOns/trekking.webp'
+const imgTrekking = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325122/TDV-Media/thumbnails/addon-trekking_thumb.webp'
 
 const vidSightseeing = 'https://media.thedivevillage.com/TDV-Media/AddOns/sightseeing.mp4'
-const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685509/TDV-Media/AddOns/sightseeing.webp'
+const imgSightseeing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325118/TDV-Media/thumbnails/addon-sightseeing_thumb.webp'
 
 const vidCampers = 'https://media.thedivevillage.com/TDV-Media/AddOns/Campers.mp4'
-const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685511/TDV-Media/AddOns/campers.webp'
+const imgCampers = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325109/TDV-Media/thumbnails/addon-campers_thumb.webp'
 
 const vidLiveaboard = 'https://media.thedivevillage.com/TDV-Media/AddOns/liveaboard.mp4'
-const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791685512/TDV-Media/AddOns/liveaboard.webp'
+const imgLiveaboard = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325111/TDV-Media/thumbnails/addon-liveaboard_thumb.webp'
 
 const vidCanoneering = 'https://media.thedivevillage.com/TDV-Media/Services/Other/Canoneering.mp4'
-const vidSurfing = 'https://media.thedivevillage.com/TDV-Media/Services/3_Day_Surf_Academy_Course.mp4'
-const vidSnorkeling = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4'
-const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691302/TDV-Media/ServicesThumbnails/Snorkeling.webp'
+const imgCanoneering = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325105/TDV-Media/thumbnails/addon-1_thumb.webp'
 
-// Activity preview URLs pointing directly to original master videos
-const prevCanoneering = vidCanoneering
-const prevSafari = vidSafari
-const prevTrekking = vidTrekking
-const prevSurfing = vidSurfing
-const prevSightseeing = vidSightseeing
-const prevSnorkeling = vidSnorkeling
-const prevCampers = vidCampers
-const prevLiveaboard = vidLiveaboard
+const vidSurfing = 'https://media.thedivevillage.com/TDV-Media/Services/discover_surfing.mp4'
+const imgSurfing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325195/TDV-Media/thumbnails/surf-3_thumb.webp'
+
+const vidSnorkeling = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4'
+const imgSnorkeling = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325164/TDV-Media/thumbnails/prog-4_thumb.webp'
 
 function HoverVideoPreview({ videoSrc, poster, displayName }) {
   const videoRef = useRef(null)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
     const v = videoRef.current
-    if (!v) return
+    if (!v || !videoSrc) return
+
     v.muted = true
     v.defaultMuted = true
     v.volume = 0
+
+    const startPlay = () => {
+      const p = v.play()
+      if (p !== undefined) {
+        p.catch(() => {})
+      }
+    }
+
     if (v.readyState >= 2) {
-      setIsLoaded(true)
+      startPlay()
+    } else {
+      v.addEventListener('canplay', startPlay, { once: true })
     }
-    const p = v.play()
-    if (p !== undefined) {
-      p.then(() => setIsLoaded(true)).catch(() => {})
-    }
+
     return () => {
+      v.removeEventListener('canplay', startPlay)
       try {
         v.pause()
-        v.removeAttribute('src')
-        v.load()
       } catch (e) {}
     }
   }, [videoSrc])
 
   return (
     <div className="absolute inset-0 w-full h-full bg-[#001428] overflow-hidden">
+      {/* Poster layer: always visible until video actually starts playing */}
       {poster && (
         <img
           src={poster}
           alt={displayName}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
-            isLoaded ? 'opacity-0' : 'opacity-100'
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none z-10 ${
+            isPlaying ? 'opacity-0' : 'opacity-100'
           }`}
         />
       )}
       <video
         ref={videoRef}
         src={videoSrc}
-        poster={poster || undefined}
         autoPlay
         loop
         muted
@@ -84,22 +85,23 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
         webkit-playsinline=""
         x5-playsinline=""
         preload="auto"
-        onLoadedMetadata={() => setIsLoaded(true)}
-        onLoadedData={() => setIsLoaded(true)}
-        onCanPlay={() => setIsLoaded(true)}
-        onPlay={() => setIsLoaded(true)}
-        onPlaying={() => setIsLoaded(true)}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-          isLoaded ? 'opacity-100' : 'opacity-0'
+        onPlaying={() => setIsPlaying(true)}
+        onTimeUpdate={(e) => {
+          if (!isPlaying && e.target.currentTime > 0) {
+            setIsPlaying(true)
+          }
+        }}
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 z-0 ${
+          isPlaying ? 'opacity-100' : 'opacity-0'
         }`}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
-      <div className="relative z-10 mt-auto p-2">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none z-20" />
+      <div className="relative z-30 mt-auto p-2">
         <span className="text-[11px] font-heading font-bold text-white drop-shadow block leading-tight truncate">
           {displayName}
         </span>
       </div>
-      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#001428] rotate-45 border-r-2 border-b-2 border-[#FFCD00]" />
+      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#001428] rotate-45 border-r-2 border-b-2 border-[#FFCD00] z-20" />
     </div>
   )
 }
@@ -109,56 +111,48 @@ const CUSTOM_ACTIVITIES = [
     id: 'canyoneering',
     name: 'Canyoneering',
     video: vidCanoneering,
-    previewVideo: prevCanoneering,
-    poster: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325105/TDV-Media/thumbnails/addon-1_thumb.webp',
+    poster: imgCanoneering,
   },
   {
     id: 'safari',
     name: 'Safari',
     video: vidSafari,
-    previewVideo: prevSafari,
     poster: imgSafari,
   },
   {
     id: 'trekking',
     name: 'Trekking',
     video: vidTrekking,
-    previewVideo: prevTrekking,
     poster: imgTrekking,
   },
   {
     id: 'surfing',
     name: 'Surfing',
     video: vidSurfing,
-    previewVideo: prevSurfing,
-    poster: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458191/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp',
+    poster: imgSurfing,
   },
   {
     id: 'sightseeing',
     name: 'Local Sightseeing',
     video: vidSightseeing,
-    previewVideo: prevSightseeing,
     poster: imgSightseeing,
   },
   {
     id: 'snorkeling',
     name: 'Snorkeling',
     video: vidSnorkeling,
-    previewVideo: prevSnorkeling,
     poster: imgSnorkeling,
   },
   {
     id: 'camping_camper',
     name: 'Camping / Camper',
     video: vidCampers,
-    previewVideo: prevCampers,
     poster: imgCampers,
   },
   {
     id: 'liveaboard',
     name: 'Liveaboard',
     video: vidLiveaboard,
-    previewVideo: prevLiveaboard,
     poster: imgLiveaboard,
   },
 ]
