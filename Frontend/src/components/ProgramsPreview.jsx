@@ -89,6 +89,7 @@ function Card({ program }) {
           <LazyVideo
             src={program.video}
             lowResSrc={program.previewVideo}
+            poster={program.img}
             priority={true}
             preload="auto"
             autoPlay

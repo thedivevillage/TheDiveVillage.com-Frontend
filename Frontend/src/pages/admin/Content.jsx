@@ -29,7 +29,7 @@ export function getMediaPoster(item) {
   const src = item.src || ''
   const filename = src.split('/').pop() || ''
 
-  if (src.includes('Extras for Gallery')) {
+  if (src.includes('Extras for Gallery') || src.includes('Extras%20for%20Gallery')) {
     const base = filename.replace(/\.(mp4|mov|webm)$/i, '')
     return `https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`
   }

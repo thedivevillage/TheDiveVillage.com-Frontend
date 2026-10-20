@@ -391,6 +391,15 @@ export default function BookUs() {
     triggerHaptic(5)
   }, [])
 
+  const handleMapSelectIsland = useCallback((newIsland) => {
+    setIsland(newIsland || '')
+    setSelectedLocation(null)
+    setLocation('')
+    setLocationId('')
+    setStepError('')
+    triggerHaptic(5)
+  }, [])
+
   const handleMapSelectSite = useCallback((site) => {
     if (!site) return
     if (site.country && site.country !== 'International Waters') {
@@ -2661,12 +2670,13 @@ export default function BookUs() {
                 onSelectSite={handleMapSelectSite}
                 onBookSite={handleMapSelectSite}
                 onSelectCountry={handleMapSelectCountry}
+                onSelectIsland={handleMapSelectIsland}
                 selectedCountry={country}
                 selectedIsland={island}
                 selectedSite={location}
                 selectedSiteId={locationId}
                 title="Dive Explorer"
-                subtitle="Explore 3,500+ worldwide dive sites on this interactive 2D map. Click any site to auto-fill your booking location!"
+                subtitle="Explore 3,500+ worldwide dive sites on this interactive 2D map. Select a country to see its islands, tap an island to explore dive sites!"
                 showHeading={true}
               />
             </Suspense>

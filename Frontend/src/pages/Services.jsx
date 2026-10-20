@@ -163,7 +163,7 @@ export default function Services() {
                     data-service-card="true"
                     onClick={() => navigate(`/services/${service.id}`)}
                     className="group rounded-2xl sm:rounded-[32px] bg-white border border-navy/5 shadow-sm hover:shadow-float transition-[box-shadow,transform] duration-300 flex flex-col justify-between cursor-pointer overflow-hidden relative active:scale-[0.99] transform-gpu hover:will-change-transform"
-                    style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 420px', contain: 'layout paint' }}
+                    style={{ contain: 'layout paint' }}
                   >
                     <div 
                       className="relative aspect-[16/10] sm:aspect-[16/10] w-full overflow-hidden bg-[#00172b] shrink-0"

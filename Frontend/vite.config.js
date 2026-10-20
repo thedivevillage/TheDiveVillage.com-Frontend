@@ -231,8 +231,13 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/firebase-messaging-sw\.js$/],
         runtimeCaching: [
           {
-            // 1. Cloudinary Media Assets (Images, Posters, Videos)
-            urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
+            // 1. Cloudflare R2 / media.thedivevillage.com Video & Audio Streams (NetworkOnly - native HTTP Range streaming)
+            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*\.(?:mp4|webm|mov|m3u8|ts|mp3)(?:\?.*)?$/i,
+            handler: 'NetworkOnly',
+          },
+          {
+            // 2. Cloudinary Static Image Assets
+            urlPattern: /^https:\/\/res\.cloudinary\.com\/.*\/image\/upload\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'tdv-media-cloudinary',
@@ -242,56 +247,37 @@ export default defineConfig({
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              },
-              rangeRequests: true
+              }
             }
           },
           {
-            // 2. Cloudflare R2 Media & Streaming (HLS, MP4, WebM, Posters)
-            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*/i,
+            // 3. Cloudflare R2 Static Image & Poster Assets
+            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*\.(?:png|jpe?g|webp|avif|svg)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-r2',
+              cacheName: 'tdv-media-r2-images',
               expiration: {
                 maxEntries: 500,
-                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
+                maxAgeSeconds: 365 * 24 * 60 * 60
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              },
-              rangeRequests: true
+              }
             }
           },
           {
-            // 3. Local Media route (/media/** - videos, audio, 3D assets)
-            urlPattern: /^\/media\/.*/i,
+            // 4. All static image extensions (png, jpg, webp, svg, avif)
+            urlPattern: /\.(?:png|jpe?g|webp|avif|svg)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-local',
-              expiration: {
-                maxEntries: 500,
-                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              },
-              rangeRequests: true
-            }
-          },
-          {
-            // 4. All static media extensions (mp4, webm, mov, mp3, ogg, wav, glb, gltf, png, jpg, webp, svg)
-            urlPattern: /\.(?:mp4|webm|mov|mp3|ogg|wav|glb|gltf|png|jpe?g|webp|avif|svg)(?:\?.*)?$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'tdv-media-assets',
+              cacheName: 'tdv-media-images',
               expiration: {
                 maxEntries: 1000,
-                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
+                maxAgeSeconds: 365 * 24 * 60 * 60
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              },
-              rangeRequests: true
+              }
             }
           },
           {

@@ -121,6 +121,7 @@ export default function About() {
         <LazyVideo
           key={isNightDive ? 'night-dive-bg' : 'day-about-bg'}
           src={isNightDive ? nightDiveVideo : backgroundVideo}
+          poster={isNightDive ? 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp' : 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458258/TDV-Media/Products/Group/4M7A6732.jpg'}
           priority={true}
           autoPlay
           loop
@@ -261,6 +262,7 @@ export default function About() {
             <div className="lg:col-span-5 relative min-h-[360px] lg:min-h-full overflow-hidden rounded-b-[40px] lg:rounded-b-none lg:rounded-r-[40px] bg-[#001e3d]">
               <LazyVideo
                 src={founderVideo} 
+                poster="https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458188/TDV-Media/Extras%20for%20Gallery/Scubadiving.webp"
                 priority={true}
                 autoPlay
                 loop

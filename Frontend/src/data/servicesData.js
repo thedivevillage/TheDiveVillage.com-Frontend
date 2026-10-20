@@ -64,15 +64,15 @@ const extGiantClam = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v17914581
 const extLionfish = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458123/TDV-Media/Extras%20for%20Gallery/Lionfish.webp';
 const extBubbleCoral = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458078/TDV-Media/Extras%20for%20Gallery/Bubble_Coral.webp';
 const extBaitball = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp';
-const extMantaRayVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4';
-const extBarracudasVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4';
-const extTurtleVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4';
-const extTrevallyVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4';
-const extStingrayVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4';
+const extMantaRayVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4';
+const extBarracudasVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Silver_Barracudas.mp4';
+const extTurtleVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle.mp4';
+const extTrevallyVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Big_Eye_Trevally.mp4';
+const extStingrayVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Bluespotted_Stingray.mp4';
 const extScubaDiverVid = 'https://media.thedivevillage.com/TDV-Media/Services/Scuba_Diver.mp4';
-const extMorayEelVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4';
-const extAnemoneVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4';
-const extSeafanVid = 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/A_Seafan.mp4';
+const extMorayEelVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4';
+const extAnemoneVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Clownfish_and_Sea_Anemone.mp4';
+const extSeafanVid = 'https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/A_Seafan.mp4';
 
 // Exact Service Media Video Imports from Assets/Media/Services
 const vidTryDive = 'https://media.thedivevillage.com/TDV-Media/Services/Try_Dive.mp4';
