@@ -12,7 +12,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-0",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/A_Moray_Eel_in_a_Giant_Barrel_Sponge.mp4",
     "title": "A Moray Eel in a Giant Barrel Sponge",
     "category": "marine",
     "filename": "A Moray Eel in a Giant Barrel Sponge.mp4"
@@ -20,7 +20,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-1",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/A_Seafan.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/A_Seafan.mp4",
     "title": "A Seafan",
     "category": "marine",
     "filename": "A Seafan.mp4"
@@ -28,7 +28,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-2",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Beach_View.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Beach_View.mp4",
     "title": "Beach View",
     "category": "marine",
     "filename": "Beach View.mp4"
@@ -36,7 +36,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-3",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Big_Eye_Trevally.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Big_Eye_Trevally.mp4",
     "title": "Big Eye Trevally",
     "category": "marine",
     "filename": "Big Eye Trevally.mp4"
@@ -44,7 +44,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-4",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Bluespotted_Stingray.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Bluespotted_Stingray.mp4",
     "title": "Bluespotted Stingray",
     "category": "marine",
     "filename": "Bluespotted Stingray.mp4"
@@ -52,7 +52,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-5",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Clownfish_and_Sea_Anemone.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Clownfish_and_Sea_Anemone.mp4",
     "title": "Clownfish and Sea Anemone",
     "category": "marine",
     "filename": "Clownfish and Sea Anemone.mp4",
@@ -61,7 +61,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-7",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Giant_Barrel_Sponge.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Giant_Barrel_Sponge.mp4",
     "title": "Giant Barrel Sponge",
     "category": "marine",
     "filename": "Giant Barrel Sponge.mp4"
@@ -69,8 +69,8 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-8",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Hawksbill_Sea_Turtle.mp4",
-    "poster": "https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_v_thumb.webp",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Hawksbill_Sea_Turtle.mp4",
+    "poster": "https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_v_thumb.webp",
     "title": "Hawksbill Sea Turtle",
     "category": "marine",
     "filename": "Hawksbill Sea Turtle.mp4"
@@ -79,7 +79,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-11",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Leaf_Scorpian_fish.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Leaf_Scorpian_fish.mp4",
     "title": "Leaf Scorpian fish",
     "category": "marine",
     "filename": "Leaf Scorpian fish.mp4"
@@ -87,7 +87,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-12",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Magnificent_Sea_Anemone.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Magnificent_Sea_Anemone.mp4",
     "title": "Magnificent Sea Anemone",
     "category": "marine",
     "filename": "Magnificent Sea Anemone.mp4"
@@ -95,7 +95,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-13",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Manta_Ray_2.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4",
     "title": "Manta Ray",
     "category": "marine",
     "filename": "Manta Ray (2).mp4"
@@ -103,7 +103,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-15",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Marbled_Stingray.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Marbled_Stingray.mp4",
     "title": "Marbled Stingray",
     "category": "marine",
     "filename": "Marbled Stingray.mp4"
@@ -119,7 +119,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-17",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Silver_Barracudas.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Silver_Barracudas.mp4",
     "title": "Silver Barracudas",
     "category": "marine",
     "filename": "Silver Barracudas.mp4"
@@ -127,7 +127,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-18",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Whale_Shark_2.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Whale_Shark_2.mp4",
     "title": "Whale Shark",
     "category": "marine",
     "filename": "Whale Shark (2).mp4"
@@ -135,7 +135,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-19",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Whale_Shark.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Whale_Shark.mp4",
     "title": "Whale Shark",
     "category": "marine",
     "filename": "Whale Shark.mp4"
@@ -143,7 +143,7 @@ const RAW_GALLERY_ITEMS = [
   {
     "id": "gallery-item-20",
     "type": "video",
-    "src": "https://media.thedivevillage.com/TDV-Media/Extras%20for%20Gallery/Whitetip_Reef_Shark.mp4",
+    "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Whitetip_Reef_Shark.mp4",
     "title": "Whitetip Reef Shark",
     "category": "marine",
     "filename": "Whitetip Reef Shark.mp4"
@@ -394,11 +394,11 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
   if (item.type === 'video') {
     const src = item.src || ''
     const filename = src.split('/').pop() || ''
-    if (src.includes('Extras%20for%20Gallery') || src.includes('Extras for Gallery')) {
+    if (src.includes('Extras for Gallery')) {
       const base = filename.replace('.mp4', '')
       return {
         ...item,
-        poster: item.poster || `https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`,
+        poster: item.poster || `https://res.cloudinary.com/qvbunv8y/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`,
         previewVideo: item.src,
         lowResSrc: item.src,
       }
@@ -406,7 +406,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'Scuba_Diver.mp4') {
       return {
         ...item,
-        poster: item.poster || 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-1_thumb.webp',
+        poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp',
         previewVideo: item.src,
         lowResSrc: item.src,
       }
@@ -414,7 +414,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'AdventureDiver.mp4') {
       return {
         ...item,
-        poster: item.poster || 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-2_thumb.webp',
+        poster: item.poster || 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325136/TDV-Media/thumbnails/course-2_thumb.webp',
         previewVideo: item.src,
         lowResSrc: item.src,
       }

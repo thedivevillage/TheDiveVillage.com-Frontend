@@ -15,7 +15,7 @@ export const MERCH_MEDIA_ITEMS = [
   { id: 'm2', src: merch2, type: 'image', alt: 'Customer Merch 2' },
   { id: 'm3', src: merch3, type: 'image', alt: 'Customer Merch 3' },
   { id: 'm4', src: merch4, type: 'image', alt: 'Customer Merch 4' },
-  { id: 'm5', src: merch5, type: 'video', alt: 'Customer Merch 5', poster: 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325134/TDV-Media/thumbnails/course-1_thumb.webp' },
+  { id: 'm5', src: merch5, type: 'video', alt: 'Customer Merch 5' },
 ]
 
 export default function CustomerReviews({ className = '' }) {
@@ -45,7 +45,6 @@ export default function CustomerReviews({ className = '' }) {
               <div className="w-full h-full relative">
                 <LazyVideo
                   src={item.src}
-                  poster={item.poster}
                   autoPlay
                   loop
                   muted
@@ -112,7 +111,6 @@ export default function CustomerReviews({ className = '' }) {
                 {activeMedia.type === 'video' ? (
                   <LazyVideo
                     src={activeMedia.src}
-                    poster={activeMedia.poster}
                     controls
                     autoPlay
                     loop

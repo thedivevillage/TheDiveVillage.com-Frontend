@@ -84,13 +84,11 @@ const LazyVideo = forwardRef(function LazyVideo({
   const [isInView, setIsInView] = useState(() => priority)
   const [masterReady, setMasterReady] = useState(false)
   const [masterStarted, setMasterStarted] = useState(false)
-  const [videoError, setVideoError] = useState(false)
 
   // Reset states if source changes
   useEffect(() => {
     setMasterReady(false)
     setMasterStarted(false)
-    setVideoError(false)
   }, [src])
 
   const setVideoNode = useCallback((node) => {
@@ -154,7 +152,7 @@ const LazyVideo = forwardRef(function LazyVideo({
 
     const handleIntersect = (isIntersecting) => {
       if (isIntersecting) {
-        setHasEnteredView(true)
+        setHasEnteredView((prev) => (prev ? prev : true))
         setIsInView(true)
       } else {
         setIsInView(false)
@@ -208,7 +206,6 @@ const LazyVideo = forwardRef(function LazyVideo({
   const handleMasterPlaying = (e) => {
     setMasterReady(true)
     setMasterStarted(true)
-    setVideoError(false)
     if (typeof externalOnPlaying === 'function') {
       externalOnPlaying(e)
     }
@@ -217,13 +214,13 @@ const LazyVideo = forwardRef(function LazyVideo({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-[#001e3d]/40'} ${className}`}
+      className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-transparent'} ${className}`}
       style={{
         contain: 'layout paint',
         backgroundColor: className.includes('bg-white') ? '#ffffff' : (externalStyle?.backgroundColor || undefined)
       }}
     >
-      {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and actively plays, and restored on any error) */}
+      {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and actively plays) */}
       {poster && (
         <img
           src={poster}
@@ -231,8 +228,12 @@ const LazyVideo = forwardRef(function LazyVideo({
           aria-hidden="true"
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+            setMasterReady(true)
+          }}
           className={`absolute inset-0 w-full h-full ${fitClass} z-0 pointer-events-none transition-opacity duration-500 ease-out ${
-            masterStarted && !videoError ? 'opacity-0' : 'opacity-100'
+            masterStarted ? 'opacity-0' : 'opacity-100'
           }`}
           style={{
             objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
@@ -253,17 +254,12 @@ const LazyVideo = forwardRef(function LazyVideo({
         playsInline={playsInline}
         webkit-playsinline=""
         x5-playsinline=""
-        crossOrigin="anonymous"
         controls={controls}
         controlsList={controlsList}
         disablePictureInPicture={disablePictureInPicture}
         preload={priority ? 'auto' : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none'))}
-        onError={() => {
-          setVideoError(true)
-          setMasterStarted(false)
-        }}
         onTimeUpdate={(e) => {
-          if (!masterStarted && !videoError) setMasterStarted(true)
+          if (!masterStarted) setMasterStarted(true)
           if (typeof externalOnTimeUpdate === 'function') {
             externalOnTimeUpdate(e)
           }
@@ -279,7 +275,7 @@ const LazyVideo = forwardRef(function LazyVideo({
           }
         }}
         className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-500 ease-out z-[2] ${
-          masterStarted && !videoError ? 'opacity-100' : (!poster && masterReady && !videoError ? 'opacity-100' : 'opacity-0')
+          masterStarted || (!poster && masterReady) ? 'opacity-100' : 'opacity-0'
         } ${!controls ? 'pointer-events-none' : ''} ${videoClassName}`}
         style={{
           objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',

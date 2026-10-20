@@ -74,15 +74,8 @@ export default function FloatingVideoPip({
             webkit-playsinline=""
             x5-playsinline=""
             preload="auto"
-            crossOrigin="anonymous"
-            onError={() => setIsPlaying(false)}
             onCanPlay={() => setIsPlaying(true)}
             onPlaying={() => setIsPlaying(true)}
-            onTimeUpdate={(e) => {
-              if (!isPlaying && e.target.currentTime > 0) {
-                setIsPlaying(true)
-              }
-            }}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 z-10 pointer-events-none ${
               isPlaying ? 'opacity-100' : 'opacity-0'
             }`}

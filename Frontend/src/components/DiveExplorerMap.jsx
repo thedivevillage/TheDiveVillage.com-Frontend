@@ -3,9 +3,13 @@ import { Map, setWorkerUrl, NavigationControl } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
-import { getIslandForSite, getIslandCentroidsForCountry, getIslandsForCountry } from '../utils/diveIslandCatalog'
+<<<<<<< Updated upstream
+import { getIslandForSite } from '../utils/diveIslandCatalog'
 import localPinIconUrl from '../assets/pin.png'
 import { PIN_DATA_URI } from '../utils/pinBase64'
+=======
+import { getIslandForSite, getIslandCentroidsForCountry, getIslandsForCountry } from '../utils/diveIslandCatalog'
+>>>>>>> Stashed changes
 
 const pinIconUrl = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792425523/pin-CG20ymQb.png'
 
@@ -561,14 +565,18 @@ export default function DiveExplorerMap({
     const map = mapRef.current
     if (!map || !countryName) return
 
+<<<<<<< Updated upstream
     ensurePinImages(map)
 
     // If map has not completed its initial layer setup yet, queue zoom
-    if (!isMapReadyRef.current || !map.loaded()) {
+    if (!isMapReadyRef.current) {
       pendingCountryZoomRef.current = countryName
+=======
+    if (!map.loaded()) {
       map.once('load', () => {
         zoomToCountry(countryName)
       })
+>>>>>>> Stashed changes
       return
     }
 
@@ -879,7 +887,127 @@ export default function DiveExplorerMap({
     }
   }, [])
 
+<<<<<<< Updated upstream
+  // 2. Compute individual dive sites GeoJSON (filtered by selected country or search)
+  const countrySitesGeoJSON = useMemo(() => {
+    if (!allSites.length) {
+      return { type: 'FeatureCollection', features: [] }
+    }
+
+    // Only show dive sites when a specific country is active or search query is entered
+    if (!selectedCountry && !searchQuery) {
+      return { type: 'FeatureCollection', features: [] }
+    }
+
+    const q = searchQuery.trim().toLowerCase()
+    const targetClean = cleanCountryName(selectedCountry)
+    const canonicalTarget = selectedCountry ? (findMatchingCountry(selectedCountry, countriesList) || selectedCountry) : ''
+    const canonicalTargetClean = cleanCountryName(canonicalTarget)
+
+    const filtered = allSites.filter((site) => {
+      // Must match selected country if active
+      if (selectedCountry) {
+        const siteClean = cleanCountryName(site.country)
+        const siteCanonicalClean = cleanCountryName(findMatchingCountry(site.country, countriesList) || site.country)
+        const isMatch =
+          siteClean === targetClean ||
+          siteClean === canonicalTargetClean ||
+          siteCanonicalClean === canonicalTargetClean ||
+          siteCanonicalClean === targetClean
+        if (!isMatch) return false
+      }
+      // Search query
+      if (q) {
+        const nameMatch = (site.siteName || '').toLowerCase().includes(q)
+        const countryMatch = (site.country || '').toLowerCase().includes(q)
+        const typeMatch = (site.naturalTypes || '').toLowerCase().includes(q)
+        if (!nameMatch && !countryMatch && !typeMatch) return false
+      }
+      return true
+    })
+
+    return {
+      type: 'FeatureCollection',
+      features: filtered.map((site) => ({
+        type: 'Feature',
+        id: site.id,
+        geometry: {
+          type: 'Point',
+          coordinates: [site.longitude, site.latitude],
+        },
+        properties: {
+          id: site.id,
+          siteName: site.siteName,
+          country: site.country,
+          latitude: site.latitude,
+          longitude: site.longitude,
+          naturalTypes: site.naturalTypes,
+          sourceUrl: site.sourceUrl,
+        },
+      })),
+    }
+  }, [allSites, selectedCountry, searchQuery, countriesList])
+
+  countrySitesGeoJSONRef.current = countrySitesGeoJSON
+
+  useEffect(() => {
+    countrySitesGeoJSONRef.current = countrySitesGeoJSON
+  }, [countrySitesGeoJSON])
+
+  // Helper: Synchronize MapLibre sources and layer visibilities safely
+  const syncMapData = useCallback((mapInstance) => {
+    const map = mapInstance || mapRef.current
+    if (!map || !isMapReadyRef.current) return
+
+    // Ensure custom and red pin images exist in map before changing layer visibility
+    ensurePinImages(map)
+
+    try {
+      const cs = map.getSource('country-centroids-source')
+      if (cs) {
+        cs.setData(geojsonCountriesRef.current)
+      }
+
+      const ds = map.getSource('dive-sites-source')
+      if (ds) {
+        ds.setData(countrySitesGeoJSONRef.current)
+      }
+
+      const isCountryView = Boolean(selectedCountryRef.current || searchQueryRef.current)
+      const countryVis = isCountryView ? 'none' : 'visible'
+      const siteVis = isCountryView ? 'visible' : 'none'
+
+      const countryIcon = pinStyleRef.current === 'red' ? 'country-pin-red' : 'country-pin-custom'
+      const siteIcon = pinStyleRef.current === 'red' ? 'site-pin-red' : 'site-pin-custom'
+
+      if (map.getLayer('country-pin')) {
+        map.setLayoutProperty('country-pin', 'visibility', countryVis)
+        map.setLayoutProperty('country-pin', 'icon-image', countryIcon)
+      }
+      if (map.getLayer('country-polygons-fill')) {
+        map.setLayoutProperty('country-polygons-fill', 'visibility', countryVis)
+      }
+      if (map.getLayer('country-polygons-stroke')) {
+        map.setLayoutProperty('country-polygons-stroke', 'visibility', countryVis)
+      }
+      if (map.getLayer('site-pin')) {
+        map.setLayoutProperty('site-pin', 'visibility', siteVis)
+        map.setLayoutProperty('site-pin', 'icon-image', siteIcon)
+      }
+
+      map.triggerRepaint()
+    } catch (e) {
+      console.warn('[DiveExplorer] syncMapData warning:', e)
+    }
+  }, [])
+
+  const syncMapDataRef = useRef(syncMapData)
+  syncMapDataRef.current = syncMapData
+
+  // 3. Initialize MapLibre GL Map with OpenFreeMap Liberty Style
+=======
   // 2. Initialize MapLibre GL Map with OpenFreeMap Liberty Style
+>>>>>>> Stashed changes
   useEffect(() => {
     if (!mapContainerRef.current) return
 
@@ -1015,7 +1143,40 @@ export default function DiveExplorerMap({
 
         // 3. Register pin icons
         try {
+<<<<<<< Updated upstream
           await ensurePinImages(map)
+=======
+          const pinImg = await preloadPinImage()
+          if (pinImg) {
+            if (!map.hasImage('country-pin-custom')) {
+              map.addImage('country-pin-custom', createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
+            }
+            if (!map.hasImage('site-pin-custom')) {
+              map.addImage('site-pin-custom', createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
+            }
+            if (!map.hasImage('country-pin-icon')) {
+              map.addImage('country-pin-icon', createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
+            }
+            if (!map.hasImage('site-pin-icon')) {
+              map.addImage('site-pin-icon', createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
+            }
+          } else {
+            const res = await map.loadImage(pinIconUrl)
+            if (res && res.data) {
+              if (!map.hasImage('country-pin-custom')) map.addImage('country-pin-custom', res.data, { pixelRatio: 4.1 })
+              if (!map.hasImage('site-pin-custom')) map.addImage('site-pin-custom', res.data, { pixelRatio: 5.6 })
+              if (!map.hasImage('country-pin-icon')) map.addImage('country-pin-icon', res.data, { pixelRatio: 4.1 })
+              if (!map.hasImage('site-pin-icon')) map.addImage('site-pin-icon', res.data, { pixelRatio: 5.6 })
+            }
+          }
+
+          if (!map.hasImage('country-pin-red')) {
+            map.addImage('country-pin-red', createRedDropPinIcon(18, 25), { pixelRatio: 2 })
+          }
+          if (!map.hasImage('site-pin-red')) {
+            map.addImage('site-pin-red', createRedDropPinIcon(14, 20), { pixelRatio: 2 })
+          }
+>>>>>>> Stashed changes
         } catch (e) {
           console.warn('[DiveExplorer] Icon registration notice:', e)
         }
@@ -1310,6 +1471,7 @@ export default function DiveExplorerMap({
           setTooltipInfo(null)
         })
 
+<<<<<<< Updated upstream
         activeMapInstance = map
         isMapReadyRef.current = true
 
@@ -1325,6 +1487,7 @@ export default function DiveExplorerMap({
           }
         })
 
+=======
         // Comprehensive single-tap detection (Touchscreen padding & Island / Country fallbacks)
         map.on('click', (e) => {
           if (e.originalEvent?._countryHandled || e.originalEvent?._islandHandled) return
@@ -1447,6 +1610,7 @@ export default function DiveExplorerMap({
           setTooltipInfo(null)
         })
 
+>>>>>>> Stashed changes
         // Initial sync of layers and data
         if (syncMapDataRef.current) {
           syncMapDataRef.current(map)
