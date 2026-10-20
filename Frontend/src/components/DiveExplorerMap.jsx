@@ -4,6 +4,8 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
 import { getIslandForSite } from '../utils/diveIslandCatalog'
+import localPinIconUrl from '../assets/pin.png'
+import { PIN_DATA_URI } from '../utils/pinBase64'
 
 const pinIconUrl = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792425523/pin-CG20ymQb.png'
 
@@ -13,21 +15,39 @@ setWorkerUrl(workerUrl)
 const DEFAULT_CENTER = [15, 20]
 const DEFAULT_ZOOM = 1.8
 
-// Preload the yellow dive goggles pin icon from assets/pin.png (#FFD500)
+// Preload the yellow dive goggles pin icon (#FFD500)
+// Directly uses the embedded Base64 Data URI to guarantee 100% synchronous in-memory availability
+// with zero network latency, zero CORS restrictions, and zero missing image drops.
+let activeMapInstance = null
 let preloadedPinImg = null
+if (typeof window !== 'undefined') {
+  const img = new Image()
+  img.onload = () => {
+    preloadedPinImg = img
+    if (activeMapInstance) {
+      try {
+        ensurePinImages(activeMapInstance, true)
+      } catch {}
+    }
+  }
+  img.src = PIN_DATA_URI
+  if (img.complete && img.naturalWidth > 0) {
+    preloadedPinImg = img
+  }
+}
+
 const preloadPinImage = () => {
   if (preloadedPinImg && preloadedPinImg.complete && preloadedPinImg.naturalWidth > 0) {
     return Promise.resolve(preloadedPinImg)
   }
   return new Promise((resolve) => {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
     img.onload = () => {
       preloadedPinImg = img
       resolve(img)
     }
     img.onerror = () => resolve(null)
-    img.src = pinIconUrl
+    img.src = PIN_DATA_URI
     if (img.complete && img.naturalWidth > 0) {
       preloadedPinImg = img
       resolve(img)
@@ -35,14 +55,10 @@ const preloadPinImage = () => {
   })
 }
 
-// Trigger preload immediately in browser environment
-if (typeof window !== 'undefined') {
-  preloadPinImage()
-}
-
 /**
  * Generates a crisp #FFD500 yellow dive goggles pin icon from assets/pin.png for MapLibre WebGL.
  * Features a subtle dark drop shadow so it pops cleanly over both deep blue ocean and light coastlines.
+ * Includes a pure vector canvas fallback in case the source image is tainted or temporarily unavailable.
  */
 function createDiveGogglesPinIcon(img, width = 30, height = 17) {
   const dpr = 2
@@ -58,7 +74,42 @@ function createDiveGogglesPinIcon(img, width = 30, height = 17) {
   ctx.shadowBlur = 3
   ctx.shadowOffsetY = 1.5
 
-  ctx.drawImage(img, pad, pad, width, height)
+  if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+    try {
+      ctx.drawImage(img, pad, pad, width, height)
+      return ctx.getImageData(0, 0, canvas.width, canvas.height)
+    } catch (e) {
+      console.warn('[DiveExplorerMap] Canvas getImageData notice, using vector goggles fallback:', e)
+    }
+  }
+
+  // Pure vector yellow dive goggles fallback (guaranteed never to throw SecurityError or return blank)
+  ctx.clearRect(0, 0, width + pad * 2, height + pad * 2)
+  ctx.save()
+  ctx.fillStyle = '#FFD500'
+  ctx.strokeStyle = '#001428'
+  ctx.lineWidth = 1.2
+  // Outer mask frame
+  ctx.beginPath()
+  if (ctx.roundRect) {
+    ctx.roundRect(pad, pad + 1, width, height - 2, 4)
+  } else {
+    ctx.rect(pad, pad + 1, width, height - 2)
+  }
+  ctx.fill()
+  ctx.stroke()
+  // Dual dark lenses
+  ctx.fillStyle = '#001E3D'
+  const lensW = (width - 7) / 2
+  const lensH = height - 6
+  if (ctx.roundRect) {
+    ctx.beginPath(); ctx.roundRect(pad + 2, pad + 3, lensW, lensH, 2); ctx.fill()
+    ctx.beginPath(); ctx.roundRect(pad + 5 + lensW, pad + 3, lensW, lensH, 2); ctx.fill()
+  } else {
+    ctx.fillRect(pad + 2, pad + 3, lensW, lensH)
+    ctx.fillRect(pad + 5 + lensW, pad + 3, lensW, lensH)
+  }
+  ctx.restore()
 
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }
@@ -128,6 +179,62 @@ function createRedDropPinIcon(width = 15, height = 21) {
   ctx.fill()
 
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
+}
+
+/**
+ * Ensures all custom dive goggles and red drop pin images are registered synchronously in the MapLibre instance.
+ * Safe to call repeatedly across country changes and map style loads.
+ */
+function ensurePinImages(map, forceUpdate = false) {
+  if (!map) return
+
+  // 1. Red drop pins (synchronous)
+  if (!map.hasImage('country-pin-red')) {
+    map.addImage('country-pin-red', createRedDropPinIcon(18, 25), { pixelRatio: 2 })
+  }
+  if (!map.hasImage('site-pin-red')) {
+    map.addImage('site-pin-red', createRedDropPinIcon(14, 20), { pixelRatio: 2 })
+  }
+
+  // 2. Custom dive goggles pins
+  const customIds = ['country-pin-custom', 'site-pin-custom', 'country-pin-icon', 'site-pin-icon']
+  const allExist = customIds.every((id) => map.hasImage(id))
+  if (allExist && !forceUpdate) return
+
+  const img = (preloadedPinImg && preloadedPinImg.complete && preloadedPinImg.naturalWidth > 0)
+    ? preloadedPinImg
+    : null
+
+  try {
+    const countryImgData = createDiveGogglesPinIcon(img, 30, 17)
+    const siteImgData = createDiveGogglesPinIcon(img, 22, 12.5)
+
+    if (!map.hasImage('country-pin-custom')) {
+      map.addImage('country-pin-custom', countryImgData, { pixelRatio: 2 })
+    } else if (forceUpdate) {
+      map.updateImage('country-pin-custom', countryImgData)
+    }
+
+    if (!map.hasImage('site-pin-custom')) {
+      map.addImage('site-pin-custom', siteImgData, { pixelRatio: 2 })
+    } else if (forceUpdate) {
+      map.updateImage('site-pin-custom', siteImgData)
+    }
+
+    if (!map.hasImage('country-pin-icon')) {
+      map.addImage('country-pin-icon', countryImgData, { pixelRatio: 2 })
+    } else if (forceUpdate) {
+      map.updateImage('country-pin-icon', countryImgData)
+    }
+
+    if (!map.hasImage('site-pin-icon')) {
+      map.addImage('site-pin-icon', siteImgData, { pixelRatio: 2 })
+    } else if (forceUpdate) {
+      map.updateImage('site-pin-icon', siteImgData)
+    }
+  } catch (e) {
+    console.warn('[DiveExplorerMap] Error adding pin image to map:', e)
+  }
 }
 
 // Clean country name string for reliable matching across basemap labels and geojson properties
@@ -244,6 +351,8 @@ export default function DiveExplorerMap({
 }) {
   const mapContainerRef = useRef(null)
   const mapRef = useRef(null)
+  const isMapReadyRef = useRef(false)
+  const pendingCountryZoomRef = useRef(null)
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -279,7 +388,7 @@ export default function DiveExplorerMap({
     } catch {}
 
     const map = mapRef.current
-    if (!map || !map.isStyleLoaded()) return
+    if (!map || !isMapReadyRef.current) return
     const countryIcon = newStyle === 'red' ? 'country-pin-red' : 'country-pin-custom'
     const siteIcon = newStyle === 'red' ? 'site-pin-red' : 'site-pin-custom'
     try {
@@ -319,17 +428,19 @@ export default function DiveExplorerMap({
     const map = mapRef.current
     if (!map || !countryName) return
 
-    // If map style is still loading, wait for load event
-    if (!map.loaded()) {
-      map.once('load', () => {
-        zoomToCountry(countryName)
-      })
+    ensurePinImages(map)
+
+    // If map has not completed its initial layer setup yet, queue zoom
+    if (!isMapReadyRef.current) {
+      pendingCountryZoomRef.current = countryName
       return
     }
 
     const canonicalCountry = findMatchingCountry(countryName, countriesListRef.current) || countryName
     const countryData = countryCentroidsRef.current.find(
-      (c) => cleanCountryName(c.country) === cleanCountryName(canonicalCountry)
+      (c) =>
+        cleanCountryName(c.country) === cleanCountryName(canonicalCountry) ||
+        cleanCountryName(c.country) === cleanCountryName(countryName)
     )
 
     if (!countryData) {
@@ -429,6 +540,10 @@ export default function DiveExplorerMap({
     if (!rawCountryName) return
     const canonical = findMatchingCountry(rawCountryName, countriesListRef.current) || rawCountryName
 
+    if (mapRef.current) {
+      ensurePinImages(mapRef.current)
+    }
+
     setSelectedCountry(canonical)
     selectedCountryRef.current = canonical
     setActiveSite(null)
@@ -509,10 +624,21 @@ export default function DiveExplorerMap({
     }
 
     const q = searchQuery.trim().toLowerCase()
+    const targetClean = cleanCountryName(selectedCountry)
+    const canonicalTarget = selectedCountry ? (findMatchingCountry(selectedCountry, countriesList) || selectedCountry) : ''
+    const canonicalTargetClean = cleanCountryName(canonicalTarget)
+
     const filtered = allSites.filter((site) => {
       // Must match selected country if active
-      if (selectedCountry && site.country?.trim().toLowerCase() !== selectedCountry.trim().toLowerCase()) {
-        return false
+      if (selectedCountry) {
+        const siteClean = cleanCountryName(site.country)
+        const siteCanonicalClean = cleanCountryName(findMatchingCountry(site.country, countriesList) || site.country)
+        const isMatch =
+          siteClean === targetClean ||
+          siteClean === canonicalTargetClean ||
+          siteCanonicalClean === canonicalTargetClean ||
+          siteCanonicalClean === targetClean
+        if (!isMatch) return false
       }
       // Search query
       if (q) {
@@ -544,7 +670,7 @@ export default function DiveExplorerMap({
         },
       })),
     }
-  }, [allSites, selectedCountry, searchQuery])
+  }, [allSites, selectedCountry, searchQuery, countriesList])
 
   countrySitesGeoJSONRef.current = countrySitesGeoJSON
 
@@ -555,7 +681,10 @@ export default function DiveExplorerMap({
   // Helper: Synchronize MapLibre sources and layer visibilities safely
   const syncMapData = useCallback((mapInstance) => {
     const map = mapInstance || mapRef.current
-    if (!map || !map.isStyleLoaded()) return
+    if (!map || !isMapReadyRef.current) return
+
+    // Ensure custom and red pin images exist in map before changing layer visibility
+    ensurePinImages(map)
 
     try {
       const cs = map.getSource('country-centroids-source')
@@ -572,8 +701,12 @@ export default function DiveExplorerMap({
       const countryVis = isCountryView ? 'none' : 'visible'
       const siteVis = isCountryView ? 'visible' : 'none'
 
+      const countryIcon = pinStyleRef.current === 'red' ? 'country-pin-red' : 'country-pin-custom'
+      const siteIcon = pinStyleRef.current === 'red' ? 'site-pin-red' : 'site-pin-custom'
+
       if (map.getLayer('country-pin')) {
         map.setLayoutProperty('country-pin', 'visibility', countryVis)
+        map.setLayoutProperty('country-pin', 'icon-image', countryIcon)
       }
       if (map.getLayer('country-polygons-fill')) {
         map.setLayoutProperty('country-polygons-fill', 'visibility', countryVis)
@@ -583,7 +716,10 @@ export default function DiveExplorerMap({
       }
       if (map.getLayer('site-pin')) {
         map.setLayoutProperty('site-pin', 'visibility', siteVis)
+        map.setLayoutProperty('site-pin', 'icon-image', siteIcon)
       }
+
+      map.triggerRepaint()
     } catch (e) {
       console.warn('[DiveExplorer] syncMapData warning:', e)
     }
@@ -626,26 +762,37 @@ export default function DiveExplorerMap({
       map.addControl(new NavigationControl({ showCompass: true, showZoom: true }), 'top-right')
 
       // Handle missing image dynamically as safety guard
-      map.on('styleimagemissing', async (e) => {
+      map.on('styleimagemissing', (e) => {
         const id = e.id
+        if (id === 'country-pin-red') {
+          if (!map.hasImage(id)) map.addImage(id, createRedDropPinIcon(18, 25), { pixelRatio: 2 })
+          return
+        }
+        if (id === 'site-pin-red') {
+          if (!map.hasImage(id)) map.addImage(id, createRedDropPinIcon(14, 20), { pixelRatio: 2 })
+          return
+        }
+
         if (id === 'country-pin-custom' || id === 'country-pin-icon') {
-          const pinImg = await preloadPinImage()
-          if (pinImg && !map.hasImage(id)) {
-            map.addImage(id, createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
+          if (preloadedPinImg && preloadedPinImg.complete && preloadedPinImg.naturalWidth > 0 && !map.hasImage(id)) {
+            try {
+              map.addImage(id, createDiveGogglesPinIcon(preloadedPinImg, 30, 17), { pixelRatio: 2 })
+              return
+            } catch (err) {
+              console.warn('[DiveExplorerMap] Sync addImage notice:', err)
+            }
           }
+          ensurePinImages(map)
         } else if (id === 'site-pin-custom' || id === 'site-pin-icon') {
-          const pinImg = await preloadPinImage()
-          if (pinImg && !map.hasImage(id)) {
-            map.addImage(id, createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
+          if (preloadedPinImg && preloadedPinImg.complete && preloadedPinImg.naturalWidth > 0 && !map.hasImage(id)) {
+            try {
+              map.addImage(id, createDiveGogglesPinIcon(preloadedPinImg, 22, 12.5), { pixelRatio: 2 })
+              return
+            } catch (err) {
+              console.warn('[DiveExplorerMap] Sync addImage notice:', err)
+            }
           }
-        } else if (id === 'country-pin-red') {
-          if (!map.hasImage(id)) {
-            map.addImage(id, createRedDropPinIcon(18, 25), { pixelRatio: 2 })
-          }
-        } else if (id === 'site-pin-red') {
-          if (!map.hasImage(id)) {
-            map.addImage(id, createRedDropPinIcon(14, 20), { pixelRatio: 2 })
-          }
+          ensurePinImages(map)
         }
       })
 
@@ -716,38 +863,7 @@ export default function DiveExplorerMap({
 
         // 3. Register pin icons: both custom #FFD500 yellow dive goggles and classic red drop pins
         try {
-          const pinImg = await preloadPinImage()
-          if (pinImg) {
-            if (!map.hasImage('country-pin-custom')) {
-              map.addImage('country-pin-custom', createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
-            }
-            if (!map.hasImage('site-pin-custom')) {
-              map.addImage('site-pin-custom', createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
-            }
-            // Backwards-compatible aliases
-            if (!map.hasImage('country-pin-icon')) {
-              map.addImage('country-pin-icon', createDiveGogglesPinIcon(pinImg, 30, 17), { pixelRatio: 2 })
-            }
-            if (!map.hasImage('site-pin-icon')) {
-              map.addImage('site-pin-icon', createDiveGogglesPinIcon(pinImg, 22, 12.5), { pixelRatio: 2 })
-            }
-          } else {
-            const res = await map.loadImage(pinIconUrl)
-            if (res && res.data) {
-              if (!map.hasImage('country-pin-custom')) map.addImage('country-pin-custom', res.data, { pixelRatio: 4.1 })
-              if (!map.hasImage('site-pin-custom')) map.addImage('site-pin-custom', res.data, { pixelRatio: 5.6 })
-              if (!map.hasImage('country-pin-icon')) map.addImage('country-pin-icon', res.data, { pixelRatio: 4.1 })
-              if (!map.hasImage('site-pin-icon')) map.addImage('site-pin-icon', res.data, { pixelRatio: 5.6 })
-            }
-          }
-
-          // Register classic red drop pins
-          if (!map.hasImage('country-pin-red')) {
-            map.addImage('country-pin-red', createRedDropPinIcon(18, 25), { pixelRatio: 2 })
-          }
-          if (!map.hasImage('site-pin-red')) {
-            map.addImage('site-pin-red', createRedDropPinIcon(14, 20), { pixelRatio: 2 })
-          }
+          await ensurePinImages(map)
         } catch (e) {
           console.warn('[DiveExplorer] Icon registration notice:', e)
         }
@@ -1078,9 +1194,33 @@ export default function DiveExplorerMap({
           setTooltipInfo(null)
         })
 
+        activeMapInstance = map
+        isMapReadyRef.current = true
+
+        // Re-assert layer data and pin layout on camera stop and tile idle
+        map.on('moveend', () => {
+          if (syncMapDataRef.current) {
+            syncMapDataRef.current(map)
+          }
+        })
+        map.on('idle', () => {
+          if (syncMapDataRef.current) {
+            syncMapDataRef.current(map)
+          }
+        })
+
         // Initial sync of layers and data
         if (syncMapDataRef.current) {
           syncMapDataRef.current(map)
+        }
+
+        // Process any queued camera flight requested before map load completed
+        if (pendingCountryZoomRef.current) {
+          const queuedCountry = pendingCountryZoomRef.current
+          pendingCountryZoomRef.current = null
+          if (zoomToCountryRef.current) {
+            zoomToCountryRef.current(queuedCountry)
+          }
         }
       })
     } catch (err) {
@@ -1092,6 +1232,10 @@ export default function DiveExplorerMap({
 
     return () => {
       isCancelled = true
+      isMapReadyRef.current = false
+      if (activeMapInstance === map) {
+        activeMapInstance = null
+      }
       if (map) {
         map.remove()
         mapRef.current = null
@@ -1272,6 +1416,10 @@ export default function DiveExplorerMap({
       setSelectedCountry(target)
       selectedCountryRef.current = target
       setActiveSite(null)
+
+      if (mapRef.current) {
+        ensurePinImages(mapRef.current)
+      }
 
       if (!target) {
         if (mapRef.current) {
@@ -1476,7 +1624,15 @@ export default function DiveExplorerMap({
               title="Custom Pin"
               aria-pressed={pinStyle === 'custom'}
             >
-              <img src={pinIconUrl} alt="" className="w-3.5 h-2 object-contain" />
+              <img
+                src={pinIconUrl}
+                alt=""
+                className="w-3.5 h-2 object-contain"
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  e.currentTarget.src = localPinIconUrl
+                }}
+              />
               <span>Custom</span>
             </button>
             <button
@@ -1621,6 +1777,10 @@ export default function DiveExplorerMap({
                   alt=""
                   className="w-3.5 h-2 object-contain"
                   aria-hidden="true"
+                  crossOrigin="anonymous"
+                  onError={(e) => {
+                    e.currentTarget.src = localPinIconUrl
+                  }}
                 />
                 <span>Custom Pin</span>
               </button>

@@ -66,7 +66,12 @@ const LazyVideo = forwardRef(function LazyVideo({
   zoom = 1,
   zoomOrigin = 'center center',
   priority = false,
-  ...props
+  onCanPlay: externalOnCanPlay,
+  onPlaying: externalOnPlaying,
+  onLoadedData: externalOnLoadedData,
+  onTimeUpdate: externalOnTimeUpdate,
+  style: externalStyle,
+  ...restProps
 }, externalRef) {
   const containerRef = useRef(null)
   const masterRef = useRef(null)
@@ -189,16 +194,16 @@ const LazyVideo = forwardRef(function LazyVideo({
     if (isInView && autoPlay && masterRef.current && masterRef.current.paused) {
       safePlay(masterRef.current, masterPlayPromiseRef)
     }
-    if (typeof props.onCanPlay === 'function') {
-      props.onCanPlay(e)
+    if (typeof externalOnCanPlay === 'function') {
+      externalOnCanPlay(e)
     }
   }
 
   const handleMasterPlaying = (e) => {
     setMasterReady(true)
     setMasterStarted(true)
-    if (typeof props.onPlaying === 'function') {
-      props.onPlaying(e)
+    if (typeof externalOnPlaying === 'function') {
+      externalOnPlaying(e)
     }
   }
 
@@ -208,7 +213,7 @@ const LazyVideo = forwardRef(function LazyVideo({
       className={`relative overflow-hidden ${className.includes('bg-') ? '' : 'bg-transparent'} ${className}`}
       style={{
         contain: 'layout paint',
-        backgroundColor: className.includes('bg-white') ? '#ffffff' : (props.style?.backgroundColor || undefined)
+        backgroundColor: className.includes('bg-white') ? '#ffffff' : (externalStyle?.backgroundColor || undefined)
       }}
     >
       {/* Layer 0: Static WebP Poster Image (Exact first frame shown until video decodes and actively plays) */}
@@ -250,16 +255,16 @@ const LazyVideo = forwardRef(function LazyVideo({
         preload={priority ? 'auto' : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none'))}
         onTimeUpdate={(e) => {
           if (!masterStarted) setMasterStarted(true)
-          if (typeof props.onTimeUpdate === 'function') {
-            props.onTimeUpdate(e)
+          if (typeof externalOnTimeUpdate === 'function') {
+            externalOnTimeUpdate(e)
           }
         }}
         onPlaying={handleMasterPlaying}
         onCanPlay={handleMasterCanPlay}
         onLoadedData={(e) => {
           setMasterReady(true)
-          if (typeof props.onLoadedData === 'function') {
-            props.onLoadedData(e)
+          if (typeof externalOnLoadedData === 'function') {
+            externalOnLoadedData(e)
           }
         }}
         className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-500 ease-out z-[2] ${
@@ -269,9 +274,9 @@ const LazyVideo = forwardRef(function LazyVideo({
           objectFit: fitClass === 'object-contain' ? 'contain' : 'cover',
           backgroundColor: className.includes('bg-white') ? '#ffffff' : undefined,
           ...zoomStyle,
-          ...(props.style || {}),
+          ...(externalStyle || {}),
         }}
-        {...props}
+        {...restProps}
       />
     </div>
   )
