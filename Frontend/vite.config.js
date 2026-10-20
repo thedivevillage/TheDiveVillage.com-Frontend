@@ -231,67 +231,63 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/firebase-messaging-sw\.js$/],
         runtimeCaching: [
           {
-            // 1. Cloudinary Media Assets (Images, Posters, Videos)
-            urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
+            // 1. Cloudinary Media Assets (Images, Posters, 3D Assets - streaming videos bypass SW)
+            urlPattern: /^https:\/\/res\.cloudinary\.com\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-cloudinary',
+              cacheName: 'tdv-media-cloudinary-v2',
               expiration: {
                 maxEntries: 1000,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              },
-              rangeRequests: true
+                statuses: [200]
+              }
             }
           },
           {
-            // 2. Cloudflare R2 Media & Streaming (HLS, MP4, WebM, Posters)
-            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*/i,
+            // 2. Cloudflare R2 Media (Images, Posters, 3D models, Audio - streaming videos bypass SW)
+            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|mp3|ogg|wav|json)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-r2',
+              cacheName: 'tdv-media-r2-v2',
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              },
-              rangeRequests: true
+                statuses: [200]
+              }
             }
           },
           {
-            // 3. Local Media route (/media/** - videos, audio, 3D assets)
-            urlPattern: /^\/media\/.*/i,
+            // 3. Local Media route (Images, Posters, 3D models, Audio - streaming videos bypass SW)
+            urlPattern: /^\/media\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|mp3|ogg|wav)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-local',
+              cacheName: 'tdv-media-local-v2',
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              },
-              rangeRequests: true
+                statuses: [200]
+              }
             }
           },
           {
-            // 4. All static media extensions (mp4, webm, mov, mp3, ogg, wav, glb, gltf, png, jpg, webp, svg)
-            urlPattern: /\.(?:mp4|webm|mov|mp3|ogg|wav|glb|gltf|png|jpe?g|webp|avif|svg)(?:\?.*)?$/i,
+            // 4. Static media extensions (Images, Audio, 3D models - streaming videos bypass SW)
+            urlPattern: /\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|mp3|ogg|wav)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-assets',
+              cacheName: 'tdv-media-assets-v2',
               expiration: {
                 maxEntries: 1000,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              },
-              rangeRequests: true
+                statuses: [200]
+              }
             }
           },
           {

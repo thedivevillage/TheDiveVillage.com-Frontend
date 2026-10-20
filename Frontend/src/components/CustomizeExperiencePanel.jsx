@@ -84,6 +84,7 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
         webkit-playsinline=""
         x5-playsinline=""
         preload="auto"
+        crossOrigin="anonymous"
         onPlaying={() => setIsPlaying(true)}
         onTimeUpdate={(e) => {
           if (!isPlaying && e.target.currentTime > 0) {
@@ -200,24 +201,14 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
     return () => clearInterval(timer)
   }, [images])
 
-  // Idle pre-warm first chunks of add-on videos for instant hover response
+  // Idle pre-warm poster images for add-on activities so hover cards render instantly
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const urlsToWarm = [
-      vidCanoneering,
-      vidSafari,
-      vidTrekking,
-      vidSurfing,
-      vidSightseeing,
-      vidSnorkeling,
-      vidCampers,
-      vidLiveaboard,
-    ]
+    const postersToWarm = CUSTOM_ACTIVITIES.map((a) => a.poster).filter(Boolean)
     const warm = () => {
-      urlsToWarm.forEach((url) => {
-        try {
-          fetch(url, { headers: { Range: 'bytes=0-131072' }, cache: 'force-cache' }).catch(() => {})
-        } catch {}
+      postersToWarm.forEach((src) => {
+        const img = new Image()
+        img.src = src
       })
     }
     if ('requestIdleCallback' in window) {

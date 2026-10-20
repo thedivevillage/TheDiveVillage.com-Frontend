@@ -11,9 +11,13 @@ export const CACHE_NAME = 'tdv-media-cache-v1'
 const ALL_TDV_CACHES = [
   CACHE_NAME,
   'tdv-media-cloudinary',
+  'tdv-media-cloudinary-v2',
   'tdv-media-r2',
+  'tdv-media-r2-v2',
   'tdv-media-local',
+  'tdv-media-local-v2',
   'tdv-media-assets',
+  'tdv-media-assets-v2',
   'cloudinary-media-q7b4kjd9',
 ]
 

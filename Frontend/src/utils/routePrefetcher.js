@@ -14,16 +14,17 @@ const TOP_SERVICE_VIDEOS = [
   'https://media.thedivevillage.com/TDV-Media/Services/Additional_dive_ater_discover_scuba_dive.mp4',
 ]
 
-export function prefetchVideoChunk(url, bytes = '0-327680') {
+export function prefetchVideoChunk(url) {
   if (typeof window === 'undefined' || prefetchedUrls.has(url)) return
   prefetchedUrls.add(url)
 
   try {
-    fetch(url, {
-      method: 'GET',
-      headers: { Range: `bytes=${bytes}` },
-      cache: 'force-cache',
-    }).catch(() => {})
+    const link = document.createElement('link')
+    link.rel = 'preload'
+    link.as = 'video'
+    link.href = url
+    link.crossOrigin = 'anonymous'
+    document.head.appendChild(link)
   } catch (e) {}
 }
 
