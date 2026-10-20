@@ -1543,9 +1543,16 @@ export default function BookUs() {
         setStepError('Booking failed. Please try again.')
       }
     } catch (err) {
-      if (err.response && err.response.status >= 400 && err.response.status < 500) {
+      const isClientError =
+        (err.response && err.response.status >= 400 && err.response.status < 500) ||
+        (err.status >= 400 && err.status < 500)
+      if (isClientError) {
         triggerErrorHaptic()
-        const backendMsg = err.response.data?.message || err.response.data?.error || 'Validation failed. Please review your booking details.'
+        const backendMsg =
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          err.message ||
+          'Validation failed. Please review your booking details.'
         setStepError(backendMsg)
         return
       }

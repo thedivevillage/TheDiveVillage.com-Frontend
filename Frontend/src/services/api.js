@@ -45,7 +45,10 @@ api.interceptors.response.use(
       error.response?.data?.message ||
       error.message ||
       'Something went wrong'
-    return Promise.reject(new Error(message))
+    const customError = new Error(message)
+    customError.response = error.response
+    customError.status = error.response?.status
+    return Promise.reject(customError)
   }
 )
 
