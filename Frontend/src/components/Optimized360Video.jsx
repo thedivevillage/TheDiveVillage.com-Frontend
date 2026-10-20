@@ -40,6 +40,8 @@ function useR2VideoTexture(hlsSrc, mp4Fallback, isVisible = true) {
     const domContainer = getOrCreateDomVideoContainer()
     const video = document.createElement('video')
     video.crossOrigin = 'anonymous'
+    video.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    video.setAttribute('poster', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
     video.playsInline = true
     video.setAttribute('webkit-playsinline', '')
     video.setAttribute('playsinline', '')
@@ -96,6 +98,8 @@ function useR2VideoTexture(hlsSrc, mp4Fallback, isVisible = true) {
         vidTexture = new THREE.VideoTexture(video)
         vidTexture.minFilter = THREE.LinearFilter
         vidTexture.magFilter = THREE.LinearFilter
+        vidTexture.wrapS = THREE.ClampToEdgeWrapping
+        vidTexture.wrapT = THREE.ClampToEdgeWrapping
         vidTexture.format = THREE.RGBAFormat
         vidTexture.generateMipmaps = false
         vidTexture.colorSpace = THREE.SRGBColorSpace

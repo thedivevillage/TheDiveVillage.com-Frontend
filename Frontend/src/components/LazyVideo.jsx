@@ -271,6 +271,7 @@ const LazyVideo = forwardRef(function LazyVideo({
       <video
         ref={setVideoNode}
         src={hasEnteredView ? src : undefined}
+        poster={poster || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
         autoPlay={autoPlay && isInView}
         loop={loop}
         muted={muted}

@@ -67,6 +67,7 @@ export default function FloatingVideoPip({
           <video
             ref={videoRef}
             src={activeSrc}
+            poster={poster || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
             autoPlay
             loop
             muted

@@ -151,6 +151,8 @@ export function preloadNightDiveFirst5Seconds() {
     video = document.createElement('video')
     video.id = 'night-dive-dom-video'
     video.crossOrigin = 'anonymous'
+    video.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    video.setAttribute('poster', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
     video.muted = true
     video.defaultMuted = true
     video.volume = 0
@@ -239,6 +241,8 @@ export function getOrCreateHeroVideoElement(src = HERO_VIDEO_SRC, playbackRate =
     video = document.createElement('video')
     video.id = 'hero-360-dom-video'
     video.crossOrigin = 'anonymous'
+    video.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    video.setAttribute('poster', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
     video.muted = true
     video.defaultMuted = true
     video.volume = 0
@@ -253,6 +257,8 @@ export function getOrCreateHeroVideoElement(src = HERO_VIDEO_SRC, playbackRate =
     container.appendChild(video)
   } else {
     video.crossOrigin = 'anonymous'
+    video.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    video.setAttribute('poster', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
   }
 
   warmHeroVideo = video

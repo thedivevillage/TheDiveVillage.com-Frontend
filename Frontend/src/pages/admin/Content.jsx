@@ -111,6 +111,7 @@ function AdminMediaCard({ item, onPreview, onEdit, onDelete, onToggleActive }) {
             <video
               ref={videoRef}
               src={item.src}
+              poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
               muted
               loop
               playsInline

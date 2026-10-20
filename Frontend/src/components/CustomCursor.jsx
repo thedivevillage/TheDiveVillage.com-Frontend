@@ -449,6 +449,7 @@ export default function CustomCursor() {
           <video
             ref={videoRef}
             src={cursorVideo}
+            poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             autoPlay
             loop
             muted

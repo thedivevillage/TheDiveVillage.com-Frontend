@@ -663,7 +663,9 @@ export default function Gallery() {
                                 ) : (
                                   <video
                                     src={item.src}
+                                    poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                                     muted
+                                    playsInline
                                     preload="metadata"
                                     className="w-full h-full object-cover pointer-events-none"
                                   />
