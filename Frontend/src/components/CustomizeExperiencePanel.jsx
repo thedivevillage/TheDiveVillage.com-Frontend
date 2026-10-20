@@ -84,7 +84,6 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
         webkit-playsinline=""
         x5-playsinline=""
         preload="auto"
-        crossOrigin="anonymous"
         onPlaying={() => setIsPlaying(true)}
         onTimeUpdate={(e) => {
           if (!isPlaying && e.target.currentTime > 0) {

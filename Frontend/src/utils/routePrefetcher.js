@@ -23,7 +23,6 @@ export function prefetchVideoChunk(url) {
     link.rel = 'preload'
     link.as = 'video'
     link.href = url
-    link.crossOrigin = 'anonymous'
     document.head.appendChild(link)
   } catch (e) {}
 }

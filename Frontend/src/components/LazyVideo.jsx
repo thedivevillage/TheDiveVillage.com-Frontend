@@ -256,7 +256,6 @@ const LazyVideo = forwardRef(function LazyVideo({
         controls={controls}
         controlsList={controlsList}
         disablePictureInPicture={disablePictureInPicture}
-        crossOrigin="anonymous"
         preload={priority ? 'auto' : (isInView ? 'auto' : (hasEnteredView ? 'metadata' : 'none'))}
         onTimeUpdate={(e) => {
           if (!masterStarted) setMasterStarted(true)
