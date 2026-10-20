@@ -191,7 +191,7 @@ if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
 }
 
-const publicPreviewDir = path.resolve(__dirname, '../public/media/TDV-Media/Services/previews');
+const publicPreviewDir = path.resolve(__dirname, '../public/TDV-Media/Services/previews');
 if (!fs.existsSync(publicPreviewDir)) {
   fs.mkdirSync(publicPreviewDir, { recursive: true });
 }

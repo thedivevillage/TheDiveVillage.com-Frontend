@@ -32,7 +32,7 @@ for (const file of jsFiles) {
 
   // 1. Replace thumbnail references
   for (const [k, url] of Object.entries(mapping)) {
-    if (k.startsWith('/media/thumbnails/') || k.startsWith('/media/TDV-Media/AirportToAirport/')) {
+    if (k.startsWith('/media/thumbnails/') || k.startsWith('https://media.thedivevillage.com/TDV-Media/AirportToAirport/')) {
       if (content.includes(`'${k}'`)) {
         content = content.replaceAll(`'${k}'`, `'${url}'`);
       }
@@ -46,19 +46,19 @@ for (const file of jsFiles) {
   if (file.endsWith('products.js')) {
     content = content.replace(
       "import imgFullWetsuitFront from '../assets/Media/done/Full Wet Suit/Black Wetsuit with Dive Village Logos.png';",
-      "const imgFullWetsuitFront = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325269/TDV-Media/Products/done/Full%20Wet%20Suit/Black_Wetsuit_with_Dive_Village_Logos.png';"
+      "const imgFullWetsuitFront = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485608/TDV-Media/Products/done/Full%20Wet%20Suit/Black_Wetsuit_with_Dive_Village_Logos.png';"
     );
     content = content.replace(
       "import imgFullWetsuitBack from '../assets/Media/done/Full Wet Suit/Rear-View Black Wetsuit with Cyan Zipper Strap.png';",
-      "const imgFullWetsuitBack = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325344/TDV-Media/Products/done/Full%20Wet%20Suit/Rear-View_Black_Wetsuit_with_Cyan_Zipper_Strap.png';"
+      "const imgFullWetsuitBack = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485608/TDV-Media/Products/done/Full%20Wet%20Suit/Rear-View_Black_Wetsuit_with_Cyan_Zipper_Strap.png';"
     );
   }
 
   // 3. Fix Preloader.jsx local video import
   if (file.endsWith('Preloader.jsx')) {
     content = content.replace(
-      "import preloaderVideoLocal from '../assets/preloader.mp4'\n\nconst CLOUD_PRELOADER = '/media/TDV-Media/UI/preloader.mp4'\nconst preloaderVideo = preloaderVideoLocal || CLOUD_PRELOADER",
-      "const CLOUD_PRELOADER = '/media/TDV-Media/UI/preloader.mp4'\nconst preloaderVideo = CLOUD_PRELOADER"
+      "import preloaderVideoLocal from '../assets/preloader.mp4'\n\nconst CLOUD_PRELOADER = 'https://media.thedivevillage.com/TDV-Media/UI/preloader.mp4'\nconst preloaderVideo = preloaderVideoLocal || CLOUD_PRELOADER",
+      "const CLOUD_PRELOADER = 'https://media.thedivevillage.com/TDV-Media/UI/preloader.mp4'\nconst preloaderVideo = CLOUD_PRELOADER"
     );
     content = content.replace(
       "import preloaderVideoLocal from '../assets/preloader.mp4'",

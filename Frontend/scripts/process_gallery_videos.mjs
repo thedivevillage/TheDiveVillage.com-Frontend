@@ -140,7 +140,7 @@ const GALLERY_VIDEOS = [
   { name: 'Whale_Shark.mp4', key: 'TDV-Media/Extras for Gallery/Whale_Shark.mp4' },
 ];
 
-const targetDir = path.resolve(__dirname, '../public/media/TDV-Media/Extras for Gallery');
+const targetDir = path.resolve(__dirname, '../public/TDV-Media/Extras for Gallery');
 const previewsDir = path.join(targetDir, 'previews');
 const postersDir = path.join(targetDir, 'posters');
 

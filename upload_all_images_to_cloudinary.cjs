@@ -3,9 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 cloudinary.config({
-  cloud_name: 'qvbunv8y',
-  api_key: '494533968621116',
-  api_secret: 'eZa4bBcDJbsQ3RpEkfJgdWww-vM',
+  cloud_name: 'q7b4kjd9',
+  api_key: '878457454693919',
+  api_secret: 'NQg7m06az6Tb-Xm2xLyS_481Rxk',
   secure: true
 });
 
@@ -65,14 +65,14 @@ const targetFolders = [
     importPrefix: '../assets/'
   },
   {
-    dir: path.join(frontendRoot, 'public/media/TDV-Media/AirportToAirport'),
+    dir: path.join(frontendRoot, 'public/TDV-Media/AirportToAirport'),
     cloudinaryFolder: 'TDV-Media/AirportToAirport',
-    urlPrefix: '/media/TDV-Media/AirportToAirport/'
+    urlPrefix: 'https://media.thedivevillage.com/TDV-Media/AirportToAirport/'
   },
   {
-    dir: path.join(frontendRoot, 'public/media/TDV-Media/Extras for Gallery/posters'),
+    dir: path.join(frontendRoot, 'public/TDV-Media/Extras for Gallery/posters'),
     cloudinaryFolder: 'TDV-Media/Extras for Gallery/posters',
-    urlPrefix: '/media/TDV-Media/Extras for Gallery/posters/'
+    urlPrefix: 'https://media.thedivevillage.com/TDV-Media/Extras for Gallery/posters/'
   }
 ];
 

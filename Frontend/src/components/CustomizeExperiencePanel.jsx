@@ -6,28 +6,28 @@ import FloatingVideoPip from './FloatingVideoPip'
 
 // Activity Media (Raw URLs & High-Res Thumbnails)
 const vidSafari = 'https://media.thedivevillage.com/TDV-Media/AirportToAirport/gallery1.mp4'
-const imgSafari = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325116/TDV-Media/thumbnails/addon-safari_thumb.webp'
+const imgSafari = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485595/TDV-Media/thumbnails/addon-safari_thumb.webp'
 
 const vidTrekking = 'https://media.thedivevillage.com/TDV-Media/AddOns/Trekking.mp4'
-const imgTrekking = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325122/TDV-Media/thumbnails/addon-trekking_thumb.webp'
+const imgTrekking = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485597/TDV-Media/thumbnails/addon-trekking_thumb.webp'
 
 const vidSightseeing = 'https://media.thedivevillage.com/TDV-Media/AddOns/sightseeing.mp4'
-const imgSightseeing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325118/TDV-Media/thumbnails/addon-sightseeing_thumb.webp'
+const imgSightseeing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485599/TDV-Media/thumbnails/addon-sightseeing_thumb.webp'
 
 const vidCampers = 'https://media.thedivevillage.com/TDV-Media/AddOns/Campers.mp4'
-const imgCampers = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325109/TDV-Media/thumbnails/addon-campers_thumb.webp'
+const imgCampers = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485595/TDV-Media/thumbnails/addon-campers_thumb.webp'
 
 const vidLiveaboard = 'https://media.thedivevillage.com/TDV-Media/AddOns/liveaboard.mp4'
-const imgLiveaboard = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325111/TDV-Media/thumbnails/addon-liveaboard_thumb.webp'
+const imgLiveaboard = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485595/TDV-Media/thumbnails/addon-liveaboard_thumb.webp'
 
 const vidCanoneering = 'https://media.thedivevillage.com/TDV-Media/Services/Other/Canoneering.mp4'
-const imgCanoneering = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325105/TDV-Media/thumbnails/addon-1_thumb.webp'
+const imgCanoneering = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485595/TDV-Media/thumbnails/addon-1_thumb.webp'
 
 const vidSurfing = 'https://media.thedivevillage.com/TDV-Media/Services/discover_surfing.mp4'
-const imgSurfing = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325195/TDV-Media/thumbnails/surf-3_thumb.webp'
+const imgSurfing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485607/TDV-Media/thumbnails/surf-3_thumb.webp'
 
 const vidSnorkeling = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4'
-const imgSnorkeling = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325164/TDV-Media/thumbnails/prog-4_thumb.webp'
+const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485603/TDV-Media/thumbnails/prog-4_thumb.webp'
 
 function HoverVideoPreview({ videoSrc, poster, displayName }) {
   const videoRef = useRef(null)

@@ -140,11 +140,22 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
     const viewer = modelRef.current
     if (!viewer) return
 
+    let isDisposed = false
+    let retryTimer = null
+    let attempts = 0
+    let successCount = 0
+
     const applyMatteAndBrighten = () => {
+      if (isDisposed || !viewer) return false
+      let materialsConfigured = 0
+
       try {
+        const minTone = isFullSleeves ? 0.38 : (isBottomsCompression ? 0.32 : 0.22)
+
         // 1. High-level ModelViewer Material API
-        if (viewer.model && viewer.model.materials) {
+        if (viewer.model && viewer.model.materials && viewer.model.materials.length > 0) {
           viewer.model.materials.forEach((mat) => {
+            materialsConfigured++
             if (typeof mat.setDoubleSided === 'function') {
               mat.setDoubleSided(true)
             } else {
@@ -155,6 +166,19 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
             if (pbr) {
               pbr.setRoughnessFactor(1.0)
               pbr.setMetallicFactor(0.0)
+
+              // Lift base color tone using official ModelViewer PBR API
+              if (typeof pbr.setBaseColorFactor === 'function') {
+                try {
+                  const cur = pbr.baseColorFactor || [1, 1, 1, 1]
+                  pbr.setBaseColorFactor([
+                    Math.max(cur[0] ?? 0, minTone),
+                    Math.max(cur[1] ?? 0, minTone),
+                    Math.max(cur[2] ?? 0, minTone),
+                    cur[3] ?? 1.0,
+                  ])
+                } catch (e) {}
+              }
 
               if (pbr.metallicRoughnessTexture && typeof pbr.metallicRoughnessTexture.setTexture === 'function') {
                 try {
@@ -295,6 +319,7 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
 
         threeMaterials.forEach((threeMat) => {
           if (!threeMat || !threeMat.isMaterial) return
+          materialsConfigured++
 
           // Soft matte finish - zero shine/gloss, gentle fabric texture
           threeMat.roughness = 0.9
@@ -322,9 +347,8 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
             threeMat.normalScale.set(0.75, 0.75)
           }
 
-          // Lift dark tones: slightly more brighter for full sleeves unisex top, slightly brighter for bottoms with compression
+          // Lift dark tones: slightly brighter for full sleeves unisex top and bottoms with compression
           if (threeMat.color) {
-            const minTone = isFullSleeves ? 0.38 : (isBottomsCompression ? 0.32 : 0.22)
             threeMat.color.r = Math.max(threeMat.color.r, minTone)
             threeMat.color.g = Math.max(threeMat.color.g, minTone)
             threeMat.color.b = Math.max(threeMat.color.b, minTone)
@@ -335,27 +359,45 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
       } catch (err) {
         console.warn('Could not configure 3D material properties', err)
       }
+
+      return materialsConfigured > 0
     }
 
-    const runMatte = () => {
-      applyMatteAndBrighten()
-      setTimeout(applyMatteAndBrighten, 150)
-      setTimeout(applyMatteAndBrighten, 600)
+    const triggerRun = () => {
+      const ok = applyMatteAndBrighten()
+      if (ok) {
+        successCount++
+      }
     }
 
-    const handleLoad = () => {
-      runMatte()
-    }
+    // Run immediately if model or scene is already in memory
+    triggerRun()
 
-    viewer.addEventListener('load', handleLoad)
-    if (viewer.modelIsVisible || viewer.loaded) {
-      handleLoad()
-    }
+    // Multi-event listeners guarantee capture regardless of cached or deferred network delivery
+    viewer.addEventListener('load', triggerRun)
+    viewer.addEventListener('model-visibility', triggerRun)
+    viewer.addEventListener('poster-dismissed', triggerRun)
+
+    // Polling retry interval for the first 3.5s to ensure materials apply on client route navigation
+    retryTimer = setInterval(() => {
+      if (isDisposed) return
+      attempts++
+      triggerRun()
+      // Once configured consistently at least 3 times and after 1.5 seconds, we can slow down or clear
+      if (attempts > 30 || (attempts > 12 && successCount >= 3)) {
+        clearInterval(retryTimer)
+        retryTimer = null
+      }
+    }, 120)
 
     return () => {
-      viewer.removeEventListener('load', handleLoad)
+      isDisposed = true
+      if (retryTimer) clearInterval(retryTimer)
+      viewer.removeEventListener('load', triggerRun)
+      viewer.removeEventListener('model-visibility', triggerRun)
+      viewer.removeEventListener('poster-dismissed', triggerRun)
     }
-  }, [src, scriptLoaded])
+  }, [src, scriptLoaded, productId, isFullSleeves, isBottomsCompression])
 
   return (
     <div 

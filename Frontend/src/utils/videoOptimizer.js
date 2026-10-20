@@ -52,7 +52,7 @@ export const OPTIMIZED_BARRACUDA_360 = HLS_BARRACUDA
 export const OPTIMIZED_TURTLE_360 = HLS_TURTLE
 export const OPTIMIZED_NIGHT_DIVE_360 = HLS_NIGHT_DIVE
 
-export const POSTER_CLOWNFISH_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325557/TDV-Media/AirportToAirport/gallery1.webp'
-export const POSTER_BARRACUDA_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp'
-export const POSTER_TURTLE_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325578/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
-export const POSTER_NIGHT_DIVE_360 = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325558/TDV-Media/AirportToAirport/travel.webp'
+export const POSTER_CLOWNFISH_360 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485610/TDV-Media/AirportToAirport/gallery1.webp'
+export const POSTER_BARRACUDA_360 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485611/TDV-Media/AirportToAirport/travel.webp'
+export const POSTER_TURTLE_360 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485613/TDV-Media/Extras%20for%20Gallery/posters/Hawksbill_Sea_Turtle_2_thumb.webp'
+export const POSTER_NIGHT_DIVE_360 = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485611/TDV-Media/AirportToAirport/travel.webp'

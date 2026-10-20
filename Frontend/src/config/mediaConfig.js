@@ -6,8 +6,7 @@
 export const MEDIA_CONFIG = {
   cloudinary: {
     cloudName: 'q7b4kjd9',
-    secondaryCloudName: 'qvbunv8y',
-    baseUrl: 'https://res.cloudinary.com/q7b4kjd9/',
+        baseUrl: 'https://res.cloudinary.com/q7b4kjd9/',
     imageUploadPrefix: 'https://res.cloudinary.com/q7b4kjd9/image/upload/',
   },
   r2: {

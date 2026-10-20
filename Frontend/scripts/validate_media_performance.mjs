@@ -4,7 +4,7 @@
  *  1. No oversized media assets imported into the bundle.
  *  2. No unoptimized raw Cloudinary <img> tags in presentation components.
  *  3. 3D model viewer lazy-loading standards (loading="lazy", reveal="interaction", DPR capped).
- *  4. Correct Cloudflare R2 delivery paths (/media/TDV-Media/...).
+ *  4. Correct Cloudflare R2 delivery paths (https://media.thedivevillage.com/TDV-Media/...).
  *  5. ServiceWorker / PWA precache exclusions (videos and GLBs excluded, size capped).
  *  6. Reusable components exports & integrity (OptimizedImage, OptimizedModelViewer, Optimized360Video).
  */
@@ -161,7 +161,7 @@ const mediaConfigPath = path.resolve(srcRoot, 'config/mediaConfig.js')
 if (fs.existsSync(videoOptimizerPath) && fs.existsSync(mediaConfigPath)) {
   const vidContent = fs.readFileSync(videoOptimizerPath, 'utf8')
   const configContent = fs.readFileSync(mediaConfigPath, 'utf8')
-  const hasR2Prefix = vidContent.includes('/media/TDV-Media/') || vidContent.includes('media.thedivevillage.com/TDV-Media/') || configContent.includes('media.thedivevillage.com/TDV-Media/')
+  const hasR2Prefix = vidContent.includes('https://media.thedivevillage.com/TDV-Media/') || vidContent.includes('media.thedivevillage.com/TDV-Media/') || configContent.includes('media.thedivevillage.com/TDV-Media/')
   const hasHlsLadder = vidContent.includes('.m3u8') || configContent.includes('.m3u8')
   const hasMp4Fallback = vidContent.includes('.mp4') || configContent.includes('.mp4')
 

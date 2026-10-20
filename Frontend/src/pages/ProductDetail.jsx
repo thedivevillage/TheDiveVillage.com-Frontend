@@ -117,6 +117,19 @@ export default function ProductDetail() {
   // 3D View toggle (if 3D GLB model exists)
   const [view3DMode, setView3DMode] = useState(false)
 
+  // Viewport tracking so only one heavy 3D viewer canvas mounts at a time
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window !== 'undefined') return window.innerWidth >= 1024
+    return true
+  })
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Build product images list (switches between Yellow photos and Grey photos for full body skin)
   const productImages = useMemo(() => {
     if (product.id === 'product-full-suit') {
@@ -434,7 +447,7 @@ export default function ProductDetail() {
         <div className="lg:hidden flex flex-col gap-4 max-w-lg mx-auto w-full mb-12">
           {/* Top Media Carousel with Dots */}
           <div className="w-full">
-            {view3DMode && activeGlb ? (
+            {!isDesktop && view3DMode && activeGlb ? (
               <div className="w-full flex flex-col">
                 <div className="relative w-full aspect-[3/4] sm:aspect-[4/3] max-h-[580px] bg-white rounded-lg border border-gray-200 shadow-xs overflow-hidden flex items-center justify-center">
                   <Product3DViewer
@@ -949,7 +962,7 @@ export default function ProductDetail() {
           <div className="lg:col-span-7 flex flex-col gap-4">
             
             {/* 3D Model Viewer Card (when 3D mode is toggled) */}
-            {view3DMode && activeGlb ? (
+            {isDesktop && view3DMode && activeGlb ? (
               <div className="w-full flex flex-col">
                 <div className="w-full h-[480px] sm:h-[540px] lg:h-[600px] xl:h-[640px] max-h-[calc(100vh-160px)] bg-white rounded-lg border border-gray-200 shadow-sm relative overflow-hidden flex items-center justify-center">
                   <Product3DViewer

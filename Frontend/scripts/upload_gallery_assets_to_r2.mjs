@@ -175,7 +175,7 @@ function putObject(key, bodyBuffer, contentType) {
 }
 
 // 2. Discover files to upload
-const baseLocalDir = path.resolve(__dirname, '../public/media/TDV-Media/Extras for Gallery');
+const baseLocalDir = path.resolve(__dirname, '../public/TDV-Media/Extras for Gallery');
 const postersDir = path.join(baseLocalDir, 'posters');
 const previewsDir = path.join(baseLocalDir, 'previews');
 

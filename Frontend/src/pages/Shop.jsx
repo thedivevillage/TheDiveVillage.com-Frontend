@@ -938,6 +938,20 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
                 pbr.setRoughnessFactor(1.0)
                 pbr.setMetallicFactor(0.0)
 
+                // Lift base color tone using official ModelViewer PBR API
+                const minTone = isFullSleeves ? 0.38 : (isBottomsCompression ? 0.32 : 0.22)
+                if (typeof pbr.setBaseColorFactor === 'function') {
+                  try {
+                    const cur = pbr.baseColorFactor || [1, 1, 1, 1]
+                    pbr.setBaseColorFactor([
+                      Math.max(cur[0] ?? 0, minTone),
+                      Math.max(cur[1] ?? 0, minTone),
+                      Math.max(cur[2] ?? 0, minTone),
+                      cur[3] ?? 1.0,
+                    ])
+                  } catch (e) {}
+                }
+
                 if (pbr.metallicRoughnessTexture && typeof pbr.metallicRoughnessTexture.setTexture === 'function') {
                   try {
                     pbr.metallicRoughnessTexture.setTexture(null)
@@ -1116,25 +1130,38 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
         } catch (e) { }
       }
 
+      let retryTimer = null
+      let attempts = 0
+
       const runMatte = () => {
         if (!active) return
         setIsLoaded(true)
         applyMatte()
-        setTimeout(applyMatte, 150)
-        setTimeout(applyMatte, 600)
       }
 
-      if (el.loaded) {
+      runMatte()
+
+      el.addEventListener('load', runMatte)
+      el.addEventListener('model-visibility', runMatte)
+      el.addEventListener('poster-dismissed', runMatte)
+
+      retryTimer = setInterval(() => {
+        if (!active) return
+        attempts++
         runMatte()
-      }
-      const handleLoad = () => {
-        runMatte()
-      }
-      el.addEventListener('load', handleLoad)
+        if (attempts > 20) {
+          clearInterval(retryTimer)
+          retryTimer = null
+        }
+      }, 120)
+
       return () => {
         active = false
+        if (retryTimer) clearInterval(retryTimer)
         if (el) {
-          el.removeEventListener('load', handleLoad)
+          el.removeEventListener('load', runMatte)
+          el.removeEventListener('model-visibility', runMatte)
+          el.removeEventListener('poster-dismissed', runMatte)
         }
       }
     }

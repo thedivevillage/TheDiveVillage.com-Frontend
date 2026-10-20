@@ -479,8 +479,8 @@
         "acceptRanges": null
       },
       {
-        "path": "/media/TDV-Media/AirportToAirport/travel.webp",
-        "url": "https://www.thedivevillage.com/media/TDV-Media/AirportToAirport/travel.webp",
+        "path": "https://media.thedivevillage.com/TDV-Media/AirportToAirport/travel.webp",
+        "url": "https://media.thedivevillage.com/TDV-Media/AirportToAirport/travel.webp",
         "status": 404,
         "ok": false,
         "contentType": "text/plain;charset=UTF-8",
@@ -490,8 +490,8 @@
         "acceptRanges": null
       },
       {
-        "path": "/media/TDV-Media/AirportToAirport/gallery1.webp",
-        "url": "https://www.thedivevillage.com/media/TDV-Media/AirportToAirport/gallery1.webp",
+        "path": "https://media.thedivevillage.com/TDV-Media/AirportToAirport/gallery1.webp",
+        "url": "https://media.thedivevillage.com/TDV-Media/AirportToAirport/gallery1.webp",
         "status": 404,
         "ok": false,
         "contentType": "text/plain;charset=UTF-8",

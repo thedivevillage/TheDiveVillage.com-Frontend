@@ -1,5 +1,5 @@
-const imgFullWetsuitFront = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325269/TDV-Media/Products/done/Full%20Wet%20Suit/Black_Wetsuit_with_Dive_Village_Logos.png';
-const imgFullWetsuitBack = 'https://res.cloudinary.com/qvbunv8y/image/upload/v1792325344/TDV-Media/Products/done/Full%20Wet%20Suit/Rear-View_Black_Wetsuit_with_Cyan_Zipper_Strap.png';
+const imgFullWetsuitFront = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485608/TDV-Media/Products/done/Full%20Wet%20Suit/Black_Wetsuit_with_Dive_Village_Logos.png';
+const imgFullWetsuitBack = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485608/TDV-Media/Products/done/Full%20Wet%20Suit/Rear-View_Black_Wetsuit_with_Cyan_Zipper_Strap.png';
 
 // 3D GLB Model Imports
 const glbCap = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791861802/TDV-Media/Products/TDV%20-%203D%20Product%20Files/The_Dive_Village_Foldable_Cap.glb';
