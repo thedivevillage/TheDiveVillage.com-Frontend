@@ -88,6 +88,7 @@ const RAW_GALLERY_ITEMS = [
     "id": "gallery-item-12",
     "type": "video",
     "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Magnificent_Sea_Anemone.mp4",
+    "poster": "/media/videos/Magnificent_Sea_Anemone_thumb.webp",
     "title": "Magnificent Sea Anemone",
     "category": "marine",
     "filename": "Magnificent Sea Anemone.mp4"
@@ -96,6 +97,7 @@ const RAW_GALLERY_ITEMS = [
     "id": "gallery-item-13",
     "type": "video",
     "src": "https://media.thedivevillage.com/TDV-Media/Extras for Gallery/Manta_Ray_2.mp4",
+    "poster": "/media/videos/Manta_Ray_2_thumb.webp",
     "title": "Manta Ray",
     "category": "marine",
     "filename": "Manta Ray (2).mp4"

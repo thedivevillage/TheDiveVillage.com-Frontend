@@ -211,7 +211,7 @@ export default function GalleryPreview() {
                   goToGalleryItem(item)
                 }
               }}
-              className="relative flex-shrink-0 w-[44vw] min-w-[155px] max-w-[210px] aspect-square sm:aspect-auto sm:w-[230px] sm:h-[310px] lg:w-[260px] lg:h-[350px] rounded-2xl overflow-hidden border border-white/20 shadow-none group cursor-pointer bg-transparent transition-transform duration-200 active:scale-[0.97] select-none"
+              className="relative flex-shrink-0 w-[44vw] min-w-[155px] max-w-[210px] aspect-[4/5] sm:aspect-auto sm:w-[240px] sm:h-[300px] lg:w-[280px] lg:h-[350px] rounded-2xl overflow-hidden border border-white/20 shadow-none group cursor-pointer bg-transparent transition-transform duration-200 active:scale-[0.97] select-none"
             >
               {item.type === 'video' ? (
                 <LazyVideo

@@ -700,6 +700,98 @@ export default function Gallery() {
 
 function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, isNightDive }) {
   const cardRef = useRef(null)
+  const isVideo = item.type === 'video'
+  const [isHovered, setIsHovered] = useState(false)
+  const isHoveredRef = useRef(false)
+  const videoRef = useRef(null)
+  const playPromiseRef = useRef(null)
+
+  const handleMouseEnter = () => {
+    if (!isVideo) return
+    isHoveredRef.current = true
+    setIsHovered(true)
+    const video = videoRef.current
+    if (video) {
+      try {
+        const p = video.play()
+        if (p && typeof p.then === 'function') {
+          playPromiseRef.current = p
+          p.catch((err) => {
+            if (err.name !== 'AbortError' && err.name !== 'NotAllowedError') {
+              // Ignore standard interruption aborts
+            }
+          })
+        }
+      } catch (e) {}
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (!isVideo) return
+    isHoveredRef.current = false
+    setIsHovered(false)
+    const video = videoRef.current
+    if (video) {
+      const p = playPromiseRef.current
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          if (!isHoveredRef.current && video) {
+            video.pause()
+            try {
+              if (video.readyState >= 1) video.currentTime = 0
+            } catch (e) {}
+          }
+        }).catch(() => {
+          if (!isHoveredRef.current && video) {
+            video.pause()
+          }
+        })
+      } else {
+        video.pause()
+        try {
+          if (video.readyState >= 1) video.currentTime = 0
+        } catch (e) {}
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!isVideo) return
+
+    const handleWindowBlur = () => {
+      if (isHoveredRef.current) {
+        handleMouseLeave()
+      }
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && isHoveredRef.current) {
+        handleMouseLeave()
+      }
+    }
+
+    window.addEventListener('blur', handleWindowBlur)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('blur', handleWindowBlur)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      if (videoRef.current) {
+        try {
+          videoRef.current.pause()
+        } catch (e) {}
+      }
+    }
+  }, [isVideo])
+
+  const handleClick = (e) => {
+    if (isVideo) {
+      handleMouseLeave()
+    }
+    if (typeof onClick === 'function') {
+      onClick(e)
+    }
+  }
 
   return (
     <motion.div
@@ -714,13 +806,19 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, 
           : 'bg-white border border-navy/10 shadow-sm hover:shadow-xl hover:border-cyan-500/30'
       }`}
       style={{ contain: 'layout paint' }}
-      onClick={onClick}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={handleMouseEnter}
+      onBlur={handleMouseLeave}
+      tabIndex={0}
     >
-      {/* Media Container */}
-      <div className={`relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden ${isNightDive ? 'bg-[#001e3d]' : 'bg-white'}`}>
+      {/* Media Container - 4:5 Ratio */}
+      <div className={`relative aspect-[4/5] w-full overflow-hidden ${isNightDive ? 'bg-[#001e3d]' : 'bg-white'}`}>
         {item.type === 'video' ? (
           <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
             <LazyVideo
+              ref={videoRef}
               src={item.src}
               lowResSrc={item.lowResSrc || item.previewVideo || item.preview}
               poster={item.poster || item.thumbnail || item.image}
@@ -729,13 +827,9 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, 
               defaultMuted={true}
               loop
               playsInline
-              autoPlay={true}
+              autoPlay={isHovered}
               playbackRate={item.playbackRate || (item.title?.toLowerCase().includes('clownfish and sea anemone') || item.src?.includes('Clownfish_and_Sea_Anemone') ? 0.7 : 1)}
-              zoom={
-                item.title?.toLowerCase().includes('moray eel') || item.id === 'gallery-item-0'
-                  ? 1
-                  : (item.zoom || (isBakedVerticalItem(item) ? 2.85 : 1))
-              }
+              zoom={item.zoom || 1}
               className="w-full h-full object-cover"
             />
           </div>
@@ -746,6 +840,22 @@ function GalleryGridCard({ item, idx, priority, reduce, onClick, isHighlighted, 
             priority={priority}
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
           />
+        )}
+
+        {/* Video Badge - Visible when not hovering */}
+        {isVideo && (
+          <div
+            className={`absolute top-2 left-2 sm:top-3.5 sm:left-3.5 z-10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white flex items-center gap-1.5 shadow-md pointer-events-none transition-all duration-300 ${
+              isHovered ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
+            }`}
+          >
+            <svg className="w-2.5 h-2.5 fill-white text-white shrink-0" viewBox="0 0 24 24">
+              <polygon points="6 3 20 12 6 21 6 3" />
+            </svg>
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase leading-none">
+              Video
+            </span>
+          </div>
         )}
 
         {/* Hover Dark Gradient */}

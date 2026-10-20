@@ -250,7 +250,6 @@ const LazyVideo = forwardRef(function LazyVideo({
         autoPlay={autoPlay && isInView}
         loop={loop}
         muted={muted}
-        defaultMuted={defaultMuted !== undefined ? defaultMuted : muted}
         playsInline={playsInline}
         webkit-playsinline=""
         x5-playsinline=""
