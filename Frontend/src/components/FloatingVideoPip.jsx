@@ -76,6 +76,11 @@ export default function FloatingVideoPip({
             preload="auto"
             onCanPlay={() => setIsPlaying(true)}
             onPlaying={() => setIsPlaying(true)}
+            onTimeUpdate={(e) => {
+              if (!isPlaying && e.target.currentTime > 0) {
+                setIsPlaying(true)
+              }
+            }}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 z-10 pointer-events-none ${
               isPlaying ? 'opacity-100' : 'opacity-0'
             }`}

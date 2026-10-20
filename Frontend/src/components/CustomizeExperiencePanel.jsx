@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PANEL_IMAGES } from '../utils/images'
 import FloatingVideoPip from './FloatingVideoPip'
-import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
 
 // Activity Media (Raw URLs & High-Res Thumbnails)
 const vidSafari = 'https://media.thedivevillage.com/TDV-Media/AirportToAirport/gallery1.mp4'
@@ -59,7 +58,7 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
       v.removeEventListener('canplay', startPlay)
       try {
         v.pause()
-      } catch (e) {}
+      } catch {}
     }
   }, [videoSrc])
 
@@ -200,6 +199,35 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
     }, duration)
     return () => clearInterval(timer)
   }, [images])
+
+  // Idle pre-warm first chunks of add-on videos for instant hover response
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const urlsToWarm = [
+      vidCanoneering,
+      vidSafari,
+      vidTrekking,
+      vidSurfing,
+      vidSightseeing,
+      vidSnorkeling,
+      vidCampers,
+      vidLiveaboard,
+    ]
+    const warm = () => {
+      urlsToWarm.forEach((url) => {
+        try {
+          fetch(url, { headers: { Range: 'bytes=0-131072' }, cache: 'force-cache' }).catch(() => {})
+        } catch {}
+      })
+    }
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(warm, { timeout: 2500 })
+      return () => window.cancelIdleCallback(id)
+    } else {
+      const timer = setTimeout(warm, 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
 
   const toggleActivity = (id) => {
@@ -376,7 +404,7 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
                           className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.7)] border-2 border-[#FFCD00] bg-[#001428] z-50 pointer-events-none flex flex-col justify-between"
                         >
                           <HoverVideoPreview
-                            videoSrc={activity.previewVideo || activity.video}
+                            videoSrc={activity.video}
                             poster={activity.poster}
                             displayName={activity.name}
                           />
