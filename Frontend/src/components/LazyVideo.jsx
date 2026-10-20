@@ -86,7 +86,9 @@ const LazyVideo = forwardRef(function LazyVideo({
   const [masterStarted, setMasterStarted] = useState(false)
 
   // Reset states if source changes
+  const retryCountRef = useRef(0)
   useEffect(() => {
+    retryCountRef.current = 0
     setMasterReady(false)
     setMasterStarted(false)
   }, [src])
@@ -211,6 +213,28 @@ const LazyVideo = forwardRef(function LazyVideo({
     }
   }
 
+  const handleMasterError = useCallback((e) => {
+    const video = e.currentTarget
+    const mediaError = video?.error
+    // MediaError.MEDIA_ERR_NETWORK is code 2. Do not retry on permanent errors (e.g. 404 / MEDIA_ERR_SRC_NOT_SUPPORTED).
+    const isNetworkError = !mediaError || mediaError.code === 2
+
+    if (isNetworkError && retryCountRef.current < 2 && src) {
+      retryCountRef.current += 1
+      const backoffDelay = retryCountRef.current * 1000
+      setTimeout(() => {
+        if (masterRef.current && hasEnteredView) {
+          masterRef.current.load()
+          safePlay(masterRef.current, masterPlayPromiseRef)
+        }
+      }, backoffDelay)
+    } else {
+      // Retries exhausted or non-transient failure: gracefully preserve poster image
+      setMasterStarted(false)
+      setMasterReady(false)
+    }
+  }, [src, hasEnteredView, safePlay])
+
   return (
     <div
       ref={containerRef}
@@ -273,6 +297,7 @@ const LazyVideo = forwardRef(function LazyVideo({
             externalOnLoadedData(e)
           }
         }}
+        onError={handleMasterError}
         className={`absolute inset-0 w-full h-full ${fitClass} transition-opacity duration-500 ease-out z-[2] ${
           masterStarted || (!poster && masterReady) ? 'opacity-100' : 'opacity-0'
         } ${!controls ? 'pointer-events-none' : ''} ${videoClassName}`}

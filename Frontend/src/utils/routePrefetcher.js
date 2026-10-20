@@ -15,16 +15,11 @@ const TOP_SERVICE_VIDEOS = [
 ]
 
 export function prefetchVideoChunk(url) {
-  if (typeof window === 'undefined' || prefetchedUrls.has(url)) return
+  if (typeof window === 'undefined' || !url || prefetchedUrls.has(url)) return
   prefetchedUrls.add(url)
-
-  try {
-    const link = document.createElement('link')
-    link.rel = 'preload'
-    link.as = 'video'
-    link.href = url
-    document.head.appendChild(link)
-  } catch (e) {}
+  // Intentionally avoid injecting <link rel="preload" as="video"> for full MP4s.
+  // Full media preloading causes socket contention and byte-range abort errors in Chromium.
+  // Video elements handle their own streaming chunks on demand.
 }
 
 export function prefetchServicesMedia() {

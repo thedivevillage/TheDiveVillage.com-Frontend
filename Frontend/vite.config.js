@@ -228,14 +228,34 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         globIgnores: ['**/firebase-messaging-sw.js'],
-        navigateFallbackDenylist: [/^\/firebase-messaging-sw\.js$/],
+        navigateFallbackDenylist: [
+          /^\/firebase-messaging-sw\.js$/,
+          /\.(mp4|webm|mov|m4v|m3u8|ts|m4s)(\?.*)?$/i,
+          /\/HLS\//i,
+          /^\/media\//i,
+        ],
         runtimeCaching: [
+          {
+            // 0. Complete Native Streaming Bypass (MP4, WebM, HLS manifests & segments, Range requests)
+            urlPattern: ({ request, url }) => {
+              const pathname = (url.pathname || '').toLowerCase();
+              const isMediaStreamExt = /\.(mp4|webm|mov|m4v|m3u8|ts|m4s)(\?.*)?$/i.test(pathname);
+              const isHlsPath = pathname.includes('/hls/');
+              const isVideoAudioDest = request.destination === 'video' || request.destination === 'audio';
+              const hasRange = request.headers && typeof request.headers.has === 'function' && request.headers.has('range');
+              return isMediaStreamExt || isHlsPath || isVideoAudioDest || hasRange;
+            },
+            handler: 'NetworkOnly',
+            options: {
+              // Direct browser network streaming without CacheStorage interception
+            }
+          },
           {
             // 1. Cloudinary Media Assets (Images, Posters, 3D Assets - streaming videos bypass SW)
             urlPattern: /^https:\/\/res\.cloudinary\.com\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-cloudinary-v2',
+              cacheName: 'tdv-media-cloudinary-v3',
               expiration: {
                 maxEntries: 1000,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
@@ -246,11 +266,11 @@ export default defineConfig({
             }
           },
           {
-            // 2. Cloudflare R2 Media (Images, Posters, 3D models, Audio - streaming videos bypass SW)
-            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|mp3|ogg|wav|json)(?:\?.*)?$/i,
+            // 2. Cloudflare R2 Media (Images, Posters, 3D models - streaming media bypasses SW)
+            urlPattern: /^https:\/\/(?:.*\.r2\.(?:cloudflarestorage\.com|dev)|media\.thedivevillage\.com)\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|json)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-r2-v2',
+              cacheName: 'tdv-media-r2-v3',
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
@@ -261,11 +281,11 @@ export default defineConfig({
             }
           },
           {
-            // 3. Local Media route (Images, Posters, 3D models, Audio - streaming videos bypass SW)
-            urlPattern: /^\/media\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|mp3|ogg|wav)(?:\?.*)?$/i,
+            // 3. Local Media route (Images, Posters, 3D models - streaming media bypasses SW)
+            urlPattern: /^\/media\/.*\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-local-v2',
+              cacheName: 'tdv-media-local-v3',
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
@@ -276,11 +296,11 @@ export default defineConfig({
             }
           },
           {
-            // 4. Static media extensions (Images, Audio, 3D models - streaming videos bypass SW)
-            urlPattern: /\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf|mp3|ogg|wav)(?:\?.*)?$/i,
+            // 4. Static media extensions (Images, 3D models - streaming media bypasses SW)
+            urlPattern: /\.(?:png|jpe?g|webp|avif|svg|gif|ico|glb|gltf)(?:\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tdv-media-assets-v2',
+              cacheName: 'tdv-media-assets-v3',
               expiration: {
                 maxEntries: 1000,
                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 Year / Permanent
