@@ -14,6 +14,7 @@ import useNightDive from '../hooks/useNightDive'
 
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import { getOptimizedImageUrl } from '../utils/mediaOptimizer'
+import QuantitySelector from '../components/QuantitySelector'
 
 const rawBannerImg = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791686007/TDV-Media/Merch/banner.jpg'
 const bannerImg = rawBannerImg
@@ -98,21 +99,18 @@ export default function Shop() {
     loadProducts()
   }, [])
 
-  const handleQuickAdd = (product, e) => {
+  const handleQuickAdd = (product, e, customQty) => {
     if (e) {
       e.preventDefault()
       e.stopPropagation()
     }
     triggerSuccessHaptic()
-    if (!user?.uid) {
-      navigate('/login')
-      return
-    }
+    const qtyToAdd = typeof customQty === 'number' && customQty > 0 ? customQty : 1
     const firstColor = product.colors?.[0]?.name || 'Standard'
     const firstSize = product.sizes?.[0] || 'Standard'
     addItem({
       inventoryId: `${product.id}-${firstSize}-${firstColor}`,
-      quantity: 1,
+      quantity: qtyToAdd,
       product: {
         id: product.id,
         name: product.title || product.name,
@@ -886,6 +884,23 @@ function GroupGallerySection() {
 
 function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, isNightDive }) {
   const navigate = useNavigate()
+  const { items } = useCart()
+  const inCartQty = useMemo(() => {
+    if (!Array.isArray(items) || !product?.id) return 0
+    const prodItems = items.filter(
+      (i) => i.product?.id === product.id || i.inventoryId?.startsWith(product.id) || i.id === product.id
+    )
+    return prodItems.reduce((sum, i) => sum + (i.quantity || 0), 0)
+  }, [items, product?.id])
+
+  const [cardQty, setCardQty] = useState(() => (inCartQty > 0 ? inCartQty : 0))
+
+  useEffect(() => {
+    if (inCartQty > 0 && cardQty < 1) {
+      setCardQty(inCartQty)
+    }
+  }, [inCartQty])
+
   const [isHovered, setIsHovered] = useState(false)
   const [hasHovered, setHasHovered] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -1240,19 +1255,41 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
           </div>
         </div>
 
-        {/* Add to Cart Yellow Button (Pinned to Bottom) */}
-        <button
-          type="button"
-          onClick={(e) => onQuickAdd(product, e)}
-          className="product-add-btn-mobile w-full bg-[#FFCD00] hover:bg-[#FFD700] text-black font-bold py-2 xs:py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs xs:text-sm active:scale-95 transition shadow-sm cursor-pointer mt-3"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
-          <span>Add to Cart</span>
-        </button>
+        {/* Quantity Controls & Add to Cart Yellow Button (Pinned to Bottom) */}
+        <div className="mt-3 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-slate-500">Qty</span>
+            <QuantitySelector
+              value={cardQty}
+              onChange={(newQty) => setCardQty(newQty)}
+              min={inCartQty > 0 ? 1 : 0}
+              max={99}
+              size="sm"
+            />
+          </div>
+          <div className="flex items-center gap-1.5 w-full">
+            <button
+              type="button"
+              onClick={(e) => onQuickAdd(product, e, cardQty)}
+              className="product-add-btn-mobile flex-1 bg-[#FFCD00] hover:bg-[#FFD700] text-black font-bold py-2 xs:py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-xs xs:text-sm active:scale-95 transition shadow-sm cursor-pointer"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              <span>Add to Cart</span>
+            </button>
+            {inCartQty > 0 && (
+              <span
+                className="bg-[#FFCD00] text-black font-black text-xs px-2.5 py-2 xs:py-2.5 rounded-xl border border-black/15 shadow-sm flex items-center justify-center shrink-0"
+                title={`${inCartQty} in cart`}
+              >
+                +{inCartQty}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* DESKTOP PRODUCT CARD (hidden md:flex - White Card) */}
@@ -1351,7 +1388,15 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
         </div>
 
         <div className="pt-2 sm:pt-4 border-t border-navy/10 flex items-center justify-between gap-1.5 sm:gap-3">
-          <span className="product-card-inquire text-[9px] sm:text-[10px] text-emerald-600 font-bold hidden sm:inline">Inquire within</span>
+          <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5">
+            <QuantitySelector
+              value={cardQty}
+              onChange={(newQty) => setCardQty(newQty)}
+              min={inCartQty > 0 ? 1 : 0}
+              max={99}
+              size="sm"
+            />
+          </div>
           <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-0">
             <button
               type="button"
@@ -1373,10 +1418,24 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             </button>
-            <button onClick={(e) => onQuickAdd(product, e)} className="product-add-btn rounded-full bg-navy text-white px-3 py-1.5 sm:px-5 sm:py-2.5 text-[10px] sm:text-xs font-bold hover:bg-[#00AEC7] hover:text-navy active:scale-95 transition shadow-sm flex items-center gap-1 cursor-pointer whitespace-nowrap">
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
-              Add
-            </button>
+            <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={(e) => onQuickAdd(product, e, cardQty)}
+                className="product-add-btn rounded-full bg-navy text-white px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold hover:bg-[#00AEC7] hover:text-navy active:scale-95 transition shadow-sm flex items-center gap-1 cursor-pointer whitespace-nowrap"
+              >
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+                <span>Add</span>
+              </button>
+              {inCartQty > 0 && (
+                <span
+                  className="bg-[#FFCD00] text-[#001e3d] font-extrabold text-[10px] sm:text-xs px-2 py-1 rounded-full shadow-xs border border-black/10 flex items-center justify-center"
+                  title={`${inCartQty} in cart`}
+                >
+                  +{inCartQty}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Badge from './Badge'
 import Button from './Button'
 import SafeImage from './SafeImage'
+import QuantitySelector from './QuantitySelector'
 import { formatCurrency } from '../utils/formatCurrency'
 import { useCart } from '../hooks/useCart'
 import { useWishlist } from '../hooks/useWishlist'
@@ -12,10 +13,22 @@ import { useAuth } from '../hooks/useAuth'
 export default function ProductCard({ product }) {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { addItem } = useCart()
+  const { items, addItem } = useCart()
   const { toggle: toggleWishlist, isWishlisted } = useWishlist()
   const reduce = useReducedMotion()
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+
+  const inCartQty = (items || [])
+    .filter((i) => i.product?.id === product.id || i.inventoryId?.startsWith(product.id) || i.id === product.id)
+    .reduce((sum, i) => sum + (i.quantity || 0), 0)
+
+  const [quantity, setQuantity] = useState(() => (inCartQty > 0 ? inCartQty : 0))
+
+  useEffect(() => {
+    if (inCartQty > 0 && quantity < 1) {
+      setQuantity(inCartQty)
+    }
+  }, [inCartQty])
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -26,13 +39,10 @@ export default function ProductCard({ product }) {
   const onAdd = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (!user?.uid) {
-      navigate('/login')
-      return
-    }
+    const qtyToAdd = Math.max(1, quantity)
     addItem({
       inventoryId: product.inventoryId || product.id,
-      quantity: 1,
+      quantity: qtyToAdd,
       product: {
         id: product.id,
         name: product.name || product.title,
@@ -40,6 +50,9 @@ export default function ProductCard({ product }) {
         image: product.image,
       },
     })
+    if (quantity < 1) {
+      setQuantity(1)
+    }
   }
 
   const wishlisted = isWishlisted(product.id)
@@ -71,11 +84,25 @@ export default function ProductCard({ product }) {
           </h3>
           <p className="mt-1 text-sm text-white/70">{product.category}</p>
         </Link>
-        <div className="mt-auto flex items-center justify-end gap-2">
+        <div className="mt-auto flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
+          <QuantitySelector
+            value={quantity}
+            onChange={(newQty) => setQuantity(newQty)}
+            min={inCartQty > 0 ? 1 : 0}
+            max={99}
+            size="sm"
+          />
           <div className="flex items-center gap-2">
-            <Button type="button" onClick={onAdd} className="!px-4 !py-2 text-xs">
-              Add to Cart
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button type="button" onClick={onAdd} className="!px-4 !py-2 text-xs">
+                Add to Cart
+              </Button>
+              {inCartQty > 0 && (
+                <span className="bg-[#FFCD00] text-black font-extrabold text-xs px-2 py-1 rounded-md border border-black/15 shadow-xs">
+                  +{inCartQty}
+                </span>
+              )}
+            </div>
             <button
               type="button"
               onClick={(e) => {

@@ -8,6 +8,7 @@ import { useWishlist } from '../hooks/useWishlist'
 import { useAuth } from '../hooks/useAuth'
 import Product3DViewer from '../components/Product3DViewer'
 import SEOHead from '../components/SEOHead'
+import QuantitySelector from '../components/QuantitySelector'
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { isNightModeAllowedRoute } from '../hooks/useNightDive'
@@ -16,7 +17,7 @@ export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { addItem } = useCart()
+  const { items, addItem } = useCart()
   const { toggle: toggleWishlist, isWishlisted } = useWishlist()
 
   // Find product
@@ -96,7 +97,29 @@ export default function ProductDetail() {
     }
   }
 
-  const [quantity, setQuantity] = useState(1)
+  // Calculate quantity of this product currently in cart
+  const inCartQty = useMemo(() => {
+    if (!Array.isArray(items) || !product?.id) return 0
+    const colorName = (product.colors && product.colors.length > 0 && selectedColor?.name) ? selectedColor.name : 'Standard'
+    const currentInventoryId = `${product.id}-${selectedSize}-${colorName}`
+    
+    const exact = items.find((i) => i.inventoryId === currentInventoryId)
+    if (exact && exact.quantity > 0) return exact.quantity
+    
+    const matching = items.filter(
+      (i) => i.product?.id === product.id || i.inventoryId?.startsWith(product.id) || i.id === product.id
+    )
+    return matching.reduce((sum, i) => sum + (i.quantity || 0), 0)
+  }, [items, product?.id, selectedSize, selectedColor])
+
+  const [quantity, setQuantity] = useState(() => (inCartQty > 0 ? inCartQty : 0))
+
+  useEffect(() => {
+    if (inCartQty > 0 && quantity < 1) {
+      setQuantity(inCartQty)
+    }
+  }, [inCartQty])
+
   const [toastMessage, setToastMessage] = useState(null)
   const [isAdding, setIsAdding] = useState(false)
 
@@ -199,7 +222,11 @@ export default function ProductDetail() {
       setSelectedSize('XS - M')
     }
     
-    setQuantity(1)
+    const inCartForP = Array.isArray(items)
+      ? items.filter((i) => i.product?.id === p.id || i.inventoryId?.startsWith(p.id) || i.id === p.id)
+          .reduce((sum, i) => sum + (i.quantity || 0), 0)
+      : 0
+    setQuantity(inCartForP > 0 ? inCartForP : 0)
     setPincode('')
     setPincodeStatus(null)
     setModalActiveImage(null)
@@ -280,18 +307,15 @@ export default function ProductDetail() {
   // Add to Cart handler
   const handleAddToCart = () => {
     triggerSuccessHaptic()
-    if (!user?.uid) {
-      navigate('/login')
-      return
-    }
     setIsAdding(true)
 
     const mappedSize = selectedSize
     const colorName = (product.colors && product.colors.length > 0 && selectedColor?.name) ? selectedColor.name : 'Standard'
+    const qtyToAdd = Math.max(1, quantity)
     
     addItem({
       inventoryId: `${product.id}-${selectedSize}-${colorName}`,
-      quantity,
+      quantity: qtyToAdd,
       product: {
         id: product.id,
         name: product.title || product.name,
@@ -302,8 +326,12 @@ export default function ProductDetail() {
       },
     })
 
+    if (quantity < 1) {
+      setQuantity(1)
+    }
+
     const colorText = product.colors && product.colors.length > 0 && colorName !== 'Standard' ? ` / ${colorName}` : ''
-    setToastMessage(`Added ${quantity}x ${product.title} (${selectedSize}${colorText}) to cart`)
+    setToastMessage(`Added ${qtyToAdd}x ${product.title} (${selectedSize}${colorText}) to cart`)
     setTimeout(() => {
       setIsAdding(false)
       setToastMessage(null)
@@ -753,30 +781,17 @@ export default function ProductDetail() {
 
           </div>
 
-          {/* Quantity Selector */}
+          {/* Quantity Selector with Number Typing & +/- buttons */}
           <div className="pt-1 flex items-center gap-3">
             <span className="text-xs font-semibold text-gray-700">Quantity</span>
-            <div className="relative inline-block">
-              <select
-                value={quantity}
-                onChange={(e) => {
-                  triggerHaptic(6)
-                  setQuantity(Number(e.target.value))
-                }}
-                className="appearance-none bg-white border border-gray-300 hover:border-gray-500 rounded-md py-1.5 pl-3 pr-8 text-xs font-bold text-gray-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-400"
-              >
-                <option value={1}>01</option>
-                <option value={2}>02</option>
-                <option value={3}>03</option>
-                <option value={4}>04</option>
-                <option value={5}>05</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-            </div>
+            <QuantitySelector
+              id="mobile-quantity-input"
+              value={quantity}
+              onChange={(newQty) => setQuantity(newQty)}
+              min={inCartQty > 0 ? 1 : 0}
+              max={99}
+              size="md"
+            />
           </div>
 
           {/* Delivery Details */}
@@ -1217,42 +1232,39 @@ export default function ProductDetail() {
 
             </div>
 
-            {/* Quantity Dropdown */}
+            {/* Quantity Selector with Number Typing & +/- buttons */}
             <div className="pt-1 flex items-center gap-3">
               <span className="text-xs font-semibold text-gray-700">Quantity</span>
-              <div className="relative inline-block">
-                <select
-                  value={quantity}
-                  onChange={(e) => {
-                    triggerHaptic(6)
-                    setQuantity(Number(e.target.value))
-                  }}
-                  className="appearance-none bg-white border border-gray-300 hover:border-gray-500 rounded-md py-1.5 pl-3 pr-8 text-xs font-bold text-gray-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-400"
-                >
-                  <option value={1}>01</option>
-                  <option value={2}>02</option>
-                  <option value={3}>03</option>
-                  <option value={4}>04</option>
-                  <option value={5}>05</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </div>
-              </div>
+              <QuantitySelector
+                id="desktop-quantity-input"
+                value={quantity}
+                onChange={(newQty) => setQuantity(newQty)}
+                min={inCartQty > 0 ? 1 : 0}
+                max={99}
+                size="md"
+              />
             </div>
 
-            {/* Action Buttons: ADD TO CART (Yellow) + WISHLIST (Outline) */}
+            {/* Action Buttons: ADD TO CART (Yellow) with +1 next to it + WISHLIST (Outline) */}
             <div className="pt-2 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                disabled={isAdding}
-                className="btn-add-to-cart-yellow flex-1 bg-[#FFCD00] hover:bg-[#FFD700] active:scale-[0.98] text-black font-bold py-3.5 px-6 rounded-md shadow-xs text-xs sm:text-sm tracking-wider uppercase transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
-              >
-                {isAdding ? 'Adding...' : 'ADD TO CART'}
-              </button>
+              <div className="flex-1 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  disabled={isAdding}
+                  className="btn-add-to-cart-yellow flex-1 bg-[#FFCD00] hover:bg-[#FFD700] active:scale-[0.98] text-black font-bold py-3.5 px-6 rounded-md shadow-xs text-xs sm:text-sm tracking-wider uppercase transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+                >
+                  {isAdding ? 'Adding...' : 'ADD TO CART'}
+                </button>
+                {inCartQty > 0 && (
+                  <span
+                    className="h-[46px] min-w-[46px] px-3 bg-[#FFCD00] hover:bg-[#FFD700] text-black font-black text-sm rounded-md border border-black/15 shadow-xs flex items-center justify-center shrink-0 transition-transform active:scale-95"
+                    title={`${inCartQty} in cart`}
+                  >
+                    +{inCartQty}
+                  </span>
+                )}
+              </div>
 
               <button
                 type="button"
@@ -1819,14 +1831,24 @@ export default function ProductDetail() {
           </svg>
         </button>
 
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          disabled={isAdding}
-          className="btn-add-to-cart-yellow flex-1 h-11 sm:h-12 bg-[#FFCD00] hover:bg-[#FFD700] active:scale-[0.98] text-black font-bold px-4 rounded-md text-xs sm:text-sm tracking-wider uppercase transition text-center shadow-xs flex items-center justify-center cursor-pointer disabled:opacity-75"
-        >
-          {isAdding ? 'ADDING...' : 'ADD TO CART'}
-        </button>
+        <div className="flex-1 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isAdding}
+            className="btn-add-to-cart-yellow flex-1 h-11 sm:h-12 bg-[#FFCD00] hover:bg-[#FFD700] active:scale-[0.98] text-black font-bold px-4 rounded-md text-xs sm:text-sm tracking-wider uppercase transition text-center shadow-xs flex items-center justify-center cursor-pointer disabled:opacity-75"
+          >
+            {isAdding ? 'ADDING...' : 'ADD TO CART'}
+          </button>
+          {inCartQty > 0 && (
+            <span
+              className="h-11 sm:h-12 min-w-[40px] px-2.5 bg-[#FFCD00] text-black font-black text-xs sm:text-sm rounded-md border border-black/15 shadow-xs flex items-center justify-center shrink-0"
+              title={`${inCartQty} in cart`}
+            >
+              +{inCartQty}
+            </span>
+          )}
+        </div>
       </div>
 
     </div>
