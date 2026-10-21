@@ -36,6 +36,7 @@ function DiverAnimation({ src, fallbackSrc, className, isNightDive }) {
     <video
       ref={videoRef}
       src={currentSrc}
+      poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
       autoPlay
       loop
       muted

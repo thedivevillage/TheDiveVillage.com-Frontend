@@ -77,6 +77,7 @@ function HoverVideoPreview({ videoSrc, poster, displayName }) {
       <video
         ref={videoRef}
         src={videoSrc}
+        poster={poster || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
         autoPlay
         loop
         muted

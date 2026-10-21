@@ -46,6 +46,8 @@ function useDirectVideoTexture(src, isVisible = true) {
     const domContainer = getOrCreateDomVideoContainer()
     const video = document.createElement('video')
     video.crossOrigin = 'anonymous'
+    video.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    video.setAttribute('poster', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
     video.playsInline = true
     video.setAttribute('webkit-playsinline', '')
     video.setAttribute('playsinline', '')
@@ -105,6 +107,8 @@ function useDirectVideoTexture(src, isVisible = true) {
           vidTexture.colorSpace = THREE.SRGBColorSpace
           vidTexture.minFilter = THREE.LinearFilter
           vidTexture.magFilter = THREE.LinearFilter
+          vidTexture.wrapS = THREE.ClampToEdgeWrapping
+          vidTexture.wrapT = THREE.ClampToEdgeWrapping
           vidTexture.generateMipmaps = false
           if (isMounted) {
             setTexture(vidTexture)

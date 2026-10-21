@@ -99,16 +99,12 @@ class AudioManager {
     // Ensures audio un-mutes automatically without waiting for an explicit click
     // ─────────────────────────────────────────────────────────────
     const microEvents = [
-      'mousemove',
-      'pointermove',
-      'wheel',
-      'scroll',
-      'pointerdown',
-      'touchstart',
-      'mousedown',
       'click',
+      'touchend',
+      'pointerup',
       'keydown',
-      'focus'
+      'pointerdown',
+      'mousedown'
     ]
 
     const removeUnlockListeners = () => {
@@ -383,6 +379,11 @@ class AudioManager {
           this.notify()
         }).catch((e) => {
           if (e?.name === 'AbortError') return
+          if (e?.name === 'NotAllowedError') {
+            // Keep muted if browser requires explicit user gesture (expected on mobile Android)
+            this.audio.muted = true
+            return
+          }
           console.warn('[AudioManager] Unmute play blocked:', e)
         })
       } else {

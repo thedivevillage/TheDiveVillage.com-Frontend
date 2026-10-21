@@ -95,6 +95,8 @@ function useDirectVideoTexture(src, fallbackMp4, playbackRate = 0.5, priority = 
       const domContainer = getOrCreateDomVideoContainer()
       video = document.createElement('video')
       video.crossOrigin = 'anonymous'
+      video.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+      video.setAttribute('poster', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
       video.muted = true
       video.defaultMuted = true
       video.volume = 0
@@ -127,7 +129,7 @@ function useDirectVideoTexture(src, fallbackMp4, playbackRate = 0.5, priority = 
 
     const checkReadiness = () => {
       if (!isMounted) return false
-      return (video.readyState >= 1 && video.videoWidth > 0) || video.readyState >= 2
+      return video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0
     }
 
     const registerFrameCallback = () => {
@@ -160,6 +162,8 @@ function useDirectVideoTexture(src, fallbackMp4, playbackRate = 0.5, priority = 
           vidTexture.colorSpace = THREE.SRGBColorSpace
           vidTexture.minFilter = THREE.LinearFilter
           vidTexture.magFilter = THREE.LinearFilter
+          vidTexture.wrapS = THREE.ClampToEdgeWrapping
+          vidTexture.wrapT = THREE.ClampToEdgeWrapping
           vidTexture.generateMipmaps = false
           if (isMounted) {
             setTexture(vidTexture)
@@ -839,6 +843,7 @@ export default function VideoSphereBackground() {
             playsInline
             preload="auto"
             crossOrigin="anonymous"
+            poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             disablePictureInPicture
             disableRemotePlayback
             style={{
