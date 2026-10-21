@@ -48,6 +48,8 @@ export default function CustomCursor() {
 
     const isPointInsideGlobe = () => false
 
+    let isNearClickable = false
+
     const checkNormalCursor = (target) => {
       if (!target) return false
       const el = target instanceof Element ? target : target.parentElement
@@ -59,16 +61,62 @@ export default function CustomCursor() {
       return !!el.closest('input, textarea, select, [contenteditable="true"], .normal-cursor, [data-normal-cursor], form, [data-auth-container], .maplibregl-map, .maplibregl-canvas, .maplibregl-canvas-container, [data-dive-map]')
     }
 
-    const checkInteractive = (target) => {
+    const checkClickable = (target) => {
       if (!target) return false
       const el = target instanceof Element ? target : target.parentElement
       if (!el || !(el instanceof Element)) return false
-      return !!el.closest('a, button, input, select, textarea, [role="button"], .cursor-pointer, [data-cursor-interactive], label, [data-product-card], .product-card, [data-360-toggle="clickable"], [data-gallery-close], [aria-label="Close Lightbox"]')
+      if (el.closest('a, button, input:not([type="hidden"]), select, textarea, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="checkbox"], [role="switch"], [role="option"], summary, label, .cursor-pointer, [data-cursor-interactive], [data-product-card], .product-card, [data-360-toggle], [data-gallery-close], [aria-label*="close" i], [aria-label*="button" i], .nav-link, .btn, .button, [onclick], [tabindex]:not([tabindex="-1"])')) {
+        return true
+      }
+      if (el.onclick || el.hasAttribute('onclick')) return true
+      if (el.style && el.style.cursor === 'pointer') return true
+
+      try {
+        if (window.getComputedStyle(el).cursor === 'pointer') return true
+      } catch (_) {}
+
+      return false
     }
 
-    const checkRadiusForInteractive = (x, y) => {
-      let el = document.elementFromPoint(x, y)
-      return el ? checkInteractive(el) : false
+    const VICINITY_RADIUS = 42
+
+    const isNearClickableElement = (x, y, target) => {
+      if (typeof document === 'undefined') return false
+      if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) return false
+
+      // 1. Direct hit on current target
+      if (target && checkClickable(target)) return true
+      const centerEl = document.elementFromPoint(x, y)
+      if (centerEl && checkClickable(centerEl)) return true
+
+      // 2. Specialized widgets (360 toggle, lightbox close)
+      if (isNear360Toggle(x, y, target) || isNearGalleryClose(x, y, target)) return true
+
+      // 3. Vicinity radial compass check (42px radius buffer)
+      const r = VICINITY_RADIUS
+      const diag = r * 0.7071
+      const points = [
+        [x - r, y],
+        [x + r, y],
+        [x, y - r],
+        [x, y + r],
+        [x - diag, y - diag],
+        [x + diag, y - diag],
+        [x - diag, y + diag],
+        [x + diag, y + diag],
+      ]
+
+      for (let i = 0; i < points.length; i++) {
+        const [px, py] = points[i]
+        if (px >= 0 && py >= 0 && px < window.innerWidth && py < window.innerHeight) {
+          const neighborEl = document.elementFromPoint(px, py)
+          if (neighborEl && neighborEl !== centerEl && checkClickable(neighborEl)) {
+            return true
+          }
+        }
+      }
+
+      return false
     }
 
     let cachedToggleCenter = null
@@ -186,7 +234,12 @@ export default function CustomCursor() {
         const speed = Math.hypot(smoothDx, smoothDy)
         const isDragging360 = typeof document !== 'undefined' && document.body.hasAttribute('data-360-dragging')
 
-        if (isDragging360) {
+        if (isNearClickable) {
+          // Around the vicinity of any clickable button or element:
+          // Disable rotating: level out smoothly to horizontal 0 deg
+          targetRotation = 0
+          // Disable flipping: do NOT update targetScaleX, maintain steady facing direction
+        } else if (isDragging360) {
           // Level out horizontally during active 360 dragging
           targetRotation = 0
         } else if (speed > 0.8) {
@@ -221,7 +274,7 @@ export default function CustomCursor() {
         // Retain current targetRotation so the cursor remains in its position!
 
         // Frame-rate independent exponential smoothing
-        const rotLerp = 1 - Math.exp(-12 * dt)
+        const rotLerp = 1 - Math.exp((isNearClickable ? -18 : -12) * dt)
         const scaleLerp = 1 - Math.exp(-18 * dt)
         currentRotation += (targetRotation - currentRotation) * rotLerp
         currentScaleX += (targetScaleX - currentScaleX) * scaleLerp
@@ -247,22 +300,24 @@ export default function CustomCursor() {
         }
       }
 
-      // Radius check throttled to ~15fps (bypass during active scroll)
+      // Vicinity check throttled to ~25fps (bypass during active scroll)
       const isScrolling = typeof document !== 'undefined' && document.body.classList.contains('is-scrolling')
-      if (!isScrolling && now - lastCheckTime >= 64 && latestX >= 0 && latestY >= 0) { // Limit to ~15fps for radius checks, bypass during scroll
+      if (!isScrolling && now - lastCheckTime >= 40 && latestX >= 0 && latestY >= 0) {
         lastCheckTime = now
         const elUnderPoint = document.elementFromPoint(latestX, latestY) || currentTarget
         isOverNormalCursor = checkNormalCursor(elUnderPoint) || isPointInsideGlobe(latestX, latestY)
         if (isOverNormalCursor) {
+          isNearClickable = false
           if (isHoveringInteractive) {
             isHoveringInteractive = false
             setIsHovering(false)
           }
         } else {
-          const hovering = checkRadiusForInteractive(latestX, latestY)
-          if (hovering !== isHoveringInteractive) {
-            isHoveringInteractive = hovering
-            setIsHovering(hovering)
+          const near = isNearClickableElement(latestX, latestY, elUnderPoint)
+          isNearClickable = near
+          if (near !== isHoveringInteractive) {
+            isHoveringInteractive = near
+            setIsHovering(near)
           }
         }
       }
@@ -292,6 +347,7 @@ export default function CustomCursor() {
       isOverNormalCursor = checkNormalCursor(e.target) || isPointInsideGlobe(latestX, latestY)
 
       if (isOverNormalCursor) {
+        isNearClickable = false
         if (isHoveringInteractive) {
           isHoveringInteractive = false
           setIsHovering(false)
@@ -310,12 +366,12 @@ export default function CustomCursor() {
           cursorRef.current.style.visibility = 'visible'
         }
 
-        // 0ms Instant Response ONLY if directly on a button and not over globe/normal cursor
-        if (e.target && checkInteractive(e.target)) {
-          if (!isHoveringInteractive) {
-            isHoveringInteractive = true
-            setIsHovering(true)
-          }
+        // Instant response for buttons/elements and their vicinity
+        const near = isNearClickableElement(latestX, latestY, e.target)
+        isNearClickable = near
+        if (near !== isHoveringInteractive) {
+          isHoveringInteractive = near
+          setIsHovering(near)
         }
       }
     }
@@ -334,6 +390,7 @@ export default function CustomCursor() {
 
     const onMouseLeave = () => {
       isHidden = true
+      isNearClickable = false
       prevMouseX = -100
       prevMouseY = -100
       pendingDx = 0
@@ -484,20 +541,6 @@ export default function CustomCursor() {
             willChange: 'transform',
           }}
         >
-<<<<<<< Updated upstream
-          <video
-            ref={videoRef}
-            src={cursorVideo}
-            poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            onError={() => setVideoError(true)}
-            className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
-          />
-=======
           {/* Scuba Diver with Dynamic Luminescence and Interactive Scale */}
           <div
             className="will-change-transform transition-transform duration-100 ease-out"
@@ -516,6 +559,7 @@ export default function CustomCursor() {
             <video
               ref={videoRef}
               src={cursorVideo}
+              poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
               autoPlay
               loop
               muted
@@ -525,7 +569,6 @@ export default function CustomCursor() {
               className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
             />
           </div>
->>>>>>> Stashed changes
         </div>
       </div>
     </div>
