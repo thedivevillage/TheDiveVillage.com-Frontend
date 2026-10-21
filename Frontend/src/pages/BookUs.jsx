@@ -391,6 +391,15 @@ export default function BookUs() {
     triggerHaptic(5)
   }, [])
 
+  const handleMapSelectIsland = useCallback((newIsland) => {
+    setIsland(newIsland || '')
+    setSelectedLocation(null)
+    setLocation('')
+    setLocationId('')
+    setStepError('')
+    triggerHaptic(5)
+  }, [])
+
   const handleMapSelectSite = useCallback((site) => {
     if (!site) return
     if (site.country && site.country !== 'International Waters') {
@@ -2674,6 +2683,7 @@ export default function BookUs() {
                 onSelectSite={handleMapSelectSite}
                 onBookSite={handleMapSelectSite}
                 onSelectCountry={handleMapSelectCountry}
+                onSelectIsland={handleMapSelectIsland}
                 selectedCountry={country}
                 selectedIsland={island}
                 selectedSite={location}

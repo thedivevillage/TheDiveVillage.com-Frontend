@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { Map, setWorkerUrl, NavigationControl } from 'maplibre-gl'
+import { Map, setWorkerUrl, NavigationControl, Marker } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { loadDiveSites } from '../utils/diveSitesLoader'
-import { getIslandForSite } from '../utils/diveIslandCatalog'
+import { getIslandForSite, getIslandsForCountry } from '../utils/diveIslandCatalog'
 import localPinIconUrl from '../assets/pin.png'
 import { PIN_DATA_URI } from '../utils/pinBase64'
 
@@ -16,8 +16,6 @@ const DEFAULT_CENTER = [15, 20]
 const DEFAULT_ZOOM = 1.8
 
 // Preload the yellow dive goggles pin icon (#FFD500)
-// Directly uses the embedded Base64 Data URI to guarantee 100% synchronous in-memory availability
-// with zero network latency, zero CORS restrictions, and zero missing image drops.
 let activeMapInstance = null
 let preloadedPinImg = null
 if (typeof window !== 'undefined') {
@@ -36,29 +34,8 @@ if (typeof window !== 'undefined') {
   }
 }
 
-const preloadPinImage = () => {
-  if (preloadedPinImg && preloadedPinImg.complete && preloadedPinImg.naturalWidth > 0) {
-    return Promise.resolve(preloadedPinImg)
-  }
-  return new Promise((resolve) => {
-    const img = new Image()
-    img.onload = () => {
-      preloadedPinImg = img
-      resolve(img)
-    }
-    img.onerror = () => resolve(null)
-    img.src = PIN_DATA_URI
-    if (img.complete && img.naturalWidth > 0) {
-      preloadedPinImg = img
-      resolve(img)
-    }
-  })
-}
-
 /**
  * Generates a crisp #FFD500 yellow dive goggles pin icon from assets/pin.png for MapLibre WebGL.
- * Features a subtle dark drop shadow so it pops cleanly over both deep blue ocean and light coastlines.
- * Includes a pure vector canvas fallback in case the source image is tainted or temporarily unavailable.
  */
 function createDiveGogglesPinIcon(img, width = 30, height = 17) {
   const dpr = 2
@@ -69,7 +46,6 @@ function createDiveGogglesPinIcon(img, width = 30, height = 17) {
   const ctx = canvas.getContext('2d')
   ctx.scale(dpr, dpr)
 
-  // Soft dark drop shadow for maximum crispness and depth against any basemap background
   ctx.shadowColor = 'rgba(0, 15, 30, 0.75)'
   ctx.shadowBlur = 3
   ctx.shadowOffsetY = 1.5
@@ -83,13 +59,12 @@ function createDiveGogglesPinIcon(img, width = 30, height = 17) {
     }
   }
 
-  // Pure vector yellow dive goggles fallback (guaranteed never to throw SecurityError or return blank)
+  // Pure vector yellow dive goggles fallback
   ctx.clearRect(0, 0, width + pad * 2, height + pad * 2)
   ctx.save()
   ctx.fillStyle = '#FFD500'
   ctx.strokeStyle = '#001428'
   ctx.lineWidth = 1.2
-  // Outer mask frame
   ctx.beginPath()
   if (ctx.roundRect) {
     ctx.roundRect(pad, pad + 1, width, height - 2, 4)
@@ -98,7 +73,7 @@ function createDiveGogglesPinIcon(img, width = 30, height = 17) {
   }
   ctx.fill()
   ctx.stroke()
-  // Dual dark lenses
+
   ctx.fillStyle = '#001E3D'
   const lensW = (width - 7) / 2
   const lensH = height - 6
@@ -115,8 +90,7 @@ function createDiveGogglesPinIcon(img, width = 30, height = 17) {
 }
 
 /**
- * Generates a classic red drop pin (teardrop map marker with white center dot and shadow)
- * for MapLibre WebGL canvas.
+ * Generates a classic red drop pin for MapLibre WebGL canvas.
  */
 function createRedDropPinIcon(width = 15, height = 21) {
   const dpr = 2
@@ -134,25 +108,20 @@ function createRedDropPinIcon(width = 15, height = 21) {
   const cy = padTop + r
   const tipY = padTop + height - 0.5
 
-  // 1. Soft drop shadow
   ctx.save()
   ctx.shadowColor = 'rgba(0, 15, 30, 0.6)'
   ctx.shadowBlur = 3
   ctx.shadowOffsetY = 1.5
 
-  // 2. Drop pin teardrop path with mathematically smooth tangents
   const d = Math.max(r + 1, tipY - cy)
   const cosAlpha = Math.min(0.95, r / d)
   const alpha = Math.acos(cosAlpha)
 
   ctx.beginPath()
-  // Start from right tangent, draw arc over top to left tangent (counter-clockwise)
   ctx.arc(cx, cy, r, Math.PI / 2 - alpha, Math.PI / 2 + alpha, true)
-  // Straight line down to pointed tip
   ctx.lineTo(cx, tipY)
   ctx.closePath()
 
-  // 3. Rich red gradient fill (classic map drop pin lighting)
   const grad = ctx.createLinearGradient(cx - r, padTop, cx + r, tipY)
   grad.addColorStop(0, '#FF4D4D')
   grad.addColorStop(0.5, '#EA3838')
@@ -161,18 +130,15 @@ function createRedDropPinIcon(width = 15, height = 21) {
   ctx.fill()
   ctx.restore()
 
-  // 4. Clean white border for contrast against ocean blue and terrain
   ctx.strokeStyle = '#FFFFFF'
   ctx.lineWidth = 1.2
   ctx.stroke()
 
-  // 5. Classic white center dot
   ctx.beginPath()
   ctx.arc(cx, cy, r * 0.42, 0, Math.PI * 2)
   ctx.fillStyle = '#FFFFFF'
   ctx.fill()
 
-  // 6. Subtle inner core dot
   ctx.beginPath()
   ctx.arc(cx, cy, r * 0.18, 0, Math.PI * 2)
   ctx.fillStyle = '#991B1B'
@@ -182,8 +148,7 @@ function createRedDropPinIcon(width = 15, height = 21) {
 }
 
 /**
- * Ensures all custom dive goggles and red drop pin images are registered synchronously in the MapLibre instance.
- * Safe to call repeatedly across country changes and map style loads.
+ * Ensures all custom dive goggles and red drop pin images are registered in the MapLibre instance.
  */
 function ensurePinImages(map, forceUpdate = false) {
   if (!map) return
@@ -192,12 +157,15 @@ function ensurePinImages(map, forceUpdate = false) {
   if (!map.hasImage('country-pin-red')) {
     map.addImage('country-pin-red', createRedDropPinIcon(18, 25), { pixelRatio: 2 })
   }
+  if (!map.hasImage('island-pin-red')) {
+    map.addImage('island-pin-red', createRedDropPinIcon(16, 22), { pixelRatio: 2 })
+  }
   if (!map.hasImage('site-pin-red')) {
     map.addImage('site-pin-red', createRedDropPinIcon(14, 20), { pixelRatio: 2 })
   }
 
   // 2. Custom dive goggles pins
-  const customIds = ['country-pin-custom', 'site-pin-custom', 'country-pin-icon', 'site-pin-icon']
+  const customIds = ['country-pin-custom', 'island-pin-custom', 'site-pin-custom', 'country-pin-icon', 'site-pin-icon']
   const allExist = customIds.every((id) => map.hasImage(id))
   if (allExist && !forceUpdate) return
 
@@ -207,12 +175,19 @@ function ensurePinImages(map, forceUpdate = false) {
 
   try {
     const countryImgData = createDiveGogglesPinIcon(img, 30, 17)
+    const islandImgData = createDiveGogglesPinIcon(img, 26, 14.5)
     const siteImgData = createDiveGogglesPinIcon(img, 22, 12.5)
 
     if (!map.hasImage('country-pin-custom')) {
       map.addImage('country-pin-custom', countryImgData, { pixelRatio: 2 })
     } else if (forceUpdate) {
       map.updateImage('country-pin-custom', countryImgData)
+    }
+
+    if (!map.hasImage('island-pin-custom')) {
+      map.addImage('island-pin-custom', islandImgData, { pixelRatio: 2 })
+    } else if (forceUpdate) {
+      map.updateImage('island-pin-custom', islandImgData)
     }
 
     if (!map.hasImage('site-pin-custom')) {
@@ -310,7 +285,6 @@ function findMatchingCountry(candidateName, countriesList) {
   const cleaned = cleanCountryName(candidateName)
   if (!cleaned) return null
 
-  // 1. Direct alias check
   if (COUNTRY_NAME_ALIASES[cleaned]) {
     const aliased = COUNTRY_NAME_ALIASES[cleaned]
     const found = countriesList.find((c) => cleanCountryName(c) === cleanCountryName(aliased))
@@ -318,11 +292,9 @@ function findMatchingCountry(candidateName, countriesList) {
     return aliased
   }
 
-  // 2. Exact match in countries list
   const exact = countriesList.find((c) => cleanCountryName(c) === cleaned)
   if (exact) return exact
 
-  // 3. Substring match
   const sub = countriesList.find((c) => {
     const cClean = cleanCountryName(c)
     return (
@@ -338,8 +310,9 @@ function findMatchingCountry(candidateName, countriesList) {
 export default function DiveExplorerMap({
   onSelectSite,
   onSelectCountry = null,
+  onSelectIsland = null,
   selectedCountry: controlledCountry = undefined,
-  selectedIsland = null,
+  selectedIsland: controlledIsland = undefined,
   selectedSite: controlledSite = null,
   selectedSiteId = null,
   compact = false,
@@ -360,15 +333,21 @@ export default function DiveExplorerMap({
   const [countryCentroids, setCountryCentroids] = useState([])
   const [geojsonCountries, setGeojsonCountries] = useState({ type: 'FeatureCollection', features: [] })
   const [countriesList, setCountriesList] = useState([])
-  // Two-tier navigation state:
-  // selectedCountry === null -> World overview (country badges visible)
-  // selectedCountry !== null -> Country zoom view (individual dive site points visible)
-  const [selectedCountry, setSelectedCountry] = useState(null)
+
+  // Three-Tier Navigation State:
+  // Level 1: selectedCountry === null -> World overview (country badges visible)
+  // Level 2: selectedCountry !== null && selectedIsland === null -> Country zoom view (island badges visible)
+  // Level 3: selectedCountry !== null && selectedIsland !== null -> Island zoom view (dive sites visible)
+  const [selectedCountry, setSelectedCountry] = useState(controlledCountry || null)
+  const [selectedIsland, setSelectedIsland] = useState(controlledIsland || null)
   const [searchQuery, setSearchQuery] = useState('')
 
   // Selected site detail card
   const [activeSite, setActiveSite] = useState(null)
   const [tooltipInfo, setTooltipInfo] = useState(null)
+
+  // Floating Animated Marker reference on the selected dive site
+  const selectedSiteMarkerRef = useRef(null)
 
   // Pin marker style state: 'custom' (yellow dive goggles) | 'red' (normal red drop pin)
   const [pinStyle, setPinStyle] = useState(() => {
@@ -390,10 +369,14 @@ export default function DiveExplorerMap({
     const map = mapRef.current
     if (!map || !isMapReadyRef.current) return
     const countryIcon = newStyle === 'red' ? 'country-pin-red' : 'country-pin-custom'
+    const islandIcon = newStyle === 'red' ? 'island-pin-red' : 'island-pin-custom'
     const siteIcon = newStyle === 'red' ? 'site-pin-red' : 'site-pin-custom'
     try {
       if (map.getLayer('country-pin')) {
         map.setLayoutProperty('country-pin', 'icon-image', countryIcon)
+      }
+      if (map.getLayer('island-pin')) {
+        map.setLayoutProperty('island-pin', 'icon-image', islandIcon)
       }
       if (map.getLayer('site-pin')) {
         map.setLayoutProperty('site-pin', 'icon-image', siteIcon)
@@ -406,31 +389,35 @@ export default function DiveExplorerMap({
   // Keep latest state in refs so asynchronous MapLibre callbacks always access fresh data
   const geojsonCountriesRef = useRef(geojsonCountries)
   const countryCentroidsRef = useRef(countryCentroids)
+  const countryIslandsGeoJSONRef = useRef({ type: 'FeatureCollection', features: [] })
   const countrySitesGeoJSONRef = useRef({ type: 'FeatureCollection', features: [] })
   const selectedCountryRef = useRef(selectedCountry)
+  const selectedIslandRef = useRef(selectedIsland)
   const searchQueryRef = useRef(searchQuery)
   const countriesListRef = useRef(countriesList)
   const onSelectCountryRef = useRef(onSelectCountry)
+  const onSelectIslandRef = useRef(onSelectIsland)
   const onSelectSiteRef = useRef(onSelectSite)
   const onBookSiteRef = useRef(onBookSite)
 
   geojsonCountriesRef.current = geojsonCountries
   countryCentroidsRef.current = countryCentroids
   selectedCountryRef.current = selectedCountry
+  selectedIslandRef.current = selectedIsland
   searchQueryRef.current = searchQuery
   countriesListRef.current = countriesList
   onSelectCountryRef.current = onSelectCountry
+  onSelectIslandRef.current = onSelectIsland
   onSelectSiteRef.current = onSelectSite
   onBookSiteRef.current = onBookSite
 
-  // Unified helper: camera zoom to country so ALL dive sites of that country are seen
+  // Helper: Zoom camera to country so all its islands/sites frame comfortably
   const zoomToCountry = useCallback((countryName) => {
     const map = mapRef.current
     if (!map || !countryName) return
 
     ensurePinImages(map)
 
-    // If map has not completed its initial layer setup yet, queue zoom
     if (!isMapReadyRef.current) {
       pendingCountryZoomRef.current = countryName
       return
@@ -447,13 +434,11 @@ export default function DiveExplorerMap({
       return
     }
 
-    // Check bounds
     if (countryData.bounds && Array.isArray(countryData.bounds) && countryData.bounds.length === 2) {
       const [sw, ne] = countryData.bounds
       const dLng = Math.abs(ne[0] - sw[0])
       const dLat = Math.abs(ne[1] - sw[1])
 
-      // True geographic center of all dive sites in this country
       const centerLng = (sw[0] + ne[0]) / 2
       const centerLat = (sw[1] + ne[1]) / 2
 
@@ -462,42 +447,24 @@ export default function DiveExplorerMap({
         ? { top: 85, bottom: 65, left: 55, right: 55 }
         : { top: 110, bottom: 90, left: 95, right: 95 }
 
-      // 1. Single-site or ultra-compact point (e.g. Jordan, Monaco, Gibraltar)
       if (dLng < 0.05 && dLat < 0.05) {
-        map.flyTo({
-          center: [sw[0], sw[1]],
-          zoom: 4.8,
-          duration: 1100,
-        })
+        map.flyTo({ center: [sw[0], sw[1]], zoom: 5.2, duration: 1100 })
         return
       }
 
-      // 2. Small island nations (e.g. Malta, Cayman Islands, US Virgin Islands, Curaçao)
       if (dLng < 0.6 && dLat < 0.6) {
-        map.flyTo({
-          center: [centerLng, centerLat],
-          zoom: 5.0,
-          duration: 1100,
-        })
+        map.flyTo({ center: [centerLng, centerLat], zoom: 5.5, duration: 1100 })
         return
       }
 
-      // 3. Normal, medium, and wide countries:
-      // Use map.cameraForBounds with padding to compute bounds framing,
-      // then reduce zoom by 0.60 so all dive sites and pins fit with generous outer breathing room.
       let targetZoom = 4.4
       let targetCenter = [centerLng, centerLat]
 
       try {
-        const camera = map.cameraForBounds(countryData.bounds, {
-          padding: dynamicPadding,
-        })
+        const camera = map.cameraForBounds(countryData.bounds, { padding: dynamicPadding })
         if (camera && typeof camera.zoom === 'number') {
-          // Max zoom for multi-site countries capped at 4.5 so we never over-zoom into small bays.
-          // Min zoom 2.2 allows massive countries (USA, Australia, Indonesia) to frame fully.
-          const maxAllowedZoom = dLng < 1.5 && dLat < 1.5 ? 4.8 : 4.5
-          targetZoom = Math.max(2.2, Math.min(maxAllowedZoom, camera.zoom - 0.60))
-
+          const maxAllowedZoom = dLng < 1.5 && dLat < 1.5 ? 5.0 : 4.6
+          targetZoom = Math.max(2.2, Math.min(maxAllowedZoom, camera.zoom - 0.50))
           if (camera.center) {
             targetCenter = [
               camera.center.lng ?? (Array.isArray(camera.center) ? camera.center[0] : centerLng),
@@ -505,37 +472,76 @@ export default function DiveExplorerMap({
             ]
           }
         } else {
-          // Fallback if cameraForBounds unavailable
           if (dLng > 60 || dLat > 25) targetZoom = 2.8
           else if (dLng > 25 || dLat > 15) targetZoom = 3.5
           else if (dLng > 10 || dLat > 8) targetZoom = 4.0
           else targetZoom = 4.4
         }
       } catch (err) {
-        console.warn('[DiveExplorer] cameraForBounds notice:', err)
         if (dLng > 60 || dLat > 25) targetZoom = 2.8
         else if (dLng > 25 || dLat > 15) targetZoom = 3.5
         else if (dLng > 10 || dLat > 8) targetZoom = 4.0
         else targetZoom = 4.4
       }
 
-      map.flyTo({
-        center: targetCenter,
-        zoom: targetZoom,
+      map.flyTo({ center: targetCenter, zoom: targetZoom, duration: 1200 })
+      return
+    }
+
+    map.flyTo({ center: [countryData.longitude, countryData.latitude], zoom: 4.2, duration: 1200 })
+  }, [])
+
+  // Helper: Zoom camera to a specific island's bounds
+  const zoomToIsland = useCallback((countryName, islandName, customBounds = null) => {
+    const map = mapRef.current
+    if (!map || !countryName || !islandName) return
+
+    ensurePinImages(map)
+
+    if (customBounds && Array.isArray(customBounds) && customBounds.length === 2) {
+      const [sw, ne] = customBounds
+      if (sw[0] === ne[0] && sw[1] === ne[1]) {
+        map.flyTo({ center: [sw[0], sw[1]], zoom: 9.8, duration: 1100 })
+        return
+      }
+      map.fitBounds(customBounds, {
+        padding: { top: 90, bottom: 90, left: 90, right: 90 },
+        maxZoom: 11.5,
         duration: 1200,
       })
       return
     }
 
-    // Fallback if no bounds: center on centroid with comfortable framing
-    map.flyTo({
-      center: [countryData.longitude, countryData.latitude],
-      zoom: 4.2,
-      duration: 1200,
-    })
-  }, [])
+    const islandSites = allSites.filter(
+      (s) => s.country && cleanCountryName(s.country) === cleanCountryName(countryName) && getIslandForSite(s) === islandName
+    )
+    if (islandSites.length === 0) return
 
-  // Two-tier navigation trigger (World View -> Specific Country)
+    let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity
+    islandSites.forEach((s) => {
+      const lng = parseFloat(s.longitude)
+      const lat = parseFloat(s.latitude)
+      if (!isNaN(lng) && !isNaN(lat)) {
+        if (lng < minLng) minLng = lng
+        if (lng > maxLng) maxLng = lng
+        if (lat < minLat) minLat = lat
+        if (lat > maxLat) maxLat = lat
+      }
+    })
+
+    if (minLng !== Infinity) {
+      if (minLng === maxLng && minLat === maxLat) {
+        map.flyTo({ center: [minLng, minLat], zoom: 9.8, duration: 1100 })
+      } else {
+        map.fitBounds(
+          [[minLng, minLat], [maxLng, maxLat]],
+          { padding: { top: 90, bottom: 90, left: 90, right: 90 }, maxZoom: 11.5, duration: 1200 }
+        )
+      }
+    }
+  }, [allSites])
+
+  // Navigation Trigger: Level 1 (World) -> Level 2 (Country with Islands shown)
   const navigateToCountry = useCallback((rawCountryName) => {
     if (!rawCountryName) return
     const canonical = findMatchingCountry(rawCountryName, countriesListRef.current) || rawCountryName
@@ -546,38 +552,74 @@ export default function DiveExplorerMap({
 
     setSelectedCountry(canonical)
     selectedCountryRef.current = canonical
+    setSelectedIsland(null)
+    selectedIslandRef.current = null
     setActiveSite(null)
     setTooltipInfo(null)
     if (onSelectSiteRef.current) onSelectSiteRef.current(null)
+    if (onSelectIslandRef.current) onSelectIslandRef.current('')
     if (onSelectCountryRef.current) onSelectCountryRef.current(canonical)
 
     zoomToCountry(canonical)
   }, [zoomToCountry])
 
+  // Navigation Trigger: Level 2 (Country) -> Level 3 (Island with Dive Sites shown)
+  const navigateToIsland = useCallback((islandName, customBounds = null) => {
+    if (!islandName) return
+    setSelectedIsland(islandName)
+    selectedIslandRef.current = islandName
+    setActiveSite(null)
+    setTooltipInfo(null)
+    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
+    if (onSelectIslandRef.current) onSelectIslandRef.current(islandName)
+
+    zoomToIsland(selectedCountryRef.current, islandName, customBounds)
+  }, [zoomToIsland])
+
+  // Back Navigation: Return from Island View to Islands of the current Country
+  const handleBackToIslands = useCallback(() => {
+    setSelectedIsland(null)
+    selectedIslandRef.current = null
+    setActiveSite(null)
+    setTooltipInfo(null)
+    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
+    if (onSelectIslandRef.current) onSelectIslandRef.current('')
+    if (selectedCountryRef.current && zoomToCountryRef.current) {
+      zoomToCountryRef.current(selectedCountryRef.current)
+    }
+  }, [])
+
+  // Full Reset: Return to World Overview (show all countries)
+  const handleResetWorldView = useCallback(() => {
+    setSelectedCountry(null)
+    selectedCountryRef.current = null
+    setSelectedIsland(null)
+    selectedIslandRef.current = null
+    setSearchQuery('')
+    searchQueryRef.current = ''
+    setActiveSite(null)
+    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
+    if (onSelectIslandRef.current) onSelectIslandRef.current('')
+    if (onSelectCountryRef.current) onSelectCountryRef.current('')
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: DEFAULT_CENTER,
+        zoom: DEFAULT_ZOOM,
+        duration: 1000,
+      })
+    }
+  }, [])
+
   const navigateToCountryRef = useRef(navigateToCountry)
   navigateToCountryRef.current = navigateToCountry
+  const navigateToIslandRef = useRef(navigateToIsland)
+  navigateToIslandRef.current = navigateToIsland
   const zoomToCountryRef = useRef(zoomToCountry)
   zoomToCountryRef.current = zoomToCountry
+  const zoomToIslandRef = useRef(zoomToIsland)
+  zoomToIslandRef.current = zoomToIsland
 
-  useEffect(() => {
-    pinStyleRef.current = pinStyle
-    const map = mapRef.current
-    if (!map || !map.isStyleLoaded()) return
-    const countryIcon = pinStyle === 'red' ? 'country-pin-red' : 'country-pin-custom'
-    const siteIcon = pinStyle === 'red' ? 'site-pin-red' : 'site-pin-custom'
-    try {
-      if (map.getLayer('country-pin')) {
-        map.setLayoutProperty('country-pin', 'icon-image', countryIcon)
-      }
-      if (map.getLayer('site-pin')) {
-        map.setLayoutProperty('site-pin', 'icon-image', siteIcon)
-      }
-    } catch (e) {
-      console.warn('[DiveExplorer] Pin style sync error:', e)
-    }
-  }, [pinStyle])
-
-  // 1. Load CSV data on mount
+  // 1. Load CSV & JSON data on mount
   useEffect(() => {
     let mounted = true
     async function initData() {
@@ -612,14 +654,45 @@ export default function DiveExplorerMap({
     }
   }, [])
 
-  // 2. Compute individual dive sites GeoJSON (filtered by selected country or search)
+  // 2a. Compute Level 2 Islands GeoJSON for currently selected country
+  const countryIslandsGeoJSON = useMemo(() => {
+    if (!selectedCountry || !allSites.length) {
+      return { type: 'FeatureCollection', features: [] }
+    }
+    const islands = getIslandsForCountry(selectedCountry, allSites)
+    return {
+      type: 'FeatureCollection',
+      features: islands.map((isl, idx) => ({
+        type: 'Feature',
+        id: `island-${idx}-${isl.name}`,
+        geometry: {
+          type: 'Point',
+          coordinates: [isl.longitude, isl.latitude],
+        },
+        properties: {
+          id: `island-${idx}`,
+          island: isl.name,
+          country: selectedCountry,
+          count: isl.count,
+          minLng: isl.bounds[0][0],
+          minLat: isl.bounds[0][1],
+          maxLng: isl.bounds[1][0],
+          maxLat: isl.bounds[1][1],
+        },
+      })),
+    }
+  }, [selectedCountry, allSites])
+
+  countryIslandsGeoJSONRef.current = countryIslandsGeoJSON
+
+  // 2b. Compute Level 3 Dive Sites GeoJSON (filtered by selected country + selected island, or search)
   const countrySitesGeoJSON = useMemo(() => {
     if (!allSites.length) {
       return { type: 'FeatureCollection', features: [] }
     }
 
-    // Only show dive sites when a specific country is active or search query is entered
-    if (!selectedCountry && !searchQuery) {
+    // Only show dive sites when an island is active or search query is entered
+    if (!searchQuery && (!selectedCountry || !selectedIsland)) {
       return { type: 'FeatureCollection', features: [] }
     }
 
@@ -639,6 +712,11 @@ export default function DiveExplorerMap({
           siteCanonicalClean === canonicalTargetClean ||
           siteCanonicalClean === targetClean
         if (!isMatch) return false
+      }
+      // Must match selected island if active (and not global search)
+      if (selectedIsland && !q) {
+        const siteIsland = getIslandForSite(site)
+        if (siteIsland !== selectedIsland) return false
       }
       // Search query
       if (q) {
@@ -670,20 +748,21 @@ export default function DiveExplorerMap({
         },
       })),
     }
-  }, [allSites, selectedCountry, searchQuery, countriesList])
+  }, [allSites, selectedCountry, selectedIsland, searchQuery, countriesList])
 
   countrySitesGeoJSONRef.current = countrySitesGeoJSON
 
-  useEffect(() => {
-    countrySitesGeoJSONRef.current = countrySitesGeoJSON
-  }, [countrySitesGeoJSON])
+  // List of islands for dropdown selector
+  const availableIslandsForDropdown = useMemo(() => {
+    if (!selectedCountry || !allSites.length) return []
+    return getIslandsForCountry(selectedCountry, allSites)
+  }, [selectedCountry, allSites])
 
-  // Helper: Synchronize MapLibre sources and layer visibilities safely
+  // Helper: Synchronize MapLibre sources and layer visibilities across the 3 Tiers
   const syncMapData = useCallback((mapInstance) => {
     const map = mapInstance || mapRef.current
     if (!map || !isMapReadyRef.current) return
 
-    // Ensure custom and red pin images exist in map before changing layer visibility
     ensurePinImages(map)
 
     try {
@@ -692,16 +771,29 @@ export default function DiveExplorerMap({
         cs.setData(geojsonCountriesRef.current)
       }
 
+      const is = map.getSource('island-centroids-source')
+      if (is) {
+        is.setData(countryIslandsGeoJSONRef.current)
+      }
+
       const ds = map.getSource('dive-sites-source')
       if (ds) {
         ds.setData(countrySitesGeoJSONRef.current)
       }
 
-      const isCountryView = Boolean(selectedCountryRef.current || searchQueryRef.current)
-      const countryVis = isCountryView ? 'none' : 'visible'
-      const siteVis = isCountryView ? 'visible' : 'none'
+      const isSearching = Boolean(searchQueryRef.current)
+      const hasCountry = Boolean(selectedCountryRef.current)
+      const hasIsland = Boolean(selectedIslandRef.current)
+
+      // Tier 1: World View (no country, no search) -> Country pins visible
+      // Tier 2: Country View (country selected, no island) -> Island pins visible
+      // Tier 3: Island View (island selected, or searching) -> Dive site pins visible
+      const countryVis = (!hasCountry && !isSearching) ? 'visible' : 'none'
+      const islandVis = (hasCountry && !hasIsland && !isSearching) ? 'visible' : 'none'
+      const siteVis = (hasIsland || isSearching) ? 'visible' : 'none'
 
       const countryIcon = pinStyleRef.current === 'red' ? 'country-pin-red' : 'country-pin-custom'
+      const islandIcon = pinStyleRef.current === 'red' ? 'island-pin-red' : 'island-pin-custom'
       const siteIcon = pinStyleRef.current === 'red' ? 'site-pin-red' : 'site-pin-custom'
 
       if (map.getLayer('country-pin')) {
@@ -714,6 +806,12 @@ export default function DiveExplorerMap({
       if (map.getLayer('country-polygons-stroke')) {
         map.setLayoutProperty('country-polygons-stroke', 'visibility', countryVis)
       }
+
+      if (map.getLayer('island-pin')) {
+        map.setLayoutProperty('island-pin', 'visibility', islandVis)
+        map.setLayoutProperty('island-pin', 'icon-image', islandIcon)
+      }
+
       if (map.getLayer('site-pin')) {
         map.setLayoutProperty('site-pin', 'visibility', siteVis)
         map.setLayoutProperty('site-pin', 'icon-image', siteIcon)
@@ -728,7 +826,7 @@ export default function DiveExplorerMap({
   const syncMapDataRef = useRef(syncMapData)
   syncMapDataRef.current = syncMapData
 
-  // 3. Initialize MapLibre GL Map with OpenFreeMap Liberty Style
+  // 3. Initialize MapLibre GL Map
   useEffect(() => {
     if (!mapContainerRef.current) return
 
@@ -743,7 +841,7 @@ export default function DiveExplorerMap({
         zoom: DEFAULT_ZOOM,
         minZoom: 1.2,
         maxZoom: 18,
-        clickTolerance: 12, // Critical for mobile touch - prevents natural finger drift from cancelling single tap!
+        clickTolerance: 12,
         attributionControl: true,
         renderWorldCopies: true,
         dragRotate: false,
@@ -753,19 +851,20 @@ export default function DiveExplorerMap({
 
       mapRef.current = map
 
-      // Ensure touchPitch, rotation, and scrollZoom are disabled so 2-finger gestures move the map cleanly
       if (map.touchPitch) map.touchPitch.disable()
       if (map.touchZoomRotate) map.touchZoomRotate.disableRotation()
       if (map.scrollZoom) map.scrollZoom.disable()
 
-      // Add navigation controls
       map.addControl(new NavigationControl({ showCompass: true, showZoom: true }), 'top-right')
 
-      // Handle missing image dynamically as safety guard
       map.on('styleimagemissing', (e) => {
         const id = e.id
         if (id === 'country-pin-red') {
           if (!map.hasImage(id)) map.addImage(id, createRedDropPinIcon(18, 25), { pixelRatio: 2 })
+          return
+        }
+        if (id === 'island-pin-red') {
+          if (!map.hasImage(id)) map.addImage(id, createRedDropPinIcon(16, 22), { pixelRatio: 2 })
           return
         }
         if (id === 'site-pin-red') {
@@ -778,9 +877,15 @@ export default function DiveExplorerMap({
             try {
               map.addImage(id, createDiveGogglesPinIcon(preloadedPinImg, 30, 17), { pixelRatio: 2 })
               return
-            } catch (err) {
-              console.warn('[DiveExplorerMap] Sync addImage notice:', err)
-            }
+            } catch (err) {}
+          }
+          ensurePinImages(map)
+        } else if (id === 'island-pin-custom') {
+          if (preloadedPinImg && preloadedPinImg.complete && preloadedPinImg.naturalWidth > 0 && !map.hasImage(id)) {
+            try {
+              map.addImage(id, createDiveGogglesPinIcon(preloadedPinImg, 26, 14.5), { pixelRatio: 2 })
+              return
+            } catch (err) {}
           }
           ensurePinImages(map)
         } else if (id === 'site-pin-custom' || id === 'site-pin-icon') {
@@ -788,9 +893,7 @@ export default function DiveExplorerMap({
             try {
               map.addImage(id, createDiveGogglesPinIcon(preloadedPinImg, 22, 12.5), { pixelRatio: 2 })
               return
-            } catch (err) {
-              console.warn('[DiveExplorerMap] Sync addImage notice:', err)
-            }
+            } catch (err) {}
           }
           ensurePinImages(map)
         }
@@ -801,7 +904,7 @@ export default function DiveExplorerMap({
 
         mapRef.current = map
 
-        // 1. Force English ONLY on all basemap place names & ensure clean Havelock Island name (removes "Swaraj Dweep / Swarajdeep")
+        //Basemap place names to English
         try {
           const styleLayers = map.getStyle().layers || []
           styleLayers.forEach((layer) => {
@@ -830,7 +933,7 @@ export default function DiveExplorerMap({
           console.warn('[DiveExplorer] English text setting notice:', e)
         }
 
-        // 2. Saturated ocean & water colors + sharp coastline stroke
+        // Ocean styling
         try {
           if (map.getLayer('water')) {
             map.setPaintProperty('water', 'fill-color', '#1a75bb')
@@ -861,7 +964,7 @@ export default function DiveExplorerMap({
           console.warn('[DiveExplorer] Water styling notice:', e)
         }
 
-        // 3. Register pin icons: both custom #FFD500 yellow dive goggles and classic red drop pins
+        // Register pin icons
         try {
           await ensurePinImages(map)
         } catch (e) {
@@ -869,17 +972,15 @@ export default function DiveExplorerMap({
         }
 
         const initialCountryIcon = pinStyleRef.current === 'red' ? 'country-pin-red' : 'country-pin-custom'
+        const initialIslandIcon = pinStyleRef.current === 'red' ? 'island-pin-red' : 'island-pin-custom'
         const initialSiteIcon = pinStyleRef.current === 'red' ? 'site-pin-red' : 'site-pin-custom'
 
-        // ----------------------------------------------------
         // SOURCE 0: Country Boundary Polygons (World Overview)
-        // ----------------------------------------------------
         map.addSource('countries-polygons-source', {
           type: 'geojson',
           data: '/data/countries.geojson',
         })
 
-        // Subtle interactive country boundary fill (captures taps/clicks anywhere on land)
         map.addLayer({
           id: 'country-polygons-fill',
           type: 'fill',
@@ -911,15 +1012,12 @@ export default function DiveExplorerMap({
           },
         })
 
-        // ----------------------------------------------------
         // SOURCE 1: Country Centroid Points (World Overview)
-        // ----------------------------------------------------
         map.addSource('country-centroids-source', {
           type: 'geojson',
           data: geojsonCountriesRef.current,
         })
 
-        // 1. Main Country Pin (Custom Goggles or Red Drop Pin with White Border Halo Text)
         map.addLayer({
           id: 'country-pin',
           type: 'symbol',
@@ -958,15 +1056,57 @@ export default function DiveExplorerMap({
           },
         })
 
-        // ----------------------------------------------------
-        // SOURCE 2: Individual Dive Sites (Country Zoom View)
-        // ----------------------------------------------------
+        // SOURCE 2: Island Centroid Points (Country View)
+        map.addSource('island-centroids-source', {
+          type: 'geojson',
+          data: countryIslandsGeoJSONRef.current,
+        })
+
+        map.addLayer({
+          id: 'island-pin',
+          type: 'symbol',
+          source: 'island-centroids-source',
+          layout: {
+            'icon-image': initialIslandIcon,
+            'icon-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              2.5, 0.65,
+              5.0, 0.85,
+              8.0, 1.10,
+              11.0, 1.30,
+            ],
+            'icon-anchor': 'bottom',
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
+            'text-field': ['get', 'island'],
+            'text-font': ['Noto Sans Bold'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              2.5, 8.5,
+              5.0, 10.5,
+              8.0, 12.0,
+            ],
+            'text-offset': [0, 0.4],
+            'text-anchor': 'top',
+            'text-optional': true,
+          },
+          paint: {
+            'text-color': '#001428',
+            'text-halo-color': '#FFFFFF',
+            'text-halo-width': 2.5,
+          },
+        })
+
+        // SOURCE 3: Individual Dive Sites (Island View)
         map.addSource('dive-sites-source', {
           type: 'geojson',
           data: countrySitesGeoJSONRef.current,
         })
 
-        // 2. Individual Dive Site Location Pin (Smaller Custom Goggles or Red Drop Pin)
         map.addLayer({
           id: 'site-pin',
           type: 'symbol',
@@ -1011,7 +1151,6 @@ export default function DiveExplorerMap({
         // ----------------------------------------------------
         // INTERACTION HANDLERS: Country Click & Hover
         // ----------------------------------------------------
-        // A) Direct tap / click on country pin marker
         map.on('click', 'country-pin', (e) => {
           if (!e.features || !e.features.length) return
           if (e.originalEvent) e.originalEvent._countryHandled = true
@@ -1021,7 +1160,6 @@ export default function DiveExplorerMap({
           }
         })
 
-        // B) Direct tap / click anywhere on country landmass polygon
         map.on('click', 'country-polygons-fill', (e) => {
           if (!e.features || !e.features.length) return
           if (e.originalEvent) e.originalEvent._countryHandled = true
@@ -1033,50 +1171,131 @@ export default function DiveExplorerMap({
           }
         })
 
-        // C) Comprehensive single-tap detection:
-        // Catches touches near pins, on basemap country text labels, and near islands
-        map.on('click', (e) => {
-          if (e.originalEvent?._countryHandled) return
-          // If already in country-specific view or searching, dive site clicks are handled by site-pin
-          if (selectedCountryRef.current || searchQueryRef.current) return
-
-          // 1. Touch hit box (24px padding around tap)
-          const pad = 24
-          const bbox = [
-            [e.point.x - pad, e.point.y - pad],
-            [e.point.x + pad, e.point.y + pad],
-          ]
-
-          // Check country-pin hit within touch radius
-          const pinFeatures = map.queryRenderedFeatures(bbox, { layers: ['country-pin'] })
-          if (pinFeatures.length > 0 && pinFeatures[0].properties?.country) {
-            if (navigateToCountryRef.current) {
-              navigateToCountryRef.current(pinFeatures[0].properties.country)
-            }
-            return
+        // ----------------------------------------------------
+        // INTERACTION HANDLERS: Island Click & Hover
+        // ----------------------------------------------------
+        map.on('click', 'island-pin', (e) => {
+          if (!e.features || !e.features.length) return
+          if (e.originalEvent) e.originalEvent._islandHandled = true
+          const p = e.features[0].properties
+          if (navigateToIslandRef.current && p?.island) {
+            navigateToIslandRef.current(p.island, [
+              [parseFloat(p.minLng), parseFloat(p.minLat)],
+              [parseFloat(p.maxLng), parseFloat(p.maxLat)],
+            ])
           }
+        })
 
-          // Check country polygon fill
-          const polyFeatures = map.queryRenderedFeatures(e.point, { layers: ['country-polygons-fill'] })
-          if (polyFeatures.length > 0) {
-            const p = polyFeatures[0].properties || {}
-            const candidate = p.name_long || p.name || p.admin || p.sovereignt || p.formal_en
-            const matched = findMatchingCountry(candidate, countriesListRef.current)
-            if (matched && navigateToCountryRef.current) {
-              navigateToCountryRef.current(matched)
+        map.on('mouseenter', 'island-pin', (e) => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
+          map.getCanvas().style.cursor = 'pointer'
+          if (e.features && e.features[0]) {
+            const p = e.features[0].properties
+            setTooltipInfo({
+              x: e.point.x,
+              y: e.point.y,
+              name: p.island,
+              subtitle: `${p.count} ${p.count === 1 ? 'Dive Site' : 'Dive Sites'} • Tap to explore`,
+            })
+          }
+        })
+
+        map.on('mouseleave', 'island-pin', () => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
+          map.getCanvas().style.cursor = ''
+          setTooltipInfo(null)
+        })
+
+        // ----------------------------------------------------
+        // INTERACTION HANDLERS: Individual Site Click & Hover
+        // ----------------------------------------------------
+        map.on('click', 'site-pin', (e) => {
+          if (!e.features || !e.features.length) return
+          if (e.originalEvent) e.originalEvent._siteHandled = true
+          const p = e.features[0].properties
+          const coords = e.features[0].geometry.coordinates
+          const site = {
+            id: p.id,
+            siteName: p.siteName,
+            country: p.country,
+            latitude: parseFloat(p.latitude) || coords[1],
+            longitude: parseFloat(p.longitude) || coords[0],
+            naturalTypes: p.naturalTypes || '',
+            sourceUrl: p.sourceUrl || '',
+          }
+          setActiveSite(site)
+          if (onSelectSiteRef.current) onSelectSiteRef.current(site)
+
+          map.flyTo({
+            center: coords,
+            zoom: Math.max(map.getZoom(), 9.5),
+            duration: 1000,
+          })
+        })
+
+        map.on('mouseenter', 'site-pin', (e) => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
+          map.getCanvas().style.cursor = 'pointer'
+          if (e.features && e.features[0]) {
+            const p = e.features[0].properties
+            setTooltipInfo({
+              x: e.point.x,
+              y: e.point.y,
+              name: p.siteName,
+              subtitle: p.naturalTypes ? p.naturalTypes : p.country,
+            })
+          }
+        })
+
+        map.on('mouseleave', 'site-pin', () => {
+          if (window.matchMedia('(pointer: coarse)').matches) return
+          map.getCanvas().style.cursor = ''
+          setTooltipInfo(null)
+        })
+
+        // Single tap detection fallback
+        map.on('click', (e) => {
+          if (e.originalEvent?._countryHandled || e.originalEvent?._islandHandled || e.originalEvent?._siteHandled) return
+
+          // If in Level 2 (Country View, no island selected), check for touches near island pins
+          if (selectedCountryRef.current && !selectedIslandRef.current && !searchQueryRef.current) {
+            const pad = 28
+            const bbox = [
+              [e.point.x - pad, e.point.y - pad],
+              [e.point.x + pad, e.point.y + pad],
+            ]
+            const islandFeatures = map.queryRenderedFeatures(bbox, { layers: ['island-pin'] })
+            if (islandFeatures.length > 0 && islandFeatures[0].properties?.island) {
+              const p = islandFeatures[0].properties
+              if (navigateToIslandRef.current) {
+                navigateToIslandRef.current(p.island, [
+                  [parseFloat(p.minLng), parseFloat(p.minLat)],
+                  [parseFloat(p.maxLng), parseFloat(p.maxLat)],
+                ])
+              }
               return
             }
           }
 
-          // Check basemap place country/state labels
-          const labelLayers = ['label_country_1', 'label_country_2', 'label_country_3', 'label_state'].filter(
-            (id) => map.getLayer(id)
-          )
-          if (labelLayers.length > 0) {
-            const labelFeatures = map.queryRenderedFeatures(bbox, { layers: labelLayers })
-            for (const feat of labelFeatures) {
-              const p = feat.properties || {}
-              const candidate = p['name:en'] || p.name_en || p.name || p['name:latin']
+          // If in Level 1 (World Overview), check touches near country pins or land
+          if (!selectedCountryRef.current && !searchQueryRef.current) {
+            const pad = 24
+            const bbox = [
+              [e.point.x - pad, e.point.y - pad],
+              [e.point.x + pad, e.point.y + pad],
+            ]
+            const pinFeatures = map.queryRenderedFeatures(bbox, { layers: ['country-pin'] })
+            if (pinFeatures.length > 0 && pinFeatures[0].properties?.country) {
+              if (navigateToCountryRef.current) {
+                navigateToCountryRef.current(pinFeatures[0].properties.country)
+              }
+              return
+            }
+
+            const polyFeatures = map.queryRenderedFeatures(e.point, { layers: ['country-polygons-fill'] })
+            if (polyFeatures.length > 0) {
+              const p = polyFeatures[0].properties || {}
+              const candidate = p.name_long || p.name || p.admin || p.sovereignt || p.formal_en
               const matched = findMatchingCountry(candidate, countriesListRef.current)
               if (matched && navigateToCountryRef.current) {
                 navigateToCountryRef.current(matched)
@@ -1084,25 +1303,9 @@ export default function DiveExplorerMap({
               }
             }
           }
-
-          // Island & proximity fallback: if tap landed in ocean near an island country (within 65px on screen)
-          let closestCountry = null
-          let minScreenDist = Infinity
-          for (const c of countryCentroidsRef.current) {
-            const pt = map.project([c.longitude, c.latitude])
-            const dist = Math.hypot(pt.x - e.point.x, pt.y - e.point.y)
-            if (dist < minScreenDist) {
-              minScreenDist = dist
-              closestCountry = c.country
-            }
-          }
-
-          if (minScreenDist <= 65 && closestCountry && navigateToCountryRef.current) {
-            navigateToCountryRef.current(closestCountry)
-          }
         })
 
-        // Desktop hover handlers: guarded so they NEVER trigger on touch devices (pointer: coarse)
+        // Desktop hover on country polygon
         map.on('mousemove', 'country-polygons-fill', (e) => {
           if (window.matchMedia('(pointer: coarse)').matches) return
           if (selectedCountryRef.current || searchQueryRef.current) return
@@ -1119,7 +1322,7 @@ export default function DiveExplorerMap({
                 x: e.point.x,
                 y: e.point.y,
                 name: matched,
-                subtitle: cData ? `${cData.count} Dive Sites • Click to explore` : 'Click to explore',
+                subtitle: cData ? `${cData.count} Dive Sites • Tap to view islands` : 'Tap to view islands',
               })
             }
           }
@@ -1139,7 +1342,7 @@ export default function DiveExplorerMap({
               x: e.point.x,
               y: e.point.y,
               name: p.country,
-              subtitle: `${p.count} Dive Sites • Click to explore`,
+              subtitle: `${p.count} Dive Sites • Tap to view islands`,
             })
           }
         })
@@ -1149,72 +1352,20 @@ export default function DiveExplorerMap({
           setTooltipInfo(null)
         })
 
-        // ----------------------------------------------------
-        // INTERACTION HANDLERS: Individual Site Click & Hover
-        // ----------------------------------------------------
-        map.on('click', 'site-pin', (e) => {
-          if (!e.features || !e.features.length) return
-          const p = e.features[0].properties
-          const coords = e.features[0].geometry.coordinates
-          const site = {
-            id: p.id,
-            siteName: p.siteName,
-            country: p.country,
-            latitude: parseFloat(p.latitude) || coords[1],
-            longitude: parseFloat(p.longitude) || coords[0],
-            naturalTypes: p.naturalTypes || '',
-            sourceUrl: p.sourceUrl || '',
-          }
-          setActiveSite(site)
-          if (onSelectSiteRef.current) onSelectSiteRef.current(site)
-
-          map.flyTo({
-            center: coords,
-            zoom: Math.max(map.getZoom(), 9.2),
-            duration: 1000,
-          })
-        })
-
-        map.on('mouseenter', 'site-pin', (e) => {
-          if (window.matchMedia('(pointer: coarse)').matches) return
-          map.getCanvas().style.cursor = 'pointer'
-          if (e.features && e.features[0]) {
-            const p = e.features[0].properties
-            setTooltipInfo({
-              x: e.point.x,
-              y: e.point.y,
-              name: p.siteName,
-              subtitle: p.naturalTypes ? p.naturalTypes : p.country,
-            })
-          }
-        })
-        map.on('mouseleave', 'site-pin', () => {
-          if (window.matchMedia('(pointer: coarse)').matches) return
-          map.getCanvas().style.cursor = ''
-          setTooltipInfo(null)
-        })
-
         activeMapInstance = map
         isMapReadyRef.current = true
 
-        // Re-assert layer data and pin layout on camera stop and tile idle
         map.on('moveend', () => {
-          if (syncMapDataRef.current) {
-            syncMapDataRef.current(map)
-          }
+          if (syncMapDataRef.current) syncMapDataRef.current(map)
         })
         map.on('idle', () => {
-          if (syncMapDataRef.current) {
-            syncMapDataRef.current(map)
-          }
+          if (syncMapDataRef.current) syncMapDataRef.current(map)
         })
 
-        // Initial sync of layers and data
         if (syncMapDataRef.current) {
           syncMapDataRef.current(map)
         }
 
-        // Process any queued camera flight requested before map load completed
         if (pendingCountryZoomRef.current) {
           const queuedCountry = pendingCountryZoomRef.current
           pendingCountryZoomRef.current = null
@@ -1236,6 +1387,10 @@ export default function DiveExplorerMap({
       if (activeMapInstance === map) {
         activeMapInstance = null
       }
+      if (selectedSiteMarkerRef.current) {
+        selectedSiteMarkerRef.current.remove()
+        selectedSiteMarkerRef.current = null
+      }
       if (map) {
         map.remove()
         mapRef.current = null
@@ -1243,7 +1398,7 @@ export default function DiveExplorerMap({
     }
   }, [])
 
-  // Auto-resize MapLibre GL whenever map container dimensions change
+  // Auto-resize
   useEffect(() => {
     const el = mapContainerRef.current
     if (!el || typeof ResizeObserver === 'undefined') return
@@ -1256,31 +1411,22 @@ export default function DiveExplorerMap({
     return () => ro.disconnect()
   }, [])
 
-  // 3b. Two-finger Pan & Zoom Navigation (Trackpad 2-finger move & Touchscreen 2-finger drag)
+  // Trackpad & Touchscreen Pan / Zoom Gestures
   useEffect(() => {
     const container = mapContainerRef.current
     if (!container) return
     const wrapper = container.parentElement || container
 
     let lastTrackpadStreamTime = 0
-    let twoFingerTouchState = {
-      active: false,
-      prevMidX: 0,
-      prevMidY: 0,
-      prevDist: 0,
-    }
+    let twoFingerTouchState = { active: false, prevMidX: 0, prevMidY: 0, prevDist: 0 }
 
-    // --- A) TRACKPAD 2-FINGER PAN & PINCH ZOOM / MOUSE WHEEL ---
     const handleWheel = (e) => {
-      // Prevent browser from scrolling the webpage while interacting with the map
       e.preventDefault()
       e.stopPropagation()
 
       const map = mapRef.current
       if (!map) return
 
-      // 1. Pinch-to-zoom on trackpad (or Ctrl + mouse wheel)
-      // Browsers set e.ctrlKey to true when the user pinches on a laptop touchpad
       if (e.ctrlKey) {
         const zoomDelta = -e.deltaY * 0.008
         const currentZoom = map.getZoom()
@@ -1291,7 +1437,6 @@ export default function DiveExplorerMap({
         return
       }
 
-      // 2. Trackpad detection (pixel mode deltaMode === 0, horizontal delta, continuous stream, or small/fractional values)
       const isTrackpad =
         e.deltaMode === 0 &&
         (Math.abs(e.deltaX) > 0 ||
@@ -1301,12 +1446,10 @@ export default function DiveExplorerMap({
 
       if (isTrackpad) {
         lastTrackpadStreamTime = Date.now()
-        // Two fingers moving up, down, left, or right -> PAN THE MAP!
         map.panBy([e.deltaX, e.deltaY], { duration: 0 })
         return
       }
 
-      // 3. Discrete physical mouse wheel notch: smooth zoom centered at cursor
       const zoomStep = e.deltaY < 0 ? 0.35 : -0.35
       const currentZoom = map.getZoom()
       const targetZoom = Math.min(Math.max(currentZoom + zoomStep, map.getMinZoom()), map.getMaxZoom())
@@ -1315,7 +1458,6 @@ export default function DiveExplorerMap({
       map.zoomTo(targetZoom, { around: anchor, duration: 150 })
     }
 
-    // --- B) TOUCHSCREEN 2-FINGER PAN & PINCH ZOOM ---
     const handleTouchStart = (e) => {
       if (e.touches.length === 2) {
         const t0 = e.touches[0]
@@ -1323,12 +1465,7 @@ export default function DiveExplorerMap({
         const midX = (t0.clientX + t1.clientX) / 2
         const midY = (t0.clientY + t1.clientY) / 2
         const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY)
-        twoFingerTouchState = {
-          active: true,
-          prevMidX: midX,
-          prevMidY: midY,
-          prevDist: dist,
-        }
+        twoFingerTouchState = { active: true, prevMidX: midX, prevMidY: midY, prevDist: dist }
       } else {
         twoFingerTouchState.active = false
       }
@@ -1336,7 +1473,6 @@ export default function DiveExplorerMap({
 
     const handleTouchMove = (e) => {
       if (e.touches.length === 2) {
-        // Prevent browser page from scrolling or pinch-zooming while two fingers move on map
         e.preventDefault()
         e.stopPropagation()
 
@@ -1353,12 +1489,10 @@ export default function DiveExplorerMap({
           const dx = midX - twoFingerTouchState.prevMidX
           const dy = midY - twoFingerTouchState.prevMidY
 
-          // 1. Two fingers moving up, down, left, or right -> PAN THE MAP!
           if (dx !== 0 || dy !== 0) {
             map.panBy([-dx, -dy], { duration: 0 })
           }
 
-          // 2. Pinch zoom if distance between the two fingers changes
           if (twoFingerTouchState.prevDist > 0 && Math.abs(dist - twoFingerTouchState.prevDist) > 1.2) {
             const scale = dist / twoFingerTouchState.prevDist
             const zoomDelta = Math.log2(scale)
@@ -1402,10 +1536,10 @@ export default function DiveExplorerMap({
     }
   }, [])
 
-  // 4. Reactive updates when data, country, or search filters change
+  // 4. Reactive updates when data, country, island, or search filters change
   useEffect(() => {
     syncMapData()
-  }, [geojsonCountries, countrySitesGeoJSON, selectedCountry, searchQuery, syncMapData])
+  }, [geojsonCountries, countryIslandsGeoJSON, countrySitesGeoJSON, selectedCountry, selectedIsland, searchQuery, syncMapData])
 
   // 5. External controlledCountry synchronization (Booking Form -> Map)
   useEffect(() => {
@@ -1415,6 +1549,8 @@ export default function DiveExplorerMap({
     if ((target || '').toLowerCase() !== (current || '').toLowerCase()) {
       setSelectedCountry(target)
       selectedCountryRef.current = target
+      setSelectedIsland(null)
+      selectedIslandRef.current = null
       setActiveSite(null)
 
       if (mapRef.current) {
@@ -1423,11 +1559,7 @@ export default function DiveExplorerMap({
 
       if (!target) {
         if (mapRef.current) {
-          mapRef.current.flyTo({
-            center: DEFAULT_CENTER,
-            zoom: DEFAULT_ZOOM,
-            duration: 1000,
-          })
+          mapRef.current.flyTo({ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM, duration: 1000 })
         }
       } else if (mapRef.current) {
         zoomToCountry(target)
@@ -1435,40 +1567,23 @@ export default function DiveExplorerMap({
     }
   }, [controlledCountry, selectedCountry, zoomToCountry])
 
-  // 5b. External selectedIsland synchronization (Booking Form -> Map)
+  // 5b. External controlledIsland synchronization (Booking Form -> Map)
   useEffect(() => {
-    if (!selectedIsland || controlledSite || selectedSiteId || allSites.length === 0 || !mapRef.current) return
-    const countryToUse = selectedCountry || controlledCountry
-    if (!countryToUse) return
+    if (controlledIsland === undefined) return
+    const target = controlledIsland ? controlledIsland.trim() : null
+    const current = selectedIsland ? selectedIsland.trim() : null
+    if ((target || '').toLowerCase() !== (current || '').toLowerCase()) {
+      setSelectedIsland(target)
+      selectedIslandRef.current = target
+      setActiveSite(null)
 
-    const islandSites = allSites.filter(
-      (s) => s.country && s.country.toLowerCase() === countryToUse.toLowerCase() && getIslandForSite(s) === selectedIsland
-    )
-    if (islandSites.length === 0) return
-
-    let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity
-    islandSites.forEach((s) => {
-      const lng = parseFloat(s.longitude)
-      const lat = parseFloat(s.latitude)
-      if (!isNaN(lng) && !isNaN(lat)) {
-        if (lng < minLng) minLng = lng
-        if (lng > maxLng) maxLng = lng
-        if (lat < minLat) minLat = lat
-        if (lat > maxLat) maxLat = lat
-      }
-    })
-
-    if (minLng !== Infinity) {
-      if (minLng === maxLng && minLat === maxLat) {
-        mapRef.current.flyTo({ center: [minLng, minLat], zoom: 9.5, duration: 1000 })
-      } else {
-        mapRef.current.fitBounds(
-          [[minLng, minLat], [maxLng, maxLat]],
-          { padding: { top: 60, bottom: 60, left: 60, right: 60 }, maxZoom: 10.5, duration: 1200 }
-        )
+      if (target && (selectedCountry || controlledCountry)) {
+        zoomToIsland(selectedCountry || controlledCountry, target)
+      } else if (!target && (selectedCountry || controlledCountry)) {
+        zoomToCountry(selectedCountry || controlledCountry)
       }
     }
-  }, [selectedIsland, selectedCountry, controlledCountry, controlledSite, selectedSiteId, allSites])
+  }, [controlledIsland, selectedIsland, selectedCountry, controlledCountry, zoomToIsland, zoomToCountry])
 
   // 6. External controlledSite / selectedSiteId synchronization (Booking Form -> Map)
   useEffect(() => {
@@ -1479,64 +1594,95 @@ export default function DiveExplorerMap({
     if (!strQuery) return
 
     const cleanQuery = strQuery.toLowerCase()
-    const prefixWord = strQuery.includes('(') ? strQuery.split('(')[0].trim().toLowerCase() : ''
-    const insideParen = strQuery.includes('(') && strQuery.includes(')') ? strQuery.split('(')[1].split(')')[0].trim().toLowerCase() : ''
-
-    // 1. Check exact ID match
     let match = allSites.find((s) => s.id === query)
-
-    // 2. Search in current country first
     if (!match && selectedCountry) {
       match = allSites.find(
         (s) => s.country.toLowerCase() === selectedCountry.toLowerCase() && s.siteName.toLowerCase() === cleanQuery
       ) || allSites.find(
         (s) => s.country.toLowerCase() === selectedCountry.toLowerCase() && s.siteName.toLowerCase().includes(cleanQuery)
-      ) || (prefixWord && allSites.find(
-        (s) => s.country.toLowerCase() === selectedCountry.toLowerCase() && (s.siteName.toLowerCase().includes(prefixWord) || prefixWord.includes(s.siteName.toLowerCase()))
-      )) || (insideParen && allSites.find(
-        (s) => s.country.toLowerCase() === selectedCountry.toLowerCase() && s.siteName.toLowerCase().includes(insideParen)
-      ))
+      )
     }
-
-    // 3. Fallback search across all sites
     if (!match) {
       match = allSites.find((s) => s.siteName.toLowerCase() === cleanQuery) ||
-        allSites.find((s) => s.siteName.toLowerCase().includes(cleanQuery)) ||
-        (prefixWord && allSites.find((s) => s.siteName.toLowerCase().includes(prefixWord))) ||
-        (insideParen && allSites.find((s) => s.siteName.toLowerCase().includes(insideParen)))
+        allSites.find((s) => s.siteName.toLowerCase().includes(cleanQuery))
     }
 
-    if (match && mapRef.current) {
+    if (match) {
       if (match.country && match.country.toLowerCase() !== (selectedCountry || '').toLowerCase()) {
         setSelectedCountry(match.country)
+        selectedCountryRef.current = match.country
         if (onSelectCountry) onSelectCountry(match.country)
       }
+      const matchIsland = getIslandForSite(match)
+      if (matchIsland && matchIsland !== selectedIsland) {
+        setSelectedIsland(matchIsland)
+        selectedIslandRef.current = matchIsland
+        if (onSelectIsland) onSelectIsland(matchIsland)
+      }
       setActiveSite(match)
-      mapRef.current.flyTo({
-        center: [match.longitude, match.latitude],
-        zoom: Math.max(mapRef.current.getZoom(), 9.2),
-        duration: 1000,
-      })
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: [match.longitude, match.latitude],
+          zoom: Math.max(mapRef.current.getZoom(), 9.5),
+          duration: 1000,
+        })
+      }
     }
-  }, [controlledSite, selectedSiteId, allSites, selectedCountry, onSelectCountry])
+  }, [controlledSite, selectedSiteId, allSites, selectedCountry, selectedIsland, onSelectCountry, onSelectIsland])
 
-  // Return to World Overview (show all countries)
-  const handleResetWorldView = useCallback(() => {
-    setSelectedCountry(null)
-    selectedCountryRef.current = null
-    setSearchQuery('')
-    searchQueryRef.current = ''
-    setActiveSite(null)
-    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
-    if (onSelectCountryRef.current) onSelectCountryRef.current('')
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: DEFAULT_CENTER,
-        zoom: DEFAULT_ZOOM,
-        duration: 1000,
-      })
+  // 7. Floating Animated Marker with Zoom-In Zoom-Out Breathing Pulse for Selected Dive Site
+  useEffect(() => {
+    if (selectedSiteMarkerRef.current) {
+      selectedSiteMarkerRef.current.remove()
+      selectedSiteMarkerRef.current = null
     }
-  }, [])
+
+    const map = mapRef.current
+    if (!map || !activeSite) return
+
+    const lng = parseFloat(activeSite.longitude)
+    const lat = parseFloat(activeSite.latitude)
+    if (isNaN(lng) || isNaN(lat)) return
+
+    const el = document.createElement('div')
+    el.className = 'tdv-selected-site-beacon'
+    el.setAttribute('data-selected-site', activeSite.siteName)
+    el.innerHTML = `
+      <div class="tdv-water-pulse"></div>
+      <div class="tdv-water-pulse-2"></div>
+      <div class="tdv-floating-pin-wrapper">
+        <div class="tdv-pin-badge">Selected Site</div>
+        ${
+          pinStyle === 'red'
+            ? `<svg width="24" height="32" viewBox="0 0 24 24" class="tdv-red-pin-icon" fill="none">
+                 <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" />
+                 <circle cx="12" cy="9" r="3.2" fill="#FFFFFF" />
+               </svg>`
+            : `<img src="${pinIconUrl}" class="tdv-pin-icon-selected" alt="" />`
+        }
+      </div>
+    `
+
+    try {
+      const marker = new Marker({
+        element: el,
+        anchor: 'bottom',
+      })
+        .setLngLat([lng, lat])
+        .addTo(map)
+
+      selectedSiteMarkerRef.current = marker
+    } catch (err) {
+      console.warn('[DiveExplorerMap] Error attaching floating marker:', err)
+    }
+
+    return () => {
+      if (selectedSiteMarkerRef.current) {
+        selectedSiteMarkerRef.current.remove()
+        selectedSiteMarkerRef.current = null
+      }
+    }
+  }, [activeSite, pinStyle])
 
   // When a user picks a country from the dropdown
   const handleDropdownCountryChange = (c) => {
@@ -1547,11 +1693,14 @@ export default function DiveExplorerMap({
     navigateToCountry(c)
   }
 
-  // Count of currently visible items
-  const activeCountryStats = useMemo(() => {
-    if (!selectedCountry) return null
-    return countryCentroids.find((c) => c.country?.toLowerCase() === selectedCountry.toLowerCase()) || null
-  }, [selectedCountry, countryCentroids])
+  // When a user picks an island from the dropdown
+  const handleDropdownIslandChange = (isl) => {
+    if (isl === 'all' || !isl) {
+      handleBackToIslands()
+      return
+    }
+    navigateToIsland(isl)
+  }
 
   return (
     <div
@@ -1587,8 +1736,9 @@ export default function DiveExplorerMap({
           )}
         </div>
 
-        {/* Mobile Country selector + Pin Toggle Row */}
-        <div className="flex items-center justify-between gap-2">
+        {/* Mobile Country + Island Selector Row */}
+        <div className="flex items-center gap-2">
+          {/* Country selector */}
           <div className="relative flex-1 min-w-0">
             <select
               value={selectedCountry || 'all'}
@@ -1608,6 +1758,31 @@ export default function DiveExplorerMap({
             </div>
           </div>
 
+          {/* Island selector (shown when country is selected) */}
+          {selectedCountry && availableIslandsForDropdown.length > 0 && (
+            <div className="relative flex-1 min-w-0 animate-in fade-in">
+              <select
+                value={selectedIsland || 'all'}
+                onChange={(e) => handleDropdownIslandChange(e.target.value)}
+                className="w-full appearance-none pl-3 pr-7 py-2 rounded-2xl bg-white border border-emerald-500/40 text-xs font-bold text-emerald-950 outline-none focus:border-accent shadow-xs truncate"
+                aria-label="Select island"
+              >
+                <option value="all">All Islands ({availableIslandsForDropdown.length})</option>
+                {availableIslandsForDropdown.map((isl) => (
+                  <option key={isl.name} value={isl.name}>
+                    {isl.name} ({isl.count})
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-emerald-700/60">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Pin Toggle */}
           <div
             className="flex items-center bg-white p-0.5 rounded-2xl border border-navy/15 shadow-xs shrink-0 select-none"
             role="group"
@@ -1616,7 +1791,7 @@ export default function DiveExplorerMap({
             <button
               type="button"
               onClick={() => handleTogglePinStyle('custom')}
-              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition cursor-pointer ${
+              className={`inline-flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-bold transition cursor-pointer ${
                 pinStyle === 'custom'
                   ? 'bg-navy text-[#FFD500] shadow-xs'
                   : 'text-navy/60 hover:text-navy'
@@ -1633,12 +1808,11 @@ export default function DiveExplorerMap({
                   e.currentTarget.src = localPinIconUrl
                 }}
               />
-              <span>Custom</span>
             </button>
             <button
               type="button"
               onClick={() => handleTogglePinStyle('red')}
-              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition cursor-pointer ${
+              className={`inline-flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-bold transition cursor-pointer ${
                 pinStyle === 'red'
                   ? 'bg-navy text-rose-400 shadow-xs'
                   : 'text-navy/60 hover:text-navy'
@@ -1655,7 +1829,6 @@ export default function DiveExplorerMap({
                 />
                 <circle cx="12" cy="9" r="2.8" fill="#FFFFFF" />
               </svg>
-              <span>Red</span>
             </button>
           </div>
         </div>
@@ -1663,13 +1836,13 @@ export default function DiveExplorerMap({
 
       {/* Main Map Card */}
       <div className="flex flex-col bg-white rounded-3xl sm:rounded-[36px] border border-navy/10 shadow-card overflow-hidden w-full">
-        {/* Optional Header Banner (Desktop Only) */}
+        {/* Header Banner (Desktop Only) */}
         {showHeading && (
           <div className="hidden sm:flex px-5 py-4 sm:px-7 sm:py-5 border-b border-navy/10 bg-white flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Worldwide 2D Map</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-accent">3-Tier Interactive Map</span>
               </div>
               <h2 className="font-heading text-lg sm:text-2xl font-bold text-navy mt-0.5">{title}</h2>
               <p className="text-xs text-navy/70 mt-0.5 max-w-xl">{subtitle}</p>
@@ -1693,7 +1866,7 @@ export default function DiveExplorerMap({
           </div>
         )}
 
-        {/* Desktop Control Bar: Search & Country / Natural Type Filters */}
+        {/* Desktop Control Bar */}
         <div className="hidden sm:flex p-4 bg-slate-50/70 border-b border-navy/10 flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between">
           {/* Search Input */}
           <div className="relative flex-1 min-w-[200px]">
@@ -1722,14 +1895,14 @@ export default function DiveExplorerMap({
             )}
           </div>
 
-          {/* Dropdowns & Filter Controls (Desktop Only) */}
+          {/* Dropdowns & Filter Controls */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Country Filter */}
             <div className="relative">
               <select
                 value={selectedCountry || 'all'}
                 onChange={(e) => handleDropdownCountryChange(e.target.value)}
-                className="appearance-none pl-3.5 pr-8 py-2.5 rounded-2xl bg-white border border-navy/15 text-xs font-bold text-navy outline-none focus:border-accent cursor-pointer shadow-xs max-w-[170px] sm:max-w-[200px] truncate"
+                className="appearance-none pl-3.5 pr-8 py-2.5 rounded-2xl bg-white border border-navy/15 text-xs font-bold text-navy outline-none focus:border-accent cursor-pointer shadow-xs max-w-[170px] sm:max-w-[190px] truncate"
                 aria-label="Select country"
               >
                 <option value="all">All Countries ({countriesList.length})</option>
@@ -1744,6 +1917,30 @@ export default function DiveExplorerMap({
               </div>
             </div>
 
+            {/* Island Filter (Desktop, only when a country is selected) */}
+            {selectedCountry && availableIslandsForDropdown.length > 0 && (
+              <div className="relative animate-in fade-in">
+                <select
+                  value={selectedIsland || 'all'}
+                  onChange={(e) => handleDropdownIslandChange(e.target.value)}
+                  className="appearance-none pl-3.5 pr-8 py-2.5 rounded-2xl bg-white border border-emerald-500/40 text-xs font-bold text-emerald-950 outline-none focus:border-accent cursor-pointer shadow-xs max-w-[170px] sm:max-w-[200px] truncate"
+                  aria-label="Select island"
+                >
+                  <option value="all">All Islands ({availableIslandsForDropdown.length})</option>
+                  {availableIslandsForDropdown.map((isl) => (
+                    <option key={isl.name} value={isl.name}>
+                      {isl.name} ({isl.count})
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-emerald-700/60">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              </div>
+            )}
+
             {/* Reset button if filtered */}
             {(selectedCountry || searchQuery) && (
               <button
@@ -1755,7 +1952,7 @@ export default function DiveExplorerMap({
               </button>
             )}
 
-            {/* Pin Style Toggle Switch (Replaces 101 countries / 3,451 dive sites badge) */}
+            {/* Pin Style Toggle Switch */}
             <div
               className="ml-auto md:ml-0 flex items-center bg-white p-1 rounded-2xl border border-navy/15 shadow-xs shrink-0 select-none"
               role="group"
@@ -1782,7 +1979,7 @@ export default function DiveExplorerMap({
                     e.currentTarget.src = localPinIconUrl
                   }}
                 />
-                <span>Custom Pin</span>
+                <span>Custom</span>
               </button>
               <button
                 type="button"
@@ -1795,14 +1992,7 @@ export default function DiveExplorerMap({
                 title="Normal Red Drop Pin"
                 aria-pressed={pinStyle === 'red'}
               >
-                <svg
-                  width="11"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="shrink-0"
-                  aria-hidden="true"
-                >
+                <svg width="11" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
                   <path
                     d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z"
                     fill="#EF4444"
@@ -1811,7 +2001,7 @@ export default function DiveExplorerMap({
                   />
                   <circle cx="12" cy="9" r="2.8" fill="#FFFFFF" />
                 </svg>
-                <span>Red Pin</span>
+                <span>Red</span>
               </button>
             </div>
           </div>
@@ -1853,8 +2043,16 @@ export default function DiveExplorerMap({
             </div>
           )}
 
-          {/* Level 2 Floating Banner: When inside a specific country */}
-          {selectedCountry && (
+          {/* LEVEL 1: World View Guidance Banner */}
+          {!selectedCountry && !searchQuery && (
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 hidden sm:flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-navy/15 shadow-sm text-[11px] font-bold text-navy max-w-[calc(100%-4.5rem)]">
+              <span className="w-2 h-2 rounded-full bg-accent animate-ping shrink-0" />
+              <span className="truncate">Tap any country to explore its confirmed islands</span>
+            </div>
+          )}
+
+          {/* LEVEL 2: Country View Banner (Country picked -> Islands shown) */}
+          {selectedCountry && !selectedIsland && (
             <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2 bg-navy/95 backdrop-blur-md text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-float border border-white/20 animate-in fade-in max-w-[calc(100%-4.5rem)]">
               <button
                 type="button"
@@ -1867,16 +2065,28 @@ export default function DiveExplorerMap({
               <div className="h-3.5 w-px bg-white/20 shrink-0" />
               <div className="text-xs font-semibold truncate text-white/95">
                 <span className="hidden sm:inline">Showing </span>
-                <strong className="text-accent">{countrySitesGeoJSON.features.length}</strong> sites in <strong className="text-white">{selectedCountry}</strong>
+                <strong className="text-accent">{countryIslandsGeoJSON.features.length}</strong> islands in <strong className="text-white">{selectedCountry}</strong>
+                <span className="hidden md:inline text-white/70"> • Tap an island to view dive sites</span>
               </div>
             </div>
           )}
 
-          {/* World View Guidance Banner (when at country level) */}
-          {!selectedCountry && !searchQuery && (
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 hidden sm:flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-navy/15 shadow-sm text-[11px] font-bold text-navy max-w-[calc(100%-4.5rem)]">
-              <span className="w-2 h-2 rounded-full bg-accent animate-ping shrink-0" />
-              <span className="truncate">Tap any country to explore its dive sites</span>
+          {/* LEVEL 3: Island View Banner (Island picked -> Dive Sites shown) */}
+          {selectedCountry && selectedIsland && (
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2 bg-navy/95 backdrop-blur-md text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-float border border-white/20 animate-in fade-in max-w-[calc(100%-4.5rem)]">
+              <button
+                type="button"
+                onClick={handleBackToIslands}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/15 hover:bg-accent hover:text-navy text-xs font-bold transition active:scale-95 cursor-pointer shrink-0"
+                title={`Back to islands in ${selectedCountry}`}
+              >
+                <span>← {selectedCountry} Islands</span>
+              </button>
+              <div className="h-3.5 w-px bg-white/20 shrink-0" />
+              <div className="text-xs font-semibold truncate text-white/95">
+                <strong className="text-accent">{countrySitesGeoJSON.features.length}</strong> dive sites on <strong className="text-white">{selectedIsland}</strong>
+                <span className="hidden md:inline text-white/70"> • Tap a site to select</span>
+              </div>
             </div>
           )}
 
@@ -1893,7 +2103,7 @@ export default function DiveExplorerMap({
             </div>
           )}
 
-          {/* Floating Controls inside Map (Matching mockup: crosshair on left, map on right) */}
+          {/* Floating Reset Controls */}
           <div className="absolute bottom-5 left-4 z-10 flex flex-col gap-2">
             <button
               type="button"
@@ -1929,17 +2139,29 @@ export default function DiveExplorerMap({
             </button>
           </div>
 
-          {/* Selected Dive Site Drawer / Detail Card */}
+          {/* Selected Dive Site Detail Card / Drawer with Island Context */}
           {activeSite && (
             <div className="absolute bottom-4 right-4 left-4 sm:left-auto sm:w-96 z-20 bg-white/98 backdrop-blur-xl rounded-3xl border border-navy/15 p-4 sm:p-5 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-200">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent block">
-                    {activeSite.country}
-                  </span>
-                  <h3 className="font-heading text-base sm:text-lg font-bold text-navy leading-snug mt-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent">
+                      {activeSite.country}
+                    </span>
+                    <span className="text-[10px] text-navy/40">•</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      {getIslandForSite(activeSite)}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-base sm:text-lg font-bold text-navy leading-snug mt-1">
                     {activeSite.siteName}
                   </h3>
+                  {activeSite.naturalTypes && (
+                    <p className="text-xs text-navy/70 mt-0.5 line-clamp-1">{activeSite.naturalTypes}</p>
+                  )}
+                  <p className="text-[10px] text-navy/50 font-mono mt-1">
+                    Lat: {parseFloat(activeSite.latitude).toFixed(4)}°, Lng: {parseFloat(activeSite.longitude).toFixed(4)}°
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -1951,26 +2173,45 @@ export default function DiveExplorerMap({
                 </button>
               </div>
 
-              {/* Return to World Map Button */}
-              <button
-                type="button"
-                onClick={handleResetWorldView}
-                className="mt-4 w-full flex items-center justify-center gap-2 rounded-2xl bg-navy hover:bg-accent text-white hover:text-navy px-4 py-2.5 text-xs sm:text-sm font-bold transition shadow-sm cursor-pointer active:scale-95"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                  <path d="M2 12h20" />
-                </svg>
-                <span>Return to World Map</span>
-              </button>
+              {/* Navigation Options */}
+              <div className="mt-4 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSite(null)
+                    if (onSelectSiteRef.current) onSelectSiteRef.current(null)
+                  }}
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-navy/5 hover:bg-navy/10 text-navy px-3.5 py-2 text-xs font-bold transition cursor-pointer"
+                >
+                  <span>← View all dive sites in {getIslandForSite(activeSite)}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBackToIslands}
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-navy/5 hover:bg-navy/10 text-navy px-3.5 py-2 text-xs font-bold transition cursor-pointer"
+                >
+                  <span>← View all islands in {activeSite.country}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetWorldView}
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-navy hover:bg-accent text-white hover:text-navy px-4 py-2 text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                    <path d="M2 12h20" />
+                  </svg>
+                  <span>Return to World Map</span>
+                </button>
+              </div>
             </div>
           )}
         </div>
 
         {/* Dataset Attribution Footer */}
         <div className="px-4 py-2.5 bg-slate-50/90 border-t border-navy/10 flex items-center justify-between text-[10px] text-navy/60 font-semibold">
-          <span>Source: Local dive site dataset (3,518 verified coordinates in 101 countries)</span>
+          <span>Source: Local dive site dataset (3,518+ verified coordinates in 115 countries)</span>
           <span className="text-navy/40">OpenFreeMap Liberty • MapLibre GL</span>
         </div>
       </div>

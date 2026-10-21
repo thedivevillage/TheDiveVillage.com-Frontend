@@ -8,6 +8,7 @@ const cursorVideo = MEDIA_CONFIG?.r2?.ui?.cursor || 'https://media.thedivevillag
 
 export default function CustomCursor() {
   const cursorRef = useRef(null)
+  const flipRef = useRef(null)
   const orientationRef = useRef(null)
   const videoRef = useRef(null)
   const isNightDive = useNightDive()
@@ -32,6 +33,12 @@ export default function CustomCursor() {
 
     let latestX = -100
     let latestY = -100
+    let prevMouseX = -100
+    let prevMouseY = -100
+    let pendingDx = 0
+    let pendingDy = 0
+    let hasNewMouseMove = false
+    let lastMouseMoveTime = 0
     let currentTarget = null
     let rafId = null
     let isHidden = true
@@ -134,10 +141,7 @@ export default function CustomCursor() {
       return dist <= 140
     }
 
-    let lastRenderX = -100
-    let lastRenderY = -100
     let lastTime = performance.now()
-    let lastMoveTime = 0
     let currentRotation = 0
     let targetRotation = 0
     let currentScaleX = -1
@@ -150,68 +154,88 @@ export default function CustomCursor() {
       lastTime = now
 
       if (cursorRef.current) {
-        const dx = latestX - lastRenderX
-        const dy = latestY - lastRenderY
-        lastRenderX = latestX
-        lastRenderY = latestY
+        cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0)`
 
-        const frameSpeed = Math.hypot(dx, dy)
-        if (frameSpeed > 0.5) {
-          lastMoveTime = now
+        let frameDx = 0
+        let frameDy = 0
+
+        if (hasNewMouseMove) {
+          frameDx = pendingDx
+          frameDy = pendingDy
+          pendingDx = 0
+          pendingDy = 0
+          hasNewMouseMove = false
+        }
+
+        const timeSinceMove = now - lastMouseMoveTime
+
+        if (timeSinceMove < 70) {
           // Smooth velocity filter to eliminate monitor refresh / mouse polling stutter
-          smoothDx += (dx - smoothDx) * 0.45
-          smoothDy += (dy - smoothDy) * 0.45
-        } else if (now - lastMoveTime > 120) {
-          // Stationary for > 120ms: decay smoothed velocity so cursor gently settles
-          smoothDx *= 0.7
-          smoothDy *= 0.7
+          const filterFactor = 1 - Math.exp(-22 * dt)
+          smoothDx += (frameDx - smoothDx) * filterFactor
+          smoothDy += (frameDy - smoothDy) * filterFactor
+        } else {
+          // Stationary for > 70ms: gently decay smoothed velocity so cursor smoothly settles
+          const decayFactor = Math.exp(-14 * dt)
+          smoothDx *= decayFactor
+          smoothDy *= decayFactor
+          if (Math.abs(smoothDx) < 0.04) smoothDx = 0
+          if (Math.abs(smoothDy) < 0.04) smoothDy = 0
         }
 
         const speed = Math.hypot(smoothDx, smoothDy)
-        const near360 = isNear360Toggle(latestX, latestY, currentTarget)
-        const nearGalleryClose = isNearGalleryClose(latestX, latestY, currentTarget)
-        const isNearStaticZone = near360 || nearGalleryClose
+        const isDragging360 = typeof document !== 'undefined' && document.body.hasAttribute('data-360-dragging')
 
-        // Natural directional swimming:
-        if (isHoveringInteractive || isNearStaticZone) {
-          // Level out horizontally over buttons and static close/toggle areas
+        if (isDragging360) {
+          // Level out horizontally during active 360 dragging
           targetRotation = 0
-        } else if (speed > 1.0) {
-          // 1. Determine horizontal facing direction (left vs right)
-          if (smoothDx > 1.0) {
-            targetScaleX = -1 // Moving rightwards -> turn RIGHT
-          } else if (smoothDx < -1.0) {
-            targetScaleX = 1 // Moving leftwards -> turn LEFT
+        } else if (speed > 0.8) {
+          const absX = Math.abs(smoothDx)
+          const absY = Math.abs(smoothDy)
+
+          // 1. Determine horizontal facing direction (left vs right) with hysteresis:
+          // Keep current facing direction unless there is deliberate horizontal motion
+          if (absX > 1.8) {
+            const isHorizontalIntent = absX > absY * 0.35 || absX > 3.5
+            if (isHorizontalIntent) {
+              if (smoothDx > 1.8) {
+                targetScaleX = -1 // Moving rightwards -> face RIGHT
+              } else if (smoothDx < -1.8) {
+                targetScaleX = 1 // Moving leftwards -> face LEFT
+              }
+            }
           }
-          // If smoothDx is between -1.0 and 1.0 (mostly vertical motion), preserve current targetScaleX
 
-          // 2. Determine swimming pitch (turn up/top vs down)
-          const forwardX = Math.max(0.2, Math.abs(smoothDx))
-          const pitch = Math.atan2(smoothDy, forwardX) * (180 / Math.PI)
-          const clampedPitch = Math.max(-80, Math.min(80, pitch))
-
-          // When facing right (scaleX = -1): clockwise is down (+), counter-clockwise is up (-)
-          // When facing left (scaleX = 1): clockwise is up (+), counter-clockwise is down (-)
-          targetRotation = targetScaleX === -1 ? clampedPitch : -clampedPitch
-        } else {
-          // Stopped / resting: gently return pitch to level horizontal (0deg)
-          targetRotation = 0
+          // 2. Determine swimming pitch (turn up vs down vs level):
+          // - Moving up rotates 45 deg to point UP
+          // - Moving down rotates 45 deg to point DOWN
+          // - Deliberate horizontal motion levels out to 0 deg
+          // - When stopped or taking hand off mouse, retain current position!
+          if (absY > 0.8 && absY > absX * 0.35) {
+            targetRotation = smoothDy < 0 ? 45 : -45
+          } else if (absX > 1.8 && absX > absY * 1.4) {
+            targetRotation = 0
+          }
         }
+        // When speed <= 0.8 (stopped / hand taken off cursor):
+        // Retain current targetRotation so the cursor remains in its position!
 
         // Frame-rate independent exponential smoothing
-        const rotLerp = 1 - Math.exp(-14 * dt)
-        const scaleLerp = 1 - Math.exp(-22 * dt)
+        const rotLerp = 1 - Math.exp(-12 * dt)
+        const scaleLerp = 1 - Math.exp(-18 * dt)
         currentRotation += (targetRotation - currentRotation) * rotLerp
         currentScaleX += (targetScaleX - currentScaleX) * scaleLerp
 
         // Snap near targets to prevent floating point drift
-        if (Math.abs(currentRotation) < 0.1 && targetRotation === 0) currentRotation = 0
+        if (Math.abs(currentRotation - targetRotation) < 0.05) currentRotation = targetRotation
         if (Math.abs(currentScaleX - targetScaleX) < 0.01) currentScaleX = targetScaleX
 
-        cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0)`
+        if (flipRef.current) {
+          flipRef.current.style.transform = `scaleX(${currentScaleX.toFixed(3)})`
+        }
 
         if (orientationRef.current) {
-          orientationRef.current.style.transform = `rotate(${currentRotation.toFixed(2)}deg) scaleX(${currentScaleX.toFixed(3)})`
+          orientationRef.current.style.transform = `rotate(${currentRotation.toFixed(2)}deg)`
         }
 
         if (isOverNormalCursor || isHidden) {
@@ -249,10 +273,19 @@ export default function CustomCursor() {
     rafId = requestAnimationFrame(updateCursorPosition)
 
     const onMouseMove = (e) => {
-      if (latestX === -100 && latestY === -100) {
-        lastRenderX = e.clientX
-        lastRenderY = e.clientY
+      const now = performance.now()
+      if (prevMouseX === -100 && prevMouseY === -100) {
+        prevMouseX = e.clientX
+        prevMouseY = e.clientY
+      } else {
+        pendingDx += e.clientX - prevMouseX
+        pendingDy += e.clientY - prevMouseY
+        prevMouseX = e.clientX
+        prevMouseY = e.clientY
+        hasNewMouseMove = true
+        lastMouseMoveTime = now
       }
+
       latestX = e.clientX
       latestY = e.clientY
       currentTarget = e.target
@@ -272,6 +305,7 @@ export default function CustomCursor() {
           isHidden = false
         }
         if (cursorRef.current) {
+          cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0)`
           cursorRef.current.style.opacity = '1'
           cursorRef.current.style.visibility = 'visible'
         }
@@ -300,6 +334,11 @@ export default function CustomCursor() {
 
     const onMouseLeave = () => {
       isHidden = true
+      prevMouseX = -100
+      prevMouseY = -100
+      pendingDx = 0
+      pendingDy = 0
+      hasNewMouseMove = false
       if (cursorRef.current) {
         cursorRef.current.style.opacity = '0'
         cursorRef.current.style.visibility = 'hidden'
@@ -312,8 +351,12 @@ export default function CustomCursor() {
       if (e?.clientX != null && e?.clientY != null) {
         latestX = e.clientX
         latestY = e.clientY
-        lastRenderX = e.clientX
-        lastRenderY = e.clientY
+        prevMouseX = e.clientX
+        prevMouseY = e.clientY
+        pendingDx = 0
+        pendingDy = 0
+        hasNewMouseMove = false
+        lastMouseMoveTime = performance.now()
       }
       const target = e?.target || document.elementFromPoint(latestX, latestY)
       isOverNormalCursor = checkNormalCursor(target) || isPointInsideGlobe(latestX, latestY)
@@ -322,6 +365,7 @@ export default function CustomCursor() {
           cursorRef.current.style.opacity = '0'
           cursorRef.current.style.visibility = 'hidden'
         } else {
+          cursorRef.current.style.transform = `translate3d(${latestX}px, ${latestY}px, 0)`
           cursorRef.current.style.opacity = '1'
           cursorRef.current.style.visibility = 'visible'
         }
@@ -422,30 +466,25 @@ export default function CustomCursor() {
         />
       )}
 
-      {/* Orientation & Swimming Physics Layer (Smooth rotation and flip around fingertip hotspot) */}
+      {/* Horizontal Facing Layer (Flip left/right around fingertip hotspot) */}
       <div
-        ref={orientationRef}
+        ref={flipRef}
         style={{
           transformOrigin: '0 0',
-          transform: 'rotate(0deg) scaleX(1)',
+          transform: 'scaleX(-1)',
           willChange: 'transform',
         }}
       >
-        {/* Scuba Diver with Dynamic Luminescence and Interactive Scale */}
+        {/* Pitch Rotation Layer (Smooth 45 deg up / down / level around fingertip hotspot) */}
         <div
-          className="will-change-transform transition-transform duration-100 ease-out"
+          ref={orientationRef}
           style={{
-            transformOrigin: '4.6% 57.5%',
-            transform: `translate(-4.6%, -57.5%) scale(${isHovering ? 1.15 : 1.0})`,
-            filter: isNightDive
-              ? (isHovering
-                  ? 'drop-shadow(0 0 6px rgba(0, 242, 254, 0.6)) brightness(1.15) contrast(1.05)'
-                  : 'drop-shadow(0 0 4px rgba(0, 242, 254, 0.4)) brightness(1.1) contrast(1.05)')
-              : (isHovering
-                  ? 'drop-shadow(0 4px 12px rgba(0, 56, 101, 0.4)) brightness(1.05)'
-                  : 'drop-shadow(0 2px 8px rgba(0, 30, 61, 0.25))'),
+            transformOrigin: '0 0',
+            transform: 'rotate(0deg)',
+            willChange: 'transform',
           }}
         >
+<<<<<<< Updated upstream
           <video
             ref={videoRef}
             src={cursorVideo}
@@ -458,6 +497,35 @@ export default function CustomCursor() {
             onError={() => setVideoError(true)}
             className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
           />
+=======
+          {/* Scuba Diver with Dynamic Luminescence and Interactive Scale */}
+          <div
+            className="will-change-transform transition-transform duration-100 ease-out"
+            style={{
+              transformOrigin: '4.6% 57.5%',
+              transform: `translate(-4.6%, -57.5%) scale(${isHovering ? 1.15 : 1.0})`,
+              filter: isNightDive
+                ? (isHovering
+                    ? 'drop-shadow(0 0 6px rgba(0, 242, 254, 0.6)) brightness(1.15) contrast(1.05)'
+                    : 'drop-shadow(0 0 4px rgba(0, 242, 254, 0.4)) brightness(1.1) contrast(1.05)')
+                : (isHovering
+                    ? 'drop-shadow(0 4px 12px rgba(0, 56, 101, 0.4)) brightness(1.05)'
+                    : 'drop-shadow(0 2px 8px rgba(0, 30, 61, 0.25))'),
+            }}
+          >
+            <video
+              ref={videoRef}
+              src={cursorVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              onError={() => setVideoError(true)}
+              className="w-16 sm:w-20 h-auto object-contain pointer-events-none select-none"
+            />
+          </div>
+>>>>>>> Stashed changes
         </div>
       </div>
     </div>
