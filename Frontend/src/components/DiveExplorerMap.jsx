@@ -512,9 +512,18 @@ export default function DiveExplorerMap({
       return
     }
 
-    const islandSites = allSites.filter(
-      (s) => s.country && cleanCountryName(s.country) === cleanCountryName(countryName) && getIslandForSite(s) === islandName
-    )
+    const islandSites = allSites.filter((s) => {
+      if (!s.country || cleanCountryName(s.country) !== cleanCountryName(countryName)) return false
+      const sIsland = getIslandForSite(s)
+      if (sIsland === islandName) return true
+      if (
+        (sIsland.toLowerCase() === 'lakshadweep' || sIsland.toLowerCase() === 'lakshadweep islands') &&
+        (islandName.toLowerCase() === 'lakshadweep' || islandName.toLowerCase() === 'lakshadweep islands')
+      ) {
+        return true
+      }
+      return false
+    })
     if (islandSites.length === 0) return
 
     let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity

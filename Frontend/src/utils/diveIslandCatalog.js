@@ -212,7 +212,7 @@ export const CONFIRMED_ISLAND_HUBS = {
     { name: 'Havelock Island', lat: 12.0, lng: 92.98 },
     { name: 'Neil Island', lat: 11.83, lng: 93.05 },
     { name: 'South Andaman Island', lat: 11.6, lng: 92.73 },
-    { name: 'Lakshadweep Islands', lat: 10.7, lng: 72.4 },
+    { name: 'Lakshadweep', lat: 10.7, lng: 72.4 },
     { name: 'Grande Island', lat: 15.35, lng: 73.77 },
     { name: 'Netrani Island', lat: 14.01, lng: 74.32 },
     { name: 'Mainland', lat: 10.0, lng: 78.0, isMainland: true }, // Kovalam, Pondicherry, Goa Mainland
@@ -628,9 +628,31 @@ export function getIslandForSite(site) {
   if (country.toLowerCase() === 'india') {
     if (siteName.includes('havelock') || siteName.includes('swaraj')) return 'Havelock Island'
     if ((siteName.includes('neil island') || siteName.includes('shaheed')) && lng > 90) return 'Neil Island'
-    if (siteName.includes('grande island') || siteName.includes('suzy') || siteName.includes('davy jones')) return 'Grande Island'
-    if (siteName.includes('netrani')) return 'Netrani Island'
-    if (siteName.includes('lakshadweep') || siteName.includes('agatti') || siteName.includes('bangaram')) return 'Lakshadweep Islands'
+    if (
+      siteName.includes('grande island') ||
+      siteName.includes('suzy') ||
+      siteName.includes('davy jones') ||
+      siteName.includes('bounty bay') ||
+      siteName.includes('sail rock') ||
+      siteName.includes('shelter cove') ||
+      siteName.includes('turbo tunnel') ||
+      (lat >= 15.2 && lat <= 15.5 && lng >= 73.6 && lng <= 73.9)
+    ) {
+      return 'Grande Island'
+    }
+    if (siteName.includes('netrani') || (lat >= 13.9 && lat <= 14.2 && lng >= 74.2 && lng <= 74.5)) return 'Netrani Island'
+    if (
+      siteName.includes('lakshadweep') ||
+      siteName.includes('agatti') ||
+      siteName.includes('bangaram') ||
+      siteName.includes('kavaratti') ||
+      siteName.includes('kadmat') ||
+      siteName.includes('minicoy') ||
+      siteName.includes('wall of wonder') ||
+      (lat >= 8.0 && lat <= 12.5 && lng >= 71.0 && lng <= 74.2)
+    ) {
+      return 'Lakshadweep'
+    }
     if (lng < 85) return 'Mainland'
   }
 
@@ -764,5 +786,16 @@ export function getSitesForIsland(country, island, allSites = []) {
   )
   if (!island) return sitesInCountry
 
-  return sitesInCountry.filter((s) => getIslandForSite(s) === island)
+  const targetIsland = island.toLowerCase().trim()
+  return sitesInCountry.filter((s) => {
+    const sIsland = getIslandForSite(s).toLowerCase().trim()
+    if (sIsland === targetIsland) return true
+    if (
+      (targetIsland === 'lakshadweep' || targetIsland === 'lakshadweep islands') &&
+      (sIsland === 'lakshadweep' || sIsland === 'lakshadweep islands')
+    ) {
+      return true
+    }
+    return false
+  })
 }
