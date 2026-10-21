@@ -125,14 +125,19 @@ export default function ProductDetail() {
   // Get active GLB model
   const activeGlb = (product.glbByColor && product.glbByColor[selectedColor?.name]) || product.glb
 
-  // Combined preview media items (images first, then video after images in the previews)
+  // Combined preview media items (images with video positioned beside the 3rd row media when applicable)
   const previewMediaItems = useMemo(() => {
+    const activeColorObj = product.colors?.find((c) => c.name === selectedColor?.name)
+    const effectiveImageLabels = (activeColorObj?.imageLabels && activeColorObj.imageLabels.length > 0)
+      ? activeColorObj.imageLabels
+      : product.imageLabels
+
     const list = productImages.map((src, i) => {
       const isVideo = isVideoUrl(src)
       const isFirstImage = !activeGlb && i === 0
       const isSecondImage = !activeGlb ? i === 1 : i === 0
-      const label = product.imageLabels && product.imageLabels[i]
-        ? product.imageLabels[i]
+      const label = effectiveImageLabels && effectiveImageLabels[i]
+        ? effectiveImageLabels[i]
         : (isFirstImage ? 'Front' : isSecondImage ? 'Back' : `View ${i + 1}`)
       return {
         type: isVideo ? 'video' : 'image',
@@ -143,16 +148,26 @@ export default function ProductDetail() {
     })
 
     if (activeVideo && !productImages.some((src) => src === activeVideo)) {
-      list.push({
+      const videoItem = {
         type: 'video',
         src: activeVideo,
         label: 'Product Video',
-        index: list.length,
+      }
+      // When activeGlb is present and we have at least 4 photos:
+      // Row 1: [3D Model] [photo 0]
+      // Row 2: [photo 1] [photo 2]
+      // Row 3: [photo 3] [VIDEO] (beside the 3rd row media!)
+      // Row 4+: [photo 4...]
+      // If no activeGlb, Row 3 has [photo 4] [VIDEO], so index 5.
+      const targetIndex = activeGlb ? (list.length >= 4 ? 4 : list.length) : (list.length >= 5 ? 5 : list.length)
+      list.splice(targetIndex, 0, videoItem)
+      list.forEach((item, idx) => {
+        item.index = idx
       })
     }
 
     return list
-  }, [productImages, activeVideo, product.imageLabels, activeGlb])
+  }, [productImages, activeVideo, product.imageLabels, product.colors, selectedColor, activeGlb])
 
   const totalMobileSlides = (activeGlb ? 1 : 0) + previewMediaItems.length
 
@@ -277,9 +292,10 @@ export default function ProductDetail() {
 
   // Badge text for image 0 (e.g. | RELAXED FIT / | 4-WAY STRETCH)
   const mainBadgeText = useMemo(() => {
+    if (product.id === 'product-womens-strap') return 'ALL-ROUND COMPRESSION'
     if (product.category === 'Tops') return 'ADAPTIVE FIT'
     if (product.category === 'Bottoms') return 'COMPRESSION SUPPORT'
-    if (product.category === 'Wetsuits') return '3MM SUPER-STRETCH'
+    if (product.category === 'Wetsuits' || product.category === 'Shortie & Wetsuit') return '3MM SUPER-STRETCH'
     if (product.category === 'Skin Wear') return 'UV 50+ SUN GUARD'
     if (product.category === 'Accessories') return 'DIVE GRADE'
     return 'PREMIUM DIVE WEAR'
@@ -860,7 +876,7 @@ export default function ProductDetail() {
               <p className="text-xs sm:text-sm text-gray-500 font-normal mt-0.5">
                 {product.category === 'Tops' ? 'Performance Dive Tops' :
                  product.category === 'Bottoms' ? 'Compression Dive Wear' :
-                 product.category === 'Wetsuits' ? 'Thermal Neoprene Wetsuits' :
+                 (product.category === 'Wetsuits' || product.category === 'Shortie & Wetsuit') ? 'Thermal Neoprene Wetsuits & Shorties' :
                  product.category === 'Skin Wear' ? 'Full Body Protective Skin' : 'Marine Gear & Accessories'}
               </p>
             </div>
@@ -1361,7 +1377,7 @@ export default function ProductDetail() {
               <p className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">
                 {product.category === 'Tops' ? 'Performance Dive Tops' :
                  product.category === 'Bottoms' ? 'Compression Dive Wear' :
-                 product.category === 'Wetsuits' ? 'Thermal Neoprene Wetsuits' :
+                 (product.category === 'Wetsuits' || product.category === 'Shortie & Wetsuit') ? 'Thermal Neoprene Wetsuits & Shorties' :
                  product.category === 'Skin Wear' ? 'Full Body Protective Skin' : 'Marine Gear & Accessories'}
               </p>
             </div>

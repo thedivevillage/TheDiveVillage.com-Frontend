@@ -105,14 +105,43 @@ const SERVICE_TO_PROGRAM = {
   'fun-night-2': { courseId: 'fun-dives', experience: 'Scuba Diving', funType: 'night', funDivesCount: 'fun-night-2' },
 }
 
+export function getMinDaysForDives(dives) {
+  const d = parseInt(dives, 10)
+  if (isNaN(d) || d <= 0) return 1
+  return Math.max(1, Math.ceil(d / 4))
+}
+
+export function parseFunDivesPackage(pkgId) {
+  if (!pkgId) return { dives: 2, days: 1 }
+  if (typeof pkgId === 'number') return { dives: pkgId, days: getMinDaysForDives(pkgId) }
+  const str = String(pkgId).trim()
+  if (/^\d+$/.test(str)) {
+    const num = parseInt(str, 10)
+    return { dives: num, days: getMinDaysForDives(num) }
+  }
+  if (str === 'fun-1') return { dives: 1, days: 1 }
+  if (str === 'fun-2') return { dives: 2, days: 1 }
+  if (str === 'fun-4') return { dives: 4, days: 1 }
+  if (str === 'fun-6') return { dives: 6, days: 2 }
+  if (str === 'fun-8') return { dives: 8, days: 2 }
+  if (str === 'fun-10') return { dives: 10, days: 3 }
+  if (str === 'fun-12') return { dives: 12, days: 3 }
+  if (str === 'fun-post') return { dives: 2, days: 1 }
+  if (str === 'fun-dawn-1' || str === 'fun-night-1') return { dives: 1, days: 1 }
+  if (str === 'fun-dawn-2' || str === 'fun-night-2') return { dives: 2, days: 1 }
+  if (str === 'fun-dawn-3' || str === 'fun-night-3') return { dives: 3, days: 1 }
+  if (str === 'fun-dawn-4' || str === 'fun-night-4') return { dives: 4, days: 1 }
+  return { dives: 2, days: 1 }
+}
+
 export const DAY_DIVES_OPTIONS = [
   { id: 'fun-1', title: '1 Dive (Half Day)', dives: 1 },
   { id: 'fun-2', title: '2 Dives (1 Day)', dives: 2 },
-  { id: 'fun-4', title: '4 Dives (2 Days)', dives: 4 },
-  { id: 'fun-6', title: '6 Dives (3 Days)', dives: 6 },
-  { id: 'fun-8', title: '8 Dives (4 Days)', dives: 8 },
-  { id: 'fun-10', title: '10 Dives (5 Days)', dives: 10 },
-  { id: 'fun-12', title: '12 Dives (6 Days)', dives: 12 },
+  { id: 'fun-4', title: '4 Dives (1 Day)', dives: 4 },
+  { id: 'fun-6', title: '6 Dives (2 Days)', dives: 6 },
+  { id: 'fun-8', title: '8 Dives (2 Days)', dives: 8 },
+  { id: 'fun-10', title: '10 Dives (3 Days)', dives: 10 },
+  { id: 'fun-12', title: '12 Dives (3 Days)', dives: 12 },
   { id: 'fun-post', title: 'Post 12 (extra 2 dives)', dives: 2 },
 ]
 
@@ -526,28 +555,38 @@ export default function BookUs() {
   }
 
   // Step 2: Participant Info List
-  const [participants, setParticipants] = useState([
-    {
-      id: 1,
-      name: '',
-      age: '',
-      parentalConsent: false,
-      hasCertification: false,
-      certifications: [],
-      selectedProgram: initialFromService?.courseId || initialProgram || '',
-      funDiveTypes: (() => {
-        const urlTimings = searchParams.get('timings') || searchParams.get('types')
-        if (urlTimings) {
-          const parsed = urlTimings.split(',').map((s) => s.trim().toLowerCase()).filter((s) => ['day', 'dawn', 'night'].includes(s))
-          if (parsed.length > 0) return parsed
-        }
-        if (initialFromService?.funType) return [initialFromService.funType]
-        if (isFunDivesProgram(initialFromService?.courseId || initialProgram)) return ['day']
-        return ['day']
-      })(),
-      funDivesCount: initialFromService?.funDivesCount || (isFunDivesProgram(initialFromService?.courseId || initialProgram) ? 'fun-2' : undefined),
-    }
-  ])
+  const [participants, setParticipants] = useState(() => {
+    const parsedInit = parseFunDivesPackage(initialFromService?.funDivesCount)
+    const initialTypes = (() => {
+      const urlTimings = searchParams.get('timings') || searchParams.get('types')
+      if (urlTimings) {
+        const parsed = urlTimings.split(',').map((s) => s.trim().toLowerCase()).filter((s) => ['day', 'dawn', 'night'].includes(s))
+        if (parsed.length > 0) return parsed
+      }
+      if (initialFromService?.funType) return [initialFromService.funType]
+      if (isFunDivesProgram(initialFromService?.courseId || initialProgram)) return ['day']
+      return ['day']
+    })()
+
+    return [
+      {
+        id: 1,
+        name: '',
+        age: '',
+        parentalConsent: false,
+        hasCertification: false,
+        certifications: [],
+        selectedProgram: initialFromService?.courseId || initialProgram || '',
+        funDiveTypes: initialTypes,
+        funDayDivesCount: parsedInit.dives,
+        funDawnDivesCount: initialFromService?.funType === 'dawn' ? parsedInit.dives : 1,
+        funNightDivesCount: initialFromService?.funType === 'night' ? parsedInit.dives : 1,
+        funDivesCount: parsedInit.dives,
+        funDives: parsedInit.dives,
+        funDays: parsedInit.days,
+      }
+    ]
+  })
 
   const lenis = useLenis()
   const bookingFormRef = useRef(null)
@@ -830,11 +869,13 @@ export default function BookUs() {
         hasCertification: false,
         certifications: [],
         selectedProgram: '',
-        funDiveTypes: [],
-        funDayDivesCount: undefined,
-        funDawnDivesCount: undefined,
-        funNightDivesCount: undefined,
-        funDivesCount: undefined,
+        funDiveTypes: ['day'],
+        funDayDivesCount: 2,
+        funDawnDivesCount: 1,
+        funNightDivesCount: 1,
+        funDivesCount: 2,
+        funDives: 2,
+        funDays: 1,
       }
     ])
     setContact({
@@ -862,6 +903,7 @@ export default function BookUs() {
     setParticipants((prev) => {
       if (prev.length === count) return prev
       if (prev.length < count) {
+        const parsedInit = parseFunDivesPackage(initialFromService?.funDivesCount)
         const extra = Array.from({ length: count - prev.length }, (_, i) => ({
           id: prev.length + i + 1,
           name: '',
@@ -871,7 +913,12 @@ export default function BookUs() {
           certifications: [],
           selectedProgram: initialFromService?.courseId || '',
           funDiveTypes: initialFromService?.funType ? [initialFromService.funType] : (isFunDivesProgram(initialFromService?.courseId) ? ['day'] : ['day']),
-          funDivesCount: initialFromService?.funDivesCount || (isFunDivesProgram(initialFromService?.courseId) ? 'fun-2' : undefined),
+          funDayDivesCount: parsedInit.dives,
+          funDawnDivesCount: 1,
+          funNightDivesCount: 1,
+          funDivesCount: parsedInit.dives,
+          funDives: parsedInit.dives,
+          funDays: parsedInit.days,
         }))
         return [...prev, ...extra]
       }
@@ -932,8 +979,10 @@ export default function BookUs() {
         if (isFunDivesProgram(value)) {
           if (!updated[index].funDiveTypes || updated[index].funDiveTypes.length === 0) {
             updated[index].funDiveTypes = ['day']
-            updated[index].funDayDivesCount = updated[index].funDayDivesCount || 'fun-2'
-            updated[index].funDivesCount = updated[index].funDayDivesCount || 'fun-2'
+            updated[index].funDayDivesCount = updated[index].funDayDivesCount || 2
+            updated[index].funDivesCount = updated[index].funDayDivesCount || 2
+            updated[index].funDives = updated[index].funDayDivesCount || 2
+            updated[index].funDays = updated[index].funDays || 1
           }
         }
       }
@@ -943,7 +992,10 @@ export default function BookUs() {
         updated[index].selectedProgram = initialFromService.courseId
       }
       if (isCourseService && !updated[index].funDivesCount && initialFromService?.funDivesCount) {
-        updated[index].funDivesCount = initialFromService.funDivesCount
+        const parsed = parseFunDivesPackage(initialFromService.funDivesCount)
+        updated[index].funDivesCount = parsed.dives
+        updated[index].funDives = parsed.dives
+        updated[index].funDays = parsed.days
       }
 
       return updated
@@ -989,33 +1041,91 @@ export default function BookUs() {
         funDiveTypes: nextTypes,
       }
       if (nextTypes.includes('day') && !p.funDayDivesCount) {
-        p.funDayDivesCount = 'fun-2'
+        p.funDayDivesCount = 2
       }
       if (nextTypes.includes('dawn') && !p.funDawnDivesCount) {
-        p.funDawnDivesCount = 'fun-dawn-1'
+        p.funDawnDivesCount = 1
       }
       if (nextTypes.includes('night') && !p.funNightDivesCount) {
-        p.funNightDivesCount = 'fun-night-1'
+        p.funNightDivesCount = 1
       }
-      p.funDivesCount = p.funDayDivesCount || p.funDawnDivesCount || p.funNightDivesCount || 'fun-2'
+      if (!p.funDays) {
+        p.funDays = 1
+      }
+      const dayCount = parseInt(p.funDayDivesCount, 10) || 0
+      const dawnCount = parseInt(p.funDawnDivesCount, 10) || 0
+      const nightCount = parseInt(p.funNightDivesCount, 10) || 0
+      const total = (nextTypes.includes('day') ? dayCount : 0) +
+                    (nextTypes.includes('dawn') ? dawnCount : 0) +
+                    (nextTypes.includes('night') ? nightCount : 0)
+      p.funDivesCount = total || 2
+      p.funDives = total || 2
+      p.funDays = getMinDaysForDives(p.funDivesCount)
       updated[index] = p
       return updated
     })
   }
 
-  // Update specific dive count package for Fun Dives (Day, Dawn, or Night)
-  const handleFunDiveCountChange = (index, type, packageId) => {
+  // Update Fun Dives custom typed numbers (dives & days)
+  const handleFunDiveNumberChange = (index, field, rawValue) => {
     setParticipants((prev) => {
       const updated = [...prev]
       const p = { ...updated[index] }
-      if (type === 'day') {
-        p.funDayDivesCount = packageId
-      } else if (type === 'dawn') {
-        p.funDawnDivesCount = packageId
-      } else if (type === 'night') {
-        p.funNightDivesCount = packageId
+
+      if (field === 'dives') {
+        const val = rawValue === '' ? '' : Math.max(1, parseInt(rawValue, 10) || 1)
+        p.funDivesCount = val
+        p.funDives = val
+        if (p.funDiveTypes?.includes('day')) {
+          p.funDayDivesCount = val
+        } else if (p.funDiveTypes?.includes('dawn')) {
+          p.funDawnDivesCount = val
+        } else if (p.funDiveTypes?.includes('night')) {
+          p.funNightDivesCount = val
+        }
+
+        // 4 dives per day max rule:
+        // Automatically updates days to the minimum required days (e.g. 4 dives -> 1 day, 12 dives -> 3 days)
+        if (val !== '') {
+          p.funDays = getMinDaysForDives(val)
+        }
+      } else if (field === 'days') {
+        const totalDives = parseInt(p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : (p.funDayDivesCount || 2), 10) || 1
+        const minDays = getMinDaysForDives(totalDives)
+
+        if (rawValue === '') {
+          p.funDays = ''
+        } else {
+          const parsed = parseInt(rawValue, 10)
+          p.funDays = isNaN(parsed) ? minDays : parsed
+        }
       }
-      p.funDivesCount = p.funDayDivesCount || p.funDawnDivesCount || p.funNightDivesCount || packageId
+      updated[index] = p
+      return updated
+    })
+  }
+
+  // Update per-timing dive count when multiple dive timings are selected
+  const handleFunDiveMultiCountChange = (index, type, rawValue) => {
+    setParticipants((prev) => {
+      const updated = [...prev]
+      const p = { ...updated[index] }
+      const val = rawValue === '' ? '' : Math.max(1, parseInt(rawValue, 10) || 1)
+      if (type === 'day') p.funDayDivesCount = val
+      if (type === 'dawn') p.funDawnDivesCount = val
+      if (type === 'night') p.funNightDivesCount = val
+
+      const dayCount = p.funDiveTypes?.includes('day') ? (parseInt(p.funDayDivesCount, 10) || 0) : 0
+      const dawnCount = p.funDiveTypes?.includes('dawn') ? (parseInt(p.funDawnDivesCount, 10) || 0) : 0
+      const nightCount = p.funDiveTypes?.includes('night') ? (parseInt(p.funNightDivesCount, 10) || 0) : 0
+      const total = dayCount + dawnCount + nightCount
+      p.funDivesCount = total || val
+      p.funDives = total || val
+
+      // Auto-set days to minimum required for total dives (4 dives/day max)
+      if (total > 0) {
+        p.funDays = getMinDaysForDives(total)
+      }
       updated[index] = p
       return updated
     })
@@ -1024,28 +1134,52 @@ export default function BookUs() {
   // Formats human-readable summary of chosen Fun Dives breakdown
   const getFunDivesSummary = useCallback((p) => {
     if (!p || !isFunDivesProgram(p.selectedProgram)) return ''
-    const types = p.funDiveTypes || []
-    const parts = []
+    const types = p.funDiveTypes || ['day']
+    const days = parseInt(p.funDays, 10) || 1
+    const daysLabel = `${days} Day${days > 1 ? 's' : ''}`
 
-    if (types.includes('day')) {
-      const dayPkg = DAY_DIVES_OPTIONS.find((f) => f.id === p.funDayDivesCount) || DAY_DIVES_OPTIONS.find((f) => f.id === 'fun-2')
-      if (dayPkg) parts.push(`Day: ${dayPkg.title}`)
-    }
-    if (types.includes('dawn')) {
-      const dawnPkg = DAWN_DIVES_OPTIONS.find((f) => f.id === p.funDawnDivesCount) || DAWN_DIVES_OPTIONS.find((f) => f.id === 'fun-dawn-1')
-      if (dawnPkg) parts.push(`Dawn: ${dawnPkg.title}`)
-    }
-    if (types.includes('night')) {
-      const nightPkg = NIGHT_DIVES_OPTIONS.find((f) => f.id === p.funNightDivesCount) || NIGHT_DIVES_OPTIONS.find((f) => f.id === 'fun-night-1')
-      if (nightPkg) parts.push(`Night: ${nightPkg.title}`)
+    if (types.length > 1) {
+      const parts = []
+      if (types.includes('day')) {
+        const d = parseInt(p.funDayDivesCount || p.funDivesCount, 10) || 0
+        if (d > 0) parts.push(`Day: ${d} Dive${d > 1 ? 's' : ''}`)
+      }
+      if (types.includes('dawn')) {
+        const d = parseInt(p.funDawnDivesCount, 10) || 0
+        if (d > 0) parts.push(`Dawn: ${d} Dive${d > 1 ? 's' : ''}`)
+      }
+      if (types.includes('night')) {
+        const d = parseInt(p.funNightDivesCount, 10) || 0
+        if (d > 0) parts.push(`Night: ${d} Dive${d > 1 ? 's' : ''}`)
+      }
+      if (parts.length > 0) {
+        return `${parts.join(' | ')} (${daysLabel})`
+      }
     }
 
-    return parts.join(' | ')
+    const dives = parseInt(p.funDivesCount || p.funDayDivesCount || p.funDives, 10) || 2
+    const typeLabel = types.includes('night') && !types.includes('day') && !types.includes('dawn')
+      ? 'Night'
+      : types.includes('dawn') && !types.includes('day') && !types.includes('night')
+        ? 'Dawn'
+        : 'Day'
+    return `${dives} ${typeLabel} Dive${dives > 1 ? 's' : ''} across ${daysLabel}`
   }, [])
 
-  // Renders Fun Dives multiple-choice Day/Dawn/Night timing selector and separate count dropdowns per timing
+  // Renders Fun Dives multiple-choice Day/Dawn/Night timing selector and type-in number of dives and days
   const renderFunDivesCustomizer = (p, idx) => {
     const activeTypes = p.funDiveTypes || []
+    const isSingleType = activeTypes.length <= 1
+
+    const singleDiveCount = parseInt(p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : (p.funDayDivesCount || 2), 10) || 1
+    const multiDiveCount = (activeTypes.includes('day') ? (parseInt(p.funDayDivesCount, 10) || 0) : 0) +
+                           (activeTypes.includes('dawn') ? (parseInt(p.funDawnDivesCount, 10) || 0) : 0) +
+                           (activeTypes.includes('night') ? (parseInt(p.funNightDivesCount, 10) || 0) : 0)
+    const totalDives = isSingleType ? singleDiveCount : (multiDiveCount || 1)
+    const minRequiredDays = getMinDaysForDives(totalDives)
+    const currentDays = parseInt(p.funDays, 10)
+    const isDaysBelowMin = !isNaN(currentDays) && currentDays < minRequiredDays
+
     return (
       <div className="mt-3 pt-3 border-t border-navy/10 space-y-4">
         {/* 1. Multiple-choice Dive Timings: Day, Dawn, Night Dives */}
@@ -1064,8 +1198,8 @@ export default function BookUs() {
 
           <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 mt-2.5">
             {[
-              { type: 'day', label: 'Day Dives', Icon: SunIcon, sub: 'Reef & wall exploration' },
               { type: 'dawn', label: 'Dawn Dives', Icon: SunriseIcon, sub: 'Sunrise first-light' },
+              { type: 'day', label: 'Day Dives', Icon: SunIcon, sub: 'Reef & wall exploration' },
               { type: 'night', label: 'Night Dives', Icon: MoonIcon, sub: 'Bioluminescence safari' },
             ].map((item) => {
               const isTypeSelected = activeTypes.includes(item.type)
@@ -1119,96 +1253,254 @@ export default function BookUs() {
           )}
         </div>
 
-        {/* 2. Number of Dives Dropdown(s) for each selected dive timing */}
+        {/* 2. Type-in Number of Dives & Number of Days */}
         {activeTypes.length > 0 && (
-          <div className="space-y-3 pt-1">
-            <span className="text-[10px] sm:text-xs font-bold text-navy/70 uppercase tracking-wider block">
-              Select Number of Dives
-            </span>
+          <div className="rounded-xl bg-[#F0F2F5]/80 border border-navy/10 p-3 sm:p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-bold text-navy/80 uppercase tracking-wider block">
+                Dive Count & Duration
+              </span>
+              <span className="text-[9px] sm:text-[10px] text-navy/50 font-medium">
+                Max 4 dives/day
+              </span>
+            </div>
 
-            {/* Day Dives package dropdown */}
-            {activeTypes.includes('day') && (
-              <div className="rounded-lg sm:rounded-xl bg-[#F0F2F5]/80 border border-navy/10 p-2.5 sm:p-3 space-y-1.5">
-                <label htmlFor={`fundives-day-package-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider flex items-center gap-1.5">
-                  <SunIcon className="w-3.5 h-3.5 text-navy/70" />
-                  <span>How many Day Dives?</span> <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    id={`fundives-day-package-${idx}`}
-                    value={p.funDayDivesCount || 'fun-2'}
-                    onChange={(e) => handleFunDiveCountChange(idx, 'day', e.target.value)}
-                    required
-                    className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/10 px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-[11px] sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none cursor-pointer pr-8 shadow-sm"
-                  >
-                    {DAY_DIVES_OPTIONS.map((pkg) => (
-                      <option key={pkg.id} value={pkg.id}>
-                        {pkg.title}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy/50">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
+            {isSingleType ? (
+              /* Single Timing: Simple Side-by-Side (Number of Dives & Number of Days) */
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label htmlFor={`fundives-count-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider block">
+                      Number of Dives <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[9px] sm:text-[10px] text-navy/50 font-medium">
+                      Min 1
+                    </span>
                   </div>
+                  <div className="relative">
+                    <input
+                      id={`fundives-count-${idx}`}
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : (p.funDayDivesCount || 2)}
+                      onChange={(e) => handleFunDiveNumberChange(idx, 'dives', e.target.value)}
+                      onBlur={() => {
+                        const val = parseInt(p.funDivesCount, 10)
+                        if (isNaN(val) || val < 1) {
+                          handleFunDiveNumberChange(idx, 'dives', 1)
+                        }
+                      }}
+                      placeholder="e.g. 4"
+                      required
+                      className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/15 px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 focus:border-navy/40 transition shadow-sm"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-bold text-navy/40 pointer-events-none">
+                      Dives
+                    </span>
+                  </div>
+                  <span className="text-[9px] sm:text-[10px] text-navy/50 block mt-1">
+                    How many total dives you want (max 4 per day)
+                  </span>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label htmlFor={`fundives-days-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider block">
+                      Number of Days <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-navy/60">
+                      Min: {minRequiredDays} Day{minRequiredDays > 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id={`fundives-days-${idx}`}
+                      type="number"
+                      min={minRequiredDays}
+                      max="60"
+                      value={p.funDays !== undefined && p.funDays !== null ? p.funDays : minRequiredDays}
+                      onChange={(e) => handleFunDiveNumberChange(idx, 'days', e.target.value)}
+                      onBlur={() => {
+                        const val = parseInt(p.funDays, 10)
+                        if (isNaN(val) || val < minRequiredDays) {
+                          handleFunDiveNumberChange(idx, 'days', minRequiredDays)
+                        }
+                      }}
+                      placeholder={`Min ${minRequiredDays}`}
+                      required
+                      className={`w-full rounded-lg sm:rounded-xl bg-white border px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition shadow-sm ${
+                        isDaysBelowMin ? 'border-red-400 focus:border-red-500' : 'border-navy/15 focus:border-navy/40'
+                      }`}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-bold text-navy/40 pointer-events-none">
+                      Days
+                    </span>
+                  </div>
+                  {isDaysBelowMin ? (
+                    <span className="text-[9px] sm:text-[10px] text-red-600 font-bold block mt-1">
+                      ⚠️ Minimum {minRequiredDays} day{minRequiredDays > 1 ? 's' : ''} required for {totalDives} dives (max 4 dives/day).
+                    </span>
+                  ) : (
+                    <span className="text-[9px] sm:text-[10px] text-navy/50 block mt-1">
+                      {minRequiredDays > 1
+                        ? `Min ${minRequiredDays} days for ${totalDives} dives (max 4 dives/day). You can increase days.`
+                        : 'Spread your dives over 1 or more days.'}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* Multiple Timings: Inputs for each timing + Number of Days */
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+                {activeTypes.includes('dawn') && (
+                  <div>
+                    <label htmlFor={`fundives-dawn-count-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+                      <SunriseIcon className="w-3.5 h-3.5 text-navy/70" />
+                      <span>Number of Dawn Dives</span> <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        id={`fundives-dawn-count-${idx}`}
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={p.funDawnDivesCount !== undefined && p.funDawnDivesCount !== null ? p.funDawnDivesCount : 1}
+                        onChange={(e) => handleFunDiveMultiCountChange(idx, 'dawn', e.target.value)}
+                        onBlur={() => {
+                          const val = parseInt(p.funDawnDivesCount, 10)
+                          if (isNaN(val) || val < 1) {
+                            handleFunDiveMultiCountChange(idx, 'dawn', 1)
+                          }
+                        }}
+                        placeholder="e.g. 1"
+                        required
+                        className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/15 px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 focus:border-navy/40 transition shadow-sm"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-bold text-navy/40 pointer-events-none">
+                        Dives
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {activeTypes.includes('day') && (
+                  <div>
+                    <label htmlFor={`fundives-day-count-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+                      <SunIcon className="w-3.5 h-3.5 text-navy/70" />
+                      <span>Number of Day Dives</span> <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        id={`fundives-day-count-${idx}`}
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={p.funDayDivesCount !== undefined && p.funDayDivesCount !== null ? p.funDayDivesCount : 2}
+                        onChange={(e) => handleFunDiveMultiCountChange(idx, 'day', e.target.value)}
+                        onBlur={() => {
+                          const val = parseInt(p.funDayDivesCount, 10)
+                          if (isNaN(val) || val < 1) {
+                            handleFunDiveMultiCountChange(idx, 'day', 1)
+                          }
+                        }}
+                        placeholder="e.g. 2"
+                        required
+                        className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/15 px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 focus:border-navy/40 transition shadow-sm"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-bold text-navy/40 pointer-events-none">
+                        Dives
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {activeTypes.includes('night') && (
+                  <div>
+                    <label htmlFor={`fundives-night-count-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+                      <MoonIcon className="w-3.5 h-3.5 text-navy/70" />
+                      <span>Number of Night Dives</span> <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        id={`fundives-night-count-${idx}`}
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={p.funNightDivesCount !== undefined && p.funNightDivesCount !== null ? p.funNightDivesCount : 1}
+                        onChange={(e) => handleFunDiveMultiCountChange(idx, 'night', e.target.value)}
+                        onBlur={() => {
+                          const val = parseInt(p.funNightDivesCount, 10)
+                          if (isNaN(val) || val < 1) {
+                            handleFunDiveMultiCountChange(idx, 'night', 1)
+                          }
+                        }}
+                        placeholder="e.g. 1"
+                        required
+                        className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/15 px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 focus:border-navy/40 transition shadow-sm"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-bold text-navy/40 pointer-events-none">
+                        Dives
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label htmlFor={`fundives-days-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider block">
+                      Number of Days <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-navy/60">
+                      Min: {minRequiredDays} Day{minRequiredDays > 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id={`fundives-days-${idx}`}
+                      type="number"
+                      min={minRequiredDays}
+                      max="60"
+                      value={p.funDays !== undefined && p.funDays !== null ? p.funDays : minRequiredDays}
+                      onChange={(e) => handleFunDiveNumberChange(idx, 'days', e.target.value)}
+                      onBlur={() => {
+                        const val = parseInt(p.funDays, 10)
+                        if (isNaN(val) || val < minRequiredDays) {
+                          handleFunDiveNumberChange(idx, 'days', minRequiredDays)
+                        }
+                      }}
+                      placeholder={`Min ${minRequiredDays}`}
+                      required
+                      className={`w-full rounded-lg sm:rounded-xl bg-white border px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition shadow-sm ${
+                        isDaysBelowMin ? 'border-red-400 focus:border-red-500' : 'border-navy/15 focus:border-navy/40'
+                      }`}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-bold text-navy/40 pointer-events-none">
+                      Days
+                    </span>
+                  </div>
+                  {isDaysBelowMin ? (
+                    <span className="text-[9px] sm:text-[10px] text-red-600 font-bold block mt-1">
+                      ⚠️ Minimum {minRequiredDays} day{minRequiredDays > 1 ? 's' : ''} required for {totalDives} total dives (max 4 dives/day).
+                    </span>
+                  ) : (
+                    <span className="text-[9px] sm:text-[10px] text-navy/50 block mt-1">
+                      {minRequiredDays > 1
+                        ? `Min ${minRequiredDays} days for ${totalDives} total dives (max 4 dives/day). You can increase days.`
+                        : 'Days spread across trip (min 1 day).'}
+                    </span>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Dawn Dives package dropdown */}
-            {activeTypes.includes('dawn') && (
-              <div className="rounded-lg sm:rounded-xl bg-[#F0F2F5]/80 border border-navy/10 p-2.5 sm:p-3 space-y-1.5">
-                <label htmlFor={`fundives-dawn-package-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider flex items-center gap-1.5">
-                  <SunriseIcon className="w-3.5 h-3.5 text-navy/70" />
-                  <span>How many Dawn Dives?</span> <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    id={`fundives-dawn-package-${idx}`}
-                    value={p.funDawnDivesCount || 'fun-dawn-1'}
-                    onChange={(e) => handleFunDiveCountChange(idx, 'dawn', e.target.value)}
-                    required
-                    className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/10 px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-[11px] sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none cursor-pointer pr-8 shadow-sm"
-                  >
-                    {DAWN_DIVES_OPTIONS.map((pkg) => (
-                      <option key={pkg.id} value={pkg.id}>
-                        {pkg.title}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy/50">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Night Dives package dropdown */}
-            {activeTypes.includes('night') && (
-              <div className="rounded-lg sm:rounded-xl bg-[#F0F2F5]/80 border border-navy/10 p-2.5 sm:p-3 space-y-1.5">
-                <label htmlFor={`fundives-night-package-${idx}`} className="text-[10px] sm:text-xs font-bold text-navy/90 uppercase tracking-wider flex items-center gap-1.5">
-                  <MoonIcon className="w-3.5 h-3.5 text-navy/70" />
-                  <span>How many Night Dives?</span> <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    id={`fundives-night-package-${idx}`}
-                    value={p.funNightDivesCount || 'fun-night-1'}
-                    onChange={(e) => handleFunDiveCountChange(idx, 'night', e.target.value)}
-                    required
-                    className="w-full rounded-lg sm:rounded-xl bg-white border border-navy/10 px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-[11px] sm:text-sm font-semibold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition appearance-none cursor-pointer pr-8 shadow-sm"
-                  >
-                    {NIGHT_DIVES_OPTIONS.map((pkg) => (
-                      <option key={pkg.id} value={pkg.id}>
-                        {pkg.title}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy/50">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Live Visual Summary */}
+            <div className="pt-2 border-t border-navy/10 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-navy/70">
+              <span>Your Fun Dives Plan:</span>
+              <span className="font-bold text-[#001e3d] bg-white px-2.5 py-1 rounded-full border border-navy/10 shadow-xs">
+                {getFunDivesSummary(p)}
+              </span>
+            </div>
           </div>
         )}
       </div>
@@ -1316,6 +1608,71 @@ export default function BookUs() {
         return false
       }
 
+      // Validate Fun Dives participants first
+      for (let i = 0; i < participants.length; i++) {
+        const p = participants[i]
+        if (isFunDivesProgram(p.selectedProgram)) {
+          const types = p.funDiveTypes || []
+          if (types.length === 0) {
+            triggerErrorHaptic()
+            setStepError(`Please select at least one dive timing (Day, Dawn, or Night Dives) for ${p.name || `Participant ${i + 1}`}.`)
+            return false
+          }
+          if (types.length > 1) {
+            if (types.includes('day')) {
+              const d = parseInt(p.funDayDivesCount, 10)
+              if (isNaN(d) || d < 1) {
+                triggerErrorHaptic()
+                setStepError(`Please enter the number of Day Dives for ${p.name || `Participant ${i + 1}`}.`)
+                return false
+              }
+            }
+            if (types.includes('dawn')) {
+              const d = parseInt(p.funDawnDivesCount, 10)
+              if (isNaN(d) || d < 1) {
+                triggerErrorHaptic()
+                setStepError(`Please enter the number of Dawn Dives for ${p.name || `Participant ${i + 1}`}.`)
+                return false
+              }
+            }
+            if (types.includes('night')) {
+              const d = parseInt(p.funNightDivesCount, 10)
+              if (isNaN(d) || d < 1) {
+                triggerErrorHaptic()
+                setStepError(`Please enter the number of Night Dives for ${p.name || `Participant ${i + 1}`}.`)
+                return false
+              }
+            }
+          } else {
+            const divesNum = parseInt(p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : p.funDayDivesCount, 10)
+            if (isNaN(divesNum) || divesNum < 1) {
+              triggerErrorHaptic()
+              setStepError(`Please enter a valid number of dives (at least 1) for ${p.name || `Participant ${i + 1}`}.`)
+              return false
+            }
+          }
+
+          const totalDives = types.length > 1
+            ? (types.includes('day') ? (parseInt(p.funDayDivesCount, 10) || 0) : 0) +
+              (types.includes('dawn') ? (parseInt(p.funDawnDivesCount, 10) || 0) : 0) +
+              (types.includes('night') ? (parseInt(p.funNightDivesCount, 10) || 0) : 0)
+            : parseInt(p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : (p.funDayDivesCount || 2), 10) || 1
+
+          const minRequiredDays = getMinDaysForDives(totalDives)
+          const daysNum = parseInt(p.funDays, 10)
+          if (isNaN(daysNum) || daysNum < minRequiredDays) {
+            triggerErrorHaptic()
+            setStepError(`With ${totalDives} dive${totalDives > 1 ? 's' : ''}, the minimum duration is ${minRequiredDays} day${minRequiredDays > 1 ? 's' : ''} (maximum 4 dives per day for diver safety).`)
+            setParticipants((prev) => {
+              const copy = [...prev]
+              copy[i] = { ...copy[i], funDays: minRequiredDays }
+              return copy
+            })
+            return false
+          }
+        }
+      }
+
       // If user came via course service page: skip certification validation & program validation (already prefilled)
       if (isCourseService) {
         setStepError('')
@@ -1342,33 +1699,6 @@ export default function BookUs() {
         triggerErrorHaptic()
         setStepError('Please select an eligible program for each participant.')
         return false
-      }
-
-      for (let i = 0; i < participants.length; i++) {
-        const p = participants[i]
-        if (isFunDivesProgram(p.selectedProgram)) {
-          const types = p.funDiveTypes || []
-          if (types.length === 0) {
-            triggerErrorHaptic()
-            setStepError(`Please select at least one dive type (Day, Dawn, or Night Dives) for ${p.name || `Participant ${i + 1}`}.`)
-            return false
-          }
-          if (types.includes('day') && !p.funDayDivesCount) {
-            triggerErrorHaptic()
-            setStepError(`Please select the number of Day Dives for ${p.name || `Participant ${i + 1}`}.`)
-            return false
-          }
-          if (types.includes('dawn') && !p.funDawnDivesCount) {
-            triggerErrorHaptic()
-            setStepError(`Please select the number of Dawn Dives for ${p.name || `Participant ${i + 1}`}.`)
-            return false
-          }
-          if (types.includes('night') && !p.funNightDivesCount) {
-            triggerErrorHaptic()
-            setStepError(`Please select the number of Night Dives for ${p.name || `Participant ${i + 1}`}.`)
-            return false
-          }
-        }
       }
 
       for (const p of participants) {
@@ -1503,7 +1833,9 @@ export default function BookUs() {
           hasCertification: p.hasCertification,
           certifications: p.certifications,
           selectedProgram: p.selectedProgram,
-          funDivesCount: p.funDivesCount,
+          funDivesCount: p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : (p.funDayDivesCount || 2),
+          funDives: parseInt(p.funDivesCount !== undefined && p.funDivesCount !== null ? p.funDivesCount : (p.funDayDivesCount || 2), 10) || 2,
+          funDays: parseInt(p.funDays || 1, 10) || 1,
           funDiveTypes: p.funDiveTypes || [],
           funDayDivesCount: p.funDayDivesCount || null,
           funDawnDivesCount: p.funDawnDivesCount || null,
@@ -2538,7 +2870,7 @@ export default function BookUs() {
                                                       {prog.certLabel}
                                                     </span>
                                                     <span className={`font-extrabold px-1.5 py-0.5 rounded ${isSelected ? 'bg-white/20 text-white' : 'bg-navy/5 text-navy/70'}`}>
-                                                      {prog.durationDays || '1 Day'}
+                                                      {isFunDivesProgram(prog.id) ? (p.funDays ? `${p.funDays} Day${parseInt(p.funDays, 10) > 1 ? 's' : ''}` : '1 Day') : (prog.durationDays || '1 Day')}
                                                     </span>
                                                   </div>
                                                 </div>
@@ -3031,7 +3363,7 @@ export default function BookUs() {
                             </div>
                             {isFunDivesProgram(p.selectedProgram) ? (
                               <span className="block text-[10px] font-semibold mt-0.5" style={{ color: 'rgba(0, 56, 101, 0.7)' }}>
-                                {getFunDivesSummary(p) || (p.funDivesCount ? `Package: ${FUN_DIVES_PACKAGES.find(f => f.id === p.funDivesCount)?.title || p.funDivesCount}` : '')}
+                                {getFunDivesSummary(p) || (p.funDivesCount ? `${p.funDivesCount} Dives across ${p.funDays || 1} Day${(p.funDays || 1) > 1 ? 's' : ''}` : '')}
                               </span>
                             ) : p.funDivesCount && (
                               <span className="block text-[10px] font-semibold mt-0.5" style={{ color: 'rgba(0, 56, 101, 0.6)' }}>

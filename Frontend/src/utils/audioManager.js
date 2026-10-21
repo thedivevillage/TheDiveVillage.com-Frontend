@@ -67,6 +67,7 @@ class AudioManager {
       audio.muted = true
       audio.volume = 0
     } else {
+      audio.muted = false
       audio.volume = 0.5
       // If audio is currently unmuted and playing, mark unlocked
       if (!audio.muted && !audio.paused) {
@@ -96,15 +97,21 @@ class AudioManager {
 
     // ─────────────────────────────────────────────────────────────
     // Instant Unmute Handlers: Covers Cursor Move, Wheel, Touch, Key, Click
-    // Ensures audio un-mutes automatically without waiting for an explicit click
+    // Ensures audio un-mutes automatically on any user presence without delay
     // ─────────────────────────────────────────────────────────────
     const microEvents = [
+      'pointerdown',
+      'touchstart',
+      'mousedown',
+      'keydown',
       'click',
+      'wheel',
+      'scroll',
+      'mousemove',
+      'pointermove',
       'touchend',
       'pointerup',
-      'keydown',
-      'pointerdown',
-      'mousedown'
+      'focus'
     ]
 
     const removeUnlockListeners = () => {
@@ -137,9 +144,11 @@ class AudioManager {
             this.showMediaNotification()
             this.notify()
             removeUnlockListeners()
-          }).catch(() => {
-            // Keep muted if browser requires further activation
-            this.audio.muted = true
+          }).catch((err) => {
+            // Keep ready without throwing
+            if (err?.name === 'NotAllowedError') {
+              this.audio.muted = false
+            }
           })
         } else {
           this.hasUnlocked = true
@@ -270,6 +279,7 @@ class AudioManager {
     // ─────────────────────────────────────────────────────────────
     const tryAutoplay = () => {
       if (this.isMuted || typeof document === 'undefined' || document.hidden) return
+      if (!this.audio) return
       this.audio.volume = 0.5
       this.audio.muted = false
       const p = this.audio.play()
@@ -281,9 +291,16 @@ class AudioManager {
           this.notify()
           removeUnlockListeners()
         }).catch(() => {
-          // If unmuted autoplay blocked on initial boot, play muted so stream is pre-buffered
-          this.audio.muted = true
-          this.audio.play().catch(() => {})
+          // Unmuted autoplay blocked by browser policy on initial load:
+          // Keep audio paused at 0:00 rather than playing silently in the background,
+          // so when the user engages, it starts playing crisply without missing sound.
+          if (this.audio && !this.hasUnlocked) {
+            this.audio.pause()
+            try {
+              this.audio.currentTime = 0
+            } catch (_) {}
+            this.audio.muted = false
+          }
         })
       }
     }

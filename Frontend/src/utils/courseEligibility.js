@@ -709,16 +709,32 @@ export function getProgramDurationInfo(programIdOrName, participant = null) {
     return { title: 'Standard Program', minDays: 1, maxDays: 1, durationLabel: '1 Day' }
   }
 
-  // Fun Dives package specialization
+  // Fun Dives package specialization (supports user-typed days & dives or preset packages)
   if (target === 'fun-dives' || String(target).toLowerCase().includes('fun dive')) {
+    const rawDays = participant?.funDays || participant?.days || participant?.funDivesDays
+    const customDays = parseInt(rawDays, 10)
+    const rawDives = participant?.funDives || participant?.funDivesCount || participant?.funDayDivesCount
+    const customDives = parseInt(rawDives, 10)
+
+    if (!isNaN(customDays) && customDays > 0) {
+      const divesText = !isNaN(customDives) && customDives > 0 ? `${customDives} Dive${customDives > 1 ? 's' : ''}` : 'Fun Dives'
+      const daysText = `${customDays} Day${customDays > 1 ? 's' : ''}`
+      return {
+        title: `Fun Dives (${divesText} / ${daysText})`,
+        minDays: customDays,
+        maxDays: customDays,
+        durationLabel: daysText,
+      }
+    }
+
     const pkgId = participant?.funDivesCount || participant?.funDayDivesCount
     if (pkgId === 'fun-1') return { title: 'Fun Dives (1 Dive / Half Day)', minDays: 1, maxDays: 1, durationLabel: '1 Day' }
     if (pkgId === 'fun-2') return { title: 'Fun Dives (2 Dives / 1 Day)', minDays: 1, maxDays: 1, durationLabel: '1 Day' }
-    if (pkgId === 'fun-4') return { title: 'Fun Dives (4 Dives / 2 Days)', minDays: 2, maxDays: 2, durationLabel: '2 Days' }
-    if (pkgId === 'fun-6') return { title: 'Fun Dives (6 Dives / 3 Days)', minDays: 3, maxDays: 3, durationLabel: '3 Days' }
-    if (pkgId === 'fun-8') return { title: 'Fun Dives (8 Dives / 4 Days)', minDays: 4, maxDays: 4, durationLabel: '4 Days' }
-    if (pkgId === 'fun-10') return { title: 'Fun Dives (10 Dives / 5 Days)', minDays: 5, maxDays: 5, durationLabel: '5 Days' }
-    if (pkgId === 'fun-12') return { title: 'Fun Dives (12 Dives / 6 Days)', minDays: 6, maxDays: 6, durationLabel: '6 Days' }
+    if (pkgId === 'fun-4') return { title: 'Fun Dives (4 Dives / 1 Day)', minDays: 1, maxDays: 1, durationLabel: '1 Day' }
+    if (pkgId === 'fun-6') return { title: 'Fun Dives (6 Dives / 2 Days)', minDays: 2, maxDays: 2, durationLabel: '2 Days' }
+    if (pkgId === 'fun-8') return { title: 'Fun Dives (8 Dives / 2 Days)', minDays: 2, maxDays: 2, durationLabel: '2 Days' }
+    if (pkgId === 'fun-10') return { title: 'Fun Dives (10 Dives / 3 Days)', minDays: 3, maxDays: 3, durationLabel: '3 Days' }
+    if (pkgId === 'fun-12') return { title: 'Fun Dives (12 Dives / 3 Days)', minDays: 3, maxDays: 3, durationLabel: '3 Days' }
     return { title: 'Fun Dives', minDays: 1, maxDays: 2, durationLabel: '1–2 Days' }
   }
 

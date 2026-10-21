@@ -188,8 +188,8 @@ export const SHOP_PRODUCTS = [
     images: [imgWomensStrapFront, imgWomensStrapBack, imgWomensStrapModel1, imgWomensStrapModel2, imgWomensStrapModel3],
     imageLabels: ['Front', 'Back', 'Photo 1', 'Photo 2', 'Photo 3'],
     glb: glbWomensShoulderStrap,
-    category: 'Tops',
-    description: 'Supportive and comfortable dive top featuring heavy-duty Velcro straps, built-in chest support, and all-round compression fit.',
+    category: 'Shortie & Wetsuit',
+    description: 'Supportive and comfortable dive shortie featuring heavy-duty Velcro straps, built-in chest support, and all-round compression fit.',
     features: [
       'Heavy-Duty Velcro Straps: Strong Velcro fastening keeps the shoulder straps securely in place during active movement.',
       'Built-In Chest Support: Integrated support cups provide added coverage and a secure, comfortable fit.',

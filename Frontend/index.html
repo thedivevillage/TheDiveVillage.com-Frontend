@@ -104,10 +104,18 @@
         }
 
         audio.volume = 0.5;
+        audio.muted = false;
 
+        var cleanup = function () {
+          unlockEvents.forEach(function (e) {
+            window.removeEventListener(e, onUserInteraction, true);
+            document.removeEventListener(e, onUserInteraction, true);
+          });
+        };
+
+        // 1. Attempt unmuted autoplay immediately on page load
         var startPlay = function () {
-          if (localStorage.getItem('tdv_audio_muted') === 'true') return;
-          if (document.hidden) return;
+          if (localStorage.getItem('tdv_audio_muted') === 'true' || document.hidden) return;
           audio.muted = false;
           audio.volume = 0.5;
           var p = audio.play();
@@ -125,38 +133,51 @@
                   });
                 } catch (e) {}
               }
+              cleanup();
             }).catch(function () {
-              // If unmuted autoplay blocked on initial boot, play muted so stream runs
-              audio.muted = true;
-              audio.play().catch(function () {});
+              // Browser blocked unmuted autoplay: keep audio paused at 0:00 rather than
+              // playing silently in background, so playback starts cleanly without missing sound
+              audio.pause();
+              try { audio.currentTime = 0; } catch (e) {}
+              audio.muted = false;
             });
           }
         };
 
+        // 2. Comprehensive interaction matrix: unmutes and plays cleanly on ANY presence
+        var unlockEvents = [
+          'pointerdown',
+          'touchstart',
+          'mousedown',
+          'keydown',
+          'click',
+          'wheel',
+          'scroll',
+          'mousemove'
+        ];
+
+        var onUserInteraction = function () {
+          if (localStorage.getItem('tdv_audio_muted') === 'true' || document.hidden) return;
+          audio.muted = false;
+          audio.volume = 0.5;
+          var p = audio.play();
+          if (p !== undefined) {
+            p.then(function () {
+              audio.muted = false;
+              audio.volume = 0.5;
+              cleanup();
+            }).catch(function () {});
+          }
+        };
+
+        unlockEvents.forEach(function (e) {
+          window.addEventListener(e, onUserInteraction, { capture: true, passive: true });
+          document.addEventListener(e, onUserInteraction, { capture: true, passive: true });
+        });
+
         startPlay();
         document.addEventListener('DOMContentLoaded', startPlay, { once: true });
         window.addEventListener('load', startPlay, { once: true });
-
-        // Unmute on first user interaction without polling high-frequency mousemove/scroll
-        var unlockEvents = ['pointerdown', 'touchstart', 'click'];
-        var onUserUnlock = function () {
-          if (localStorage.getItem('tdv_audio_muted') === 'true') return;
-          if (document.hidden) return;
-          if (audio.muted || audio.paused) {
-            audio.muted = false;
-            audio.volume = 0.5;
-            var p = audio.play();
-            if (p !== undefined) {
-              p.then(function () {
-                audio.muted = false;
-                audio.volume = 0.5;
-              }).catch(function () {});
-            }
-          }
-        };
-        unlockEvents.forEach(function (e) {
-          window.addEventListener(e, onUserUnlock, { once: true, passive: true });
-        });
       } catch (e) {}
     })();
   </script>

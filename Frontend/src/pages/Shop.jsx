@@ -25,6 +25,8 @@ const pop2 = rawPop2Local
 
 const CATEGORIES = [
   { key: 'all', label: 'All Merchandise' },
+  { key: 'Wetsuits', label: 'Wetsuits' },
+  { key: 'Shorties', label: 'Shorties' },
   { key: 'Tops', label: 'Tops' },
   { key: 'Skin Wear', label: 'Skin Wear' },
   { key: 'Accessories', label: 'Accessories' },
@@ -79,6 +81,7 @@ export default function Shop() {
             return {
               ...staticProd,
               ...dbProd,
+              category: staticProd.category || dbProd.category,
               glb: staticProd.glb || dbProd.glb,
               glbByColor: staticProd.glbByColor || dbProd.glbByColor,
               images: staticProd.images && staticProd.images.length > 0 ? staticProd.images : dbProd.images,
@@ -130,10 +133,44 @@ export default function Shop() {
     if (!Array.isArray(productsList)) return []
     return productsList.filter((product) => {
       if (!product) return false
-      const matchesCategory =
-        selectedCategory === 'all' ||
-        product.category?.toLowerCase() === selectedCategory.toLowerCase() ||
-        (selectedCategory === 'Gear' && (product.category === 'Accessories' || product.category === 'Wetsuits'))
+      const matchesCategory = (() => {
+        if (selectedCategory === 'all') return true
+        const catKey = selectedCategory.toLowerCase()
+        const prodCat = (product.category || '').toLowerCase()
+        const prodTitle = (product.title || product.name || '').toLowerCase()
+        const prodId = product.id || ''
+
+        if (catKey === 'wetsuits' || catKey === 'wetsuit') {
+          return (
+            prodCat.includes('wetsuit') ||
+            prodTitle.includes('wet suit') ||
+            prodTitle.includes('wetsuit') ||
+            prodId === 'product-womens-strap' ||
+            prodId === 'product-full-wetsuit' ||
+            prodId === 'product-shortie-wetsuit'
+          )
+        }
+
+        if (catKey === 'shorties' || catKey === 'shortie') {
+          return (
+            prodCat.includes('shortie') ||
+            prodTitle.includes('shortie') ||
+            prodId === 'product-womens-strap' ||
+            prodId === 'product-shortie-wetsuit'
+          )
+        }
+
+        if (catKey === 'gear') {
+          return (
+            product.category === 'Accessories' ||
+            product.category === 'Wetsuits' ||
+            prodCat.includes('wetsuit') ||
+            prodId === 'product-womens-strap'
+          )
+        }
+
+        return prodCat === catKey
+      })()
 
       const titleOrName = (product.title || product.name || '')
       const desc = (product.description || '')

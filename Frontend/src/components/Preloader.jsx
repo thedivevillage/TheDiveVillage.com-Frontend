@@ -158,7 +158,9 @@ export default function Preloader({ onComplete }) {
       exit={{ y: '-100%', transition: { duration: 0.85, ease: [0.76, 0, 0.24, 1] } }}
       onClick={handleUnlockAudio}
       onTouchStart={handleUnlockAudio}
-      className={`fixed inset-0 z-[99999] ${isNightDive ? 'bg-[#003865] text-white' : 'bg-white text-navy'} flex flex-col items-center justify-center p-6 select-none font-body shadow-none`}
+      onPointerDown={handleUnlockAudio}
+      onMouseDown={handleUnlockAudio}
+      className={`fixed inset-0 z-[99999] ${isNightDive ? 'bg-[#003865] text-white' : 'bg-white text-navy'} flex flex-col items-center justify-center p-6 select-none font-body shadow-none cursor-pointer`}
     >
       {/* Diver Graphic / Video Animation with clean background keying */}
       <div className="w-56 sm:w-68 md:w-80 mb-6 flex items-center justify-center overflow-hidden">
@@ -183,6 +185,11 @@ export default function Preloader({ onComplete }) {
         <span className="truncate pr-2">Preparing to dive...</span>
         <span className={`shrink-0 ${isNightDive ? 'text-[#FFCD00]' : 'text-[#003865]'} font-bold`}>{Math.round(progress)}%</span>
       </div>
+
+      {/* Subtle sound cue for instant unmute on mobile/desktop */}
+      <p className={`mt-3 text-[10px] tracking-widest uppercase transition-opacity duration-300 ${isNightDive ? 'text-white/40' : 'text-[#003865]/40'} select-none`}>
+        Tap anywhere for sound
+      </p>
     </motion.div>
   )
 }

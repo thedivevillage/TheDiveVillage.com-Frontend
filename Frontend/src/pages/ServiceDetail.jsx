@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, Link, Navigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SERVICES_DATA, CATEGORIES, FUN_DIVES_PACKAGES } from '../data/servicesData'
@@ -40,24 +40,56 @@ export default function ServiceDetail() {
   const categoryLabel = CATEGORIES.find(c => c.key === service.category)?.label || (isFunDivesCombo ? 'Combos & Packages' : 'Services')
   const activeFaqs = service.faqs && service.faqs.length > 0 ? service.faqs : DEFAULT_FAQS
 
+  const TIMING_ORDER = ['dawn', 'day', 'night']
+
+  const sortDiveTimings = (timings) => {
+    return [...timings].sort((a, b) => TIMING_ORDER.indexOf(a) - TIMING_ORDER.indexOf(b))
+  }
+
   const DIVE_TIMINGS = [
-    { key: 'day', label: 'Day Dives', icon: Sun, desc: 'Reef & wall exploration' },
     { key: 'dawn', label: 'Dawn Dives', icon: Sunrise, desc: 'First light sunrise pelagic safari' },
+    { key: 'day', label: 'Day Dives', icon: Sun, desc: 'Reef & wall exploration' },
     { key: 'night', label: 'Night Dives', icon: Moon, desc: 'Bioluminescence & nocturnal safari' },
   ]
 
   const handleToggleDiveTiming = (key) => {
     setSelectedDiveTimings((prev) => {
+      let updated
       if (prev.includes(key)) {
         if (prev.length === 1) return prev // Keep at least one selected
-        return prev.filter((t) => t !== key)
+        updated = prev.filter((t) => t !== key)
+      } else {
+        updated = [...prev, key]
       }
-      return [...prev, key]
+      return sortDiveTimings(updated)
     })
   }
 
+  // Filter fun dive packages based on number of selected dive timings:
+  // - If 2 selected: 1 Dive is hidden
+  // - If 3 selected: 1 Dive and 2 Dives disappear
+  const visibleFunPackages = useMemo(() => {
+    if (selectedDiveTimings.length >= 3) {
+      return FUN_DIVES_PACKAGES.filter((pkg) => pkg.id !== 'fun-1' && pkg.id !== 'fun-2')
+    }
+    if (selectedDiveTimings.length === 2) {
+      return FUN_DIVES_PACKAGES.filter((pkg) => pkg.id !== 'fun-1')
+    }
+    return FUN_DIVES_PACKAGES
+  }, [selectedDiveTimings])
+
+  // Keep selectedFunPackage synced to an available package if current selection disappeared
+  useEffect(() => {
+    setSelectedFunPackage((current) => {
+      if (!current || !visibleFunPackages.some((pkg) => pkg.id === current.id)) {
+        return visibleFunPackages[0] || null
+      }
+      return current
+    })
+  }, [visibleFunPackages])
+
   const getBookingUrl = (pkgId) => {
-    const timingsParam = selectedDiveTimings.join(',')
+    const timingsParam = sortDiveTimings(selectedDiveTimings).join(',')
     return `/book-us?service=${pkgId}${timingsParam ? `&timings=${timingsParam}` : ''}`
   }
 
@@ -211,7 +243,7 @@ export default function ServiceDetail() {
                   <div className="text-xs font-bold text-navy/70 shrink-0 self-start sm:self-auto bg-white px-3.5 py-1.5 rounded-full border border-navy/10 shadow-xs">
                     Selected:{' '}
                     <span className="text-[#003865] font-black">
-                      {selectedDiveTimings.map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(' + ')}
+                      {sortDiveTimings(selectedDiveTimings).map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(' + ')}
                     </span>
                   </div>
                 )}
@@ -267,99 +299,106 @@ export default function ServiceDetail() {
               </div>
             </div>
 
-            {/* Grid of Fun Dive Packages - Permanent Day Dives Programs */}
+            {/* Grid of Fun Dive Packages */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {FUN_DIVES_PACKAGES.map((pkg, pkgIndex) => {
-                const isSelected = selectedFunPackage?.id === pkg.id
-                return (
-                  <div
-                    key={pkg.id}
-                    onClick={() => setSelectedFunPackage(pkg)}
-                    className={`rounded-3xl border-2 transition-all duration-300 p-4 sm:p-5 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
-                      isSelected
-                        ? 'border-accent bg-accent/5 shadow-float scale-[1.01]'
-                        : 'border-navy/10 bg-white hover:border-navy/30 hover:shadow-card'
-                    }`}
-                  >
-                    <div>
-                      {/* Media Preview */}
-                      <div className="relative h-44 w-full rounded-2xl overflow-hidden bg-navy/10 mb-4">
-                        {pkg.video ? (
-                          <LazyVideo
-                            src={pkg.video}
-                            lowResSrc={pkg.previewVideo || pkg.lowResVideo}
-                            poster={pkg.image}
-                            priority={pkgIndex === 0}
-                            autoPlay={true}
-                            loop={true}
-                            muted={true}
-                            playsInline={true}
-                            zoom={pkg.zoom || ((pkg.id === 'course-4' || pkg.id === 'combo-fundives' || pkg.title?.toLowerCase().includes('adventure diver') || pkg.title?.toLowerCase().includes('fun dive')) ? 2.95 : 1)}
-                            zoomOrigin={pkg.zoomOrigin || (pkg.id === 'combo-fundives' || pkg.title?.toLowerCase().includes('fun dive') ? 'center 75%' : 'center center')}
-                            className="absolute inset-0 w-full h-full object-cover object-center"
-                          />
-                        ) : (
-                          <SafeImage
-                            src={pkg.image}
-                            alt={pkg.title}
-                            className="absolute inset-0 w-full h-full object-cover object-center"
-                            imgClassName="w-full h-full object-cover object-center"
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent pointer-events-none" />
-                        <span className="absolute top-3 left-3 rounded-full bg-navy/85 backdrop-blur-md text-white px-3 py-1 text-[11px] font-black uppercase tracking-wider shadow-sm">
-                          {pkg.badge}
-                        </span>
-                        {isSelected && (
-                          <span className="absolute top-3 right-3 rounded-full bg-accent text-navy px-3 py-1 text-[11px] font-black uppercase tracking-wider shadow-md">
-                            ✓ Selected
+              <AnimatePresence mode="popLayout">
+                {visibleFunPackages.map((pkg, pkgIndex) => {
+                  const isSelected = selectedFunPackage?.id === pkg.id
+                  return (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.25 }}
+                      key={pkg.id}
+                      onClick={() => setSelectedFunPackage(pkg)}
+                      className={`rounded-3xl border-2 transition-all duration-300 p-4 sm:p-5 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
+                        isSelected
+                          ? 'border-accent bg-accent/5 shadow-float scale-[1.01]'
+                          : 'border-navy/10 bg-white hover:border-navy/30 hover:shadow-card'
+                      }`}
+                    >
+                      <div>
+                        {/* Media Preview */}
+                        <div className="relative h-44 w-full rounded-2xl overflow-hidden bg-navy/10 mb-4">
+                          {pkg.video ? (
+                            <LazyVideo
+                              src={pkg.video}
+                              lowResSrc={pkg.previewVideo || pkg.lowResVideo}
+                              poster={pkg.image}
+                              priority={pkgIndex === 0}
+                              autoPlay={true}
+                              loop={true}
+                              muted={true}
+                              playsInline={true}
+                              zoom={pkg.zoom || ((pkg.id === 'course-4' || pkg.id === 'combo-fundives' || pkg.title?.toLowerCase().includes('adventure diver') || pkg.title?.toLowerCase().includes('fun dive')) ? 2.95 : 1)}
+                              zoomOrigin={pkg.zoomOrigin || (pkg.id === 'combo-fundives' || pkg.title?.toLowerCase().includes('fun dive') ? 'center 75%' : 'center center')}
+                              className="absolute inset-0 w-full h-full object-cover object-center"
+                            />
+                          ) : (
+                            <SafeImage
+                              src={pkg.image}
+                              alt={pkg.title}
+                              className="absolute inset-0 w-full h-full object-cover object-center"
+                              imgClassName="w-full h-full object-cover object-center"
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent pointer-events-none" />
+                          <span className="absolute top-3 left-3 rounded-full bg-navy/85 backdrop-blur-md text-white px-3 py-1 text-[11px] font-black uppercase tracking-wider shadow-sm">
+                            {pkg.badge}
                           </span>
-                        )}
-                        <div className="absolute bottom-2.5 left-3 right-3">
-                          <h3 className="font-heading text-lg sm:text-xl font-bold text-white leading-tight">
-                            {pkg.title}
-                          </h3>
+                          {isSelected && (
+                            <span className="absolute top-3 right-3 rounded-full bg-accent text-navy px-3 py-1 text-[11px] font-black uppercase tracking-wider shadow-md">
+                              ✓ Selected
+                            </span>
+                          )}
+                          <div className="absolute bottom-2.5 left-3 right-3">
+                            <h3 className="font-heading text-lg sm:text-xl font-bold text-white leading-tight">
+                              {pkg.title}
+                            </h3>
+                          </div>
+                        </div>
+
+                        {/* Package Description & Highlights */}
+                        <p className="text-xs sm:text-sm text-navy/70 leading-relaxed font-medium mb-4">
+                          {pkg.short_desc}
+                        </p>
+
+                        <div className="rounded-xl bg-[#F0F2F5] p-3 text-[11px] font-semibold text-navy/80 mb-4">
+                          {pkg.highlights}
                         </div>
                       </div>
 
-                      {/* Package Description & Highlights */}
-                      <p className="text-xs sm:text-sm text-navy/70 leading-relaxed font-medium mb-4">
-                        {pkg.short_desc}
-                      </p>
-
-                      <div className="rounded-xl bg-[#F0F2F5] p-3 text-[11px] font-semibold text-navy/80 mb-4">
-                        {pkg.highlights}
+                      {/* Action Buttons */}
+                      <div className="pt-2 border-t border-navy/10 flex items-center gap-2">
+                        <Button
+                          as={Link}
+                          to={getBookingUrl(pkg.id)}
+                          variant={isSelected ? 'gold' : 'navy'}
+                          className="flex-1 justify-center py-2.5 text-xs font-bold shadow-sm"
+                        >
+                          Book {pkg.title}
+                        </Button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedFunPackage(pkg)
+                          }}
+                          className={`rounded-full px-3 py-2 text-xs font-bold border transition cursor-pointer ${
+                            isSelected
+                              ? 'bg-accent/20 border-accent text-navy'
+                              : 'bg-white border-navy/20 text-navy/70 hover:bg-navy/5'
+                          }`}
+                        >
+                          Details
+                        </button>
                       </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="pt-2 border-t border-navy/10 flex items-center gap-2">
-                      <Button
-                        as={Link}
-                        to={getBookingUrl(pkg.id)}
-                        variant={isSelected ? 'gold' : 'navy'}
-                        className="flex-1 justify-center py-2.5 text-xs font-bold shadow-sm"
-                      >
-                        Book {pkg.title}
-                      </Button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setSelectedFunPackage(pkg)
-                        }}
-                        className={`rounded-full px-3 py-2 text-xs font-bold border transition cursor-pointer ${
-                          isSelected
-                            ? 'bg-accent/20 border-accent text-navy'
-                            : 'bg-white border-navy/20 text-navy/70 hover:bg-navy/5'
-                        }`}
-                      >
-                        Details
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
             </div>
 
             {/* Selected Package Spotlight Card */}
