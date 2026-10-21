@@ -481,6 +481,10 @@ export function getIslandForSite(site) {
   const numId = Number(site.id)
 
   // 1. Direct Island overrides based on exact site name keywords or IDs
+  if (siteName.includes('transuram') || siteName.includes('transuran')) {
+    return 'Lakshadweep'
+  }
+
   if (country.toLowerCase() === 'philippines') {
     if (siteName.includes('malapascua') || siteName.includes('monad') || siteName.includes('gato island') || siteName.includes('chocolate island') || siteName.includes('lapus lapus')) {
       return 'Malapascua Island'
@@ -648,7 +652,10 @@ export function getIslandForSite(site) {
       siteName.includes('kavaratti') ||
       siteName.includes('kadmat') ||
       siteName.includes('minicoy') ||
+      siteName.includes('kiltan') ||
       siteName.includes('wall of wonder') ||
+      siteName.includes('transuram') ||
+      siteName.includes('transuran') ||
       (lat >= 8.0 && lat <= 12.5 && lng >= 71.0 && lng <= 74.2)
     ) {
       return 'Lakshadweep'

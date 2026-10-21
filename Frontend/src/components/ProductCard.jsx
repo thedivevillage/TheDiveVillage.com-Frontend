@@ -75,6 +75,16 @@ export default function ProductCard({ product }) {
             <Badge tone={product.badgeTone || 'accent'}>{product.badge}</Badge>
           </div>
         )}
+        {product.glb && (
+          <div className="absolute right-3 top-3 z-10">
+            <span className="inline-flex items-center gap-1 bg-[#FFCD00] text-gray-950 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#e6b800] shadow-xs pointer-events-none">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+              </svg>
+              <span>3D</span>
+            </span>
+          </div>
+        )}
       </Link>
 
       <div className="flex flex-1 flex-col gap-3 p-4">

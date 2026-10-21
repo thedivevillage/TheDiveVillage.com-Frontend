@@ -105,7 +105,7 @@ export default function Cart() {
 
                         {/* Metadata */}
                         <div className="flex flex-wrap items-center gap-2 text-xs text-navy/60 mb-4">
-                          {product.selectedSize && product.selectedSize !== 'Standard' && (
+                          {product.selectedSize && product.selectedSize !== 'Standard' && product.selectedSize !== 'One Size Fits Most' && (
                             <span className="bg-[#F0F2F5] px-2.5 py-1 rounded-lg font-semibold text-navy">
                               Size: {product.selectedSize}
                             </span>

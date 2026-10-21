@@ -388,8 +388,14 @@ export default function Checkout() {
                       <img src={item.product?.image || item.image} alt="" className="max-h-full max-w-full object-contain" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-navy truncate">{item.product?.name || item.product?.title || item.title}</p>
-                      <p className="text-[10px] text-navy/60 font-semibold">{item.product?.selectedSize || item.size || 'Standard'} • {item.product?.selectedColor || item.color || 'Standard'} • Qty: {item.quantity}</p>
+                      <p className="text-[10px] text-navy/60 font-semibold">
+                        {(item.product?.selectedSize && item.product?.selectedSize !== 'Standard' && item.product?.selectedSize !== 'One Size Fits Most')
+                          ? `${item.product.selectedSize} • `
+                          : (item.size && item.size !== 'Standard' && item.size !== 'One Size Fits Most')
+                          ? `${item.size} • `
+                          : ''}
+                        {item.product?.selectedColor || item.color || 'Standard'} • Qty: {item.quantity}
+                      </p>
                     </div>
                     <span className="text-xs font-bold text-navy">
                       {formatCurrency(((item.product?.price ?? item.price) || 0) * (item.quantity || 1))}
@@ -842,7 +848,10 @@ export default function Checkout() {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-xs font-bold text-navy truncate">{item.product?.name || item.product?.title || item.title}</h4>
                     <p className="text-[10px] text-navy/60">
-                      {item.product?.selectedSize || item.size ? `Size: ${item.product?.selectedSize || item.size}` : ''} {item.product?.selectedColor || item.color ? `• ${item.product?.selectedColor || item.color}` : ''}
+                      {((item.product?.selectedSize && item.product?.selectedSize !== 'Standard' && item.product?.selectedSize !== 'One Size Fits Most') || (item.size && item.size !== 'Standard' && item.size !== 'One Size Fits Most'))
+                        ? `Size: ${item.product?.selectedSize || item.size} • `
+                        : ''}
+                      {item.product?.selectedColor || item.color ? `${item.product?.selectedColor || item.color}` : 'Standard'}
                     </p>
                     <p className="text-xs font-bold text-navy mt-0.5">
                       {formatCurrency(((item.product?.price ?? item.price) || 0) * (item.quantity || 1))}
@@ -1033,7 +1042,11 @@ export default function Checkout() {
                         <div className="min-w-0">
                           <p className="font-bold text-navy truncate">{item.product?.name || item.product?.title || item.title}</p>
                           <p className="text-[10px] text-navy/50">
-                            Qty: {item.quantity || 1} • Size: {item.product?.selectedSize || item.size || 'Standard'} • Color: {item.product?.selectedColor || item.color || 'Standard'}
+                            Qty: {item.quantity || 1}
+                            {((item.product?.selectedSize && item.product?.selectedSize !== 'Standard' && item.product?.selectedSize !== 'One Size Fits Most') || (item.size && item.size !== 'Standard' && item.size !== 'One Size Fits Most'))
+                              ? ` • Size: ${item.product?.selectedSize || item.size}`
+                              : ''}
+                            {' • Color: '}{item.product?.selectedColor || item.color || 'Standard'}
                           </p>
                         </div>
                       </div>

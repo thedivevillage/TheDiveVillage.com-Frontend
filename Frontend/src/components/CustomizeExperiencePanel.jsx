@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { motion, AnimatePresence } from 'framer-motion'
 import { PANEL_IMAGES } from '../utils/images'
 import FloatingVideoPip from './FloatingVideoPip'
 
@@ -27,84 +26,6 @@ const vidSurfing = 'https://media.thedivevillage.com/TDV-Media/Services/discover
 const imgSurfing = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485607/TDV-Media/thumbnails/surf-3_thumb.webp'
 
 const vidSnorkeling = 'https://media.thedivevillage.com/TDV-Media/Services/Discover_Snorkelling.mp4'
-const imgSnorkeling = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485603/TDV-Media/thumbnails/prog-4_thumb.webp'
-
-function HoverVideoPreview({ videoSrc, poster, displayName }) {
-  const videoRef = useRef(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-
-  useEffect(() => {
-    const v = videoRef.current
-    if (!v || !videoSrc) return
-
-    v.muted = true
-    v.defaultMuted = true
-    v.volume = 0
-
-    const startPlay = () => {
-      const p = v.play()
-      if (p !== undefined) {
-        p.catch(() => {})
-      }
-    }
-
-    if (v.readyState >= 2) {
-      startPlay()
-    } else {
-      v.addEventListener('canplay', startPlay, { once: true })
-    }
-
-    return () => {
-      v.removeEventListener('canplay', startPlay)
-      try {
-        v.pause()
-      } catch {}
-    }
-  }, [videoSrc])
-
-  return (
-    <div className="absolute inset-0 w-full h-full bg-[#001428] overflow-hidden">
-      {/* Poster layer: always visible until video actually starts playing */}
-      {poster && (
-        <img
-          src={poster}
-          alt={displayName}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none z-10 ${
-            isPlaying ? 'opacity-0' : 'opacity-100'
-          }`}
-        />
-      )}
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        poster={poster || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
-        autoPlay
-        loop
-        muted
-        playsInline
-        webkit-playsinline=""
-        x5-playsinline=""
-        preload="auto"
-        onPlaying={() => setIsPlaying(true)}
-        onTimeUpdate={(e) => {
-          if (!isPlaying && e.target.currentTime > 0) {
-            setIsPlaying(true)
-          }
-        }}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 z-0 ${
-          isPlaying ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none z-20" />
-      <div className="relative z-30 mt-auto p-2">
-        <span className="text-[11px] font-heading font-bold text-white drop-shadow block leading-tight truncate">
-          {displayName}
-        </span>
-      </div>
-      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#001428] rotate-45 border-r-2 border-b-2 border-[#FFCD00] z-20" />
-    </div>
-  )
-}
 
 const CUSTOM_ACTIVITIES = [
   {
@@ -141,7 +62,7 @@ const CUSTOM_ACTIVITIES = [
     id: 'snorkeling',
     name: 'Snorkeling',
     video: vidSnorkeling,
-    poster: imgSnorkeling,
+    poster: null,
   },
   {
     id: 'camping_camper',
@@ -160,27 +81,35 @@ const CUSTOM_ACTIVITIES = [
 export default function CustomizeExperiencePanel({ className = '', images = PANEL_IMAGES }) {
   const [selectedActivities, setSelectedActivities] = useState([])
   const [customText, setCustomText] = useState('')
-  const [hoveredActivity, setHoveredActivity] = useState(null)
-  const [suppressedHoverId, setSuppressedHoverId] = useState(null)
   const [pipVideo, setPipVideo] = useState(null)
   const navigate = useNavigate()
 
-  const handleActivityClick = (activity) => {
-    const isCurrentlySelected = selectedActivities.includes(activity.id)
-    toggleActivity(activity.id)
-    setHoveredActivity(null)
-    setSuppressedHoverId(activity.id)
-
-    if (pipVideo && pipVideo.id === activity.id) {
-      // Tap again on active activity video -> close video
-      setPipVideo(null)
-    } else if (!isCurrentlySelected && activity.video) {
-      // Tap once to select activity -> load video
-      setPipVideo({
+  const handleActivityHover = (activity) => {
+    if (!activity.video) return
+    setPipVideo((prev) => {
+      if (prev && prev.id === activity.id) return prev
+      return {
         id: activity.id,
         video: activity.video,
         fallbackVideo: activity.video,
         poster: activity.poster,
+        title: activity.name,
+      }
+    })
+  }
+
+  const handleActivityClick = (activity) => {
+    toggleActivity(activity.id)
+    if (activity.video) {
+      setPipVideo((prev) => {
+        if (prev && prev.id === activity.id) return prev
+        return {
+          id: activity.id,
+          video: activity.video,
+          fallbackVideo: activity.video,
+          poster: activity.poster,
+          title: activity.name,
+        }
       })
     }
   }
@@ -219,7 +148,6 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
       return () => clearTimeout(timer)
     }
   }, [])
-
 
   const toggleActivity = (id) => {
     setSelectedActivities((prev) => {
@@ -366,58 +294,24 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
             <div className="hidden sm:flex flex-wrap gap-2.5">
               {CUSTOM_ACTIVITIES.map((activity) => {
                 const isSelected = selectedActivities.includes(activity.id)
-                const isHovered = hoveredActivity === activity.id && suppressedHoverId !== activity.id
 
                 return (
-                  <div
+                  <button
                     key={activity.id}
-                    className="relative"
-                    onMouseEnter={() => {
-                      if (suppressedHoverId !== activity.id) {
-                        setHoveredActivity(activity.id)
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      setHoveredActivity(null)
-                      if (suppressedHoverId === activity.id) {
-                        setSuppressedHoverId(null)
-                      }
-                    }}
+                    type="button"
+                    onMouseEnter={() => handleActivityHover(activity)}
+                    onClick={() => handleActivityClick(activity)}
+                    className={`group inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 ${
+                      isSelected
+                        ? 'bg-navy text-white border-white/40 scale-105 shadow-md'
+                        : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-[#FFCD00] backdrop-blur-md hover:text-[#FFCD00]'
+                    }`}
                   >
-                    {/* Hover Floating Video Preview Box */}
-                    <AnimatePresence>
-                      {isHovered && activity.video && (!pipVideo || pipVideo.id !== activity.id) && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.88 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                          transition={{ type: 'spring', damping: 22, stiffness: 350 }}
-                          className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden shadow-[0_16px_36px_rgba(0,0,0,0.7)] border-2 border-[#FFCD00] bg-[#001428] z-50 pointer-events-none flex flex-col justify-between"
-                        >
-                          <HoverVideoPreview
-                            videoSrc={activity.video}
-                            poster={activity.poster}
-                            displayName={activity.name}
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    <button
-                      type="button"
-                      onClick={() => handleActivityClick(activity)}
-                      className={`group inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 border cursor-pointer select-none active:scale-95 ${
-                        isSelected
-                          ? 'bg-navy text-white border-white/40 scale-105 shadow-md'
-                          : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-[#FFCD00] backdrop-blur-md hover:text-[#FFCD00]'
-                      }`}
-                    >
-                      <span>{activity.name}</span>
-                      {isSelected && (
-                        <span className="ml-1 text-[11px] font-black text-[#FFCD00]">✓</span>
-                      )}
-                    </button>
-                  </div>
+                    <span>{activity.name}</span>
+                    {isSelected && (
+                      <span className="ml-1 text-[11px] font-black text-[#FFCD00]">✓</span>
+                    )}
+                  </button>
                 )
               })}
             </div>
@@ -464,12 +358,12 @@ export default function CustomizeExperiencePanel({ className = '', images = PANE
           videoSrc={pipVideo.video}
           fallbackSrc={pipVideo.fallbackVideo}
           poster={pipVideo.poster}
-          onClose={() => {
-            setPipVideo(null)
-            setHoveredActivity(null)
-          }}
+          title={pipVideo.title}
+          aspectRatio="vertical"
+          onClose={() => setPipVideo(null)}
         />
       )}
     </div>
   )
 }
+

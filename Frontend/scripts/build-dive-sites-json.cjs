@@ -466,3 +466,12 @@ const output = {
 
 fs.writeFileSync(outJsonPath, JSON.stringify(output), 'utf8');
 console.log(`Successfully generated ${outJsonPath} (${(fs.statSync(outJsonPath).size / 1024).toFixed(1)} KB) with ${validSites.length} dive sites!`);
+
+const distJsonPath = path.resolve(__dirname, '../dist/data/dive-sites.json');
+const distCsvPath = path.resolve(__dirname, '../dist/data/dive-sites.csv');
+if (fs.existsSync(path.dirname(distJsonPath))) {
+  fs.writeFileSync(distJsonPath, JSON.stringify(output), 'utf8');
+  fs.copyFileSync(csvPath, distCsvPath);
+  console.log(`Also synchronized dist files at ${distJsonPath} and ${distCsvPath}`);
+}
+

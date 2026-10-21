@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { precacheMediaAsset } from '../utils/mediaCache'
 import { markMediaLoaded } from '../utils/mediaOptimizer'
 
-export default function Product3DViewer({ src, alt = '3D Product Model', productId, poster }) {
+export default function Product3DViewer({ src, alt = '3D Product Model', productId, poster, className = '' }) {
   const [scriptLoaded, setScriptLoaded] = useState(false)
   const [autoRotate, setAutoRotate] = useState(true)
   const modelRef = useRef(null)
@@ -403,7 +403,7 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
     <div 
       ref={containerRef}
       data-product-media="true"
-      className="product-3d-wrapper relative w-full h-full min-h-[320px] bg-white rounded-lg overflow-hidden flex items-center justify-center select-none"
+      className={`product-3d-wrapper relative w-full h-full min-h-[320px] bg-white rounded-lg overflow-hidden flex items-center justify-center select-none ${className}`}
       style={{ backgroundColor: '#ffffff' }}
     >
       <model-viewer

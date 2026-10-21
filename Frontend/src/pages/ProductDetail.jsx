@@ -3,12 +3,14 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SHOP_PRODUCTS } from '../utils/products'
+import { productService } from '../services/productService'
 import { useCart } from '../hooks/useCart'
 import { useWishlist } from '../hooks/useWishlist'
 import { useAuth } from '../hooks/useAuth'
 import Product3DViewer from '../components/Product3DViewer'
 import SEOHead from '../components/SEOHead'
 import QuantitySelector from '../components/QuantitySelector'
+import DiveCommunitySection from '../components/DiveCommunitySection'
 import { triggerHaptic, triggerSuccessHaptic } from '../utils/haptics'
 import { shareContent } from '../utils/share'
 import { isNightModeAllowedRoute } from '../hooks/useNightDive'
@@ -20,47 +22,165 @@ export default function ProductDetail() {
   const { items, addItem } = useCart()
   const { toggle: toggleWishlist, isWishlisted } = useWishlist()
 
+  // All products state (loads live catalog if available, with SHOP_PRODUCTS fallback)
+  const [allProducts, setAllProducts] = useState(SHOP_PRODUCTS)
+
+  useEffect(() => {
+    let isMounted = true
+    async function loadProducts() {
+      try {
+        const res = await productService.getProducts()
+        if (!isMounted) return
+        if (res.data?.data && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          const merged = SHOP_PRODUCTS.map((staticProd) => {
+            const dbProd = res.data.data.find((dp) => dp.id === staticProd.id || dp._id === staticProd.id)
+            if (!dbProd) return staticProd
+            return {
+              ...staticProd,
+              ...dbProd,
+              glb: staticProd.glb || dbProd.glb,
+              glbByColor: staticProd.glbByColor || dbProd.glbByColor,
+              images: staticProd.images && staticProd.images.length > 0 ? staticProd.images : dbProd.images,
+              imageLabels: staticProd.imageLabels && staticProd.imageLabels.length > 0 ? staticProd.imageLabels : dbProd.imageLabels,
+              image: staticProd.image || dbProd.image,
+              video: staticProd.video || dbProd.video,
+              videoByColor: staticProd.videoByColor || dbProd.videoByColor,
+            }
+          })
+          const extraDbProds = res.data.data.filter(
+            (dp) => !SHOP_PRODUCTS.some((sp) => sp.id === dp.id || sp.id === dp._id)
+          )
+          setAllProducts([...merged, ...extraDbProds])
+        }
+      } catch {
+        // Fallback to static SHOP_PRODUCTS
+      }
+    }
+    loadProducts()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   // Find product
-  const product = SHOP_PRODUCTS.find((p) => p.id === id) || SHOP_PRODUCTS[0]
+  const product = useMemo(() => {
+    return allProducts.find((p) => p.id === id) || SHOP_PRODUCTS.find((p) => p.id === id) || SHOP_PRODUCTS[0]
+  }, [allProducts, id])
 
   // Color / Variant selection
   const [selectedColor, setSelectedColor] = useState(
     product.colors && product.colors.length > 0 ? product.colors[0] : { name: 'Standard', hex: '#000000' }
   )
 
-  // Sizing setup: "One Size Fits Most" for accessories, and two size buttons for apparel
-  const isAccessory = product.category === 'Accessories' || product.id === 'product-dive-cap' || product.id === 'product-ocean-bag'
+  // Sizing setup: Accessories (cap, bag) have no size options; apparel has XS - M and L -XXL
+  const isAccessory = product.category === 'Accessories' || product.id === 'product-dive-cap' || product.id === 'product-ocean-bag' || product.id?.includes('bag') || product.id?.includes('cap')
   
   // Available size options: Only two buttons for apparel: XS - M and L -XXL
   const availableSizes = useMemo(() => {
-    if (isAccessory) return ['One Size Fits Most']
+    if (isAccessory) return []
     return ['XS - M', 'L -XXL']
   }, [isAccessory])
 
   const [selectedSize, setSelectedSize] = useState(() => {
-    if (isAccessory) return 'One Size Fits Most'
+    if (isAccessory) return ''
     return 'XS - M'
   })
+
+  // Build product images list (switches between Yellow photos and Grey photos for full body skin)
+  const productImages = useMemo(() => {
+    if (product.id === 'product-full-suit') {
+      const activeColorObj = product.colors?.find((c) => c.name === selectedColor?.name)
+      if (activeColorObj?.images && activeColorObj.images.length > 0) {
+        return activeColorObj.images
+      }
+      if (selectedColor?.name?.toLowerCase().includes('grey') && product.images && product.images.length > 5) {
+        return product.images.slice(5)
+      } else if (product.images && product.images.length > 5) {
+        return product.images.slice(0, 5)
+      }
+    }
+    if (product.images && product.images.length > 0) {
+      return product.images
+    }
+    if (product.image) {
+      return [product.image]
+    }
+    return []
+  }, [product, selectedColor])
+
+  // Helper to test if a URL is a video
+  const isVideoUrl = (url) => typeof url === 'string' && (/\.(mp4|webm|mov)(\?.*)?$/i.test(url) || url.includes('/video'))
+
+  // Get active video (switches between color variants if defined, e.g. Yellow skin suit)
+  const activeVideo = useMemo(() => {
+    if (product.id === 'product-full-suit') {
+      const activeColorObj = product.colors?.find((c) => c.name === selectedColor?.name)
+      if (activeColorObj?.video !== undefined) return activeColorObj.video
+      if (selectedColor?.name?.toLowerCase().includes('grey')) return null
+      return product.videoByColor?.['Black / Yellow'] || product.video || null
+    }
+    return product.video || null
+  }, [product, selectedColor])
+
+  // Get active GLB model
+  const activeGlb = (product.glbByColor && product.glbByColor[selectedColor?.name]) || product.glb
+
+  // Combined preview media items (images first, then video after images in the previews)
+  const previewMediaItems = useMemo(() => {
+    const list = productImages.map((src, i) => {
+      const isVideo = isVideoUrl(src)
+      const isFirstImage = !activeGlb && i === 0
+      const isSecondImage = !activeGlb ? i === 1 : i === 0
+      const label = product.imageLabels && product.imageLabels[i]
+        ? product.imageLabels[i]
+        : (isFirstImage ? 'Front' : isSecondImage ? 'Back' : `View ${i + 1}`)
+      return {
+        type: isVideo ? 'video' : 'image',
+        src,
+        label,
+        index: i,
+      }
+    })
+
+    if (activeVideo && !productImages.some((src) => src === activeVideo)) {
+      list.push({
+        type: 'video',
+        src: activeVideo,
+        label: 'Product Video',
+        index: list.length,
+      })
+    }
+
+    return list
+  }, [productImages, activeVideo, product.imageLabels, activeGlb])
+
+  const totalMobileSlides = (activeGlb ? 1 : 0) + previewMediaItems.length
 
   // Mobile / Tablet Carousel Slider state
   const [mobileSlideIndex, setMobileSlideIndex] = useState(0)
   const mobileTouchStartX = useRef(0)
   const mobileTouchStartY = useRef(0)
+  const isTouchOn3DViewer = useRef(false)
 
   const handleMobileTouchStart = (e) => {
+    isTouchOn3DViewer.current = Boolean(e.target?.closest && (e.target.closest('model-viewer') || e.target.closest('.product-3d-wrapper')))
     mobileTouchStartX.current = e.touches[0].clientX
     mobileTouchStartY.current = e.touches[0].clientY
   }
 
   const handleMobileTouchEnd = (e) => {
+    if (mobileSlideIndex === 0 && activeGlb && isTouchOn3DViewer.current) {
+      return
+    }
     const deltaX = e.changedTouches[0].clientX - mobileTouchStartX.current
     const deltaY = e.changedTouches[0].clientY - mobileTouchStartY.current
+    const totalSlides = totalMobileSlides
     if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
       if (deltaX < 0) {
-        setMobileSlideIndex((prev) => (prev + 1) % productImages.length)
+        setMobileSlideIndex((prev) => (prev + 1) % totalSlides)
         triggerHaptic(6)
       } else {
-        setMobileSlideIndex((prev) => (prev - 1 + productImages.length) % productImages.length)
+        setMobileSlideIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
         triggerHaptic(6)
       }
     }
@@ -101,7 +221,8 @@ export default function ProductDetail() {
   const inCartQty = useMemo(() => {
     if (!Array.isArray(items) || !product?.id) return 0
     const colorName = (product.colors && product.colors.length > 0 && selectedColor?.name) ? selectedColor.name : 'Standard'
-    const currentInventoryId = `${product.id}-${selectedSize}-${colorName}`
+    const sizePart = isAccessory ? 'standard' : (selectedSize || 'standard')
+    const currentInventoryId = `${product.id}-${sizePart}-${colorName}`
     
     const exact = items.find((i) => i.inventoryId === currentInventoryId)
     if (exact && exact.quantity > 0) return exact.quantity
@@ -110,7 +231,7 @@ export default function ProductDetail() {
       (i) => i.product?.id === product.id || i.inventoryId?.startsWith(product.id) || i.id === product.id
     )
     return matching.reduce((sum, i) => sum + (i.quantity || 0), 0)
-  }, [items, product?.id, selectedSize, selectedColor])
+  }, [items, product?.id, selectedSize, selectedColor, isAccessory])
 
   const [quantity, setQuantity] = useState(() => (inCartQty > 0 ? inCartQty : 0))
 
@@ -153,30 +274,6 @@ export default function ProductDetail() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Build product images list (switches between Yellow photos and Grey photos for full body skin)
-  const productImages = useMemo(() => {
-    if (product.id === 'product-full-suit') {
-      const activeColorObj = product.colors?.find((c) => c.name === selectedColor?.name)
-      if (activeColorObj?.images && activeColorObj.images.length > 0) {
-        return activeColorObj.images
-      }
-      if (selectedColor?.name?.toLowerCase().includes('grey') && product.images && product.images.length > 5) {
-        return product.images.slice(5)
-      } else if (product.images && product.images.length > 5) {
-        return product.images.slice(0, 5)
-      }
-    }
-    if (product.images && product.images.length > 0) {
-      return product.images
-    }
-    if (product.image) {
-      return [product.image]
-    }
-    return []
-  }, [product, selectedColor])
-
-  // Get active GLB model
-  const activeGlb = (product.glbByColor && product.glbByColor[selectedColor?.name]) || product.glb
 
   // Badge text for image 0 (e.g. | RELAXED FIT / | 4-WAY STRETCH)
   const mainBadgeText = useMemo(() => {
@@ -212,12 +309,12 @@ export default function ProductDetail() {
       window.lenis.scrollTo(0, { immediate: true, force: true })
     }
 
-    const p = SHOP_PRODUCTS.find((item) => item.id === id) || SHOP_PRODUCTS[0]
+    const p = allProducts.find((item) => item.id === id) || SHOP_PRODUCTS.find((item) => item.id === id) || SHOP_PRODUCTS[0]
     const initialColor = p.colors && p.colors.length > 0 ? p.colors[0] : { name: 'Standard', hex: '#000000' }
     setSelectedColor(initialColor)
     
-    if (p.category === 'Accessories' || p.id === 'product-dive-cap' || p.id === 'product-ocean-bag') {
-      setSelectedSize('One Size Fits Most')
+    if (p.category === 'Accessories' || p.id === 'product-dive-cap' || p.id === 'product-ocean-bag' || p.id?.includes('bag') || p.id?.includes('cap')) {
+      setSelectedSize('')
     } else {
       setSelectedSize('XS - M')
     }
@@ -232,7 +329,10 @@ export default function ProductDetail() {
     setModalActiveImage(null)
     setView3DMode(false)
     setMobileSlideIndex(0)
-  }, [id])
+    if (relatedCarouselRef.current) {
+      relatedCarouselRef.current.scrollTo({ left: 0, behavior: 'instant' })
+    }
+  }, [id, allProducts])
 
   // Keyboard navigation for Lightbox Modal
   useEffect(() => {
@@ -258,29 +358,29 @@ export default function ProductDetail() {
       window.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = prevOverflow
     }
-  }, [modalActiveImage, modalImageIndex, productImages])
+  }, [modalActiveImage, modalImageIndex, previewMediaItems])
 
   // Modal navigation helpers
-  const handleOpenModal = (imgSrc, index) => {
+  const handleOpenModal = (mediaSrc, index) => {
     triggerHaptic(8)
-    setModalActiveImage(imgSrc)
+    setModalActiveImage(mediaSrc)
     setModalImageIndex(index)
   }
 
   const handleNextModalImage = () => {
-    if (!productImages.length) return
+    if (!previewMediaItems.length) return
     triggerHaptic(8)
-    const nextIdx = (modalImageIndex + 1) % productImages.length
+    const nextIdx = (modalImageIndex + 1) % previewMediaItems.length
     setModalImageIndex(nextIdx)
-    setModalActiveImage(productImages[nextIdx])
+    setModalActiveImage(previewMediaItems[nextIdx].src)
   }
 
   const handlePrevModalImage = () => {
-    if (!productImages.length) return
+    if (!previewMediaItems.length) return
     triggerHaptic(8)
-    const prevIdx = (modalImageIndex - 1 + productImages.length) % productImages.length
+    const prevIdx = (modalImageIndex - 1 + previewMediaItems.length) % previewMediaItems.length
     setModalImageIndex(prevIdx)
-    setModalActiveImage(productImages[prevIdx])
+    setModalActiveImage(previewMediaItems[prevIdx].src)
   }
 
   // Touch swipe support for Modal
@@ -309,12 +409,13 @@ export default function ProductDetail() {
     triggerSuccessHaptic()
     setIsAdding(true)
 
-    const mappedSize = selectedSize
     const colorName = (product.colors && product.colors.length > 0 && selectedColor?.name) ? selectedColor.name : 'Standard'
     const qtyToAdd = Math.max(1, quantity)
+    const sizePart = isAccessory ? 'standard' : (selectedSize || 'standard')
+    const mappedSize = isAccessory ? '' : selectedSize
     
     addItem({
-      inventoryId: `${product.id}-${selectedSize}-${colorName}`,
+      inventoryId: `${product.id}-${sizePart}-${colorName}`,
       quantity: qtyToAdd,
       product: {
         id: product.id,
@@ -331,7 +432,8 @@ export default function ProductDetail() {
     }
 
     const colorText = product.colors && product.colors.length > 0 && colorName !== 'Standard' ? ` / ${colorName}` : ''
-    setToastMessage(`Added ${qtyToAdd}x ${product.title} (${selectedSize}${colorText}) to cart`)
+    const sizeText = !isAccessory && selectedSize ? ` (${selectedSize}${colorText})` : (colorText ? ` (${colorName})` : '')
+    setToastMessage(`Added ${qtyToAdd}x ${product.title}${sizeText} to cart`)
     setTimeout(() => {
       setIsAdding(false)
       setToastMessage(null)
@@ -378,10 +480,74 @@ export default function ProductDetail() {
   }
 
 
-  // Related products
+  // Related products (all other products on the website catalog, always putting bag and cap in front)
   const relatedProducts = useMemo(() => {
-    return SHOP_PRODUCTS.filter((p) => p.id !== product.id).slice(0, 6)
-  }, [product.id])
+    const others = allProducts.filter((p) => p.id !== product.id)
+    const isBag = (p) => p.id === 'product-ocean-bag' || p.id?.toLowerCase().includes('bag')
+    const isCap = (p) => p.id === 'product-dive-cap' || p.id?.toLowerCase().includes('cap')
+
+    const bags = others.filter(isBag)
+    const caps = others.filter(isCap)
+    const rest = others.filter((p) => !isBag(p) && !isCap(p))
+
+    return [...bags, ...caps, ...rest]
+  }, [allProducts, product.id])
+
+  // Related Products Carousel navigation & drag
+  const relatedCarouselRef = useRef(null)
+  const isRelatedDraggingRef = useRef(false)
+  const relatedStartXRef = useRef(0)
+  const relatedStartScrollLeftRef = useRef(0)
+  const relatedMovedRef = useRef(false)
+
+  const handleScrollPrevRelated = () => {
+    const el = relatedCarouselRef.current
+    if (!el) return
+    triggerHaptic(6)
+    const cardWidth = el.firstElementChild ? el.firstElementChild.getBoundingClientRect().width + 16 : 220
+    const scrollAmount = Math.max(cardWidth * 2, Math.floor(el.clientWidth * 0.7))
+
+    if (el.scrollLeft <= 10) {
+      el.scrollTo({ left: el.scrollWidth - el.clientWidth, behavior: 'smooth' })
+    } else {
+      el.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  const handleScrollNextRelated = () => {
+    const el = relatedCarouselRef.current
+    if (!el) return
+    triggerHaptic(6)
+    const cardWidth = el.firstElementChild ? el.firstElementChild.getBoundingClientRect().width + 16 : 220
+    const scrollAmount = Math.max(cardWidth * 2, Math.floor(el.clientWidth * 0.7))
+
+    if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 15) {
+      el.scrollTo({ left: 0, behavior: 'smooth' })
+    } else {
+      el.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  const handleRelatedPointerDown = (e) => {
+    isRelatedDraggingRef.current = true
+    relatedMovedRef.current = false
+    relatedStartXRef.current = e.pageX || e.clientX
+    relatedStartScrollLeftRef.current = relatedCarouselRef.current ? relatedCarouselRef.current.scrollLeft : 0
+  }
+
+  const handleRelatedPointerMove = (e) => {
+    if (!isRelatedDraggingRef.current || !relatedCarouselRef.current) return
+    const currentX = e.pageX || e.clientX
+    const diff = currentX - relatedStartXRef.current
+    if (Math.abs(diff) > 5) {
+      relatedMovedRef.current = true
+      relatedCarouselRef.current.scrollLeft = relatedStartScrollLeftRef.current - diff
+    }
+  }
+
+  const handleRelatedPointerUp = () => {
+    isRelatedDraggingRef.current = false
+  }
 
   // Variants: Show ONLY for the full body skins with the yellow and grey variant
   const hasVariants = Boolean(product.id === 'product-full-suit' || (product.colors && product.colors.length > 1))
@@ -445,7 +611,7 @@ export default function ProductDetail() {
       </AnimatePresence>
 
       {/* Main Container */}
-      <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-20">
+      <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-24 sm:pb-32">
         
         {/* Back To Shop redirect */}
         <div className="mb-4 sm:mb-6">
@@ -521,27 +687,85 @@ export default function ProductDetail() {
                     className="flex w-full h-full transition-transform duration-300 ease-out"
                     style={{ transform: `translateX(-${mobileSlideIndex * 100}%)` }}
                   >
-                    {productImages.map((imgSrc, idx) => (
+                    {/* First slide: 3D Model when activeGlb is present */}
+                    {activeGlb && (
+                      <div
+                        className="w-full h-full shrink-0 relative flex items-center justify-center p-2 sm:p-3 bg-white"
+                        style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                      >
+                        {!isDesktop && (
+                          <Product3DViewer
+                            key={`mobile-carousel-${activeGlb}`}
+                            src={activeGlb}
+                            alt={product.title}
+                            productId={product.id}
+                            poster={product.image}
+                          />
+                        )}
+
+                        {/* Top-Left Corner Badge on first slide (3D Model) */}
+                        <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                          <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
+                            <span className="text-gray-400">|</span>
+                            <span>{mainBadgeText}</span>
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Following slides: Product Photos and then Video (after images) */}
+                    {previewMediaItems.map((mediaItem, idx) => (
                       <div
                         key={idx}
-                        className="w-full h-full shrink-0 relative cursor-pointer flex items-center justify-center p-2 sm:p-3"
-                        onClick={() => handleOpenModal(imgSrc, idx)}
+                        className="w-full h-full shrink-0 relative cursor-pointer flex items-center justify-center p-2 sm:p-3 bg-white"
+                        style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                        onClick={() => handleOpenModal(mediaItem.src, idx)}
                       >
-                        <img
-                          src={imgSrc}
-                          alt={`${product.title} - view ${idx + 1}`}
-                          className="w-full h-full object-contain"
-                          loading={idx === 0 ? 'eager' : 'lazy'}
-                        />
-
-                        {/* Top-Left Corner Badge on first image */}
-                        {idx === 0 && (
-                          <div className="absolute top-3 left-3 z-10 pointer-events-none">
-                            <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
-                              <span className="text-gray-400">|</span>
-                              <span>{mainBadgeText}</span>
-                            </span>
+                        {mediaItem.type === 'video' ? (
+                          <div className="relative w-full h-full flex items-center justify-center">
+                            <video
+                              src={mediaItem.src}
+                              autoPlay
+                              muted
+                              loop
+                              playsInline
+                              preload="metadata"
+                              className="w-full h-full object-contain"
+                            />
+                            {/* Top-Left Corner Badge */}
+                            <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                              <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
+                                <span className="text-gray-400">|</span>
+                                <span>PRODUCT VIDEO</span>
+                              </span>
+                            </div>
+                            {/* Bottom-Right Video Indicator */}
+                            <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-xs text-gray-800 border border-gray-200 shadow-xs pointer-events-none">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                              </svg>
+                              <span>Video</span>
+                            </div>
                           </div>
+                        ) : (
+                          <>
+                            <img
+                              src={mediaItem.src}
+                              alt={`${product.title} - ${mediaItem.label}`}
+                              className="w-full h-full object-contain"
+                              loading={!activeGlb && idx === 0 ? 'eager' : 'lazy'}
+                            />
+
+                            {/* Top-Left Corner Badge on first photo if NO activeGlb */}
+                            {!activeGlb && idx === 0 && (
+                              <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                                <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
+                                  <span className="text-gray-400">|</span>
+                                  <span>{mainBadgeText}</span>
+                                </span>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     ))}
@@ -567,18 +791,18 @@ export default function ProductDetail() {
                     </button>
                   )}
 
-                  {/* Chevrons: hidden on mobile phone for pure clean look matching screenshot, visible on tablet */}
-                  {productImages.length > 1 && (
+                  {/* Chevrons: for easy navigation between 3D model and photos */}
+                  {totalMobileSlides > 1 && (
                     <>
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
                           triggerHaptic(6)
-                          setMobileSlideIndex((prev) => (prev - 1 + productImages.length) % productImages.length)
+                          setMobileSlideIndex((prev) => (prev - 1 + totalMobileSlides) % totalMobileSlides)
                         }}
-                        aria-label="Previous image"
-                        className="hidden md:flex absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-xs text-gray-800 shadow-md items-center justify-center hover:bg-white transition cursor-pointer z-10"
+                        aria-label="Previous slide"
+                        className="flex absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/85 backdrop-blur-xs text-gray-800 shadow-md items-center justify-center hover:bg-white active:scale-90 transition cursor-pointer z-20 border border-gray-200/60"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="15 18 9 12 15 6" />
@@ -589,10 +813,10 @@ export default function ProductDetail() {
                         onClick={(e) => {
                           e.stopPropagation()
                           triggerHaptic(6)
-                          setMobileSlideIndex((prev) => (prev + 1) % productImages.length)
+                          setMobileSlideIndex((prev) => (prev + 1) % totalMobileSlides)
                         }}
-                        aria-label="Next image"
-                        className="hidden md:flex absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-xs text-gray-800 shadow-md items-center justify-center hover:bg-white transition cursor-pointer z-10"
+                        aria-label="Next slide"
+                        className="flex absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/85 backdrop-blur-xs text-gray-800 shadow-md items-center justify-center hover:bg-white active:scale-90 transition cursor-pointer z-20 border border-gray-200/60"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="9 18 15 12 9 6" />
@@ -603,9 +827,9 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Pagination Dots Directly Beneath Image Matching Screenshot: [- • • • •] */}
-                {productImages.length > 1 && (
+                {totalMobileSlides > 1 && (
                   <div className="flex items-center justify-center gap-1.5 pt-3 pb-1">
-                    {productImages.map((_, idx) => (
+                    {Array.from({ length: totalMobileSlides }).map((_, idx) => (
                       <button
                         key={idx}
                         type="button"
@@ -725,13 +949,13 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* Sizing: Please select a size + SIZE CHART */}
-          <div className="pt-2">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs sm:text-sm font-semibold text-gray-800">
-                Please select a size.
-              </span>
-              {!isAccessory && (
+          {/* Sizing: Please select a size + SIZE CHART (Hidden for accessories like bag and cap) */}
+          {!isAccessory && (
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs sm:text-sm font-semibold text-gray-800">
+                  Please select a size.
+                </span>
                 <button
                   type="button"
                   onClick={() => {
@@ -742,20 +966,11 @@ export default function ProductDetail() {
                 >
                   SIZE CHART
                 </button>
-              )}
-            </div>
+              </div>
 
-            {/* Size Buttons Grid: Only two buttons for apparel (XS - M and L -XXL) */}
-            <div className="flex items-center gap-3 flex-wrap mb-2">
-              {isAccessory ? (
-                <button
-                  type="button"
-                  className="min-w-[140px] h-10 px-4 rounded-md border-2 border-gray-900 text-xs font-bold text-gray-900 bg-white shadow-xs cursor-default"
-                >
-                  One Size Fits Most
-                </button>
-              ) : (
-                availableSizes.map((sz) => {
+              {/* Size Buttons Grid: Only two buttons for apparel (XS - M and L -XXL) */}
+              <div className="flex items-center gap-3 flex-wrap mb-2">
+                {availableSizes.map((sz) => {
                   const isSelected = selectedSize === sz
 
                   return (
@@ -775,11 +990,10 @@ export default function ProductDetail() {
                       <span>{sz}</span>
                     </button>
                   )
-                })
-              )}
+                })}
+              </div>
             </div>
-
-          </div>
+          )}
 
           {/* Quantity Selector with Number Typing & +/- buttons */}
           <div className="pt-1 flex items-center gap-3">
@@ -1003,28 +1217,119 @@ export default function ProductDetail() {
             ) : (
               /* The 2-Column Product Gallery Grid */
               <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full">
-                {productImages.map((imgSrc, idx) => {
-                  const isFirstImage = idx === 0
-                  const isSecondImage = idx === 1
-                  const label = product.imageLabels && product.imageLabels[idx]
-                    ? product.imageLabels[idx]
-                    : (isFirstImage ? 'Front' : isSecondImage ? 'Back' : `View ${idx + 1}`)
+                {/* First Card: 3D Model Card when activeGlb is present */}
+                {activeGlb && (
+                  <div
+                    style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                    className="group relative aspect-[3/4] bg-white rounded-xs border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md hover:border-gray-300 flex items-center justify-center p-2 sm:p-4"
+                  >
+                    {isDesktop && (
+                      <Product3DViewer
+                        key={`desktop-grid-${activeGlb}`}
+                        src={activeGlb}
+                        alt={product.title}
+                        productId={product.id}
+                        poster={product.image}
+                      />
+                    )}
+
+                    {/* Top-Left Corner Badge */}
+                    <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                      <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
+                        <span className="text-gray-400">|</span>
+                        <span>{mainBadgeText}</span>
+                      </span>
+                    </div>
+
+                    {/* Subtle 3D Model Badge Indicator in bottom-right */}
+                    <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-xs text-gray-800 border border-gray-200 shadow-xs pointer-events-none">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                        <line x1="12" y1="22.08" x2="12" y2="12" />
+                      </svg>
+                      <span>3D Model</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Following Cards: Product Photos and then Video (after images in previews) */}
+                {previewMediaItems.map((mediaItem, idx) => {
+                  if (mediaItem.type === 'video') {
+                    return (
+                      <div
+                        key={`video-${idx}`}
+                        onClick={() => handleOpenModal(mediaItem.src, idx)}
+                        style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                        className="group relative aspect-[3/4] bg-white rounded-xs border border-gray-200 overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 flex items-center justify-center p-2 sm:p-4"
+                      >
+                        <video
+                          src={mediaItem.src}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full object-contain bg-white"
+                        />
+
+                        {/* Top-Left Corner Badge */}
+                        <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                          <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
+                            <span className="text-gray-400">|</span>
+                            <span>PRODUCT VIDEO</span>
+                          </span>
+                        </div>
+
+                        {/* Hover Play Button Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="w-12 h-12 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg backdrop-blur-xs">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                              <polygon points="6 4 20 12 6 20 6 4" />
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* Bottom-Right Video badge */}
+                        <div className="absolute bottom-2.5 right-2.5 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-xs text-gray-800 border border-gray-200 shadow-xs pointer-events-none">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                          </svg>
+                          <span>Video</span>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  const isFirstImage = !activeGlb && idx === 0
+                  const isSecondImage = !activeGlb ? idx === 1 : idx === 0
+                  const label = mediaItem.label
 
                   return (
                     <div
                       key={idx}
-                      onClick={() => handleOpenModal(imgSrc, idx)}
+                      onClick={() => handleOpenModal(mediaItem.src, idx)}
                       style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
                       className="group relative aspect-[3/4] bg-white rounded-xs border border-gray-200 overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 flex items-center justify-center p-2 sm:p-4"
                     >
                       {/* Product Image */}
                       <img
-                        src={imgSrc}
+                        src={mediaItem.src}
                         alt={`${product.title} - ${label}`}
                         style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
                         className="w-full h-full object-contain transition-transform duration-500 bg-white"
                         loading={idx < 4 ? 'eager' : 'lazy'}
                       />
+
+                      {/* Top-Left Corner Badge if NO activeGlb and idx === 0 */}
+                      {!activeGlb && idx === 0 && (
+                        <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                          <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase tracking-wider rounded-xs shadow-xs border border-gray-200/60">
+                            <span className="text-gray-400">|</span>
+                            <span>{mainBadgeText}</span>
+                          </span>
+                        </div>
+                      )}
 
                       {/* Subtle hover zoom hint icon in bottom right */}
                       <div className="absolute bottom-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/85 text-gray-700 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-xs pointer-events-none">
@@ -1047,58 +1352,18 @@ export default function ProductDetail() {
               ========================================================================= */}
           <div className="lg:col-span-5 flex flex-col justify-start lg:sticky lg:top-20 xl:top-24 lg:self-start gap-4">
             
-            {/* Product Title & View in 3D Button (on the same line) */}
-            <div className="flex items-start justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
-              <div className="min-w-0 flex-1">
-                <h1 className="font-bold text-2xl sm:text-[28px] text-gray-900 leading-snug tracking-tight">
-                  {product.title}
-                </h1>
-                {/* Category / Subtitle directly under title */}
-                <p className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">
-                  {product.category === 'Tops' ? 'Performance Dive Tops' :
-                   product.category === 'Bottoms' ? 'Compression Dive Wear' :
-                   product.category === 'Wetsuits' ? 'Thermal Neoprene Wetsuits' :
-                   product.category === 'Skin Wear' ? 'Full Body Protective Skin' : 'Marine Gear & Accessories'}
-                </p>
-              </div>
-
-              {/* View in 3D Button (on the right side of the product name) */}
-              {activeGlb && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    triggerHaptic(8)
-                    setView3DMode(!view3DMode)
-                  }}
-                  className={`btn-view-3d shrink-0 inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg text-xs sm:text-sm font-extrabold transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg active:scale-95 ${
-                    view3DMode
-                      ? 'btn-view-3d-active bg-gray-900 text-[#FFCD00] border-2 border-[#FFCD00] hover:bg-black'
-                      : 'btn-view-3d-yellow bg-[#FFCD00] text-gray-950 border-2 border-[#e6b800] hover:bg-[#ffb700]'
-                  }`}
-                  style={
-                    view3DMode
-                      ? { backgroundColor: '#111827', color: '#FFCD00', borderColor: '#FFCD00' }
-                      : { backgroundColor: '#FFCD00', color: '#030a12', borderColor: '#e6b800' }
-                  }
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={view3DMode ? '#FFCD00' : '#030a12'}
-                    strokeWidth="2.5"
-                    className="shrink-0"
-                  >
-                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                    <line x1="12" y1="22.08" x2="12" y2="12" />
-                  </svg>
-                  <span style={{ color: view3DMode ? '#FFCD00' : '#030a12' }}>
-                    {view3DMode ? 'View Photos' : 'View in 3D'}
-                  </span>
-                </button>
-              )}
+            {/* Product Title */}
+            <div>
+              <h1 className="font-bold text-2xl sm:text-[28px] text-gray-900 leading-snug tracking-tight">
+                {product.title}
+              </h1>
+              {/* Category / Subtitle directly under title */}
+              <p className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">
+                {product.category === 'Tops' ? 'Performance Dive Tops' :
+                 product.category === 'Bottoms' ? 'Compression Dive Wear' :
+                 product.category === 'Wetsuits' ? 'Thermal Neoprene Wetsuits' :
+                 product.category === 'Skin Wear' ? 'Full Body Protective Skin' : 'Marine Gear & Accessories'}
+              </p>
             </div>
 
             {/* Price Block - Commented out */}
@@ -1171,13 +1436,13 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Please select a size + SIZE CHART */}
-            <div className="pt-2">
-              <div className="flex items-center justify-between mb-2.5">
-                <span className="text-xs sm:text-sm font-semibold text-gray-800">
-                  Please select a size.
-                </span>
-                {!isAccessory && (
+            {/* Please select a size + SIZE CHART (Hidden for accessories like bag and cap) */}
+            {!isAccessory && (
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-800">
+                    Please select a size.
+                  </span>
                   <button
                     type="button"
                     onClick={() => {
@@ -1188,20 +1453,11 @@ export default function ProductDetail() {
                   >
                     SIZE CHART
                   </button>
-                )}
-              </div>
+                </div>
 
-              {/* Size Buttons Grid: Only two buttons for apparel (XS - M and L -XXL) */}
-              <div className="flex items-center gap-3 flex-wrap mb-2">
-                {isAccessory ? (
-                  <button
-                    type="button"
-                    className="min-w-[140px] h-10 px-5 rounded-md border-2 border-gray-900 text-xs font-bold text-gray-900 bg-white shadow-xs cursor-default"
-                  >
-                    One Size Fits Most
-                  </button>
-                ) : (
-                  availableSizes.map((sz) => {
+                {/* Size Buttons Grid: Only two buttons for apparel (XS - M and L -XXL) */}
+                <div className="flex items-center gap-3 flex-wrap mb-2">
+                  {availableSizes.map((sz) => {
                     const isSelected = selectedSize === sz
 
                     return (
@@ -1221,16 +1477,16 @@ export default function ProductDetail() {
                         <span>{sz}</span>
                       </button>
                     )
-                  })
-                )}
-              </div>
+                  })}
+                </div>
 
-              {/* Size subtitle / helper */}
-              <div className="flex items-center gap-1.5 text-[11px] text-gray-500 mt-2">
-                <span>4-way ultra-stretch memory fabric</span>
-              </div>
+                {/* Size subtitle / helper */}
+                <div className="flex items-center gap-1.5 text-[11px] text-gray-500 mt-2">
+                  <span>4-way ultra-stretch memory fabric</span>
+                </div>
 
-            </div>
+              </div>
+            )}
 
             {/* Quantity Selector with Number Typing & +/- buttons */}
             <div className="pt-1 flex items-center gap-3">
@@ -1544,44 +1800,92 @@ export default function ProductDetail() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            {relatedProducts.map((relProduct) => (
-              <Link
-                key={relProduct.id}
-                to={`/shop/${relProduct.id}`}
-                className="group flex flex-col bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition duration-200 p-2"
-              >
-                <div style={{ backgroundColor: '#ffffff', background: '#ffffff' }} className="aspect-[3/4] w-full bg-white rounded-xs border border-gray-150 overflow-hidden mb-2 relative flex items-center justify-center p-2">
-                  <img
-                    src={relProduct.image}
-                    alt={relProduct.title}
-                    style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 bg-white"
-                  />
-                </div>
-                <span className="text-[9px] font-bold uppercase tracking-wider text-[#006666]">
-                  {relProduct.category}
-                </span>
-                <h4 className="text-xs font-bold text-gray-900 line-clamp-1 group-hover:text-[#e11b22] transition">
-                  {relProduct.title}
-                </h4>
-                {/* Price - Commented out */}
-                {/*
-                <div className="mt-1 flex items-baseline gap-1.5">
-                  <span className="text-xs font-bold text-gray-900">
-                    ₹ {relProduct.price?.toLocaleString('en-IN')}
+          {/* Carousel with arrow buttons on both ends */}
+          <div className="relative group/carousel">
+            {/* Left Arrow Button */}
+            <button
+              type="button"
+              onClick={handleScrollPrevRelated}
+              aria-label="Previous products"
+              className="related-carousel-btn absolute left-0 sm:-left-3 lg:-left-5 top-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/95 border border-gray-200 shadow-md text-gray-800 flex items-center justify-center hover:bg-white hover:text-[#006666] hover:border-[#006666] active:scale-90 cursor-pointer transition select-none"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="sm:w-5 sm:h-5">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            {/* Scrollable Track */}
+            <div
+              ref={relatedCarouselRef}
+              onPointerDown={handleRelatedPointerDown}
+              onPointerMove={handleRelatedPointerMove}
+              onPointerUp={handleRelatedPointerUp}
+              onPointerCancel={handleRelatedPointerUp}
+              onPointerLeave={handleRelatedPointerUp}
+              className="flex gap-3 sm:gap-4 overflow-x-auto scroll-smooth scrollbar-none py-2 px-1 sm:px-2 select-none"
+              style={{ touchAction: 'pan-y' }}
+            >
+              {relatedProducts.map((relProduct) => (
+                <Link
+                  key={relProduct.id}
+                  to={`/shop/${relProduct.id}`}
+                  onClick={(e) => {
+                    if (relatedMovedRef.current) {
+                      e.preventDefault()
+                    }
+                  }}
+                  className="group flex flex-col bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition duration-200 p-2 w-[160px] sm:w-[185px] md:w-[205px] lg:w-[218px] shrink-0"
+                >
+                  <div style={{ backgroundColor: '#ffffff', background: '#ffffff' }} className="aspect-[3/4] w-full bg-white rounded-xs border border-gray-150 overflow-hidden mb-2 relative flex items-center justify-center p-2">
+                    <img
+                      src={relProduct.image}
+                      alt={relProduct.title}
+                      style={{ backgroundColor: '#ffffff', background: '#ffffff' }}
+                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 bg-white pointer-events-none"
+                      draggable="false"
+                    />
+                  </div>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#006666]">
+                    {relProduct.category}
                   </span>
-                  {relProduct.oldPrice && (
-                    <span className="text-[10px] text-gray-400 line-through">
-                      ₹ {relProduct.oldPrice?.toLocaleString('en-IN')}
+                  <h4 className="text-xs font-bold text-gray-900 line-clamp-1 group-hover:text-[#e11b22] transition">
+                    {relProduct.title}
+                  </h4>
+                  {/* Price - Commented out */}
+                  {/*
+                  <div className="mt-1 flex items-baseline gap-1.5">
+                    <span className="text-xs font-bold text-gray-900">
+                      ₹ {relProduct.price?.toLocaleString('en-IN')}
                     </span>
-                  )}
-                </div>
-                */}
-              </Link>
-            ))}
+                    {relProduct.oldPrice && (
+                      <span className="text-[10px] text-gray-400 line-through">
+                        ₹ {relProduct.oldPrice?.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                  </div>
+                  */}
+                </Link>
+              ))}
+            </div>
+
+            {/* Right Arrow Button */}
+            <button
+              type="button"
+              onClick={handleScrollNextRelated}
+              aria-label="Next products"
+              className="related-carousel-btn absolute right-0 sm:-right-3 lg:-right-5 top-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/95 border border-gray-200 shadow-md text-gray-800 flex items-center justify-center hover:bg-white hover:text-[#006666] hover:border-[#006666] active:scale-90 cursor-pointer transition select-none"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="sm:w-5 sm:h-5">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
           </div>
         </div>
+
+        {/* =========================================================================
+            THE DIVE COMMUNITY SECTION
+            ========================================================================= */}
+        <DiveCommunitySection className="mt-16 sm:mt-24 pt-12 sm:pt-16 border-t border-gray-200" />
 
       </div>
 
@@ -1653,15 +1957,32 @@ export default function ProductDetail() {
                     </button>
                   )}
 
+                  {/* Left Navigation Chevron Button */}
+                  {previewMediaItems.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handlePrevModalImage()
+                      }}
+                      aria-label="Previous media"
+                      className="absolute left-2 sm:left-4 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-xl text-gray-800 flex items-center justify-center hover:bg-gray-100 active:scale-90 cursor-pointer transition border border-gray-150"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                    </button>
+                  )}
+
                   {/* Right Navigation Chevron Button */}
-                  {productImages.length > 1 && (
+                  {previewMediaItems.length > 1 && (
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleNextModalImage()
                       }}
-                      aria-label="Next image"
+                      aria-label="Next media"
                       className="absolute right-2 sm:right-4 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-xl text-gray-800 flex items-center justify-center hover:bg-gray-100 active:scale-90 cursor-pointer transition border border-gray-150"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1670,30 +1991,41 @@ export default function ProductDetail() {
                     </button>
                   )}
 
-                  {/* The Full Uncropped Image */}
+                  {/* The Full Uncropped Image or Video */}
                   <div className="relative h-full flex items-center justify-center">
-                    <img
-                      key={modalActiveImage}
-                      src={modalActiveImage}
-                      alt={product.title}
-                      className="h-full max-h-[77vh] sm:max-h-[81vh] w-auto max-w-full object-contain rounded-xs select-none shadow-xs"
-                      draggable={false}
-                    />
+                    {isVideoUrl(modalActiveImage) ? (
+                      <video
+                        key={modalActiveImage}
+                        src={modalActiveImage}
+                        controls
+                        autoPlay
+                        playsInline
+                        className="h-full max-h-[77vh] sm:max-h-[81vh] w-auto max-w-full object-contain rounded-xs select-none shadow-xs bg-black"
+                      />
+                    ) : (
+                      <img
+                        key={modalActiveImage}
+                        src={modalActiveImage}
+                        alt={product.title}
+                        className="h-full max-h-[77vh] sm:max-h-[81vh] w-auto max-w-full object-contain rounded-xs select-none shadow-xs"
+                        draggable={false}
+                      />
+                    )}
                   </div>
                 </div>
 
                 {/* Bottom Thumbnail Strip matching Screenshot 2 */}
-                {productImages.length > 1 && (
+                {previewMediaItems.length > 1 && (
                   <div className="w-full pt-2 mt-1 border-t border-gray-150 flex items-center justify-center gap-1.5 sm:gap-2.5 overflow-x-auto scrollbar-none py-1 shrink-0">
-                    {productImages.map((thumb, idx) => {
-                      const isSelected = modalActiveImage === thumb
+                    {previewMediaItems.map((mediaItem, idx) => {
+                      const isSelected = modalActiveImage === mediaItem.src
                       return (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => {
                             triggerHaptic(6)
-                            setModalActiveImage(thumb)
+                            setModalActiveImage(mediaItem.src)
                             setModalImageIndex(idx)
                           }}
                           className={`relative w-11 h-15 sm:w-13 sm:h-17 rounded-xs overflow-hidden border-2 transition cursor-pointer shrink-0 bg-white ${
@@ -1702,11 +2034,23 @@ export default function ProductDetail() {
                               : 'border-gray-200 opacity-60 hover:opacity-100'
                           }`}
                         >
-                          <img
-                            src={thumb}
-                            alt={`Thumbnail ${idx + 1}`}
-                            className="w-full h-full object-contain p-0.5"
-                          />
+                          {mediaItem.type === 'video' ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white p-0.5 relative">
+                              <video src={mediaItem.src} className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" />
+                              <div className="relative z-10 w-5 h-5 rounded-full bg-white/90 text-gray-900 flex items-center justify-center shadow-xs">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                  <polygon points="5 3 19 12 5 21 5 3" />
+                                </svg>
+                              </div>
+                              <span className="relative z-10 text-[8px] font-bold uppercase tracking-wider text-white mt-0.5">Video</span>
+                            </div>
+                          ) : (
+                            <img
+                              src={mediaItem.src}
+                              alt={`Thumbnail ${idx + 1}`}
+                              className="w-full h-full object-contain p-0.5"
+                            />
+                          )}
                         </button>
                       )
                     })}

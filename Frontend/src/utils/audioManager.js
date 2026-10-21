@@ -401,7 +401,7 @@ class AudioManager {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: 'Underwater Ambiance',
           artist: 'The Dive Village',
-          album: "It's a Community",
+          album: "It is a Community",
           artwork: [
             {
               src: 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png',

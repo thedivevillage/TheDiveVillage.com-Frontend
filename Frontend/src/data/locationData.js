@@ -94,7 +94,8 @@ export const LOCATION_DATA = {
         'Minicoy Island',
         'Amini',
         'Andrott',
-        'Kalpeni'
+        'Kalpeni',
+        'Kiltan Island'
       ],
       'Gujarat': [
         'Ahmedabad',

@@ -123,7 +123,7 @@ export default function MiniCartDrawer({ isOpen, onClose }) {
                         <h4 className="font-heading text-xs font-bold text-white truncate leading-tight">
                           {p.title || p.name || 'Merchandise Item'}
                         </h4>
-                        {item.selectedSize && (
+                        {item.selectedSize && item.selectedSize !== 'Standard' && item.selectedSize !== 'One Size Fits Most' && (
                           <span className="text-[10px] text-white/60 block mt-0.5">
                             Size: <strong className="text-cyan-300">{item.selectedSize}</strong>
                           </span>

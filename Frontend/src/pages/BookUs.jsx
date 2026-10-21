@@ -25,6 +25,10 @@ import {
   validateParticipantBooking,
   normalizeExperienceKey,
   isFunDivesProgram,
+  PROGRAM_DURATION_MAP,
+  getProgramDurationInfo,
+  calculateCourseSchedule,
+  calculateGroupCourseSchedule,
 } from '../utils/courseEligibility'
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '../utils/haptics'
 
@@ -573,6 +577,13 @@ export default function BookUs() {
       })
     }
   }, [initialRequests])
+
+  // Calculate course schedules & possible completion end dates
+  const groupCourseSchedule = useMemo(() => {
+    const activeAddOns = selectedAddOns.filter((item) => item !== 'None')
+    const fallbackExp = experience || activeAddOns[0] || selectedCourseProgram?.name || 'Scuba Diving'
+    return calculateGroupCourseSchedule(date, participants, fallbackExp)
+  }, [date, participants, experience, selectedAddOns, selectedCourseProgram])
 
   // Lock background scrolling and pause Lenis when order confirmation modal is open
   useEffect(() => {
@@ -1528,6 +1539,7 @@ export default function BookUs() {
           contactPhone: contact.phone || null,
           specialRequests: contact.requests || null,
           participants: isDirect ? [] : participants,
+          courseSchedule: groupCourseSchedule,
           status: 'Pending Review',
           createdAt: new Date().toISOString(),
         }
@@ -1583,6 +1595,7 @@ export default function BookUs() {
         contactPhone: contact.phone || null,
         specialRequests: contact.requests || null,
         participants: isDirect ? [] : participants,
+        courseSchedule: groupCourseSchedule,
         status: 'Pending Review',
         createdAt: new Date().toISOString(),
       }
@@ -1620,6 +1633,8 @@ export default function BookUs() {
       email: booking.contactEmail || '',
       phone: booking.contactPhone || '',
     }
+
+    const submittedSchedule = booking.courseSchedule || calculateGroupCourseSchedule(bookingDate, bookingParticipants, bookingExperience)
 
     return (
       <div
@@ -1690,8 +1705,13 @@ export default function BookUs() {
                 </div>
               )}
               <div className="flex justify-between items-start border-b border-navy/5 pb-3">
-                <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Date & Group</span>
-                <span className="font-bold text-navy text-right leading-tight max-w-[60%]">{formatDateToDDMMYYYY(bookingDate)} <br /><span className="text-navy/60 font-medium text-[11px] sm:text-xs">{bookingParticipants.length} Person{bookingParticipants.length > 1 ? 's' : ''}</span></span>
+                <span className="text-navy/50 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Schedule & Group</span>
+                <span className="font-bold text-navy text-right leading-tight max-w-[65%]">
+                  {formatDateToDDMMYYYY(bookingDate)} → {submittedSchedule.overallPossibleEndRange} <br />
+                  <span className="text-navy/60 font-medium text-[11px] sm:text-xs">
+                    Duration: {submittedSchedule.overallDurationLabel} • {bookingParticipants.length} Person{bookingParticipants.length > 1 ? 's' : ''}
+                  </span>
+                </span>
               </div>
 
               {!isDirect && (
@@ -1708,6 +1728,7 @@ export default function BookUs() {
                         ? (certNames.length ? certNames.join(', ') : 'Certified Diver')
                         : 'No Prior Certification (Beginner / Pathway)')
                       : `${booking.experience} Program`
+                    const pSched = submittedSchedule.participantSchedules?.[idx] || calculateCourseSchedule(bookingDate, p.selectedProgram, p)
 
                     return (
                       <div
@@ -1718,10 +1739,18 @@ export default function BookUs() {
                         <div className="pr-3">
                           <span className="font-bold text-navy text-sm block mb-0.5">{p.name || `Participant ${idx + 1}`}</span>
                           <span className="text-[10px] sm:text-[11px] text-navy/50 leading-tight block">Age: {p.age || 'N/A'} • {certSummary}</span>
+                          <span className="text-[10px] text-navy/70 font-semibold block mt-1">
+                            Start: {formatDateToDDMMYYYY(bookingDate)} • Possible End: {pSched.possibleEndRange}
+                          </span>
                         </div>
-                        <span className="font-bold text-accent text-[10px] bg-accent/10 px-2.5 py-1.5 rounded-full text-center shrink-0 max-w-[110px] leading-tight">
-                          {getCourseDisplayName(prog?.name || 'Selected Course')}
-                        </span>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <span className="font-bold text-accent text-[10px] bg-accent/10 px-2.5 py-1.5 rounded-full text-center shrink-0 max-w-[120px] leading-tight">
+                            {getCourseDisplayName(prog?.name || 'Selected Course')}
+                          </span>
+                          <span className="font-extrabold text-[#001e3d] text-[9px] bg-[#FFCD00] px-2 py-0.5 rounded-full text-center shrink-0">
+                            {pSched.durationLabel}
+                          </span>
+                        </div>
                       </div>
                     )
                   })}
@@ -2327,6 +2356,9 @@ export default function BookUs() {
                                         <span className="font-heading font-bold text-navy text-xs sm:text-base truncate block mt-0.5">
                                           Program - "{programName}"
                                         </span>
+                                        <span className="text-[10px] text-navy/60 font-semibold block mt-0.5">
+                                          Duration: {selectedCourseProgram?.durationDays || getProgramDurationInfo(selectedCourseProgram?.id || p.selectedProgram || programName).durationLabel}
+                                        </span>
                                       </div>
                                       <span className="px-2.5 py-1 rounded-full bg-accent/20 text-navy text-[10px] sm:text-xs font-extrabold shrink-0">
                                         Selected
@@ -2465,7 +2497,7 @@ export default function BookUs() {
                                               <option value="" disabled>Select an eligible course...</option>
                                               {eligibleCourses.map((prog) => (
                                                 <option key={prog.id} value={prog.id}>
-                                                  {getCourseDisplayName(prog.name)} [{prog.category}] — {prog.certLabel}
+                                                  {getCourseDisplayName(prog.name)} [{prog.category}] — {prog.durationDays || '1 Day'} — {prog.certLabel}
                                                 </option>
                                               ))}
                                             </select>
@@ -2490,7 +2522,7 @@ export default function BookUs() {
                                                   <div className="flex justify-between items-start gap-1.5">
                                                     <div>
                                                       <span className={`text-[8px] sm:text-[9px] font-bold uppercase tracking-widest block mb-0.5 ${isSelected ? 'text-cyan-300' : 'text-navy/50'}`}>
-                                                        {prog.category}
+                                                        {prog.category} • {prog.durationDays || '1 Day'}
                                                       </span>
                                                       <h5 className="font-heading font-bold text-[11px] sm:text-sm leading-snug">
                                                         {getCourseDisplayName(prog.name)}
@@ -2501,10 +2533,12 @@ export default function BookUs() {
                                                     </div>
                                                   </div>
 
-                                                  <div className="flex flex-wrap items-center gap-1 pt-1 text-[8px] sm:text-[9px]">
-
-                                                    <span className={`truncate max-w-[200px] sm:max-w-[260px] ${isSelected ? 'text-white/70' : 'text-navy/50'}`}>
+                                                  <div className="flex flex-wrap items-center justify-between gap-1 pt-1 text-[8px] sm:text-[9px]">
+                                                    <span className={`truncate max-w-[170px] sm:max-w-[210px] ${isSelected ? 'text-white/70' : 'text-navy/50'}`}>
                                                       {prog.certLabel}
+                                                    </span>
+                                                    <span className={`font-extrabold px-1.5 py-0.5 rounded ${isSelected ? 'bg-white/20 text-white' : 'bg-navy/5 text-navy/70'}`}>
+                                                      {prog.durationDays || '1 Day'}
                                                     </span>
                                                   </div>
                                                 </div>
@@ -2595,6 +2629,102 @@ export default function BookUs() {
                           rows="3"
                           className="w-full rounded-lg sm:rounded-2xl bg-[#F0F2F5] px-3 py-2 sm:px-5 sm:py-4 text-[11px] sm:text-sm placeholder:text-[10px] sm:placeholder:text-sm font-semibold sm:font-bold text-navy outline-none focus:ring-2 focus:ring-accent/50 transition placeholder:text-navy/30 resize-y"
                         ></textarea>
+                      </div>
+
+                      {/* Course Schedule & Estimated Duration Breakdown */}
+                      <div className="rounded-2xl sm:rounded-3xl bg-white border border-navy/15 p-4 sm:p-5 shadow-sm space-y-3.5 text-navy">
+                        <div className="flex items-center justify-between border-b border-navy/10 pb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-navy shrink-0">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                              </svg>
+                            </div>
+                            <div>
+                              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-accent block">
+                                Course Schedule & Timeline
+                              </span>
+                              <h4 className="font-heading font-bold text-navy text-xs sm:text-sm leading-tight">
+                                Estimated Duration & Completion
+                              </h4>
+                            </div>
+                          </div>
+                          <span className="px-2.5 py-1 rounded-full bg-navy/5 text-navy text-[10px] sm:text-xs font-bold border border-navy/10 shrink-0">
+                            {groupCourseSchedule.overallDurationLabel}
+                          </span>
+                        </div>
+
+                        {/* Schedule Metric Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                          <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#F8F9FA] border border-navy/10">
+                            <span className="block text-[10px] text-navy/60 font-medium">Selected Start Date</span>
+                            <strong className="block text-xs sm:text-sm font-bold text-navy mt-0.5">
+                              {date ? formatDateToDDMMYYYY(date) : 'Pending selection'}
+                            </strong>
+                            <span className="block text-[9px] text-navy/40 mt-0.5">Day 1 of course</span>
+                          </div>
+
+                          <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#F8F9FA] border border-navy/10">
+                            <span className="block text-[10px] text-navy/60 font-medium">Program Duration</span>
+                            <strong className="block text-xs sm:text-sm font-bold text-navy mt-0.5">
+                              {groupCourseSchedule.overallDurationLabel}
+                            </strong>
+                            <span className="block text-[9px] text-navy/40 mt-0.5">Standard course days</span>
+                          </div>
+
+                          <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-[#F8F9FA] border border-navy/10">
+                            <span className="block text-[10px] text-navy/60 font-medium">Possible End Date</span>
+                            <strong className="block text-xs sm:text-sm font-bold text-navy mt-0.5">
+                              {date ? groupCourseSchedule.overallPossibleEndRange : 'Set after start date'}
+                            </strong>
+                            <span className="block text-[9px] text-navy/40 mt-0.5">Target graduation</span>
+                          </div>
+                        </div>
+
+                        {/* Per-Participant Breakdown */}
+                        {groupCourseSchedule.participantSchedules && groupCourseSchedule.participantSchedules.length > 0 && (
+                          <div className="space-y-2 pt-1 border-t border-navy/5">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-navy/60 block">
+                              Participant Schedule Breakdown
+                            </span>
+                            <div className="space-y-1.5">
+                              {groupCourseSchedule.participantSchedules.map((ps, idx) => (
+                                <div
+                                  key={idx}
+                                  className="p-2.5 rounded-xl bg-navy/[0.02] border border-navy/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs"
+                                >
+                                  <div>
+                                    <span className="font-bold text-navy">
+                                      {idx + 1}. {ps.participantName}
+                                    </span>
+                                    <span className="mx-1.5 text-navy/40">•</span>
+                                    <span className="font-semibold text-navy/80">{getCourseDisplayName(ps.programName)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <span className="px-2 py-0.5 rounded-full bg-accent/20 text-[#001e3d] text-[10px] font-extrabold">
+                                      {ps.durationLabel}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-navy/70">
+                                      {date ? `${ps.formattedStartDate} → ${ps.possibleEndRange}` : ps.durationLabel}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[10px] text-navy/70 flex items-start gap-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-amber-600 mt-0.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
+                          </svg>
+                          <span>
+                            Possible end dates account for required training sessions, surface intervals, and safety guidelines. Final course completion pace adapts to individual diver comfort and weather conditions.
+                          </span>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -2780,13 +2910,34 @@ export default function BookUs() {
                       <strong className="font-bold text-navy" style={{ color: '#003865' }}>{location || 'To Be Arranged'}</strong>
                     </div>
                     <div>
-                      <span className="block text-[11px]" style={{ color: 'rgba(0, 56, 101, 0.6)' }}>Date:</span>
+                      <span className="block text-[11px]" style={{ color: 'rgba(0, 56, 101, 0.6)' }}>Start Date:</span>
                       <strong className="font-bold text-navy" style={{ color: '#003865' }}>{formatDateToDDMMYYYY(date)}</strong>
+                    </div>
+                    <div>
+                      <span className="block text-[11px]" style={{ color: 'rgba(0, 56, 101, 0.6)' }}>Course Duration:</span>
+                      <strong className="font-bold text-navy" style={{ color: '#003865' }}>{groupCourseSchedule.overallDurationLabel}</strong>
+                    </div>
+                    <div>
+                      <span className="block text-[11px]" style={{ color: 'rgba(0, 56, 101, 0.6)' }}>Possible End Date:</span>
+                      <strong className="font-bold text-navy" style={{ color: '#003865' }}>{groupCourseSchedule.overallPossibleEndRange}</strong>
                     </div>
                     <div>
                       <span className="block text-[11px]" style={{ color: 'rgba(0, 56, 101, 0.6)' }}>Total Group Size:</span>
                       <strong className="font-bold text-navy" style={{ color: '#003865' }}>{participants.length} Person{participants.length > 1 ? 's' : ''}</strong>
                     </div>
+                  </div>
+
+                  {/* Course Schedule Highlight Banner */}
+                  <div
+                    className="p-2 sm:p-2.5 rounded-xl border flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-[11px] sm:text-xs font-bold mt-2"
+                    style={{
+                      backgroundColor: 'rgba(255, 205, 0, 0.15)',
+                      borderColor: 'rgba(255, 205, 0, 0.4)',
+                      color: '#003865'
+                    }}
+                  >
+                    <span>Course Schedule Window:</span>
+                    <span>{formatDateToDDMMYYYY(date)} → {groupCourseSchedule.overallPossibleEndRange} ({groupCourseSchedule.overallDurationLabel})</span>
                   </div>
                 </div>
 
@@ -2828,6 +2979,7 @@ export default function BookUs() {
                     {participants.map((p, idx) => {
                       const progName = COURSE_CATALOG.find(c => c.id === p.selectedProgram)?.name || p.selectedProgram || 'Standard Activity'
                       const isUnder12 = parseInt(p.age, 10) < 12
+                      const pSched = groupCourseSchedule.participantSchedules?.[idx] || calculateCourseSchedule(date, p.selectedProgram, p)
                       return (
                         <div
                           key={p.id}
@@ -2847,19 +2999,36 @@ export default function BookUs() {
                                 ✓ Parental Consent Confirmed
                               </span>
                             )}
+                            <div className="flex items-center gap-1.5 mt-1 text-[10px] font-semibold text-navy/70">
+                              <span>Start: {formatDateToDDMMYYYY(date)}</span>
+                              <span>•</span>
+                              <span>Possible End: <strong className="font-bold text-navy">{pSched.possibleEndRange}</strong></span>
+                            </div>
                           </div>
                           <div className="text-left sm:text-right">
-                            <span
-                              data-booking-course-badge="true"
-                              className="px-2.5 py-1 rounded-full font-bold text-[11px] inline-block"
-                              style={{
-                                backgroundColor: 'rgba(0, 56, 101, 0.08)',
-                                color: '#003865',
-                                border: '1px solid rgba(0, 56, 101, 0.12)',
-                              }}
-                            >
-                              {progName}
-                            </span>
+                            <div className="flex items-center sm:justify-end gap-1.5 flex-wrap">
+                              <span
+                                data-booking-course-badge="true"
+                                className="px-2.5 py-1 rounded-full font-bold text-[11px] inline-block"
+                                style={{
+                                  backgroundColor: 'rgba(0, 56, 101, 0.08)',
+                                  color: '#003865',
+                                  border: '1px solid rgba(0, 56, 101, 0.12)',
+                                }}
+                              >
+                                {progName}
+                              </span>
+                              <span
+                                className="px-2 py-0.5 rounded-full font-extrabold text-[10px] inline-block"
+                                style={{
+                                  backgroundColor: '#FFCD00',
+                                  color: '#001e3d',
+                                  border: '1px solid #FFCD00',
+                                }}
+                              >
+                                {pSched.durationLabel}
+                              </span>
+                            </div>
                             {isFunDivesProgram(p.selectedProgram) ? (
                               <span className="block text-[10px] font-semibold mt-0.5" style={{ color: 'rgba(0, 56, 101, 0.7)' }}>
                                 {getFunDivesSummary(p) || (p.funDivesCount ? `Package: ${FUN_DIVES_PACKAGES.find(f => f.id === p.funDivesCount)?.title || p.funDivesCount}` : '')}

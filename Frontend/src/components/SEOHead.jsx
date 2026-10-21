@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 
 export default function SEOHead({
-  title = "The Dive Village | It's a Community",
-  description = 'Experience world-class scuba diving certifications, guided freediving excursions, and premium ocean apparel with certified professional divemasters at The Dive Village.',
+  title = 'The Dive Village | It is a Community',
+  description = 'The Dive Village | It is a Community. Experience world-class scuba diving certifications, guided freediving excursions, and premium ocean apparel with certified professional divemasters at The Dive Village.',
   keywords = 'scuba diving, freediving, scuba certification, diving courses, dive center, dive gear, underwater exploration, ocean apparel, dive village',
   canonicalUrl = 'https://thedivevillage.com',
-  ogImage = '/src/assets/Logo.png',
+  ogImage = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png',
   ogType = 'website'
 }) {
   useEffect(() => {
@@ -42,9 +42,13 @@ export default function SEOHead({
       el.content = content
     }
 
+    setMetaTag('name', 'title', title)
+    setMetaTag('property', 'og:site_name', 'The Dive Village | It is a Community')
     setMetaTag('property', 'og:title', title)
     setMetaTag('property', 'og:description', description)
     setMetaTag('property', 'og:type', ogType)
+    setMetaTag('name', 'application-name', 'The Dive Village | It is a Community')
+    setMetaTag('name', 'apple-mobile-web-app-title', 'The Dive Village | It is a Community')
 
     // Full absolute URL for og:image
     const fullImageUrl = ogImage
@@ -53,7 +57,7 @@ export default function SEOHead({
         : typeof window !== 'undefined'
         ? new URL(ogImage, window.location.origin).href
         : ogImage
-      : (typeof window !== 'undefined' ? `${window.location.origin}/src/assets/Logo.png` : '/src/assets/Logo.png')
+      : 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791691225/TDV-Media/UI/Logo.png'
 
     setMetaTag('property', 'og:image', fullImageUrl)
     setMetaTag('property', 'og:image:secure_url', fullImageUrl)
@@ -65,6 +69,7 @@ export default function SEOHead({
     setMetaTag('name', 'twitter:title', title)
     setMetaTag('name', 'twitter:description', description)
     setMetaTag('name', 'twitter:image', fullImageUrl)
+    setMetaTag('name', 'twitter:url', canonicalUrl || (typeof window !== 'undefined' ? window.location.href : ''))
 
     // Canonical link tag
     if (typeof document !== 'undefined') {

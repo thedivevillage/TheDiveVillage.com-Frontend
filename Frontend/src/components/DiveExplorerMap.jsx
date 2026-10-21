@@ -725,7 +725,11 @@ export default function DiveExplorerMap({
       // Must match selected island if active (and not global search)
       if (selectedIsland && !q) {
         const siteIsland = getIslandForSite(site)
-        if (siteIsland !== selectedIsland) return false
+        const isIslandMatch =
+          siteIsland === selectedIsland ||
+          ((siteIsland.toLowerCase() === 'lakshadweep' || siteIsland.toLowerCase() === 'lakshadweep islands') &&
+            (selectedIsland.toLowerCase() === 'lakshadweep' || selectedIsland.toLowerCase() === 'lakshadweep islands'))
+        if (!isIslandMatch) return false
       }
       // Search query
       if (q) {

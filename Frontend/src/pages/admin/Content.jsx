@@ -34,7 +34,7 @@ export function getMediaPoster(item) {
     return `https://res.cloudinary.com/q7b4kjd9/image/upload/TDV-Media/Extras%20for%20Gallery/posters/${encodeURIComponent(base)}_thumb.webp`
   }
   if (filename === 'Scuba_Diver.mp4') {
-    return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-1_thumb.webp'
+    return 'https://media.thedivevillage.com/TDV-Media/Services/posters/Scuba_Diver_thumb.webp'
   }
   if (filename === 'AdventureDiver.mp4') {
     return 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-2_thumb.webp'

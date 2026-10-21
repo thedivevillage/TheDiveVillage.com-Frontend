@@ -114,6 +114,7 @@ const RAW_GALLERY_ITEMS = [
     "id": "gallery-item-16",
     "type": "video",
     "src": "https://media.thedivevillage.com/TDV-Media/Services/Scuba_Diver.mp4",
+    "poster": "https://media.thedivevillage.com/TDV-Media/Services/posters/Scuba_Diver_thumb.webp",
     "title": "Scuba Diver",
     "category": "marine",
     "filename": "Scuba Diver.mp4"
@@ -255,14 +256,6 @@ const RAW_GALLERY_ITEMS = [
     "filename": "Feather Star.webp"
   },
   {
-    "id": "gallery-item-34",
-    "type": "image",
-    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458095/TDV-Media/Extras%20for%20Gallery/FeatherStar_3.webp",
-    "title": "Feather Star",
-    "category": "marine",
-    "filename": "FeatherStar (3).webp"
-  },
-  {
     "id": "gallery-item-35",
     "type": "image",
     "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458100/TDV-Media/Extras%20for%20Gallery/Giant_Clam.webp",
@@ -303,14 +296,6 @@ const RAW_GALLERY_ITEMS = [
     "filename": "Lionfish.webp"
   },
   {
-    "id": "gallery-item-40",
-    "type": "image",
-    "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458177/TDV-Media/Extras%20for%20Gallery/Moon_Jellyfish.webp",
-    "title": "Moon Jellyfish",
-    "category": "marine",
-    "filename": "Moon Jellyfish.webp"
-  },
-  {
     "id": "gallery-item-42",
     "type": "image",
     "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458179/TDV-Media/Extras%20for%20Gallery/School_of_Baitball.webp",
@@ -346,9 +331,9 @@ const RAW_GALLERY_ITEMS = [
     "id": "gallery-item-48",
     "type": "image",
     "src": "https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458204/TDV-Media/Extras%20for%20Gallery/Sunset.jpg",
-    "title": "Sunset",
+    "title": "Sunrise",
     "category": "marine",
-    "filename": "Sunset.webp"
+    "filename": "Sunrise.webp"
   },
   {
     "id": "gallery-item-49",
@@ -408,7 +393,7 @@ export const GALLERY_ITEMS = RAW_GALLERY_ITEMS.map((item) => {
     if (filename === 'Scuba_Diver.mp4') {
       return {
         ...item,
-        poster: item.poster || 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792485600/TDV-Media/thumbnails/course-1_thumb.webp',
+        poster: item.poster || 'https://media.thedivevillage.com/TDV-Media/Services/posters/Scuba_Diver_thumb.webp',
         previewVideo: item.src,
         lowResSrc: item.src,
       }

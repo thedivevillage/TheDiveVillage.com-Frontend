@@ -269,10 +269,10 @@ export default function Navbar() {
               type="button"
               id="desktop-theme-toggle-btn"
               onClick={toggleNightDive}
-              className={`hidden sm:flex h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-1.5 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 cursor-pointer shadow-sm active:scale-95`}
+              className={`hidden sm:flex group h-8.5 w-8.5 sm:h-10 sm:w-auto items-center justify-center gap-2 rounded-xl border ${borderColor} ${btnBg} backdrop-blur-md px-2 sm:px-3 ${btnText} transition duration-300 hover:!bg-[#FFCD00] hover:!text-[#001e3d] hover:!border-[#FFCD00] shrink-0 cursor-pointer shadow-sm active:scale-95`}
               aria-label="Toggle Night Dive mode"
             >
-              <ThemeToggle isNightDive={isNightDive} className="hidden lg:inline-block" />
+              <ThemeToggle isNightDive={isNightDive} className="inline-block" />
               <span className="hidden sm:inline text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap select-none">
                 {isNightDive ? 'Day Dive' : 'Night Dive'}
               </span>
@@ -392,7 +392,7 @@ export default function Navbar() {
                       toggleNightDive()
                       setOpen(false)
                     }}
-                    className="rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left text-white hover:bg-white/10 cursor-pointer flex items-center gap-2"
+                    className="group rounded-xl px-4 py-3 font-heading text-[15px] font-bold transition duration-hover text-left text-white hover:bg-white/10 cursor-pointer flex items-center gap-2.5"
                   >
                     <ThemeToggle isNightDive={isNightDive} className="inline-block" />
                     <span>{isNightDive ? 'Switch to Day Dive' : 'Switch to Night Dive'}</span>

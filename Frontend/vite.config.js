@@ -189,9 +189,9 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'The Dive Village',
-        short_name: 'DiveVillage',
-        description: 'Scuba Diving & Ocean Exploration',
+        name: 'The Dive Village | It is a Community',
+        short_name: 'The Dive Village',
+        description: 'The Dive Village | It is a Community - Scuba Diving & Ocean Exploration',
         theme_color: '#001e3d',
         background_color: '#001e3d',
         icons: [

@@ -16,6 +16,11 @@ const glbWetSuitShortieMale = glbWetSuitShortieFemale;
 const glbWomensShoulderStrap = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791718918/TDV-Media/Products/TDV%20-%203D%20Product%20Files/Womens_shoulder_strap_shortie_with_all_round_compression.glb';
 const glbWomensSweetheart = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791783718/TDV-Media/Products/TDV%20-%203D%20Product%20Files/Womens_Sweetheart_neck_top.glb';
 
+// Product Preview Videos (Cloudflare CDN)
+const vidCap = 'https://media.thedivevillage.com/TDV-Media/Products/divecap.mp4';
+const vidBag = 'https://media.thedivevillage.com/TDV-Media/Products/gearbagvideo.mp4';
+const vidSkinSuitYellow = 'https://media.thedivevillage.com/TDV-Media/Products/yellowskinsuit.mp4';
+
 // Backpack Assets
 const imgBagFront = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458222/TDV-Media/Products/Backpack/bag_front.webp';
 const imgBagBack = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1791458224/TDV-Media/Products/Backpack/bagback.webp';
@@ -291,6 +296,11 @@ export const SHOP_PRODUCTS = [
       'Black / Yellow': glbFullBodySkinYellow,
       'Black / Light Grey': glbFullBodySkinGrey,
     },
+    video: vidSkinSuitYellow,
+    videoByColor: {
+      'Black / Yellow': vidSkinSuitYellow,
+      'Black / Light Grey': null,
+    },
     category: 'Skin Wear',
     description: 'Ultimate full-body protection with grip panels on knees and seat, full front zipper, and stirrup foot straps.',
     features: [
@@ -307,7 +317,8 @@ export const SHOP_PRODUCTS = [
         hex2: '#EAB308', 
         image: imgSkinSuitFront,
         images: [imgSkinSuitFront, imgSkinSuitBack, imgSkinSuitYellow1, imgSkinSuitYellow2, imgSkinSuitYellow3],
-        imageLabels: ['Front', 'Back', 'Yellow View 1', 'Yellow View 2', 'Yellow View 3']
+        imageLabels: ['Front', 'Back', 'Yellow View 1', 'Yellow View 2', 'Yellow View 3'],
+        video: vidSkinSuitYellow
       },
       { 
         name: 'Black / Light Grey', 
@@ -384,13 +395,14 @@ export const SHOP_PRODUCTS = [
     images: [imgCapFront, imgCapBack, imgCapSide],
     imageLabels: ['Front', 'Back', 'Side'],
     glb: glbCap,
+    video: vidCap,
     category: 'Accessories',
     description: 'Durable, quick-dry ocean cap with adjustable strap for beach, boat, and water activities.',
     features: [
       'Quick-Dry Breathable Fabric: Fast-drying material resists saltwater staining.',
       'Adjustable Strap: Secure fit even in windy boat conditions.'
     ],
-    sizes: ['One Size Fits Most'],
+    sizes: [],
     colors: [],
     stock: 40,
     stockStatus: 'In Stock',
@@ -407,13 +419,14 @@ export const SHOP_PRODUCTS = [
     images: [imgBagFront, imgBagBack, imgBagIn, imgBagOpen1, imgBagOpen2],
     imageLabels: ['Front', 'Back', 'Inside', 'Open Top 1', 'Open Top 2'],
     glb: glbBag,
+    video: vidBag,
     category: 'Accessories',
     description: 'Heavy-duty waterproof gear backpack designed for carrying wetsuits, towels, and dive equipment.',
     features: [
       'Water-Resistant Tarpaulin: Isolates wet gear from dry clothes.',
       'High Capacity Storage: Easily holds fins, mask, towel, and suit.'
     ],
-    sizes: ['One Size Fits Most'],
+    sizes: [],
     colors: [
       { name: 'Black', hex: '#000000' }
     ],

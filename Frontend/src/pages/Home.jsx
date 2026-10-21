@@ -149,8 +149,8 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden relative isolate pointer-events-none">
       <SEOHead
-        title="The Dive Village | It's a Community"
-        description="Experience world-class scuba diving, professional certifications, guided snorkeling tours, and freediving with The Dive Village. Explore ocean gear and sustainable apparel."
+        title="The Dive Village | It is a Community"
+        description="The Dive Village | It is a Community. Experience world-class scuba diving, professional certifications, guided snorkeling tours, and freediving with The Dive Village. Explore ocean gear and sustainable apparel."
         keywords="scuba diving center, certification courses, guided snorkeling tours, freediving school, ocean apparel, dive gear shop, eco diving village"
         canonicalUrl="https://thedivevillage.com/"
       />
