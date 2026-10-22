@@ -60,20 +60,35 @@ export default function OptimizedModelViewer({
 
   // Direct script injection on mount
   useEffect(() => {
-    if (typeof window !== 'undefined' && !customElements.get('model-viewer')) {
-      const existingScript = document.querySelector('script[data-model-viewer-loader]')
-      if (existingScript) {
-        existingScript.addEventListener('load', () => setScriptLoaded(true), { once: true })
-      } else {
-        const script = document.createElement('script')
-        script.type = 'module'
-        script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'
-        script.setAttribute('data-model-viewer-loader', 'true')
-        script.onload = () => setScriptLoaded(true)
-        document.head.appendChild(script)
-      }
-    } else {
+    const applyDecoder = () => {
+      try {
+        const ModelViewer = customElements.get('model-viewer')
+        if (ModelViewer) {
+          ModelViewer.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+        }
+      } catch (e) {}
       setScriptLoaded(true)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.ModelViewerElement = window.ModelViewerElement || {}
+      window.ModelViewerElement.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+
+      if (!customElements.get('model-viewer')) {
+        const existingScript = document.querySelector('script[data-model-viewer-loader]')
+        if (existingScript) {
+          existingScript.addEventListener('load', applyDecoder, { once: true })
+        } else {
+          const script = document.createElement('script')
+          script.type = 'module'
+          script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'
+          script.setAttribute('data-model-viewer-loader', 'true')
+          script.onload = applyDecoder
+          document.head.appendChild(script)
+        }
+      } else {
+        applyDecoder()
+      }
     }
   }, [])
 
@@ -119,6 +134,7 @@ export default function OptimizedModelViewer({
           src={src || undefined}
           alt={alt}
           poster={poster || undefined}
+          meshopt-decoder-location="/libs/meshopt_decoder.js"
           auto-rotate={autoRotate ? true : undefined}
           rotation-per-second={rotationSpeed}
           camera-controls={cameraControls}

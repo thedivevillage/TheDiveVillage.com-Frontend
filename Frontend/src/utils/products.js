@@ -3,7 +3,7 @@ const imgFullWetsuitBack = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v17
 
 // 3D GLB Model Imports
 const glbCap = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791861802/TDV-Media/Products/TDV%20-%203D%20Product%20Files/The_Dive_Village_Foldable_Cap.glb';
-const glbBag = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791610581/TDV-Media/Products/TDV%20-%203D%20Product%20Files/The_Dive_Village_Gear_Bag.glb';
+const glbBag = 'https://res.cloudinary.com/q7b4kjd9/image/upload/v1792644824/The_Dive_Village_Gear_Bag.glb';
 const glbBottomsCompression = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791609610/TDV-Media/Products/TDV%20-%203D%20Product%20Files/Bottoms_with_compression_support.glb';
 const glbFullSleeves = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791609687/TDV-Media/Products/TDV%20-%203D%20Product%20Files/Full_Sleeves_Top.glb';
 const glbHalfSleeves = 'https://res.cloudinary.com/q7b4kjd9/raw/upload/v1791458322/TDV-Media/Products/TDV%20-%203D%20Product%20Files/Half_sleeves_tops_-_unisex.glb';

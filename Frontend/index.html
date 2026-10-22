@@ -63,6 +63,21 @@
         "priceRange": "$$"
       }
     </script>
+  <script>
+    (function () {
+      var decoderUrl = '/libs/meshopt_decoder.js';
+      self.ModelViewerElement = self.ModelViewerElement || {};
+      self.ModelViewerElement.meshoptDecoderLocation = decoderUrl;
+      if (typeof customElements !== 'undefined' && customElements.whenDefined) {
+        customElements.whenDefined('model-viewer').then(function () {
+          var el = customElements.get('model-viewer');
+          if (el) {
+            el.meshoptDecoderLocation = decoderUrl;
+          }
+        });
+      }
+    })();
+  </script>
 </head>
 
 <body style="background-color: #001e3d; margin: 0; padding: 0;">

@@ -702,11 +702,28 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
   )
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !customElements.get('model-viewer')) {
-      const script = document.createElement('script')
-      script.type = 'module'
-      script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'
-      document.head.appendChild(script)
+    const applyDecoder = () => {
+      try {
+        const ModelViewer = customElements.get('model-viewer')
+        if (ModelViewer) {
+          ModelViewer.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+        }
+      } catch (e) {}
+    }
+
+    if (typeof window !== 'undefined') {
+      window.ModelViewerElement = window.ModelViewerElement || {}
+      window.ModelViewerElement.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+
+      if (!customElements.get('model-viewer')) {
+        const script = document.createElement('script')
+        script.type = 'module'
+        script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'
+        script.onload = applyDecoder
+        document.head.appendChild(script)
+      } else {
+        applyDecoder()
+      }
     }
   }, [])
 
@@ -714,6 +731,9 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
     let active = true
     const el = viewerRef.current
     if (el) {
+      try {
+        el.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+      } catch (e) {}
       const applyMatte = () => {
         try {
           if (el.model && el.model.materials) {
@@ -1122,6 +1142,7 @@ function ProductCardItem({ product, onQuickAdd, isWishlisted, onToggleWishlist, 
                     data-product-media="true"
                     src={product.glb}
                     alt={product.title}
+                    meshopt-decoder-location="/libs/meshopt_decoder.js"
                     reveal="auto"
                     auto-rotate
                     auto-rotate-delay="0"

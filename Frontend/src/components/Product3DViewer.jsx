@@ -39,14 +39,29 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
 
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !customElements.get('model-viewer')) {
-      const script = document.createElement('script')
-      script.type = 'module'
-      script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'
-      script.onload = () => setScriptLoaded(true)
-      document.head.appendChild(script)
-    } else {
+    const applyDecoder = () => {
+      try {
+        const ModelViewer = customElements.get('model-viewer')
+        if (ModelViewer) {
+          ModelViewer.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+        }
+      } catch (e) {}
       setScriptLoaded(true)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.ModelViewerElement = window.ModelViewerElement || {}
+      window.ModelViewerElement.meshoptDecoderLocation = '/libs/meshopt_decoder.js'
+
+      if (!customElements.get('model-viewer')) {
+        const script = document.createElement('script')
+        script.type = 'module'
+        script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'
+        script.onload = applyDecoder
+        document.head.appendChild(script)
+      } else {
+        applyDecoder()
+      }
     }
   }, [])
 
@@ -412,6 +427,7 @@ export default function Product3DViewer({ src, alt = '3D Product Model', product
         src={src ? src : undefined}
         alt={alt}
         poster={poster || undefined}
+        meshopt-decoder-location="/libs/meshopt_decoder.js"
         reveal="auto"
         auto-rotate={autoRotate ? true : undefined}
         rotation-per-second="25deg"
